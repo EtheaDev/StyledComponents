@@ -6,7 +6,7 @@
 
 | Component | Description |
 | - | - |
-| ![OK_BUTTON_128.png](./Images/OK_BUTTON_128.png) | **TStyledButton** is a Graphic Button with Styles (eg. Bootstrap) with support of ImageList, Action and full configuration of 5 state: Normal, Hot, Focused, Down, Disabled|
+| ![OK_BUTTON_128.png](./Images/OK_BUTTON_128.png) | **TStyledButton** is a Graphic Button with Styles (eg. Bootstrap) with support of ImageList, Action and full configuration of five states: Normal, Hot, Focused, Down and Disabled|
 | ![StyledTaskDialog_128.png](./Images/StyledTaskDialog_128.png) | **TStyledTaskDialog** is a special "TaskDialog" component with custom Button Captions and Icons. Using a special Form you can show a full customizable Dialog |
 
 ## Additional Components Required ##
