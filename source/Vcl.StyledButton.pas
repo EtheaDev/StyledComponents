@@ -121,7 +121,6 @@ type
     procedure SetRadius(const AValue: Integer);
     procedure DestroyFocusControl;
     procedure CreateFocusControl(AOwner: TComponent; AParent: TWinControl);
-    procedure WMEraseBkgnd(var Message: TWMEraseBkGnd); message WM_ERASEBKGND;
     function IconAssigned: Boolean;
     function GetPictureWidth: Integer;
     function GetPictureHeight: Integer;
@@ -1199,11 +1198,6 @@ begin
     if AComponent = Images then
       Images := nil;
   end;
-end;
-
-procedure TStyledButton.WMEraseBkgnd(var Message: TWMEraseBkGnd);
-begin
-  message.Result := 1;
 end;
 
 { TStyledButtonActionLink }

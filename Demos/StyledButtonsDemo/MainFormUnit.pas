@@ -123,8 +123,7 @@ begin
   LStyledButton.Name := 'StyledButton'+ACaption;
   LStyledButton.Caption := ACaption;
   LStyledButton.Images := VirtualImageList;
-  //LStyledButton.ImageName := AImageName;
-  LStyledButton.ImageIndex := 1;
+  LStyledButton.ImageName := AImageName;
   LStyledButton.StyleClass := AStyle; //Bootstrap StyleClass
   LStyledButton.ImageAlignment := AImagePos;
   LStyledButton.SetBounds(ALeft, ATop, LWidth, LHeight);

@@ -70,25 +70,32 @@ type
     property Position: TPoint read FPosition write FPosition;
   end;
 
+function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer; overload;
+function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn): Integer; overload;
+(*
+function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn;
+  CustomButtonCaptions: array of string): Integer; overload;
+*)
 function StyledMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint;
-  X: Integer = -1; Y: Integer = -1; CustomIcon : TICon = nil): Integer; overload;
+  X: Integer = -1; Y: Integer = -1): Integer; overload;
 function StyledMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; DefaultButton: TMsgDlgBtn; HelpCtx: Longint;
-  X: Integer = -1; Y: Integer = -1; CustomIcon : TICon = nil): Integer; overload;
+  X: Integer = -1; Y: Integer = -1): Integer; overload;
 function StyledTaskDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint;
-  X: Integer = -1; Y: Integer = -1; CustomIcon : TIcon = nil): Integer; overload;
+  X: Integer = -1; Y: Integer = -1): Integer; overload;
 function StyledTaskDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; DefaultButton: TMsgDlgBtn; HelpCtx: Longint;
-  X: Integer = -1; Y: Integer = -1; CustomIcon : TIcon = nil): Integer; overload;
+  X: Integer = -1; Y: Integer = -1): Integer; overload;
 
 procedure SetUseAlwaysTaskDialog(Value: boolean);
 procedure RegisterCustomExecute(const AShowStyledTaskDialog: ITaskDialogLauncher);
 procedure UnregisterCustomExecute;
 procedure InitializeDialogs(AFont: TFont; AUseTaskDialog: Boolean);
-procedure RegisterCustomIcons(const ACustomIcons: TStyledDialogIcons);
-procedure UnregisterCustomIcons;
 function GetTaskDlgType(const AIcon: TTaskDialogIcon): TMsgDlgType;
 
 implementation
@@ -133,8 +140,34 @@ begin
 {$ENDIF}
 end;
 
+function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer;
+begin
+  Result := StyledTaskDlgPos(Title, Msg, DlgType, Buttons, HelpCtx, -1, -1);
+end;
+
+function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn): Integer; overload;
+begin
+  Result := StyledTaskDlgPos(Title, Msg, DlgType, Buttons, DefaultButton,
+    HelpCtx, -1, -1);
+end;
+
+function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn; CustomButtonCaptions: array of string): Integer; overload;
+begin
+  Result := StyledTaskDlgPos(Title, Msg, DlgType, Buttons, DefaultButton,
+    HelpCtx, -1, -1);
+end;
+
+function StyleMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint; X, Y: Integer): Integer;
+begin
+  Result := MessageDlgPosHelp(Msg, DlgType, Buttons, HelpCtx, X, Y, '');
+end;
+
 function StyledMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
-  Buttons: TMsgDlgButtons; HelpCtx: Longint; X: Integer = -1; Y: Integer = -1; CustomIcon : TICon = nil): Integer;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint; X: Integer = -1; Y: Integer = -1): Integer;
 var
   DefaultButton: TMsgDlgBtn;
 begin
@@ -153,17 +186,14 @@ begin
   else DefaultButton := mbYes;
   if Buttons = [] then
     Buttons := [mbOK];
-  Result := StyledMessageDlgPos(Msg, DlgType, Buttons, DefaultButton, HelpCtx, X, Y, CustomIcon);
+  Result := StyledMessageDlgPos(Msg, DlgType, Buttons, DefaultButton, HelpCtx, X, Y);
 end;
 
 function StyledMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
-  Buttons: TMsgDlgButtons; DefaultButton: TMsgDlgBtn; HelpCtx: Longint; X: Integer = -1; Y: Integer = -1;
-  CustomIcon : TICon = nil): Integer;
+  Buttons: TMsgDlgButtons; DefaultButton: TMsgDlgBtn; HelpCtx: Longint; X: Integer = -1; Y: Integer = -1): Integer;
 var
   Dlg : TForm;
   MyMsg : string;
-  LIcon: TIcon;
-  LImage: TImage;
 
   procedure ChangeButtonCaption(MsgDlgBtn : TMsgDlgBtn;
     const Caption : string);
@@ -179,7 +209,7 @@ begin
   if IsTaskMessageSupported and UseAlwaysTaskDialog then
   begin
     //Use a TaskDialog to Show the message instead of a MessageDialog
-    Result := StyledTaskDlgPos('',Msg,DlgType,Buttons,DefaultButton,HelpCtx,X,Y,CustomIcon);
+    Result := StyledTaskDlgPos('',Msg,DlgType,Buttons,DefaultButton,HelpCtx,X,Y);
   end
   else
   begin
@@ -215,20 +245,6 @@ begin
         mtInformation  : Dlg.Caption := STR_INFORMATION;
         mtConfirmation : Dlg.Caption := STR_CONFIRM;
         mtCustom       : Dlg.Caption := STR_INFORMATION;
-      end;
-
-      if Assigned(CustomIcon) then
-        LIcon := CustomIcon
-      else if Assigned(CustomIcons[DlgType]) then
-        LIcon := CustomIcons[DlgType]
-      else
-        LIcon := nil;
-
-      if Assigned(LIcon) then
-      begin
-        LImage := Dlg.FindComponent('Image') as TImage;
-        if Assigned(LImage) then
-          LImage.Picture.Assign(LIcon);
       end;
 
       Result := Dlg.ShowModal;
@@ -391,7 +407,7 @@ begin
 end;
 
 function StyledTaskDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
-  Buttons: TMsgDlgButtons; HelpCtx: Longint; X: Integer = -1; Y: Integer = -1; CustomIcon : TIcon = nil): Integer;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint; X: Integer = -1; Y: Integer = -1): Integer;
 var
   DefaultButton: TMsgDlgBtn;
 begin
@@ -410,12 +426,12 @@ begin
 
   else DefaultButton := mbYes;
 
-  Result := StyledTaskDlgPos(Title, Msg, DlgType, Buttons, DefaultButton, HelpCtx, X, Y, CustomIcon);
+  Result := StyledTaskDlgPos(Title, Msg, DlgType, Buttons, DefaultButton, HelpCtx, X, Y);
 end;
 
 function StyledTaskDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; DefaultButton: TMsgDlgBtn; HelpCtx: Longint;
-  X: Integer = -1; Y: Integer = -1; CustomIcon : TIcon = nil): Integer;
+  X: Integer = -1; Y: Integer = -1): Integer;
 var
   MsgWithTitle: string;
 begin
@@ -424,9 +440,9 @@ begin
   else
     MsgWithTitle := Msg;
   if IsTaskMessageSupported then
-    Result := DoTaskMessageDlgPos(Title, Msg, DlgType, Buttons, HelpCtx, DefaultButton, X, Y, CustomIcon)
+    Result := DoTaskMessageDlgPos(Title, Msg, DlgType, Buttons, HelpCtx, DefaultButton, X, Y)
   else
-    Result := StyledMessageDlgPos(MsgWithTitle, DlgType, Buttons, DefaultButton, HelpCtx, -1, -1, CustomIcon);
+    Result := StyledMessageDlgPos(MsgWithTitle, DlgType, Buttons, DefaultButton, HelpCtx, -1, -1);
 end;
 
 { TStyledTaskDialog }

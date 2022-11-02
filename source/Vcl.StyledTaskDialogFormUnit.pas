@@ -206,9 +206,6 @@ procedure TStyledTaskDialogForm.SetCommonButtons(
   const AValue: TTaskDialogCommonButtons);
 begin
   FCommonButtons := AValue;
-  if FCommonButtons = [] then
-    FCommonButtons := [tcbOk];
-
   HelpButton.Visible := HelpContext <> 0;
   CloseButton.Visible := tcbClose in FCommonButtons;
   RetryButton.Visible := tcbRetry in FCommonButtons;
