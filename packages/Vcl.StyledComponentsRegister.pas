@@ -29,7 +29,8 @@ implementation
 procedure Register;
 begin
   RegisterComponents('Styled Components',
-    [TStyledButton,
+    [TStyledGraphicButton,
+     TStyledButton,
      TStyledTaskDialog]);
 end;
 

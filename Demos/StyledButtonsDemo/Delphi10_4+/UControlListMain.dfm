@@ -29,6 +29,8 @@ object ControlListMainForm: TControlListMainForm
     ParentColor = False
     TabOrder = 0
     OnBeforeDrawItem = ControlListBeforeDrawItem
+    ExplicitWidth = 724
+    ExplicitHeight = 394
     object Label1: TLabel
       AlignWithMargins = True
       Left = 80
@@ -112,6 +114,26 @@ object ControlListMainForm: TControlListMainForm
       LinkHotColor = clHighlight
       Style = clbkToolButton
       ExplicitLeft = 651
+    end
+    object GraphicButton: TStyledGraphicButton
+      Tag = 0
+      Left = 462
+      Top = 4
+      Width = 110
+      Height = 30
+      OnClick = GraphicButtonClick
+      Caption = 'Primary'
+      StyleClass = 'Primary'
+    end
+    object StyledGraphicButton1: TStyledGraphicButton
+      Tag = 0
+      Left = 462
+      Top = 36
+      Width = 110
+      Height = 30
+      OnClick = GraphicButtonClick
+      Caption = 'Secondary'
+      StyleClass = 'Secondary'
     end
   end
   object SVGIconImageCollection: TSVGIconImageCollection

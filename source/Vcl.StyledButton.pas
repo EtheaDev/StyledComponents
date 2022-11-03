@@ -55,6 +55,7 @@ const
 
 type
   TStyledButtonMode = (bsmNormal, bsmDown, bsmFocused, bsmHot, bsmDisabled);
+  TStyledGraphicButton = class;
   TStyledButton = class;
 
   TButtonFocusControl = class(TWinControl)
@@ -65,14 +66,14 @@ type
     procedure WndProc(var Message: TMessage); override;
     procedure WMKeyDown(var Message: TWMKeyDown); message WM_KEYDOWN;
   public
-    constructor Create(AOwner: TComponent; AGraphicControl: TStyledButton); reintroduce;
+    constructor Create(AOwner: TComponent; AStyledButton: TStyledButton); reintroduce;
     property TabOrder;
     property TabStop default True;
   end;
 
-  TStyledButtonActionLink = class(TControlActionLink)
+  TGraphicButtonActionLink = class(TControlActionLink)
   protected
-    FClient: TStyledButton;
+    FClient: TStyledGraphicButton;
     function IsImageIndexLinked: Boolean; override;
     {$IFDEF D10_4+}
     function IsImageNameLinked: Boolean; override;
@@ -83,7 +84,7 @@ type
     procedure SetChecked(Value: Boolean); override;
   end;
 
-  TStyledButton = class(TGraphicControl)
+  TStyledGraphicButton = class(TGraphicControl)
   private
     FScaleFactor: Single;
     FButtonStyleNormal: TStyledButtonAttributes;
@@ -94,7 +95,6 @@ type
     FModalResult: TModalResult;
     FMouseInControl: Boolean;
     FState: TButtonState;
-    FFocusControl: TButtonFocusControl;
     FPen: TPen;
     FBrush: TBrush;
     FImageMargins: TImageMargins;
@@ -108,19 +108,12 @@ type
     FImageName: TImageName;
     {$ENDIF}
     FImageAlignment: TImageAlignment;
+    FTag: Integer;
     function IsPressed: Boolean;
     function IsDefault: Boolean;
     procedure SetImageMargins(const AValue: TImageMargins);
     function IsRadius: Boolean;
-    function GetTabOrder: Integer;
-    procedure SetTabStop(const AValue: Boolean);
-    function GetTabStop: Boolean;
-    procedure SetTabOrder(const AValue: Integer);
-    function GetFocused: Boolean;
-    function GetCanFocus: Boolean;
     procedure SetRadius(const AValue: Integer);
-    procedure DestroyFocusControl;
-    procedure CreateFocusControl(AOwner: TComponent; AParent: TWinControl);
     function IconAssigned: Boolean;
     function GetPictureWidth: Integer;
     function GetPictureHeight: Integer;
@@ -163,18 +156,18 @@ type
     function IsStyleDisabledStored: Boolean;
     function IsStyleDownStored: Boolean;
   protected
+    function GetFocused: Boolean; virtual;
+    function GetCanFocus: Boolean; virtual;
     procedure UpdateImage; virtual;
     {$IFDEF D10_4+}
     procedure CheckImageIndexes;
     {$ENDIF}
-    procedure VisibleChanging; override;
     procedure ActionChange(Sender: TObject; CheckDefaults: Boolean); override;
     function GetActionLinkClass: TControlActionLinkClass; override;
     procedure SetName(const AValue: TComponentName); override;
     procedure Loaded; override;
     procedure DoKeyUp;
     procedure Paint; override;
-    procedure SetParent(AParent: TWinControl); override;
     procedure DoKeyDown(var AKey: Word; AShift: TShiftState);
     {$IFDEF HiDPISupport}
     procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
@@ -187,13 +180,7 @@ type
 
     property ScaleFactor: Single read FScaleFactor;
   public
-    property CanFocus: Boolean read GetCanFocus;
-    property Focused: Boolean read GetFocused;
-
-    procedure SetFocus;
     procedure Click; override;
-    procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
-      X, Y: Integer); override;
 
     procedure Assign(ASource: TPersistent); override;
     procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
@@ -202,6 +189,7 @@ type
       const AStyleClass: TStyledButtonStyle); virtual;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    property Focused: Boolean read GetFocused;
   published
     property Action;
     property Align;
@@ -245,10 +233,9 @@ type
     property ImageMargins: TImageMargins read FImageMargins write SetImageMargins;
     property ModalResult: TModalResult read FModalResult write FModalResult default 0;
     property Images: TCustomImageList read FImages write SetImages;
-    property TabOrder: Integer read GetTabOrder write SetTabOrder;
-    property TabStop: Boolean read GetTabStop write SetTabStop default True;
     property Radius: Integer read FRadius write SetRadius stored IsRadius default DEFAULT_RADIUS;
     property StyleClass: TStyledButtonStyle read FStyleClass write SetStyleClass stored IsStoredStyleClass;
+    property Tag: Integer read FTag write FTag;
     property Width default DEFAULT_BTN_WIDTH;
 
     property ButtonStyleNormal: TStyledButtonAttributes read FButtonStyleNormal write SetButtonStyleNormal stored IsStyleNormalStored;
@@ -256,6 +243,34 @@ type
     property ButtonStyleFocused: TStyledButtonAttributes read FButtonStyleFocused write SetButtonStyleFocused stored IsStyleFocusedStored;
     property ButtonStyleHot: TStyledButtonAttributes read FButtonStyleHot write SetButtonStyleHot stored IsStyleHotStored;
     property ButtonStyleDisabled: TStyledButtonAttributes read FButtonStyleDisabled write SetButtonStyleDisabled stored IsStyleDisabledStored;
+  end;
+
+  TStyledButton = class(TStyledGraphicButton)
+  private
+    FFocusControl: TButtonFocusControl;
+    function GetTabOrder: Integer;
+    procedure SetTabStop(const AValue: Boolean);
+    function GetTabStop: Boolean;
+    procedure SetTabOrder(const AValue: Integer);
+    procedure DestroyFocusControl;
+    procedure CreateFocusControl(AOwner: TComponent; AParent: TWinControl);
+    procedure SetFocus;
+  protected
+    function GetFocused: Boolean; override;
+    function GetCanFocus: Boolean; override;
+    procedure VisibleChanging; override;
+    procedure SetName(const AValue: TComponentName); override;
+    procedure SetParent(AParent: TWinControl); override;
+  public
+    procedure Click; override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer); override;
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+    property CanFocus: Boolean read GetCanFocus;
+  published
+    property TabOrder: Integer read GetTabOrder write SetTabOrder;
+    property TabStop: Boolean read GetTabStop write SetTabStop default True;
   end;
 
 implementation
@@ -270,10 +285,10 @@ uses
 
 { TButtonFocusControl }
 
-constructor TButtonFocusControl.Create(AOwner: TComponent; AGraphicControl: TStyledButton);
+constructor TButtonFocusControl.Create(AOwner: TComponent; AStyledButton: TStyledButton);
 begin
   inherited Create(AOwner);
-  FButton := AGraphicControl;
+  FButton := AStyledButton;
   Self.TabStop := false;
 end;
 
@@ -308,23 +323,23 @@ begin
   inherited;
 end;
 
-{ TStyledButton }
+{ TGraphicButton }
 
-procedure TStyledButton.Assign(ASource: TPersistent);
+procedure TStyledGraphicButton.Assign(ASource: TPersistent);
 begin
-  if ASource is TStyledButton then
+  if ASource is TStyledGraphicButton then
   begin
-    FBrush.Assign(TStyledButton(ASource).FBrush);
-    FPen.Assign(TStyledButton(ASource).FPen);
-    Font.Assign(TStyledButton(ASource).Font);
-    FRadius := TStyledButton(ASource).FRadius;
+    FBrush.Assign(TStyledGraphicButton(ASource).FBrush);
+    FPen.Assign(TStyledGraphicButton(ASource).FPen);
+    Font.Assign(TStyledGraphicButton(ASource).Font);
+    FRadius := TStyledGraphicButton(ASource).FRadius;
   end
   else
     inherited Assign(ASource);
 end;
 
 {$IFDEF HiDPISupport}
-procedure TStyledButton.ChangeScale(M, D: Integer; isDpiChange: Boolean);
+procedure TStyledGraphicButton.ChangeScale(M, D: Integer; isDpiChange: Boolean);
 var
   Flags: TScalingFlags;
 begin
@@ -346,7 +361,7 @@ begin
 end;
 {$ENDIF}
 
-procedure TStyledButton.CMEnter(var Message: TCMEnter);
+procedure TStyledGraphicButton.CMEnter(var Message: TCMEnter);
 begin
   if not(Enabled) or (csDesigning in ComponentState) then
     Exit;
@@ -355,7 +370,7 @@ begin
   Invalidate;
 end;
 
-procedure TStyledButton.CMMouseEnter(var Message: TNotifyEvent);
+procedure TStyledGraphicButton.CMMouseEnter(var Message: TNotifyEvent);
 begin
   if not(Enabled) or (csDesigning in ComponentState) then
     Exit;
@@ -364,7 +379,7 @@ begin
   Invalidate;
 end;
 
-procedure TStyledButton.CMMouseLeave(var Message: TNotifyEvent);
+procedure TStyledGraphicButton.CMMouseLeave(var Message: TNotifyEvent);
 begin
   if not(Enabled) or (csDesigning in ComponentState) then
     Exit;
@@ -373,31 +388,23 @@ begin
   Invalidate;
 end;
 
-procedure TStyledButton.VisibleChanging;
+procedure TStyledGraphicButton.Click;
 begin
-  inherited;
-  if Assigned(FFocusControl) then
-    FFocusControl.TabStop := Self.Visible;
-end;
-
-procedure TStyledButton.Click;
-begin
-  SetFocus;
   inherited;
 end;
 
-procedure TStyledButton.ImageListChange(Sender: TObject);
+procedure TStyledGraphicButton.ImageListChange(Sender: TObject);
 begin
   UpdateImage;
   Invalidate;
 end;
 
-procedure TStyledButton.ImageMarginsChange(Sender: TObject);
+procedure TStyledGraphicButton.ImageMarginsChange(Sender: TObject);
 begin
   Invalidate;
 end;
 
-constructor TStyledButton.CreateStyled(AOwner: TComponent;
+constructor TStyledGraphicButton.CreateStyled(AOwner: TComponent;
   const AStyleClass: TStyledButtonStyle);
 begin
   inherited Create(AOwner);
@@ -420,8 +427,6 @@ begin
   FImageAlignment := iaLeft;
   FBorderType := btrounded;
   FScaleFactor := 1;
-  FFocusControl := nil;
-  CreateFocusControl(nil, TWinControl(AOwner));
   Cursor := crHandPoint;
   ControlStyle := ControlStyle + [csReplicatable];
   ParentFont := true;
@@ -436,7 +441,6 @@ begin
   FBrush := TBrush.Create;
   FBrush.OnChange := StyleChanged;
   FMouseInControl := false;
-  TabStop := True;
   FImageIndex := -1;
   {$IFDEF D10_4+}
   FImageName := '';
@@ -444,12 +448,12 @@ begin
   StyleClass := AStyleClass;
 end;
 
-constructor TStyledButton.Create(AOwner: TComponent);
+constructor TStyledGraphicButton.Create(AOwner: TComponent);
 begin
   CreateStyled(AOwner, DEFAULT_STYLE_CLASS);
 end;
 
-procedure TStyledButton.ActionChange(Sender: TObject; CheckDefaults: Boolean);
+procedure TStyledGraphicButton.ActionChange(Sender: TObject; CheckDefaults: Boolean);
 begin
   inherited;
   if Sender is TCustomAction then
@@ -463,7 +467,7 @@ begin
   end;
 end;
 
-procedure TStyledButton.ApplyStyleClass;
+procedure TStyledGraphicButton.ApplyStyleClass;
 var
   LStyleAttribute: IStyledButtonAttributes;
 begin
@@ -479,13 +483,12 @@ begin
   invalidate;
 end;
 
-destructor TStyledButton.Destroy;
+destructor TStyledGraphicButton.Destroy;
 begin
   Images := nil;
   FreeAndNil(FImageChangeLink);
   FreeAndNil(FPen);
   FreeAndNil(FBrush);
-  DestroyFocusControl;
   FreeAndNil(FImageMargins);
   FreeAndNil(FButtonStyleNormal);
   FreeAndNil(FButtonStyleDown);
@@ -496,30 +499,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TStyledButton.CreateFocusControl(AOwner: TComponent; AParent: TWinControl);
-begin
-  if not Assigned(FFocusControl) then
-  begin
-    FFocusControl := TButtonFocusControl.Create(AOwner, Self);
-    try
-      FFocusControl.TabStop := true;
-      FFocusControl.SetBounds(0, 0, 0, 0);
-    except
-      raise;
-    end;
-  end;
-end;
-
-procedure TStyledButton.DestroyFocusControl;
-begin
-  if Assigned(FFocusControl) then
-  begin
-    if Assigned(FFocusControl.Parent) then
-      FreeAndNil(FFocusControl);
-  end;
-end;
-
-procedure TStyledButton.DoKeyDown(var AKey: Word; AShift: TShiftState);
+procedure TStyledGraphicButton.DoKeyDown(var AKey: Word; AShift: TShiftState);
 begin
   if ((AKey = VK_RETURN) or (AKey = VK_SPACE)) then
   begin
@@ -530,30 +510,14 @@ begin
   end;
 end;
 
-procedure TStyledButton.DoKeyUp;
+procedure TStyledGraphicButton.DoKeyUp;
 begin
   FState := bsUp;
 
   Invalidate;
 end;
 
-function TStyledButton.GetCanFocus: Boolean;
-begin
-  if Assigned(FFocusControl) then
-    Result := FFocusControl.CanFocus
-  else
-    Result := false;
-end;
-
-function TStyledButton.GetFocused: Boolean;
-begin
-  if Assigned(FFocusControl) then
-    Result := FFocusControl.Focused
-  else
-    Result := false;
-end;
-
-function TStyledButton.GetPictureHeight: Integer;
+function TStyledGraphicButton.GetPictureHeight: Integer;
 begin
   if IconAssigned then
     Result := Images.Height
@@ -561,7 +525,7 @@ begin
     Result := 0;
 end;
 
-function TStyledButton.GetPictureWidth: Integer;
+function TStyledGraphicButton.GetPictureWidth: Integer;
 begin
   if IconAssigned then
     Result := Images.Width
@@ -569,102 +533,86 @@ begin
     Result := 0;
 end;
 
-function TStyledButton.GetTabOrder: Integer;
-begin
-  if Assigned(FFocusControl) then
-    Result := FFocusControl.TabOrder
-  else
-    Result := -1;
-end;
-
-function TStyledButton.GetTabStop: Boolean;
-begin
-  if Assigned(FFocusControl) then
-    Result := FFocusControl.TabStop
-  else
-    Result := false;
-end;
-
-function TStyledButton.GetText: TCaption;
+function TStyledGraphicButton.GetText: TCaption;
 begin
   Result := inherited Caption;
 end;
 
-function TStyledButton.IconAssigned: Boolean;
+function TStyledGraphicButton.IconAssigned: Boolean;
 begin
   Result := Assigned(Images) and ((FImageIndex <> -1)
     {$IFDEF D10_4+}or (FImageName <> ''){$ENDIF});
 end;
 
-function TStyledButton.IsCaptionStored: Boolean;
+function TStyledGraphicButton.IsCaptionStored: Boolean;
 begin
   Result := (ActionLink = nil) or
-    not TStyledButtonActionLink(ActionLink).IsCaptionLinked;
+    not TGraphicButtonActionLink(ActionLink).IsCaptionLinked;
 end;
 
-function TStyledButton.IsImageIndexStored: Boolean;
+function TStyledGraphicButton.IsImageIndexStored: Boolean;
 begin
   Result := (ActionLink = nil) or
-    not TStyledButtonActionLink(ActionLink).IsImageIndexLinked;
+    not TGraphicButtonActionLink(ActionLink).IsImageIndexLinked;
 end;
 
-function TStyledButton.IsCustomBorderType: Boolean;
+function TStyledGraphicButton.IsCustomBorderType: Boolean;
 begin
   Result := FBorderType <> GetDrawingStyle.BorderType;
 end;
 
-function TStyledButton.IsDefault: Boolean;
+function TStyledGraphicButton.IsDefault: Boolean;
 begin
   //IsDefault := (Control is TCustomButton) and TCustomButton(Control).FActive;
   Result := False;
 end;
 
-function TStyledButton.IsPressed: Boolean;
+function TStyledGraphicButton.IsPressed: Boolean;
 begin
   Result := FState = bsDown;
 end;
 
-function TStyledButton.IsRadius: Boolean;
+function TStyledGraphicButton.IsRadius: Boolean;
 begin
   Result := Radius <> DEFAULT_RADIUS;
 end;
 
-function TStyledButton.IsStoredStyleClass: Boolean;
+function TStyledGraphicButton.IsStoredStyleClass: Boolean;
 begin
   Result := FStyleClass <> DEFAULT_STYLE_CLASS;
 end;
 
-function TStyledButton.IsStyleDisabledStored: Boolean;
+function TStyledGraphicButton.IsStyleDisabledStored: Boolean;
 begin
   Result := FButtonStyleDisabled.IsChanged;
 end;
 
-function TStyledButton.IsStyleDownStored: Boolean;
+function TStyledGraphicButton.IsStyleDownStored: Boolean;
 begin
   Result := FButtonStyleDown.IsChanged;
 end;
 
-function TStyledButton.IsStyleFocusedStored: Boolean;
+function TStyledGraphicButton.IsStyleFocusedStored: Boolean;
 begin
   Result := FButtonStyleFocused.IsChanged;
 end;
 
-function TStyledButton.IsStyleHotStored: Boolean;
+function TStyledGraphicButton.IsStyleHotStored: Boolean;
 begin
   Result := FButtonStyleHot.IsChanged;
 end;
 
-function TStyledButton.IsStyleNormalStored: Boolean;
+function TStyledGraphicButton.IsStyleNormalStored: Boolean;
 begin
   Result := FButtonStyleNormal.IsChanged;
 end;
 
-function TStyledButton.GetActionLinkClass: TControlActionLinkClass;
+function TStyledGraphicButton.GetActionLinkClass: TControlActionLinkClass;
 begin
-  Result := TStyledButtonActionLink;
+  Result := TGraphicButtonActionLink;
 end;
 
-function TStyledButton.GetAttributes(const AMode: TStyledButtonMode): TStyledButtonAttributes;
+function TStyledGraphicButton.GetAttributes(const AMode: TStyledButtonMode): TStyledButtonAttributes;
 begin
   case Amode of
     bsmDown: Result := FButtonStyleDown;
@@ -676,7 +624,12 @@ begin
   end;
 end;
 
-procedure TStyledButton.DrawText(const AText: string; var ARect: TRect; AFlags: Cardinal);
+function TStyledGraphicButton.GetCanFocus: Boolean;
+begin
+  Result := False;
+end;
+
+procedure TStyledGraphicButton.DrawText(const AText: string; var ARect: TRect; AFlags: Cardinal);
 var
   Details:  TThemedElementDetails;
   ThemeTextColor: TColor;
@@ -717,7 +670,7 @@ begin
   end;
 end;
 
-function TStyledButton.UseVCLStyles: Boolean;
+function TStyledGraphicButton.UseVCLStyles: Boolean;
 begin
   Result := False;
 end;
@@ -746,7 +699,7 @@ begin
 end;
 *)
 
-procedure TStyledButton.DrawBorder;
+procedure TStyledGraphicButton.DrawBorder;
 var
   Details:  TThemedElementDetails;
   LStyle: TCustomStyleServices;
@@ -825,14 +778,14 @@ begin
   end;
 end;
 
-procedure TStyledButton.DrawImage(
+procedure TStyledGraphicButton.DrawImage(
   const IX, IY: Integer);
 begin
   if IconAssigned then
     Images.Draw(Canvas, IX, IY, FImageIndex, Enabled);
 end;
 
-function TStyledButton.CalcImageRect(var ATextRect: TRect): TRect;
+function TStyledGraphicButton.CalcImageRect(var ATextRect: TRect): TRect;
 var
   IW, IH, IX, IY: Integer;
 begin
@@ -898,7 +851,7 @@ begin
 end;
 
 {$IFDEF D10_4+}
-procedure TStyledButton.CheckImageIndexes;
+procedure TStyledGraphicButton.CheckImageIndexes;
 begin
   if (Images = nil) or not Images.IsImageNameAvailable then
     Exit;
@@ -906,7 +859,7 @@ begin
 end;
 {$ENDIF}
 
-procedure TStyledButton.DrawButton;
+procedure TStyledGraphicButton.DrawButton;
 var
   LTextFlags: Cardinal;
   LTextRect, LImageRect: TRect;
@@ -924,7 +877,7 @@ begin
   DrawText(Caption, LTextRect, DrawTextBiDiModeFlags(LTextFlags));
 end;
 
-function TStyledButton.GetDrawingStyle: TStyledButtonAttributes;
+function TStyledGraphicButton.GetDrawingStyle: TStyledButtonAttributes;
 begin
   //Getting drawing styles
   if not Enabled then
@@ -957,12 +910,17 @@ begin
   FBorderType := Result.BorderType;
 end;
 
-procedure TStyledButton.Paint;
+function TStyledGraphicButton.GetFocused: Boolean;
+begin
+  Result := False;
+end;
+
+procedure TStyledGraphicButton.Paint;
 begin
   DrawButton;
 end;
 
-procedure TStyledButton.SetBorderType(const AValue: TBtnBorder);
+procedure TStyledGraphicButton.SetBorderType(const AValue: TBtnBorder);
 begin
   if FBorderType <> AValue then
   begin
@@ -971,20 +929,13 @@ begin
   end;
 end;
 
-procedure TStyledButton.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+procedure TStyledGraphicButton.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
 begin
   inherited;
   Repaint;
 end;
 
-procedure TStyledButton.SetFocus;
-begin
-  if Assigned(FFocusControl) then
-    if FFocusControl.CanFocus then
-      FFocusControl.SetFocus;
-end;
-
-procedure TStyledButton.SetImageAlignment(const AValue: TImageAlignment);
+procedure TStyledGraphicButton.SetImageAlignment(const AValue: TImageAlignment);
 begin
   if AValue <> FImageAlignment then
   begin
@@ -993,7 +944,7 @@ begin
   end;
 end;
 
-procedure TStyledButton.SetImageIndex(const AValue: TImageIndex);
+procedure TStyledGraphicButton.SetImageIndex(const AValue: TImageIndex);
 begin
   if AValue <> FImageIndex then
   begin
@@ -1008,13 +959,13 @@ begin
 end;
 
 {$IFDEF D10_4+}
-function TStyledButton.IsImageNameStored: Boolean;
+function TStyledGraphicButton.IsImageNameStored: Boolean;
 begin
   Result := (ActionLink = nil) or
-    not TStyledButtonActionLink(ActionLink).IsImageNameLinked;
+    not TGraphicButtonActionLink(ActionLink).IsImageNameLinked;
 end;
 
-procedure TStyledButton.SetImageName(const AValue: TImageName);
+procedure TStyledGraphicButton.SetImageName(const AValue: TImageName);
 begin
   if AValue <> FImageName then
   begin
@@ -1027,7 +978,7 @@ begin
 end;
 {$ENDIF}
 
-procedure TStyledButton.UpdateImage;
+procedure TStyledGraphicButton.UpdateImage;
 begin
 {$IFDEF D10_4+}
   if (FImages <> nil) and FImages.IsImageNameAvailable then
@@ -1036,12 +987,12 @@ begin
       FImageIndex := FImages.GetIndexByName(FImageName)
     else if (FImageName = '') and (FImageIndex <> -1) then
       FImageName := FImages.GetNameByIndex(FImageIndex);
+    CheckImageIndexes;
   end;
-  CheckImageIndexes;
 {$ENDIF}
 end;
 
-procedure TStyledButton.SetImages(const AValue: TCustomImageList);
+procedure TStyledGraphicButton.SetImages(const AValue: TCustomImageList);
 begin
   if AValue <> FImages then
   begin
@@ -1061,20 +1012,17 @@ begin
   end;
 end;
 
-procedure TStyledButton.SetName(const AValue: TComponentName);
+procedure TStyledGraphicButton.SetName(const AValue: TComponentName);
 var
   LOldValue: string;
 begin
   LOldValue := Caption;
   inherited;
-  if Assigned(FFocusControl) then
-    FFocusControl.Name := AValue;
-
   if LOldValue <> Caption then
     Invalidate;
 end;
 
-procedure TStyledButton.SetButtonStyleNormal(const AValue: TStyledButtonAttributes);
+procedure TStyledGraphicButton.SetButtonStyleNormal(const AValue: TStyledButtonAttributes);
 begin
   if not SameStyledButtonStyle(FButtonStyleNormal, AValue) then
   begin
@@ -1083,13 +1031,13 @@ begin
   end;
 end;
 
-procedure TStyledButton.SetButtonStyleDisabled(
+procedure TStyledGraphicButton.SetButtonStyleDisabled(
   const AValue: TStyledButtonAttributes);
 begin
 
 end;
 
-procedure TStyledButton.SetButtonStyleDown(const AValue: TStyledButtonAttributes);
+procedure TStyledGraphicButton.SetButtonStyleDown(const AValue: TStyledButtonAttributes);
 begin
   if not SameStyledButtonStyle(FButtonStyleDown, AValue) then
   begin
@@ -1098,7 +1046,7 @@ begin
   end;
 end;
 
-procedure TStyledButton.SetButtonStyleFocused(const AValue: TStyledButtonAttributes);
+procedure TStyledGraphicButton.SetButtonStyleFocused(const AValue: TStyledButtonAttributes);
 begin
   if not SameStyledButtonStyle(FButtonStyleFocused, AValue) then
   begin
@@ -1107,7 +1055,7 @@ begin
   end;
 end;
 
-procedure TStyledButton.SetButtonStyleHot(const AValue: TStyledButtonAttributes);
+procedure TStyledGraphicButton.SetButtonStyleHot(const AValue: TStyledButtonAttributes);
 begin
   if not SameStyledButtonStyle(FButtonStyleHot, AValue) then
   begin
@@ -1116,22 +1064,12 @@ begin
   end;
 end;
 
-procedure TStyledButton.SetParent(AParent: TWinControl);
-begin
-  inherited;
-  if Assigned(Self.Parent) then
-  begin
-    FFocusControl.Parent := Self.Parent;
-    FFocusControl.Show;
-  end;
-end;
-
-procedure TStyledButton.SetImageMargins(const AValue: TImageMargins);
+procedure TStyledGraphicButton.SetImageMargins(const AValue: TImageMargins);
 begin
   FImageMargins.Assign(AValue);
 end;
 
-procedure TStyledButton.SetRadius(const AValue: Integer);
+procedure TStyledGraphicButton.SetRadius(const AValue: Integer);
 begin
   if FRadius <> AValue then
   begin
@@ -1140,7 +1078,7 @@ begin
   end;
 end;
 
-procedure TStyledButton.SetStyleClass(const AValue: TStyledButtonStyle);
+procedure TStyledGraphicButton.SetStyleClass(const AValue: TStyledButtonStyle);
 var
   LValue: TStyledButtonStyle;
 begin
@@ -1151,6 +1089,144 @@ begin
   begin
     Self.FStyleClass := LValue;
     ApplyStyleClass;
+  end;
+end;
+
+procedure TStyledGraphicButton.SetText(const AValue: TCaption);
+begin
+  inherited Caption := AValue;
+  Invalidate;
+end;
+
+procedure TStyledGraphicButton.StyleChanged(Sender: TObject);
+begin
+  Invalidate;
+end;
+
+procedure TStyledGraphicButton.Loaded;
+begin
+  inherited;
+  SetImageIndex(ImageIndex);
+end;
+
+procedure TStyledGraphicButton.Notification(AComponent: TComponent; AOperation: TOperation);
+begin
+  inherited Notification(AComponent, AOperation);
+  if AOperation = opRemove then
+  begin
+    if AComponent = Images then
+      Images := nil;
+  end;
+end;
+
+{ TGraphicButtonActionLink }
+
+procedure TGraphicButtonActionLink.AssignClient(AClient: TObject);
+begin
+  inherited AssignClient(AClient);
+  FClient := AClient as TStyledGraphicButton;
+end;
+
+function TGraphicButtonActionLink.IsCheckedLinked: Boolean;
+begin
+  Result := inherited IsCheckedLinked;
+   (*and (FClient.Checked = TCustomAction(Action).Checked);*)
+end;
+
+function TGraphicButtonActionLink.IsImageIndexLinked: Boolean;
+begin
+  Result := inherited IsImageIndexLinked and
+    (TStyledGraphicButton(FClient).ImageIndex = TStyledGraphicButton(Action).ImageIndex);
+end;
+
+{$IFDEF D10_4+}
+function TGraphicButtonActionLink.IsImageNameLinked: Boolean;
+begin
+  Result := inherited IsImageNameLinked and
+    (TStyledGraphicButton(FClient).ImageName = TStyledGraphicButton(Action).ImageName);
+end;
+{$ENDIF}
+
+procedure TGraphicButtonActionLink.SetChecked(Value: Boolean);
+begin
+  inherited;
+  ;
+end;
+
+procedure TGraphicButtonActionLink.SetImageIndex(Value: Integer);
+begin
+  inherited;
+  if IsImageIndexLinked then
+    TStyledGraphicButton(FClient).ImageIndex := Value;
+end;
+
+{ TStyledButton }
+
+procedure TStyledButton.Click;
+begin
+  SetFocus;
+  inherited;
+end;
+
+constructor TStyledButton.Create(AOwner: TComponent);
+begin
+  inherited;
+  FFocusControl := nil;
+  CreateFocusControl(nil, TWinControl(AOwner));
+  TabStop := True;
+end;
+
+procedure TStyledButton.CreateFocusControl(AOwner: TComponent;
+  AParent: TWinControl);
+begin
+  if not Assigned(FFocusControl) then
+  begin
+    FFocusControl := TButtonFocusControl.Create(AOwner, Self);
+    try
+      FFocusControl.TabStop := true;
+      FFocusControl.SetBounds(0, 0, 0, 0);
+    except
+      raise;
+    end;
+  end;
+end;
+
+destructor TStyledButton.Destroy;
+begin
+  DestroyFocusControl;
+  inherited;
+end;
+
+procedure TStyledButton.DestroyFocusControl;
+begin
+  if Assigned(FFocusControl) then
+  begin
+    if Assigned(FFocusControl.Parent) then
+      FreeAndNil(FFocusControl);
+  end;
+end;
+
+procedure TStyledButton.SetFocus;
+begin
+  if Assigned(FFocusControl) then
+    if FFocusControl.CanFocus then
+      FFocusControl.SetFocus;
+end;
+
+procedure TStyledButton.SetName(const AValue: TComponentName);
+begin
+  if Assigned(FFocusControl) then
+    FFocusControl.Name := AValue;
+  inherited;
+end;
+
+procedure TStyledButton.SetParent(AParent: TWinControl);
+begin
+  inherited;
+  if Assigned(Self.Parent) then
+  begin
+    FFocusControl.Parent := Self.Parent;
+    FFocusControl.Show;
   end;
 end;
 
@@ -1166,81 +1242,50 @@ begin
     FFocusControl.TabStop := AValue;
 end;
 
-procedure TStyledButton.SetText(const AValue: TCaption);
-begin
-  inherited Caption := AValue;
-  Invalidate;
-end;
-
-procedure TStyledButton.StyleChanged(Sender: TObject);
-begin
-  Invalidate;
-end;
-
-procedure TStyledButton.Loaded;
+procedure TStyledButton.VisibleChanging;
 begin
   inherited;
-  SetImageIndex(ImageIndex);
+  if Assigned(FFocusControl) then
+    FFocusControl.TabStop := Self.Visible;
 end;
 
-procedure TStyledButton.MouseDown(Button: TMouseButton; Shift: TShiftState; X,
-  Y: Integer);
+function TStyledButton.GetCanFocus: Boolean;
+begin
+  if Assigned(FFocusControl) then
+    Result := FFocusControl.CanFocus
+  else
+    Result := false;
+end;
+
+function TStyledButton.GetFocused: Boolean;
+begin
+  if Assigned(FFocusControl) then
+    Result := FFocusControl.Focused
+  else
+    Result := false;
+end;
+
+function TStyledButton.GetTabOrder: Integer;
+begin
+  if Assigned(FFocusControl) then
+    Result := FFocusControl.TabOrder
+  else
+    Result := -1;
+end;
+
+function TStyledButton.GetTabStop: Boolean;
+begin
+  if Assigned(FFocusControl) then
+    Result := FFocusControl.TabStop
+  else
+    Result := false;
+end;
+
+procedure TStyledButton.MouseDown(Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
 begin
   SetFocus;
   inherited;
 end;
-
-procedure TStyledButton.Notification(AComponent: TComponent; AOperation: TOperation);
-begin
-  inherited Notification(AComponent, AOperation);
-  if AOperation = opRemove then
-  begin
-    if AComponent = Images then
-      Images := nil;
-  end;
-end;
-
-{ TStyledButtonActionLink }
-
-procedure TStyledButtonActionLink.AssignClient(AClient: TObject);
-begin
-  inherited AssignClient(AClient);
-  FClient := AClient as TStyledButton;
-end;
-
-function TStyledButtonActionLink.IsCheckedLinked: Boolean;
-begin
-  Result := inherited IsCheckedLinked;
-   (*and (FClient.Checked = TCustomAction(Action).Checked);*)
-end;
-
-function TStyledButtonActionLink.IsImageIndexLinked: Boolean;
-begin
-  Result := inherited IsImageIndexLinked and
-    (TStyledButton(FClient).ImageIndex = TStyledButton(Action).ImageIndex);
-end;
-
-{$IFDEF D10_4+}
-function TStyledButtonActionLink.IsImageNameLinked: Boolean;
-begin
-  Result := inherited IsImageNameLinked and
-    (TStyledButton(FClient).ImageName = TStyledButton(Action).ImageName);
-end;
-{$ENDIF}
-
-procedure TStyledButtonActionLink.SetChecked(Value: Boolean);
-begin
-  inherited;
-  ;
-end;
-
-procedure TStyledButtonActionLink.SetImageIndex(Value: Integer);
-begin
-  inherited;
-  if IsImageIndexLinked then
-    TStyledButton(FClient).ImageIndex := Value;
-end;
-
-
 
 end.

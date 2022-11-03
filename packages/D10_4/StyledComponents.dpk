@@ -27,6 +27,7 @@ package StyledComponents;
 
 {$R *.res}
 {$R 'StyledButton.dcr'}
+{$R 'StyledTaskDialog.dcr'}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}

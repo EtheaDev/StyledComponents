@@ -99,6 +99,7 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="StyledButton.dcr"/>
+        <DCCReference Include="StyledTaskDialog.dcr"/>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="..\..\source\Vcl.StyledButton.pas"/>

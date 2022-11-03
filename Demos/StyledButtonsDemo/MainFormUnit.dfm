@@ -17,7 +17,8 @@ object MainForm: TMainForm
     Top = 642
     Width = 129
     Height = 41
-    Action = TestAction
+    OnClick = TestActionExecute
+    Caption = 'Action'
     ImageIndex = 1
     ImageName = 'accept_database'
     Images = VirtualImageList
