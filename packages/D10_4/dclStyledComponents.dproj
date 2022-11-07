@@ -55,7 +55,7 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=Ethea S.r.l.;FileDescription=Graphic Button Component;FileVersion=1.0.0.0;InternalName=;LegalCopyright=Copyright (c) Ethea S.r.l.;LegalTrademarks=;OriginalFilename=;ProgramID=;ProductName=Animated Controls;ProductVersion=1.0;Comments=</VerInfo_Keys>
-        <DCC_Description>Ethea - Graphic Button Component</DCC_Description>
+        <DCC_Description>Ethea - Styled Components</DCC_Description>
         <DllSuffix>$(Auto)</DllSuffix>
         <DCC_UnitSearchPath>..\..\Source;..\;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DesignOnlyPackage>true</DesignOnlyPackage>
@@ -98,6 +98,9 @@
         <DCCReference Include="DesignIDE.dcp"/>
         <DCCReference Include="StyledComponents.dcp"/>
         <DCCReference Include="..\Vcl.StyledComponentsRegister.pas"/>
+        <DCCReference Include="..\Vcl.StyledButtonEditorUnit.pas">
+            <Form>StyledButtonEditor</Form>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

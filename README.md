@@ -2,7 +2,7 @@
 
 ## Delphi VCL Components (Button and TaskDialog) with Custom Graphic Styles
 
-### Actual official "beta" version: 0.9.0
+### Actual official "beta" version: 0.9.5
 
 | Component | Description |
 | - | - |
@@ -10,13 +10,19 @@
 | ![OK_BUTTON_128.png](./Images/OK_BUTTON_128.png) | **TStyledButton** inherits from TStyledGraphicButton and add supporto for focus and Tabstop to the button.|
 | ![StyledTaskDialog_128.png](./Images/StyledTaskDialog_128.png) | **TStyledTaskDialog** is a special "TaskDialog" component with custom Button Captions and Icons. Using a special Form you can show a full customizable Dialog |
 
-## Additional Components Required ##
-
-Demos uses SVGIconImageList components, but you can use another Image/Icon support.
-
 ## Description ##
 
 **TStyledGraphicButton**, **TStyledButton** and **TStyledTaskDialog** are designed to expand Button and Dialogs functionalities.
+
+The Button Styles defined are not affected by VCLStyles and are also visibile on a "non styled" Windows application.
+
+**Component editor for TStyledGraphicButton and StyledButton:**
+
+To simplify use of the Styled Buttons, there is a useful "Component Editor" to select three values that defines Button Style:
+
+StyleFamily (the pages "Classic" and "Bootstrap"), StyleClass (the buttons) and Style Appearance (eg.Normal or Outline).
+
+![StyledButtonComponentEditor.jpg](./Images/StyledButtonComponentEditor.jpg)
 
 **Look at the Demo Folder:**
 
@@ -33,6 +39,10 @@ A simple demo to show different "Styled Class" Buttons (similar to Bootstrap but
 A simple demo to show how to use StyledTaskDialog with custom icons, caption for buttons, etc.
 
 Activating "Use Styled Dialog" you can use a special form to show complete custom Dialog, like in those pictures:
+
+*Confirmation Dialog*
+
+![ConfirmationDialog.jpg](./Images/ConfirmationDialog.jpg)
 
 *Warning Dialog*
 
@@ -60,6 +70,14 @@ A simple demo to show how to use StyledGraphicButton into a ControlList (only fo
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+
+07 Nov 2022: version 0.9.5 (VCL)
+- Added Styled Button properties: StyleFamily, StyleClass and StyleAppearance
+- Added "Classic Family" with Styles similar to VCL Styles
+- Updated "Bootstrap Family"
+- Added Component Editor for Styled Button
+- Fixed Dialog Form: focused buttons, all dialog buttons available
+- Fixed Styled Button
 
 03 Nov 2022: version 0.9.1 (VCL)
 - Added TStyledGraphicButton

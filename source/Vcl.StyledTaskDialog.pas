@@ -97,6 +97,7 @@ procedure RegisterCustomExecute(const AShowStyledTaskDialog: ITaskDialogLauncher
 procedure UnregisterCustomExecute;
 procedure InitializeDialogs(AFont: TFont; AUseTaskDialog: Boolean);
 function GetTaskDlgType(const AIcon: TTaskDialogIcon): TMsgDlgType;
+function GetDialogFont: TFont;
 
 implementation
 
@@ -130,6 +131,12 @@ var
   ModalResults: array[TMsgDlgBtn] of Integer = (
     mrYes, mrNo, mrOk, mrCancel, mrAbort, mrRetry, mrIgnore, mrAll, mrNoToAll,
     mrYesToAll, 0, mrClose);
+
+function GetDialogFont: TFont;
+begin
+  Result := DialogFont;
+end;
+
 
 function IsTaskMessageSupported : Boolean;
 begin

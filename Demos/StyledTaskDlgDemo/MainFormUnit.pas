@@ -93,6 +93,7 @@ type
     procedure ShowStyleDialogButtonClick(Sender: TObject);
     procedure cbUseStyledDialogClick(Sender: TObject);
   private
+    procedure ShowSelection(const AModalResult: TModalResult);
   public
     procedure ShowError(Sender: TObject; E: Exception);
   end;
@@ -143,6 +144,8 @@ begin
   Font.Name := 'Century Gothic';
   Screen.MessageFont.Assign(Font);
 
+//  InitializeDialogs(Self.Font, False);
+
   for dt := Low(TMsgDlgType) to High(TMsgDlgType)  do
     rgDlgType.Items.Add(GetEnumName(TypeInfo(TMsgDlgType), Ord(dt)));
   for db := Low(TMsgDlgBtn) to High(TMsgDlgBtn) do
@@ -162,6 +165,30 @@ begin
         'You can visit site: '+StringToHRef('http://www.ethea.it','www.Ethea.it');
 
   edMessage.Text := Msg;
+  UseStyledDialogForm(cbUseStyledDialog.Checked);
+end;
+
+procedure TMainForm.ShowSelection(const AModalResult: TModalResult);
+var
+  LResultMsg: string;
+begin
+  case AModalResult of
+    mrYes: LResultMsg := 'Yes';
+    mrNo: LResultMsg := 'No';
+    mrOk: LResultMsg := 'OK';
+    mrCancel: LResultMsg := 'Cancel';
+    mrAbort: LResultMsg := 'Abort';
+    mrRetry: LResultMsg := 'Retry';
+    mrIgnore: LResultMsg := 'Ignore';
+    mrAll: LResultMsg := 'All';
+    mrNoToAll: LResultMsg := 'NoToAll';
+    mrYesToAll: LResultMsg := 'YesToAll';
+    mrClose: LResultMsg := 'Close';
+  else
+    LResultMsg := '';
+  end;
+  if LResultMsg <> '' then
+    ShowMessageFmt('Selected "%s"', [LResultMsg]);
 end;
 
 procedure TMainForm.ShowDlg(Sender: TObject);
@@ -170,6 +197,7 @@ var
   db : TMsgDlgBtn;
   LDefaultButton: TMsgDlgBtn;
   LUseDefault: boolean;
+  LResult: TModalResult;
 begin
   Buttons := [];
   LUseDefault := False;
@@ -188,23 +216,24 @@ begin
   if LUseDefault then
   begin
     if Sender = btTask then
-      StyledTaskDlgPos(edTitle.Text, edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, LDefaultButton, 0)
+      LResult := StyledTaskDlgPos(edTitle.Text, edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, LDefaultButton, HelpContext)
     else if Sender = btStdTask then
-      TaskMessageDlg(edTitle.Text, edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, 0)
+      LResult := TaskMessageDlg(edTitle.Text, edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, HelpContext)
     else if Sender = btStdMsgDlg then
-      MessageDlg(edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, 0)
+      LResult := MessageDlg(edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, 0)
     else
-      StyledMessageDlgPos(edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, LDefaultButton, 0);
+      LResult := StyledMessageDlgPos(edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, LDefaultButton, HelpContext);
   end
   else
   begin
     if Sender = btTask then
-      StyledTaskDlgPos(edTitle.Text, edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, 0)
+      LResult := StyledTaskDlgPos(edTitle.Text, edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, HelpContext)
     else if Sender = btStdTask then
-      TaskMessageDlg(edTitle.Text, edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, 0)
+      LResult := TaskMessageDlg(edTitle.Text, edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, HelpContext)
     else
-      StyledMessageDlgPos(edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, 0);
+      LResult := StyledMessageDlgPos(edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, HelpContext);
   end;
+  ShowSelection(LResult);
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
@@ -221,8 +250,8 @@ begin
   else
     LHelpContext := 200;
 
-  raise Exception.CreateHelp('Errore imprevisto!'+sLineBreak+
-    'Consultare il file di errore: '+
+  raise Exception.CreateHelp('Unexpected Error!'+sLineBreak+
+    'Please read the error file: '+
     StringToHRef('C:\Windows\System32\license.rtf','license.rtf'),
     LHelpContext);
 end;

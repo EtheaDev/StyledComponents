@@ -40,14 +40,13 @@ uses
   Vcl.ExtCtrls,
   Vcl.StdCtrls,
   Vcl.ImgList,
-  SVGIconImageListBase,
-  SVGIconImageList,
-  SVGIconImageCollection,
   Vcl.StyledButton,
   Vcl.BootstrapButtonStyles,
   Vcl.StandardButtonStyles,
   System.Actions,
-  Vcl.ActnList;
+  Vcl.ActnList,
+  Vcl.ButtonStylesAttributes,
+  Vcl.StyledButtonEditorUnit;
 
 type
   TMainForm = class(TForm)
@@ -55,7 +54,7 @@ type
     StyledButton: TStyledButton;
     ActionList: TActionList;
     TestAction: TAction;
-    SVGIconImageList: TSVGIconImageList;
+    ImageList: TImageList;
     procedure ButtonClick(Sender: TObject);
     procedure ButtonMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
@@ -63,9 +62,11 @@ type
     procedure TestActionExecute(Sender: TObject);
   private
     procedure CreateAllButtons;
-    procedure CreateButtons(const AParent: TWinControl; const ALeft,
-      ATop: Integer; const AStyle: TStyledButtonStyle;
-      const ACaption: string;
+    procedure CreateButtons(const AParent: TWinControl;
+      const ALeft, ATop: Integer;
+      const AFamily: TStyledButtonFamily;
+      const AClass: TStyledButtonClass;
+      const ACaption, AVCLStyle: string;
       const AImageIndex: Integer;
       AImagePos: TImageAlignment);
   protected
@@ -95,15 +96,14 @@ end;
 
 procedure TMainForm.ButtonClick(Sender: TObject);
 begin
-  if Sender is TButton then
-    ShowMessage(Format('TButton %s clicked!',[TButton(Sender).Caption]))
-  else if Sender is TStyledButton then
-    ShowMessage(Format('TStyledButton %s clicked!',[TStyledButton(Sender).Caption]));
+  EditStyledButton(Sender as TStyledButton);
 end;
 
-procedure TMainForm.CreateButtons(const AParent: TWinControl; const ALeft,
-  ATop: Integer; const AStyle: TStyledButtonStyle;
-  const ACaption: string;
+procedure TMainForm.CreateButtons(const AParent: TWinControl;
+  const ALeft, ATop: Integer;
+  const AFamily: TStyledButtonFamily;
+  const AClass: TStyledButtonClass;
+  const ACaption, AVCLStyle: string;
   const AImageIndex: Integer;
   AImagePos: TImageAlignment);
 var
@@ -111,30 +111,33 @@ var
   LStyledButton: TStyledButton;
   LStyledButtonOutline: TStyledButton;
   LStyledButtonDisabled: TStyledButton;
-  LButton: TButton;
-  LButtonDisabled: TButton;
+  LStyledButtonVCL: TStyledButton;
 begin
   LWidth := 100;
   LHeight := 54;
+
   LStyledButton := TStyledButton.Create(Self);
   LStyledButton.Parent := AParent;
   LStyledButton.Name := 'StyledButton'+ACaption;
   LStyledButton.Caption := ACaption;
-  LStyledButton.Images := svgIconImageList;
+  LStyledButton.Images := ImageList;
   LStyledButton.ImageIndex := AImageIndex;
-  LStyledButton.StyleClass := AStyle; //Bootstrap StyleClass
+  LStyledButton.StyleFamily := AFamily;
+  LStyledButton.StyleClass := AClass;
   LStyledButton.ImageAlignment := AImagePos;
   LStyledButton.SetBounds(ALeft, ATop, LWidth, LHeight);
-  //LStyledButton.OnClick := ButtonClick;
-  LStyledButton.OnMouseDown := ButtonMouseDown;
+  LStyledButton.OnClick := ButtonClick;
+  //LStyledButton.OnMouseDown := ButtonMouseDown;
 
   LStyledButtonOutline := TStyledButton.Create(Self);
   LStyledButtonOutline.Parent := AParent;
   LStyledButtonOutline.Name := 'StyledButtonOutline'+ACaption;
   LStyledButtonOutline.Caption := ACaption;
-  LStyledButtonOutline.Images := svgIconImageList;
+  LStyledButtonOutline.Images := ImageList;
   LStyledButtonOutline.ImageIndex := AImageIndex;
-  LStyledButtonOutline.StyleClass := 'outline-'+AStyle; //Bootstrap outline StyleClass
+  LStyledButtonOutline.StyleFamily := AFamily;
+  LStyledButtonOutline.StyleClass := AClass;
+  LStyledButtonOutline.StyleAppearance := 'outline';
   LStyledButtonOutline.ImageAlignment := AImagePos;
   LStyledButtonOutline.SetBounds(ALeft+150, ATop, LWidth, LHeight);
   //LStyledButtonOutline.OnClick := ButtonClick;
@@ -143,32 +146,25 @@ begin
   LStyledButtonDisabled := TStyledButton.Create(Self);
   LStyledButtonDisabled.Parent := AParent;
   LStyledButtonDisabled.Caption := ACaption;
-  LStyledButtonDisabled.Images := svgIconImageList;
+  LStyledButtonDisabled.Images := ImageList;
   LStyledButtonDisabled.ImageIndex := AImageIndex;
-  LStyledButtonDisabled.StyleClass := AStyle;
+  LStyledButtonDisabled.StyleFamily := AFamily;
+  LStyledButtonDisabled.StyleClass := AClass;
   LStyledButtonDisabled.Enabled := False;
   LStyledButtonDisabled.ImageAlignment := AImagePos;
   LStyledButtonDisabled.SetBounds(ALeft+300, ATop, LWidth, LHeight);
 
-  LButton := TButton.Create(Self);
-  LButton.Parent := AParent;
-  LButton.Name := 'Button'+ACaption;
-  LButton.Caption := ACaption;
-  LButton.Images := svgIconImageList;
-  LButton.ImageIndex := AImageIndex;
-  LButton.ImageAlignment := AImagePos;
-  LButton.SetBounds(ALeft+600, ATop, LWidth, LHeight);
-  //LButton.OnClick := ButtonClick;
-  LButton.OnMouseDown := ButtonMouseDown;
-
-  LButtonDisabled := TButton.Create(Self);
-  LButtonDisabled.Parent := AParent;
-  LButtonDisabled.Caption := ACaption;
-  LButtonDisabled.Images := svgIconImageList;
-  LButtonDisabled.ImageIndex := AImageIndex;
-  LButtonDisabled.Enabled := False;
-  LButtonDisabled.ImageAlignment := AImagePos;
-  LButtonDisabled.SetBounds(ALeft+750, ATop, LWidth, LHeight);
+  LStyledButtonVCL := TStyledButton.Create(Self);
+  LStyledButtonVCL.Parent := AParent;
+  LStyledButtonVCL.Caption := AVCLStyle;
+  LStyledButtonVCL.Images := ImageList;
+  LStyledButtonVCL.ImageIndex := AImageIndex;
+  LStyledButtonVCL.StyleFamily := 'Classic';
+  LStyledButtonVCL.StyleClass := AVCLStyle;
+  LStyledButtonVCL.StyleAppearance := DEFAULT_APPEARANCE;
+  LStyledButtonVCL.Enabled := True;
+  LStyledButtonVCL.ImageAlignment := AImagePos;
+  LStyledButtonVCL.SetBounds(ALeft+450, ATop, LWidth, LHeight);
 end;
 
 procedure TMainForm.FormClick(Sender: TObject);
@@ -187,15 +183,16 @@ end;
 
 procedure TMainForm.CreateAllButtons;
 begin
-  CreateButtons(Self, 10, 10 , DEFAULT_STYLE_CLASS,'Custom',1, iaLeft);
-  CreateButtons(Self, 10, 70 , btn_Primary,   'Primary',  2, iaRight);
-  CreateButtons(Self, 10, 130, btn_Secondary, 'Secondary',3, iaTop);
-  CreateButtons(Self, 10, 190, btn_Success,   'Success',  4, iaBottom);
-  CreateButtons(Self, 10, 250, btn_Danger,    'Danger',   5, iaCenter);
-  CreateButtons(Self, 10, 310, btn_Warning,   'Warning',  -1, iaLeft);
-  CreateButtons(Self, 10, 370, btn_Info,      'Info',     -1, iaRight);
-  CreateButtons(Self, 10, 430, btn_Light,     'Light',    -1, iaTop);
-  CreateButtons(Self, 10, 490, btn_Dark,      'Dark',     -1, iaBottom);
+  CreateButtons(Self, 10, 10 , 'Classic', 'Normal','Windows', 'Windows', 0, iaLeft);
+  //Bootstrap Buttons
+  CreateButtons(Self, 10, 70 , 'Bootstrap', btn_Primary  ,'Primary',  'Tablet Dark',       1, iaRight);
+  CreateButtons(Self, 10, 130, 'Bootstrap', btn_Secondary,'Secondary','Lavender Classico', 2, iaTop);
+  CreateButtons(Self, 10, 190, 'Bootstrap', btn_Success  ,'Success',  'Iceberg Classico',  3, iaBottom);
+  CreateButtons(Self, 10, 250, 'Bootstrap', btn_Danger   ,'Danger',   'Ruby Graphite',     4, iaCenter);
+  CreateButtons(Self, 10, 310, 'Bootstrap', btn_Warning  ,'Warning',  'Golden Graphite',  -1, iaLeft);
+  CreateButtons(Self, 10, 370, 'Bootstrap', btn_Info     ,'Info',     'Light',            -1, iaRight);
+  CreateButtons(Self, 10, 430, 'Bootstrap', btn_Light    ,'Light',    'Luna',             -1, iaTop);
+  CreateButtons(Self, 10, 490, 'Bootstrap', btn_Dark     ,'Dark',     'Silver',           -1, iaBottom);
 end;
 
 procedure TMainForm.Loaded;

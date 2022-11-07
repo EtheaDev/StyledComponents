@@ -1,6 +1,7 @@
 object MainForm: TMainForm
   Left = 0
   Top = 0
+  HelpContext = 100
   Caption = 'StyledTaskDialog Demo (c) Ethea S.r.l.'
   ClientHeight = 496
   ClientWidth = 731
@@ -10,10 +11,12 @@ object MainForm: TMainForm
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  OldCreateOrder = True
   Position = poScreenCenter
   ShowHint = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  PixelsPerInch = 96
   TextHeight = 13
   object DefaultButtonLabel: TLabel
     Left = 484
@@ -49,16 +52,16 @@ object MainForm: TMainForm
     Left = 8
     Top = 64
     Width = 434
-    Height = 321
+    Height = 294
     TabOrder = 1
     WordWrap = False
   end
   object btTask: TButton
-    Left = 202
-    Top = 399
-    Width = 172
+    Left = 16
+    Top = 387
+    Width = 184
     Height = 25
-    Caption = 'Show Task Dialog'
+    Caption = 'Show Styled Task Dialog'
     TabOrder = 2
     OnClick = ShowDlg
   end
@@ -79,18 +82,18 @@ object MainForm: TMainForm
     TabOrder = 4
   end
   object btMsg: TButton
-    Left = 202
-    Top = 430
-    Width = 172
+    Left = 16
+    Top = 463
+    Width = 184
     Height = 25
     Caption = 'Show Message Dialog'
     TabOrder = 5
     OnClick = ShowDlg
   end
   object btError: TButton
-    Left = 385
-    Top = 399
-    Width = 172
+    Left = 537
+    Top = 463
+    Width = 184
     Height = 25
     Caption = 'Raise Error with Task Dialog'
     TabOrder = 6
@@ -105,56 +108,58 @@ object MainForm: TMainForm
     TabOrder = 7
   end
   object btStdTask: TButton
-    Left = 8
-    Top = 399
-    Width = 183
+    Left = 206
+    Top = 387
+    Width = 184
     Height = 25
     Caption = 'Show Native Task Dialog'
     TabOrder = 8
     OnClick = ShowDlg
   end
   object btStdMsgDlg: TButton
-    Left = 8
-    Top = 430
-    Width = 183
+    Left = 206
+    Top = 463
+    Width = 184
     Height = 25
     Caption = 'Show Native Message Dialog'
     TabOrder = 9
     OnClick = ShowDlg
   end
   object CBXButton2: TButton
-    Left = 385
-    Top = 430
-    Width = 172
+    Left = 537
+    Top = 432
+    Width = 184
     Height = 25
     Caption = 'Raise Error with Msg Dialog'
     TabOrder = 10
     OnClick = RaiseError
   end
   object ShowTaskDialogCompButton: TButton
-    Left = 8
-    Top = 461
-    Width = 183
+    Left = 207
+    Top = 418
+    Width = 184
     Height = 25
-    Caption = 'Show TaskDialog Component'
+    Caption = 'Show Native Long Messages'
     TabOrder = 11
     OnClick = ShowTaskDialog
   end
   object ShowStyleDialogButton: TButton
-    Left = 202
-    Top = 463
-    Width = 172
+    Left = 17
+    Top = 418
+    Width = 184
     Height = 25
-    Caption = 'Show Styled TaskDialog'
+    Caption = 'Show Styled Long Messages'
     TabOrder = 12
     OnClick = ShowStyleDialogButtonClick
   end
   object cbUseStyledDialog: TCheckBox
-    Left = 580
-    Top = 403
-    Width = 141
+    Left = 17
+    Top = 364
+    Width = 161
     Height = 17
-    Caption = 'Use Styled Dialog'
+    Caption = 'Use modern Styled Dialog'
+    Checked = True
+    State = cbChecked
     TabOrder = 13
     OnClick = cbUseStyledDialogClick
   end

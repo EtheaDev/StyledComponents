@@ -35,7 +35,7 @@ object ControlListMainForm: TControlListMainForm
       AlignWithMargins = True
       Left = 80
       Top = 24
-      Width = 368
+      Width = 360
       Height = 42
       Margins.Left = 10
       Margins.Top = 2
@@ -48,6 +48,7 @@ object ControlListMainForm: TControlListMainForm
         'raphicControl on it and adjust properties.'
       Transparent = True
       WordWrap = True
+      ExplicitWidth = 368
     end
     object VirtualImage1: TVirtualImage
       AlignWithMargins = True
@@ -117,23 +118,26 @@ object ControlListMainForm: TControlListMainForm
     end
     object GraphicButton: TStyledGraphicButton
       Tag = 0
-      Left = 462
-      Top = 4
-      Width = 110
-      Height = 30
+      Left = 470
+      Top = 38
+      Width = 111
+      Height = 28
       OnClick = GraphicButtonClick
-      Caption = 'Primary'
-      StyleClass = 'Primary'
+      Caption = 'Secondary'
+      StyleFamily = 'Bootstrap'
+      StyleClass = 'Secondary'
+      StyleAppearance = 'Outline'
     end
     object StyledGraphicButton1: TStyledGraphicButton
       Tag = 0
-      Left = 462
-      Top = 36
+      Left = 471
+      Top = 6
       Width = 110
-      Height = 30
+      Height = 28
       OnClick = GraphicButtonClick
-      Caption = 'Secondary'
-      StyleClass = 'Secondary'
+      Caption = 'Primary'
+      StyleFamily = 'Bootstrap'
+      StyleClass = 'Primary'
     end
   end
   object SVGIconImageCollection: TSVGIconImageCollection

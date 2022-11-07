@@ -1,6 +1,7 @@
 {******************************************************************************}
 {                                                                              }
-{       StyledButton: a Button Component based on TGraphicControl              }
+{       Standard Button Family: an example of "standard" Family                }
+{       attributs for StyledButton                                             }
 {                                                                              }
 {       Copyright (c) 2022 (Ethea S.r.l.)                                      }
 {       Author: Carlo Barazzetta                                               }
@@ -28,340 +29,206 @@ unit Vcl.StandardButtonStyles;
 interface
 
 uses
-  Vcl.Graphics
-  , System.Classes
-  , Vcl.Controls;
+  Vcl.Graphics,
+  Vcl.ButtonStylesAttributes;
+
+const
+  DEFAULT_CLASSIC_FAMILY = 'Classic';
+  DEFAULT_WINDOWS_CLASS = 'Windows';
+  DEFAULT_APPEARANCE = 'Normal';
+  OUTLINE_APPEREANCE = 'Outline';
+  BORDER_WIDTH = 3;
 
 Type
-  TStyledButtonStyle = string;
-  TBtnBorder = (btRounded, btedgy);
-
-  TStyledButtonAttributes = class(TComponent)
+  TButtonStandardStyles = class(TInterfacedObject, IStyledButtonAttributes)
   private
-    FBorderType: TBtnBorder;
-    FBorderWidth: Integer;
-    FBorderStyle: TPenStyle;
-    FBorderColor: TColor;
-    FFontColor: TColor;
-    FFontStyle: TFontStyles;
-    FFontName: TFontName;
-    FButtonColor: TColor;
-    FOutLine: Boolean;
-    FOwnerControl: TGraphicControl;
-    FIsChanged: Boolean;
-    procedure InvalidateControl;
-    procedure SetBorderColor(const Value: TColor);
-    procedure SetBorderStyle(const Value: TPenStyle);
-    procedure SetBorderType(const Value: TBtnBorder);
-    procedure SetBorderWidth(const Value: Integer);
-    procedure SetButtonColor(const Value: TColor);
-    procedure SetFontColor(const Value: TColor);
-    procedure SetFontName(const Value: TFontName);
-    procedure SetFontStyle(const Value: TFontStyles);
-    procedure SetOutLine(const Value: Boolean);
-  public
-    constructor Create(AOwner: TComponent); override;
-    function IsChanged: Boolean;
-  published
-    property BorderType : TBtnBorder  read FBorderType   write SetBorderType;
-    property BorderWidth: Integer     read FBorderWidth  write SetBorderWidth;
-    property BorderStyle: TPenStyle   read FBorderStyle  write SetBorderStyle;
-    property BorderColor: TColor      read FBorderColor  write SetBorderColor;
-    property FontColor  : TColor      read FFontColor    write SetFontColor;
-    property FontStyle  : TFontStyles read FFontStyle    write SetFontStyle;
-    property FontName   : TFontName   read FFontName     write SetFontName;
-    property ButtonColor: TColor      read FButtonColor  write SetButtonColor;
-    property OutLine    : Boolean     read FOutLine      write SetOutLine;
-  end;
-
-  //  Abstraction of Graphic Button Attributes
-  IStyledButtonAttributes = interface
-    ['{C7BC98EE-D513-46B9-881A-2FDE8DE07786}']
-    procedure UpdateAttributes(const AStyle: TStyledButtonStyle;
-      var ANormalStyle, ADownStyle, AFocusedStyle,
-      AHotStyle, ADisabledStyle: TStyledButtonAttributes);
-  end;
-
-  TStyledButtonStdStyle = class(TInterfacedObject, IStyledButtonAttributes)
-  private
-  protected
-    procedure AssignStyle(const ASource: TStyledButtonAttributes;
-      var ADest: TStyledButtonAttributes); virtual;
-    procedure InternalUpdateAttributes(
-      const AStyle: TStyledButtonStyle;
-      var ANormalStyle, ADownStyle, AFocusedStyle,
-      AHotStyle, ADisabledStyle: TStyledButtonAttributes); virtual;
-  public
-    //IStyledButtonAttributes interface
     procedure UpdateAttributes(
-      const AStyle: TStyledButtonStyle;
+      const AFamily:  TStyledButtonFamily;
+      const AClass: TStyledButtonClass;
+      const AAppearance: TStyledButtonAppearance;
       var ANormalStyle, ADownStyle, AFocusedStyle,
       AHotStyle, ADisabledStyle: TStyledButtonAttributes);
+    function ButtonFamilyName: string;
+    function GetButtonClasses: TButtonClasses;
+    function GetButtonAppearances: TButtonAppearances;
   end;
-
-function DarkenColor(Color:TColor; Percent:integer):TColor;
-function LightenColor(Color:TColor; Percent:integer):TColor;
-function HtmlToColor(Color: string): TColor;
-function ColortoGrayscale(AColor : TColor): TColor;
-function ColorIsLight(Color: TColor): Boolean;
-function SameStyledButtonStyle(Style1, Style2: TStyledButtonAttributes): Boolean;
 
 implementation
 
 uses
   Winapi.Windows
+  , Vcl.StyledButton
+  , Vcl.StdCtrls
+  , Vcl.Themes
+  , System.SysUtils
   , System.UITypes
   , System.Math;
 
-function SameStyledButtonStyle(Style1, Style2: TStyledButtonAttributes): Boolean;
-begin
-  Result :=
-    (Style1.BorderType  = Style2.BorderType ) and
-    (Style1.BorderWidth = Style2.BorderWidth) and
-    (Style1.BorderStyle = Style2.BorderStyle) and
-    (Style1.BorderColor = Style2.BorderColor) and
-    (Style1.FontColor   = Style2.FontColor  ) and
-    (Style1.FontStyle   = Style2.FontStyle  ) and
-    (Style1.FontName    = Style2.FontName   ) and
-    (Style1.ButtonColor = Style2.ButtonColor) and
-    (Style1.OutLine     = Style2.OutLine    );
-end;
-
-function ColortoGrayscale(AColor : TColor): TColor;
 var
-  LGray : byte;
-begin
-  // Ignore reserved color values : "INHERIT" (TColors.SysDefault) and "none" (TColors.SysNone) .
-  if (AColor = TColors.SysDefault) or (AColor = TColors.SysNone) then exit(aColor);
-
-  // get the luminance according to https://www.w3.org/TR/AERT/#color-contrast
-  LGray  := round((0.299 * GetRValue(aColor)) + (0.587 * GetGValue(aColor)) + (0.114 * GetBValue(aColor)));
-
-  // set the result to the new grayscale color including the alpha info
-  Result := (aColor and $FF000000) or rgb(LGray, LGray, LGray);
-end;
-
-function HtmlToColor(Color: string): TColor;
-begin
-  Result := StringToColor('$' + Copy(Color, 6, 2) + Copy(Color, 4, 2) + Copy(Color, 2, 2));
-end;
-
-function DarkenColor(Color:TColor; Percent:Integer):TColor;
-var r,g,b:Byte;
-begin
-  Color:=ColorToRGB(Color);
-  r:=GetRValue(Color);
-  g:=GetGValue(Color);
-  b:=GetBValue(Color);
-  r:=r-muldiv(r,Percent,100);  //Percent% closer to black
-  g:=g-muldiv(g,Percent,100);
-  b:=b-muldiv(b,Percent,100);
-  result:=RGB(r,g,b);
-end;
-
-function LightenColor(Color:TColor; Percent:Integer):TColor;
-var r,g,b:Byte;
-begin
-  Color:=ColorToRGB(Color);
-  r:=GetRValue(Color);
-  g:=GetGValue(Color);
-  b:=GetBValue(Color);
-  r:=r+muldiv(255-r,Percent,100); //Percent% closer to white
-  g:=g+muldiv(255-g,Percent,100);
-  b:=b+muldiv(255-b,Percent,100);
-  result:=RGB(r,g,b);
-end;
-
-function ColorIsLight(Color: TColor): Boolean;
-begin
-  Color := ColorToRGB(Color);
-  Result := ((Color and $FF) + (Color shr 8 and $FF) +
-  (Color shr 16 and $FF))>= $180;
-end;
+  ButtonClasses: TButtonClasses;
+  ButtonAppearances: TButtonAppearances;
 
 { TStyledButtonStdStyle }
 
-procedure TStyledButtonStdStyle.AssignStyle(
-  const ASource: TStyledButtonAttributes;
-  var ADest: TStyledButtonAttributes);
+procedure StandardClassToColors(const AClass: TStyledButtonClass;
+  const AAppearance: TStyledButtonAppearance;
+  var AFontColor, AButtonColor, ABorderColor: TColor; out AOutLine: Boolean);
+var
+  LStyle: TCustomStyleServices;
+  Details:  TThemedElementDetails;
 begin
-  ADest.BorderType := ASource.BorderType;
-  ADest.BorderWidth := ASource.BorderWidth;
-  ADest.BorderStyle := ASource.BorderStyle;
-  ADest.BorderColor := ASource.BorderColor;
-  ADest.FontName := ASource.FontName;
-  ADest.FontColor := ASource.FontColor;
-  ADest.FontStyle := ASource.FontStyle;
-  ADest.ButtonColor := ASource.ButtonColor;
-  ADest.OutLine := ASource.OutLine;
+  if SameText(AClass, DEFAULT_WINDOWS_CLASS) then
+  begin
+    AButtonColor := clBtnFace;
+    ABorderColor := clBtnShadow;
+    AFontColor := clWindowText;
+    AOutLine := SameText(AAppearance, OUTLINE_APPEREANCE);
+  end
+  else
+  begin
+    LStyle := TStyleManager.Style[AClass];
+    if (LStyle = nil) or not LStyle.Enabled then
+      LStyle := StyleServices;
+    Details := LStyle.GetElementDetails(tbPushButtonNormal);
+
+    //TODO: mapping VCL Styles colors
+    AButtonColor := LStyle.GetSystemColor(clBtnFace);
+    ABorderColor := LStyle.GetSystemColor(clBtnShadow);
+    LStyle.GetElementColor(Details, ecTextColor, AFontColor);
+  end;
 end;
 
-procedure TStyledButtonStdStyle.InternalUpdateAttributes(
-  const AStyle: TStyledButtonStyle;
+function TButtonStandardStyles.ButtonFamilyName: string;
+begin
+  Result := DEFAULT_CLASSIC_FAMILY;
+end;
+
+function TButtonStandardStyles.GetButtonClasses: TButtonClasses;
+var
+  LStylesCount: Integer;
+  LStyleName: string;
+  I: Integer;
+begin
+  if length(ButtonClasses) = 0 then
+  begin
+    LStylesCount := Length(TStyleManager.StyleNames);
+    SetLength(ButtonClasses,LStylesCount);
+    for I := 0 to High(TStyleManager.StyleNames) do
+    begin
+      LStyleName := TStyleManager.StyleNames[i];
+      ButtonClasses[I] := LStyleName;
+    end;
+  end;
+  Result := ButtonClasses;
+end;
+
+function TButtonStandardStyles.GetButtonAppearances: TButtonAppearances;
+begin
+  if length(ButtonAppearances) = 0 then
+  begin
+    SetLength(ButtonAppearances, 2);
+    ButtonAppearances[0] := DEFAULT_APPEARANCE;
+    ButtonAppearances[1] := OUTLINE_APPEREANCE;
+  end;
+  Result := ButtonAppearances;
+end;
+
+procedure TButtonStandardStyles.UpdateAttributes(
+  const AFamily:  TStyledButtonFamily;
+  const AClass: TStyledButtonClass;
+  const AAppearance: TStyledButtonAppearance;
   var ANormalStyle, ADownStyle, AFocusedStyle, AHotStyle,
   ADisabledStyle: TStyledButtonAttributes);
 var
-  LFontColor, LButtonColor: TColor;
+  LFontColor, LButtonColor, LBorderColor: TColor;
+  LOutLine: Boolean;
 begin
-  LFontColor := clBtnText;
-  LButtonColor := clBtnFace;
+  StandardClassToColors(AClass, AAppearance, LFontColor, LButtonColor, LBorderColor, LOutLine);
   //Default Style Attributes
   ANormalStyle.BorderType := btRounded;
-  ANormalStyle.BorderWidth := 3;
-  ANormalStyle.BorderColor := clBtnShadow;
+  ANormalStyle.BorderWidth := BORDER_WIDTH;
+  ANormalStyle.BorderColor := LBorderColor;
   ANormalStyle.BorderStyle := psSolid;
-  ANormalStyle.FontStyle := [];
   ANormalStyle.FontColor := LFontColor;
   ANormalStyle.ButtonColor := LButtonColor;
-  //ANormalStyle.BorderColor := ANormalStyle.ButtonColor;
-  ANormalStyle.OutLine := False;
 
   //Clone Normal Style to Other Styles
-  AssignStyle(ANormalStyle, ADownStyle);
-  AssignStyle(ANormalStyle, AFocusedStyle);
-  AssignStyle(ANormalStyle, AHotStyle);
-  AssignStyle(ANormalStyle, ADisabledStyle);
+  CloneButtonStyle(ANormalStyle, ADownStyle);
+  CloneButtonStyle(ANormalStyle, AFocusedStyle);
+  CloneButtonStyle(ANormalStyle, AHotStyle);
+  CloneButtonStyle(ANormalStyle, ADisabledStyle);
 
-  //Button Down
-  ADownStyle.ButtonColor := DarkenColor(LButtonColor, 20);
-  ADownStyle.BorderColor := LightenColor(LButtonColor, 50);
-  ADownStyle.BorderStyle := psSolid;
-  ADownStyle.BorderWidth := 1;
-
-  //Button Hot: color as Down but no Border
-  AHotStyle.ButtonColor := ADownStyle.ButtonColor;
-
-  //Button Focused
-  AFocusedStyle.ButtonColor := DarkenColor(LButtonColor, 20);
-  AFocusedStyle.BorderStyle := psSolid;
-  AFocusedStyle.BorderWidth := 1;
-
-  //Button Disabled
-  ADisabledStyle.ButtonColor := LightenColor(ANormalStyle.ButtonColor, 70);//ColortoGrayscale(LButtonColor);//
-  ADisabledStyle.FontColor := LightenColor(LFontColor, 70);
-end;
-
-procedure TStyledButtonStdStyle.UpdateAttributes(
-  const AStyle: TStyledButtonStyle;
-  var ANormalStyle, ADownStyle, AFocusedStyle,
-  AHotStyle, ADisabledStyle: TStyledButtonAttributes);
-begin
-  InternalUpdateAttributes(AStyle,
-    ANormalStyle, ADownStyle, AFocusedStyle,
-    AHotStyle, ADisabledStyle);
-  ANormalStyle.FIsChanged := False;
-  ADownStyle.FIsChanged := False;
-  AFocusedStyle.FIsChanged := False;
-  AHotStyle.FIsChanged := False;
-  ADisabledStyle.FIsChanged := False;
-end;
-
-{ TStyledButtonAttributes }
-
-function TStyledButtonAttributes.IsChanged: Boolean;
-begin
-  Result := FIsChanged;
-end;
-
-constructor TStyledButtonAttributes.Create(AOwner: TComponent);
-begin
-  inherited;
-  if AOwner is TGraphicControl then
+  if LOutline then
   begin
-    FOwnerControl := TGraphicControl(AOwner);
-    SetSubComponent(True);
-    FIsChanged := False;
+    //Button Down: color as Button Color
+    with ADownStyle do
+    begin
+      ButtonColor := LButtonColor;
+      BorderColor := LightenColor(LButtonColor, 50);
+      BorderStyle := psSolid;
+      BorderWidth := BORDER_WIDTH;
+      FontColor   := LFontColor;
+      BrushStyle  := bsSolid;
+    end;
+
+    //Button Hot: color as Button Color
+    with AHotStyle do
+    begin
+      ButtonColor := LButtonColor;
+      BorderColor := LightenColor(LButtonColor, 50);
+      BorderStyle := psClear;
+      BorderWidth := BORDER_WIDTH;
+      FontColor := LFontColor;
+      BrushStyle  := bsSolid;
+    end;
+
+    //Button Focused
+    with AFocusedStyle do
+    begin
+      if Pos('dark', AClass) > 0 then
+        ButtonColor := LightenColor(LButtonColor, 20)
+      else
+        ButtonColor := DarkenColor(LButtonColor, 20);
+      BorderStyle := psSolid;
+      BorderWidth := BORDER_WIDTH;
+      FontColor := LFontColor;
+      BrushStyle  := bsSolid;
+    end;
+
+    //Button Disabled
+    with ADisabledStyle do
+    begin
+      ButtonColor := LightenColor(ANormalStyle.ButtonColor, 70); //ColortoGrayscale(LButtonColor);
+      FontColor := LightenColor(LFontColor, 70);
+    end;
+  end
+  else
+  begin
+    //Button Down
+    ADownStyle.ButtonColor := DarkenColor(LButtonColor, 20);
+    ADownStyle.BorderColor := LightenColor(LBorderColor, 50);
+    ADownStyle.BorderStyle := psSolid;
+    ADownStyle.BorderWidth := BORDER_WIDTH;
+
+    //Button Hot: color as Down but no Border
+    AHotStyle.ButtonColor := ADownStyle.ButtonColor;
+
+    //Button Focused
+    AFocusedStyle.ButtonColor := DarkenColor(LButtonColor, 20);
+    AFocusedStyle.BorderStyle := psSolid;
+    AFocusedStyle.BorderWidth := BORDER_WIDTH;
+
+    //Button Disabled
+    ADisabledStyle.ButtonColor := LightenColor(ANormalStyle.ButtonColor, 70);//ColortoGrayscale(LButtonColor);
+    ADisabledStyle.FontColor := LightenColor(LFontColor, 70);
   end;
 end;
 
-procedure TStyledButtonAttributes.InvalidateControl;
-begin
-  if Assigned(FOwnerControl) then
-  begin
-    FIsChanged := True;
-    FOwnerControl.Invalidate;
-  end;
-end;
+initialization
+  SetLength(ButtonClasses,0);
+  SetLength(ButtonAppearances,0);
 
-procedure TStyledButtonAttributes.SetBorderColor(const Value: TColor);
-begin
-  if FBorderColor <> Value then
-  begin
-    FBorderColor := Value;
-    InvalidateControl;
-  end;
-end;
-
-procedure TStyledButtonAttributes.SetBorderStyle(const Value: TPenStyle);
-begin
-  if FBorderStyle <> Value then
-  begin
-    FBorderStyle := Value;
-    InvalidateControl;
-  end;
-end;
-
-procedure TStyledButtonAttributes.SetBorderType(const Value: TBtnBorder);
-begin
-  if FBorderType <> Value then
-  begin
-    FBorderType := Value;
-    InvalidateControl;
-  end;
-end;
-
-procedure TStyledButtonAttributes.SetBorderWidth(const Value: Integer);
-begin
-  if FBorderWidth <> Value then
-  begin
-    FBorderWidth := Value;
-    InvalidateControl;
-  end;
-end;
-
-procedure TStyledButtonAttributes.SetButtonColor(const Value: TColor);
-begin
-  if FButtonColor <> Value then
-  begin
-    FButtonColor := Value;
-    InvalidateControl;
-  end;
-end;
-
-procedure TStyledButtonAttributes.SetFontColor(const Value: TColor);
-begin
-  if FFontColor <> Value then
-  begin
-    FFontColor := Value;
-    InvalidateControl;
-  end;
-end;
-
-procedure TStyledButtonAttributes.SetFontName(const Value: TFontName);
-begin
-  if FFontName <> Value then
-  begin
-    FFontName := Value;
-    InvalidateControl;
-  end;
-end;
-
-procedure TStyledButtonAttributes.SetFontStyle(const Value: TFontStyles);
-begin
-  if FFontStyle <> Value then
-  begin
-    FFontStyle := Value;
-    InvalidateControl;
-  end;
-end;
-
-procedure TStyledButtonAttributes.SetOutLine(const Value: Boolean);
-begin
-  if FOutLine <> Value then
-  begin
-    FOutLine := Value;
-    InvalidateControl;
-  end;
-end;
+  RegisterButtonFamily(
+    TButtonStandardStyles.Create);
 
 end.

@@ -40,11 +40,11 @@ uses
   Vcl.StdCtrls,
   Vcl.ExtCtrls,
   Vcl.ImgList,
+  System.ImageList, //If you are using an older Delphi version, remove this line
   Vcl.StyledButton,
   Vcl.StyledTaskDialog,
-  SVGIconImage,
-  SVGIconImageListBase,
-  SVGIconImageList, System.ImageList;
+  Vcl.StandardButtonStyles,
+  Vcl.BootstrapButtonStyles;
 
 type
   TTaskDialogLauncherHandler = class(TInterfacedObject, ITaskDialogLauncher)
@@ -59,19 +59,24 @@ type
     ImagePanel: TPanel;
     ButtonsPanel: TPanel;
     OKButton: TStyledButton;
-    CancelButton: TStyledButton;
-    YesButton: TStyledButton;
-    NoButton: TStyledButton;
-    RetryButton: TStyledButton;
-    CloseButton: TStyledButton;
-    SVGIconImage: TSVGIconImage;
-    HelpButton: TStyledButton;
+    AllButton: TStyledButton;
     BottomBevel: TBevel;
     MessageScrollBox: TScrollBox;
     TitleLabel: TLabel;
     TextLabel: TLinkLabel;
     AutoSizeLabel: TLabel;
-    SVGIconImageList: TSVGIconImageList;
+    ImageList: TImageList;
+    Image: TImage;
+    CancelButton: TStyledButton;
+    YesButton: TStyledButton;
+    NoButton: TStyledButton;
+    RetryButton: TStyledButton;
+    CloseButton: TStyledButton;
+    HelpButton: TStyledButton;
+    AbortButton: TStyledButton;
+    IgnoreButton: TStyledButton;
+    NoToAllButton: TStyledButton;
+    YesToAllButton: TStyledButton;
     procedure FormCreate(Sender: TObject);
     procedure ButtonClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -79,11 +84,13 @@ type
     procedure TextLabelLinkClick(Sender: TObject; const Link: string;
       LinkType: TSysLinkType);
     procedure FormDestroy(Sender: TObject);
+    procedure HelpButtonClick(Sender: TObject);
   private
     FCustomIcons: TStyledDialogIcons;
     FTaskDialog: TCustomTaskDialog;
     FDialogType: TMsgDlgType;
     FCommonButtons: TTaskDialogCommonButtons;
+    FDefaultButton: TTaskDialogCommonButton;
     FButtons: TTaskDialogButtons;
     procedure GetIconNameAndIndex(ATaskDialog: TMsgDlgType;
       out AImageName: string; out AImageIndex: Integer);
@@ -96,18 +103,21 @@ type
     procedure SetText(const AValue: string);
     procedure SetTitle(const AValue: string);
     procedure AdjustHeight;
+    procedure AdjustWidth;
     procedure AdjustButtonsCaption;
     procedure SetButtons(const Value: TTaskDialogButtons);
     procedure PlayMessageDlgSound;
+    procedure FocusDefaultButton;
+    procedure LoadImage;
 (*
     property Button: TTaskDialogButtonItem read FButton write FButton;
 *)
     property Buttons: TTaskDialogButtons read FButtons write SetButtons;
     property CommonButtons: TTaskDialogCommonButtons read FCommonButtons write SetCommonButtons default [tcbOk, tcbCancel];
+    property DefaultButton: TTaskDialogCommonButton read FDefaultButton write FDefaultButton default tcbOk;
 (*
     property CustomFooterIcon: TIcon read FCustomFooterIcon write SetCustomFooterIcon;
     property CustomMainIcon: TIcon read FCustomMainIcon write SetCustomMainIcon;
-    property DefaultButton: TTaskDialogCommonButton read FDefaultButton write FDefaultButton default tcbOk;
     property ExpandButtonCaption: string read FExpandButtonCaption write FExpandButtonCaption;
     property Expanded: Boolean read FExpanded;
     property ExpandedText: string read FExpandedText write SetExpandedText;
@@ -143,6 +153,7 @@ type
     procedure UpdateCustomIcons;
     procedure Loaded; override;
   public
+    procedure SetDialogFont(const AFont: TFont);
     constructor Create(AOwner: TComponent); override;
   end;
 
@@ -154,6 +165,7 @@ implementation
 
 uses
   System.Math
+  , System.HelpIntfs
   , Winapi.ShellAPI
   , Vcl.StyledCmpMessages
   , System.Typinfo
@@ -187,11 +199,15 @@ begin
       mrNo: LStyledButton := NoButton;
       mrOk: LStyledButton := OKButton;
       mrCancel: LStyledButton := CancelButton;
+      mrAbort: LStyledButton := AbortButton;
       mrRetry: LStyledButton := RetryButton;
+      mrIgnore: LStyledButton := IgnoreButton;
+      mrAll: LStyledButton := AllButton;
+      mrNoToAll: LStyledButton := NoToAllButton;
+      mrYesToAll: LStyledButton := YesToAllButton;
       mrClose: LStyledButton := CloseButton;
-      mrAbort, mrIgnore, mrAll, mrNoToAll, mrYesToAll: LStyledButton := nil;
     else
-      LStyledButton := OKButton;
+      LStyledButton := HelpButton;
     end;
     if Assigned(LStyledButton) then
     begin
@@ -202,17 +218,35 @@ begin
   end;
 end;
 
+procedure TStyledTaskDialogForm.FocusDefaultButton;
+begin
+  case DefaultButton of
+    tcbOk: OKbutton.SetFocus;
+    tcbYes: YesButton.SetFocus;
+    tcbNo: NoButton.SetFocus;
+    tcbCancel: CancelButton.SetFocus;
+    tcbRetry: RetryButton.SetFocus;
+    tcbClose: CloseButton.SetFocus;
+  end;
+end;
+
 procedure TStyledTaskDialogForm.SetCommonButtons(
   const AValue: TTaskDialogCommonButtons);
 begin
   FCommonButtons := AValue;
-  HelpButton.Visible := HelpContext <> 0;
-  CloseButton.Visible := tcbClose in FCommonButtons;
-  RetryButton.Visible := tcbRetry in FCommonButtons;
-  CancelButton.Visible := tcbCancel in FCommonButtons;
-  NoButton.Visible := tcbNo in FCommonButtons;
-  YesButton.Visible := tcbYes in FCommonButtons;
-  OKButton.Visible := tcbOk in FCommonButtons;
+  CloseButton.Visible := (tcbClose in FCommonButtons);
+  RetryButton.Visible := (tcbRetry in FCommonButtons);
+  CancelButton.Visible := (tcbCancel in FCommonButtons);
+  OKButton.Visible := (tcbOk in FCommonButtons);
+  NoButton.Visible := (tcbNo in FCommonButtons);
+  YesButton.Visible := (tcbYes in FCommonButtons);
+end;
+
+procedure TStyledTaskDialogForm.SetDialogFont(const AFont: TFont);
+begin
+  Self.Font.Assign(AFont);
+  TitleLabel.Font.Name := Font.Name;
+  TextLabel.Font.Name := Font.Name;
 end;
 
 procedure TStyledTaskDialogForm.SetHelpContext(const AValue: Integer);
@@ -237,7 +271,7 @@ begin
     LBottomPanelHeight + margins +
     ButtonsPanel.Height + margins +
     margins + margins;
-  LMinHeight := SVGIconImage.Height +
+  LMinHeight := ImageList.Height +
     LBottomPanelHeight + margins +
     ButtonsPanel.Height +
     margins + margins;
@@ -251,7 +285,31 @@ begin
   TextLabel.Font.Assign(AutoSizeLabel.Font);
   TextLabel.Height := AutoSizeLabel.Height;
   AutoSizeLabel.Visible := False;
+
+  MessageScrollBox.VertScrollBar.Visible :=
+    LCalcHeight > Constraints.MinHeight;
   //TextLabel.Visible := False;
+end;
+
+procedure TStyledTaskDialogForm.AdjustWidth;
+var
+  LFormWidth, I: Integer;
+  LStyledButton: TStyledButton;
+  LMargins: Integer;
+begin
+  LMargins := ButtonsPanel.Margins.Left;
+  LFormWidth := LMargins;
+  for I := 0 to ComponentCount -1 do
+  begin
+    if Components[I] is TStyledButton then
+    begin
+      LStyledButton := TStyledButton(Components[I]);
+      if LStyledButton.Visible then
+        LFormWidth := LFormWidth + LStyledButton.Width + LMargins + LMargins;
+    end;
+  end;
+  LFormWidth := LFormWidth + LMargins;
+  Width := Max(Width, LFormWidth);
 end;
 
 procedure TStyledTaskDialogForm.SetText(const AValue: string);
@@ -265,25 +323,39 @@ begin
   TitleLabel.Caption := AValue;
 end;
 
-procedure TStyledTaskDialogForm.ShowDialogForm;
+procedure TStyledTaskDialogForm.LoadImage;
 var
   LIconName: string;
   LIconIndex: Integer;
+  LBitmap: TBitmap;
+begin
+  GetIconNameAndIndex(FDialogType, LIconName, LIconIndex);
+  LBitmap := TBitmap.Create;
+  try
+    LBitmap.PixelFormat := pf32bit;
+    ImageList.GetBitmap(lIconIndex, LBitmap);
+    Image.Picture.Bitmap.Assign(LBitmap);
+  finally
+    LBitmap.free;
+  end;
+end;
+
+procedure TStyledTaskDialogForm.ShowDialogForm;
 begin
   //Initialize components based on ATaskDialog attributes
   Caption := FTaskDialog.Caption;
   HelpContext := FTaskDialog.HelpContext;
   CommonButtons := FTaskDialog.CommonButtons;
-  GetIconNameAndIndex(FDialogType, LIconName, LIconIndex);
-  SVGIconImage.ImageIndex := lIconIndex;
+  Buttons := FTaskDialog.Buttons;
+  DefaultButton := FTaskDialog.DefaultButton;
+  LoadImage;
+
 (*
     property Button: TTaskDialogButtonItem read FButton write FButton;
 *)
-  Buttons := FTaskDialog.Buttons;
 (*
     property CustomFooterIcon: TIcon read FCustomFooterIcon write SetCustomFooterIcon;
     property CustomMainIcon: TIcon read FCustomMainIcon write SetCustomMainIcon;
-    property DefaultButton: TTaskDialogCommonButton read FDefaultButton write FDefaultButton default tcbOk;
     property ExpandButtonCaption: string read FExpandButtonCaption write FExpandButtonCaption;
     property Expanded: Boolean read FExpanded;
     property ExpandedText: string read FExpandedText write SetExpandedText;
@@ -359,6 +431,7 @@ constructor TStyledTaskDialogForm.Create(AOwner: TComponent);
 begin
   inherited;
   FCommonButtons := [tcbOk, tcbCancel];
+  FDefaultButton := tcbOk;
 end;
 
 procedure TStyledTaskDialogForm.FormCreate(Sender: TObject);
@@ -402,7 +475,9 @@ begin
   ShowDialogForm;
   AdjustButtonsCaption;
   AdjustHeight;
+  AdjustWidth;
   PlayMessageDlgSound;
+  FocusDefaultButton;
 end;
 
 function TStyledTaskDialogForm.GetHelpContext: Integer;
@@ -430,6 +505,12 @@ begin
   Result :=  TitleLabel.Caption;
 end;
 
+procedure TStyledTaskDialogForm.HelpButtonClick(Sender: TObject);
+begin
+  //TODO: implement call to Help
+  Application.HelpContext(HelpContext);
+end;
+
 procedure TStyledTaskDialogForm.AdjustButtonsCaption;
 begin
   YesButton.Caption := STR_YES;
@@ -442,6 +523,8 @@ end;
 
 procedure TStyledTaskDialogForm.Loaded;
 begin
+  TextLabel.Align := alTop;
+
   TitleLabel.Font.Style := [TFontStyle.fsBold];
   TitleLabel.Font.Height := Round(TitleLabel.Font.Height * 1.4);
   TitleLabel.Font.Color := clHighlight;
@@ -462,12 +545,20 @@ function TTaskDialogLauncherHandler.DoExecute(ParentWnd: HWND;
   const ATaskDialog: TCustomTaskDialog): Boolean;
 var
   LForm: TStyledTaskDialogForm;
+  LFont: TFont;
 begin
   LForm := TStyledTaskDialogForm.Create(nil);
   try
     LForm.FTaskDialog := ATaskDialog;
     LForm.FDialogType := ADialogType;
-    Result := LForm.ShowModal = mrOk;
+    LFont := GetDialogFont;
+    if Assigned(LFont) then
+      LForm.SetDialogFont(LFont)
+    else
+      LForm.SetDialogFont(Screen.MessageFont);
+    LForm.ShowModal;
+    ATaskDialog.ModalResult := LForm.ModalResult;
+    Result := True;
   finally
     LForm.Free;
   end;

@@ -37,6 +37,7 @@ function ExtractHrefValues(const HRef: string;
 function ClearHRefs(const Msg: string; OnlyFileNotExists: boolean = False): string;
 function GetErrorClassNameDesc(const ExceptionClassName : string;
   IsAccessViolation: boolean) : string;
+function GetProjectURL: string;
 
 implementation
 
@@ -44,6 +45,11 @@ uses
   System.SysUtils
   , Vcl.StyledCmpMessages
   ;
+
+function GetProjectURL: string;
+begin
+  Result := 'https://github.com/EtheaDev/StyledComponents';
+end;
 
 function HRefToString(const HRef: string): string;
 var
@@ -150,8 +156,6 @@ begin
   Result := '';
   if pos('Database', ExceptionClassName) > 0 then
     Result := EDATABASEERRORDESC
-  else if pos('FilerError', ExceptionClassName) > 0 then
-    Result := EFILERERROR
   else if IsAccessViolation then
     Result := EACCESSVIOLDESC
   else

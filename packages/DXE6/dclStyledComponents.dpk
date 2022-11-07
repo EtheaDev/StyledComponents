@@ -36,7 +36,7 @@ package dclStyledComponents;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Ethea VCL Styled Components (button, TaskDialog)'}
+{$DESCRIPTION 'Ethea - Styled Components'}
 {$LIBSUFFIX 'DXE6'}
 {$DESIGNONLY}
 {$IMPLICITBUILD ON}
@@ -46,6 +46,7 @@ requires
   StyledComponents;
 
 contains
-  Vcl.StyledComponentsRegister in '..\Vcl.StyledComponentsRegister.pas';
+  Vcl.StyledComponentsRegister in '..\Vcl.StyledComponentsRegister.pas',
+  Vcl.StyledButtonEditorUnit in '..\Vcl.StyledButtonEditorUnit.pas' {StyledButtonEditor};
 
 end.

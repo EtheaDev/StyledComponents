@@ -26,8 +26,8 @@
 package StyledComponents;
 
 {$R *.res}
-{$R 'StyledButton.dcr'}
-{$R 'StyledTaskDialog.dcr'}
+{$R '..\StyledButton.dcr'}
+{$R '..\StyledTaskDialog.dcr'}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -63,6 +63,7 @@ requires
 
 contains
   Vcl.StyledButton in '..\..\source\Vcl.StyledButton.pas',
+  Vcl.ButtonStylesAttributes in '..\..\source\Vcl.ButtonStylesAttributes.pas',
   Vcl.StandardButtonStyles in '..\..\source\Vcl.StandardButtonStyles.pas',
   Vcl.BootstrapButtonStyles in '..\..\source\Vcl.BootstrapButtonStyles.pas',
   Vcl.StyledTaskDialog in '..\..\source\Vcl.StyledTaskDialog.pas',

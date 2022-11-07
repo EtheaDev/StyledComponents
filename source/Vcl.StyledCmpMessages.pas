@@ -51,9 +51,6 @@ resourcestring
     STR_CLOSE = 'Chiudi';
     EINSTANTERRORDESC = 'Errore nei dati';
     EDATABASEERRORDESC = 'Errore nei dati';
-    EFILERERROR = 'Errore nell''input/output dei files';
-    EOPENOFFICEERROR = 'Errore nell''interfacciamento con OpenOffice';
-    ELIBREOFFICEERROR = 'Errore nell''interfacciamento con LibreOffice';
     EGENERICERROR = 'Errore';
     EACCESSVIOLDESC = 'Errore non previsto nel programma';
     ERR_ACCES_VIOL_DESC = 'Si è verificato un errore inatteso nel programma.'+sLineBreak+sLineBreak+'%s'+sLineBreak+sLineBreak+
