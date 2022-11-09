@@ -26,8 +26,6 @@ StyleFamily (the pages "Classic" and "Bootstrap"), StyleClass (the buttons) and 
 
 **Look at the Demo Folder:**
 
-Notice: to build Demos you must first Download [SvgIconImageList Components](https://github.com/EtheaDev/SVGIconImageList)
-
 **Demos\Delphi10_3+\StyledButtonsDemo**
 
 A simple demo to show different "Styled Class" Buttons (similar to Bootstrap buttons) and outlined versions.
@@ -85,4 +83,4 @@ Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org
 01 Nov 2022: version 0.9.0 (VCL)
 - First "beta" version
 
-Thanks to Paulo Alvis "PraButtonStyle component" for the inspiration of StyledButton.
+Thanks to Paulo Alvis "PraButtonStyle component" for the inspiration of my StyledButton.
