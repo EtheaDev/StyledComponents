@@ -37,7 +37,7 @@ const
   DEFAULT_WINDOWS_CLASS = 'Windows';
   DEFAULT_APPEARANCE = 'Normal';
   OUTLINE_APPEREANCE = 'Outline';
-  BORDER_WIDTH = 3;
+  STD_BORDER_WIDTH = 2;
 
 Type
   TButtonStandardStyles = class(TInterfacedObject, IStyledButtonAttributes)
@@ -145,8 +145,7 @@ var
 begin
   StandardClassToColors(AClass, AAppearance, LFontColor, LButtonColor, LBorderColor, LOutLine);
   //Default Style Attributes
-  ANormalStyle.BorderType := btRounded;
-  ANormalStyle.BorderWidth := BORDER_WIDTH;
+  ANormalStyle.BorderWidth := STD_BORDER_WIDTH;
   ANormalStyle.BorderColor := LBorderColor;
   ANormalStyle.BorderStyle := psSolid;
   ANormalStyle.FontColor := LFontColor;
@@ -166,7 +165,7 @@ begin
       ButtonColor := LButtonColor;
       BorderColor := LightenColor(LButtonColor, 50);
       BorderStyle := psSolid;
-      BorderWidth := BORDER_WIDTH;
+      BorderWidth := STD_BORDER_WIDTH;
       FontColor   := LFontColor;
       BrushStyle  := bsSolid;
     end;
@@ -177,7 +176,7 @@ begin
       ButtonColor := LButtonColor;
       BorderColor := LightenColor(LButtonColor, 50);
       BorderStyle := psClear;
-      BorderWidth := BORDER_WIDTH;
+      BorderWidth := STD_BORDER_WIDTH;
       FontColor := LFontColor;
       BrushStyle  := bsSolid;
     end;
@@ -190,7 +189,7 @@ begin
       else
         ButtonColor := DarkenColor(LButtonColor, 20);
       BorderStyle := psSolid;
-      BorderWidth := BORDER_WIDTH;
+      BorderWidth := STD_BORDER_WIDTH;
       FontColor := LFontColor;
       BrushStyle  := bsSolid;
     end;
@@ -208,7 +207,7 @@ begin
     ADownStyle.ButtonColor := DarkenColor(LButtonColor, 20);
     ADownStyle.BorderColor := LightenColor(LBorderColor, 50);
     ADownStyle.BorderStyle := psSolid;
-    ADownStyle.BorderWidth := BORDER_WIDTH;
+    ADownStyle.BorderWidth := STD_BORDER_WIDTH;
 
     //Button Hot: color as Down but no Border
     AHotStyle.ButtonColor := ADownStyle.ButtonColor;
@@ -216,7 +215,7 @@ begin
     //Button Focused
     AFocusedStyle.ButtonColor := DarkenColor(LButtonColor, 20);
     AFocusedStyle.BorderStyle := psSolid;
-    AFocusedStyle.BorderWidth := BORDER_WIDTH;
+    AFocusedStyle.BorderWidth := STD_BORDER_WIDTH;
 
     //Button Disabled
     ADisabledStyle.ButtonColor := LightenColor(ANormalStyle.ButtonColor, 70);//ColortoGrayscale(LButtonColor);

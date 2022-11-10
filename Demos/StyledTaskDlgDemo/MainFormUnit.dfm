@@ -3,7 +3,7 @@ object MainForm: TMainForm
   Top = 0
   HelpContext = 100
   Caption = 'StyledTaskDialog Demo (c) Ethea S.r.l.'
-  ClientHeight = 496
+  ClientHeight = 660
   ClientWidth = 731
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,12 +19,12 @@ object MainForm: TMainForm
   PixelsPerInch = 96
   TextHeight = 13
   object DefaultButtonLabel: TLabel
-    Left = 484
-    Top = 367
-    Width = 70
+    Left = 512
+    Top = 353
+    Width = 74
     Height = 13
     Alignment = taRightJustify
-    Caption = 'Default Button'
+    Caption = 'Default Button:'
   end
   object TitleLabel: TLabel
     Left = 8
@@ -35,10 +35,18 @@ object MainForm: TMainForm
   end
   object MessageLabel: TLabel
     Left = 8
-    Top = 49
-    Width = 46
+    Top = 51
+    Width = 26
     Height = 13
-    Caption = 'Message:'
+    Caption = 'Text:'
+  end
+  object FontLabel: TLabel
+    Left = 248
+    Top = 348
+    Width = 26
+    Height = 13
+    Alignment = taRightJustify
+    Caption = 'Font:'
   end
   object edTitle: TEdit
     Left = 8
@@ -49,20 +57,20 @@ object MainForm: TMainForm
     Text = 'Task dialog Tester'
   end
   object edMessage: TMemo
-    Left = 8
+    Left = 10
     Top = 64
     Width = 434
-    Height = 294
-    TabOrder = 1
+    Height = 275
+    TabOrder = 2
     WordWrap = False
   end
-  object btTask: TButton
-    Left = 16
-    Top = 387
-    Width = 184
+  object btCustomTaskDialog: TButton
+    Left = 7
+    Top = 370
+    Width = 210
     Height = 25
-    Caption = 'Show Styled Task Dialog'
-    TabOrder = 2
+    Caption = 'Show Custom Task Dialog'
+    TabOrder = 6
     OnClick = ShowDlg
   end
   object rgDlgType: TRadioGroup
@@ -71,101 +79,212 @@ object MainForm: TMainForm
     Width = 273
     Height = 105
     Caption = 'Dialog Type'
-    TabOrder = 3
+    TabOrder = 1
   end
   object clbButtons: TCheckListBox
-    Left = 448
-    Top = 139
+    Left = 450
+    Top = 127
     Width = 273
-    Height = 219
+    Height = 212
     ItemHeight = 13
-    TabOrder = 4
+    TabOrder = 3
   end
-  object btMsg: TButton
-    Left = 16
-    Top = 463
-    Width = 184
+  object btCustomMsgDialog: TButton
+    Left = 8
+    Top = 401
+    Width = 210
     Height = 25
-    Caption = 'Show Message Dialog'
-    TabOrder = 5
-    OnClick = ShowDlg
-  end
-  object btError: TButton
-    Left = 537
-    Top = 463
-    Width = 184
-    Height = 25
-    Caption = 'Raise Error with Task Dialog'
-    TabOrder = 6
-    OnClick = RaiseError
-  end
-  object DefaultButtonComboBox: TComboBox
-    Left = 560
-    Top = 364
-    Width = 161
-    Height = 21
-    Style = csDropDownList
-    TabOrder = 7
-  end
-  object btStdTask: TButton
-    Left = 206
-    Top = 387
-    Width = 184
-    Height = 25
-    Caption = 'Show Native Task Dialog'
+    Caption = 'Show Custom Message Dialog'
     TabOrder = 8
     OnClick = ShowDlg
   end
-  object btStdMsgDlg: TButton
-    Left = 206
-    Top = 463
-    Width = 184
+  object btRaiseErrorTaskDialog: TButton
+    Left = 513
+    Top = 372
+    Width = 210
+    Height = 25
+    Caption = 'Raise Error with Task Dialog'
+    TabOrder = 10
+    OnClick = RaiseError
+  end
+  object DefaultButtonComboBox: TComboBox
+    Left = 592
+    Top = 345
+    Width = 131
+    Height = 21
+    Style = csDropDownList
+    DropDownCount = 12
+    TabOrder = 5
+  end
+  object btNativeTaskDialog: TButton
+    Left = 234
+    Top = 370
+    Width = 210
+    Height = 25
+    Caption = 'Show Native Task Dialog'
+    TabOrder = 7
+    OnClick = ShowDlg
+  end
+  object btNativeMsgDialog: TButton
+    Left = 234
+    Top = 401
+    Width = 210
     Height = 25
     Caption = 'Show Native Message Dialog'
     TabOrder = 9
     OnClick = ShowDlg
   end
-  object CBXButton2: TButton
-    Left = 537
-    Top = 432
-    Width = 184
+  object btRaiseErrorMsgDialog: TButton
+    Left = 513
+    Top = 401
+    Width = 210
     Height = 25
     Caption = 'Raise Error with Msg Dialog'
-    TabOrder = 10
+    TabOrder = 11
     OnClick = RaiseError
   end
-  object ShowTaskDialogCompButton: TButton
-    Left = 207
-    Top = 418
-    Width = 184
-    Height = 25
-    Caption = 'Show Native Long Messages'
-    TabOrder = 11
-    OnClick = ShowTaskDialog
-  end
-  object ShowStyleDialogButton: TButton
-    Left = 17
-    Top = 418
-    Width = 184
-    Height = 25
-    Caption = 'Show Styled Long Messages'
-    TabOrder = 12
-    OnClick = ShowStyleDialogButtonClick
-  end
   object cbUseStyledDialog: TCheckBox
-    Left = 17
-    Top = 364
-    Width = 161
+    Left = 8
+    Top = 347
+    Width = 137
     Height = 17
     Caption = 'Use modern Styled Dialog'
     Checked = True
     State = cbChecked
-    TabOrder = 13
+    TabOrder = 4
     OnClick = cbUseStyledDialogClick
+  end
+  object ExtraGroupBox: TGroupBox
+    Left = 0
+    Top = 432
+    Width = 731
+    Height = 228
+    Align = alBottom
+    Caption = 'Use Style Dialog Component with extra feature'
+    TabOrder = 12
+    ExplicitLeft = 7
+    object ExpandedTextLabel: TLabel
+      Left = 33
+      Top = 41
+      Width = 77
+      Height = 13
+      Alignment = taRightJustify
+      Caption = 'Expanded Text:'
+    end
+    object FooterTextLabel: TLabel
+      Left = 49
+      Top = 103
+      Width = 61
+      Height = 13
+      Alignment = taRightJustify
+      Caption = 'Footer Text:'
+    end
+    object Label1: TLabel
+      Left = 28
+      Top = 165
+      Width = 82
+      Height = 13
+      Alignment = taRightJustify
+      Caption = 'Verification Text:'
+    end
+    object CaptionLabel: TLabel
+      Left = 37
+      Top = 19
+      Width = 73
+      Height = 13
+      Alignment = taRightJustify
+      Caption = 'Dialog Caption:'
+    end
+    object ExpandedTextMemo: TMemo
+      Left = 112
+      Top = 42
+      Width = 411
+      Height = 56
+      Lines.Strings = (
+        'Expanded Text'
+        'second expanded line')
+      TabOrder = 1
+      WordWrap = False
+    end
+    object btUseStyledDialogComp: TButton
+      Left = 526
+      Top = 14
+      Width = 195
+      Height = 25
+      Caption = 'Use StyledTaskDialog comp.'
+      TabOrder = 4
+      OnClick = UseStyleDialogCompClick
+    end
+    object btUseNativeDialogComp: TButton
+      Left = 526
+      Top = 45
+      Width = 195
+      Height = 25
+      Caption = 'Use native TaskDialog comp.'
+      TabOrder = 5
+      OnClick = UseStyleDialogCompClick
+    end
+    object FooterTextMemo: TMemo
+      Left = 112
+      Top = 104
+      Width = 411
+      Height = 56
+      Lines.Strings = (
+        'Footer Text'
+        'second footer line')
+      TabOrder = 2
+      WordWrap = False
+    end
+    object VerificationTextMemo: TMemo
+      Left = 112
+      Top = 166
+      Width = 411
+      Height = 56
+      Lines.Strings = (
+        'Verification Text'
+        'second Verification line')
+      TabOrder = 3
+      WordWrap = False
+    end
+    object rgMainIcon: TRadioGroup
+      Left = 538
+      Top = 76
+      Width = 190
+      Height = 121
+      Caption = 'Main Icon'
+      ItemIndex = 0
+      Items.Strings = (
+        'tdiNone'
+        'tdiWarning'
+        'tdiError'
+        'tdiInformation'
+        'tdiShield')
+      TabOrder = 6
+    end
+    object CaptionEdit: TEdit
+      Left = 112
+      Top = 15
+      Width = 411
+      Height = 21
+      TabOrder = 0
+      Text = 'Caption'
+    end
+  end
+  object FontComboBox: TComboBox
+    Left = 280
+    Top = 345
+    Width = 164
+    Height = 21
+    TabOrder = 13
+    Text = 'FontComboBox'
+    OnSelect = FontComboBoxSelect
   end
   object TaskDialog: TTaskDialog
     Buttons = <>
     Caption = 'Caption'
+    ExpandedText = 'Expanded Text'
+    Flags = [tfEnableHyperlinks, tfAllowDialogCancellation]
+    FooterText = 'Footer Text'
     RadioButtons = <>
     Text = 
       'Message Text Lorem ipsum dolor sit amet, consectetur adipiscing ' +
@@ -184,6 +303,7 @@ object MainForm: TMainForm
       ' reprehenderit in voluptate velit esse cillum dolore eu fugiat n' +
       'ulla pariatur. Excepteur sint occaecat cupidatat non proident, s' +
       'unt in culpa qui officia deserunt mollit anim id est laborum'
+    VerificationText = 'Verification Test'
     Left = 266
     Top = 175
   end

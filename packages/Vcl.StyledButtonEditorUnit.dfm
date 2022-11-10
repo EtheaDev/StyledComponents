@@ -1,6 +1,7 @@
 object StyledButtonEditor: TStyledButtonEditor
   Left = 0
   Top = 0
+  ActiveControl = TabControl
   Caption = 'Styled Button Editor %s - Copyright Ethea S.r.l.'
   ClientHeight = 459
   ClientWidth = 880
@@ -38,7 +39,7 @@ object StyledButtonEditor: TStyledButtonEditor
       880
       38)
     object OKButton: TButton
-      Left = 503
+      Left = 499
       Top = 6
       Width = 85
       Height = 25
@@ -50,7 +51,7 @@ object StyledButtonEditor: TStyledButtonEditor
       OnClick = OKButtonClick
     end
     object ApplyButton: TButton
-      Left = 686
+      Left = 682
       Top = 6
       Width = 85
       Height = 25
@@ -60,7 +61,7 @@ object StyledButtonEditor: TStyledButtonEditor
       OnClick = ApplyButtonClick
     end
     object CancelButton: TButton
-      Left = 595
+      Left = 591
       Top = 6
       Width = 85
       Height = 25
@@ -71,7 +72,7 @@ object StyledButtonEditor: TStyledButtonEditor
       TabOrder = 1
     end
     object HelpButton: TButton
-      Left = 778
+      Left = 774
       Top = 6
       Width = 85
       Height = 25
@@ -97,7 +98,6 @@ object StyledButtonEditor: TStyledButtonEditor
       Align = alLeft
       Caption = 'Actual Appearance'
       TabOrder = 0
-      ExplicitHeight = 64
       object SourceButton: TStyledGraphicButton
         Tag = 0
         AlignWithMargins = True
@@ -116,8 +116,6 @@ object StyledButtonEditor: TStyledButtonEditor
       Align = alClient
       Caption = 'New appearance'
       TabOrder = 1
-      ExplicitLeft = 177
-      ExplicitTop = -1
       object DestButton: TStyledGraphicButton
         Tag = 0
         AlignWithMargins = True
@@ -141,8 +139,6 @@ object StyledButtonEditor: TStyledButtonEditor
       'Classic')
     TabIndex = 0
     OnChange = TabControlChange
-    ExplicitTop = 69
-    ExplicitHeight = 352
     object ClassesGroupBox: TGroupBox
       Left = 4
       Top = 38
@@ -151,7 +147,6 @@ object StyledButtonEditor: TStyledButtonEditor
       Align = alClient
       Caption = 'Classes'
       TabOrder = 0
-      ExplicitHeight = 310
       object ScrollBox: TScrollBox
         AlignWithMargins = True
         Left = 5
@@ -162,7 +157,6 @@ object StyledButtonEditor: TStyledButtonEditor
         BevelOuter = bvNone
         BorderStyle = bsNone
         TabOrder = 0
-        ExplicitHeight = 287
       end
     end
   end

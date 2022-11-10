@@ -41,7 +41,7 @@ uses
   Vcl.ExtCtrls,
   Vcl.Controls,
   Vcl.Forms,
-  Vcl.StdCtrls;
+  Vcl.StdCtrls, Vcl.StandardButtonStyles, Vcl.BootstrapButtonStyles;
 
 const
   BUTTON_WIDTH = 100;
@@ -75,7 +75,7 @@ type
     FStyledButton: TStyledGraphicButton;
     procedure BuildTabControls;
     procedure BuildFamilyPreview(const AFamily: TStyledButtonFamily);
-    procedure Apply;
+    procedure ApplyStyle;
     procedure UpdateGUI;
     procedure ButtonClick(Sender: TObject);
     procedure CreateButton(
@@ -125,12 +125,16 @@ begin
         FStyledButton := AButton;
         paTop.Height := SourceButton.Top + AButton.Height + 10;
         AButton.AssignStyleTo(SourceButton);
+        SourceButton.Caption := AButton.Caption;
+        SourceButton.Hint := AButton.Hint;
         SourceButton.Width := AButton.Width;
         SourceButton.Height := AButton.Height;
 
         AButton.AssignStyleTo(DestButton);
         DestButton.Width := AButton.Width;
         DestButton.Height := AButton.Height;
+        DestButton.Caption := AButton.Caption;
+        DestButton.Hint := AButton.Hint;
 
         UpdateGUI;
       finally
@@ -152,11 +156,11 @@ var
   LStylesButton: TStyledButton;
 begin
   LStylesButton := Sender as TStyledButton;
-  DestButton.Assign(LStylesButton);
+  LStylesButton.AssignStyleTo(DestButton);
 end;
 
 
-procedure TStyledButtonEditor.Apply;
+procedure TStyledButtonEditor.ApplyStyle;
 begin
   Screen.Cursor := crHourglass;
   try
@@ -168,7 +172,7 @@ end;
 
 procedure TStyledButtonEditor.ApplyButtonClick(Sender: TObject);
 begin
-  Apply;
+  ApplyStyle;
   UpdateGUI;
 end;
 
@@ -335,7 +339,7 @@ end;
 
 procedure TStyledButtonEditor.OKButtonClick(Sender: TObject);
 begin
-  Apply;
+  ApplyStyle;
 end;
 
 procedure TStyledButtonEditor.paTopResize(Sender: TObject);
@@ -356,8 +360,4 @@ begin
   BuildTabControls;
 end;
 
-initialization
-  {$IFDEF DEBUG}
-  ReportMemoryLeaksOnShutdown := True;
-  {$ENDIF}
 end.

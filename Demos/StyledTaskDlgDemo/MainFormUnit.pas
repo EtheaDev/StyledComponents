@@ -61,37 +61,50 @@ uses
 {$ENDIF}
   UITypes;
 
+{$WARN SYMBOL_PLATFORM OFF}
 type
   TMainForm = class(TForm)
     edTitle: TEdit;
     edMessage: TMemo;
-    btTask: TButton;
+    btCustomTaskDialog: TButton;
     rgDlgType: TRadioGroup;
     clbButtons: TCheckListBox;
-    btMsg: TButton;
-    btError: TButton;
+    btCustomMsgDialog: TButton;
+    btRaiseErrorTaskDialog: TButton;
     DefaultButtonComboBox: TComboBox;
     DefaultButtonLabel: TLabel;
-    btStdTask: TButton;
-    btStdMsgDlg: TButton;
-    CBXButton2: TButton;
+    btNativeTaskDialog: TButton;
+    btNativeMsgDialog: TButton;
+    btRaiseErrorMsgDialog: TButton;
     TaskDialog: TTaskDialog;
-    ShowTaskDialogCompButton: TButton;
-    ShowStyleDialogButton: TButton;
     StyledTaskDialog: TStyledTaskDialog;
     TitleLabel: TLabel;
     MessageLabel: TLabel;
     cbUseStyledDialog: TCheckBox;
+    ExtraGroupBox: TGroupBox;
+    ExpandedTextLabel: TLabel;
+    ExpandedTextMemo: TMemo;
+    btUseStyledDialogComp: TButton;
+    btUseNativeDialogComp: TButton;
+    FooterTextLabel: TLabel;
+    FooterTextMemo: TMemo;
+    Label1: TLabel;
+    VerificationTextMemo: TMemo;
+    rgMainIcon: TRadioGroup;
+    CaptionLabel: TLabel;
+    CaptionEdit: TEdit;
+    FontComboBox: TComboBox;
+    FontLabel: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure ShowDlg(Sender: TObject);
     procedure RaiseError(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChangeStyleButtonClick(Sender: TObject);
-    procedure ShowTaskDialog(Sender: TObject);
     procedure TaskDialogTimer(Sender: TObject; TickCount: Cardinal;
       var Reset: Boolean);
-    procedure ShowStyleDialogButtonClick(Sender: TObject);
+    procedure UseStyleDialogCompClick(Sender: TObject);
     procedure cbUseStyledDialogClick(Sender: TObject);
+    procedure FontComboBoxSelect(Sender: TObject);
   private
     procedure ShowSelection(const AModalResult: TModalResult);
   public
@@ -131,6 +144,11 @@ begin
 *)
 end;
 
+procedure TMainForm.FontComboBoxSelect(Sender: TObject);
+begin
+  Screen.MessageFont.Name := FontComboBox.Text;
+end;
+
 procedure TMainForm.FormCreate(Sender: TObject);
 var
   dt : TMsgDlgType;
@@ -138,10 +156,12 @@ var
   Msg: string;
   LButtonName: string;
 begin
+  FontComboBox.Items.Assign(Screen.Fonts);
+  FontComboBox.Text := Screen.IconFont.Name;
+
   UnregisterCustomExecute;
-  SetUseAlwaysTaskDialog(False);
+  SetUseAlwaysTaskDialog(True);
   Font.Assign(Screen.IconFont);
-  Font.Name := 'Century Gothic';
   Screen.MessageFont.Assign(Font);
 
 //  InitializeDialogs(Self.Font, False);
@@ -215,23 +235,29 @@ begin
 
   if LUseDefault then
   begin
-    if Sender = btTask then
+    if Sender = btCustomTaskDialog then
       LResult := StyledTaskDlgPos(edTitle.Text, edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, LDefaultButton, HelpContext)
-    else if Sender = btStdTask then
+    else if Sender = btNativeTaskDialog then
       LResult := TaskMessageDlg(edTitle.Text, edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, HelpContext)
-    else if Sender = btStdMsgDlg then
+    else if Sender = btNativeMsgDialog then
       LResult := MessageDlg(edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, 0)
+    else if Sender = btCustomMsgDialog then
+      LResult := StyledMessageDlgPos(edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, LDefaultButton, HelpContext)
     else
-      LResult := StyledMessageDlgPos(edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, LDefaultButton, HelpContext);
+      LResult := mrNone;
   end
   else
   begin
-    if Sender = btTask then
+    if Sender = btCustomTaskDialog then
       LResult := StyledTaskDlgPos(edTitle.Text, edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, HelpContext)
-    else if Sender = btStdTask then
+    else if Sender = btNativeTaskDialog then
       LResult := TaskMessageDlg(edTitle.Text, edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, HelpContext)
+    else if Sender = btNativeMsgDialog then
+      LResult := MessageDlg(edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, 0)
+    else if Sender = btCustomMsgDialog then
+      LResult := StyledMessageDlgPos(edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, HelpContext)
     else
-      LResult := StyledMessageDlgPos(edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, HelpContext);
+      LResult := mrNone;
   end;
   ShowSelection(LResult);
 end;
@@ -245,7 +271,7 @@ procedure TMainForm.RaiseError(Sender: TObject);
 var
   LHelpContext: Integer;
 begin
-  if Sender = btError then
+  if Sender = btRaiseErrorTaskDialog then
     LHelpContext := -100
   else
     LHelpContext := 200;
@@ -299,17 +325,64 @@ begin
   end;
 end;
 
-procedure TMainForm.ShowTaskDialog(Sender: TObject);
-begin
-//  TaskDialog.ProgressBar.Min := 0;
-//  TaskDialog.ProgressBar.Max := 100;
+procedure TMainForm.UseStyleDialogCompClick(Sender: TObject);
+const
+  LModalResults: array[TMsgDlgBtn] of Integer = (mrYes, mrNo, mrOk, mrCancel,
+    mrAbort, mrRetry, mrIgnore, mrAll, mrNoToAll, mrYesToAll, -1, mrClose);
 
-  TaskDialog.Execute;
-end;
+var
+  LTaskDialog: TTaskDialog;
+  LDefaultButton: Boolean;
+  db : TMsgDlgBtn;
+  LTaskDialogBaseButtonItem: TTaskDialogBaseButtonItem;
 
-procedure TMainForm.ShowStyleDialogButtonClick(Sender: TObject);
+  procedure AddCommonButton(const AButton: TTaskDialogCommonButton);
+  begin
+    LTaskDialog.CommonButtons := LTaskDialog.CommonButtons + [AButton];
+    if LDefaultButton then
+      LTaskDialog.DefaultButton := AButton;
+  end;
+
 begin
-  StyledTaskDialog.Execute(Self.Handle);
+  if Sender = btUseStyledDialogComp then
+    LTaskDialog := StyledTaskDialog
+  else
+    LTaskDialog := TaskDialog;
+
+  LTaskDialog.Buttons.Clear;
+  LTaskDialog.CommonButtons := [];
+  for db := Low(TMsgDlgBtn) to High(TMsgDlgBtn) do
+  begin
+    if clbButtons.Checked[Ord(db)] then
+    begin
+      LDefaultButton := SameText(DefaultButtonComboBox.Text, clbButtons.Items[Ord(db)]);
+      //tcbOk, tcbYes, tcbNo, tcbCancel, tcbRetry, tcbClose
+      case db of
+        TMsgDlgBtn.mbYes: AddCommonButton(tcbYes);
+        TMsgDlgBtn.mbNo: AddCommonButton(tcbNo);
+        TMsgDlgBtn.mbOK: AddCommonButton(tcbOK);
+        TMsgDlgBtn.mbCancel: AddCommonButton(tcbCancel);
+        TMsgDlgBtn.mbRetry: AddCommonButton(tcbRetry);
+        TMsgDlgBtn.mbClose: AddCommonButton(tcbClose);
+      else
+        LTaskDialogBaseButtonItem := LTaskDialog.Buttons.add;
+        LTaskDialogBaseButtonItem.Caption := GetEnumName(TypeInfo(TMsgDlgBtn), Ord(db));
+        LTaskDialogBaseButtonItem.ModalResult := LModalResults[db];
+        if LDefaultButton then
+          LTaskDialogBaseButtonItem.Default := True;
+      end;
+    end;
+  end;
+
+  LTaskDialog.Caption := CaptionEdit.Text;
+  LTaskDialog.Title := edTitle.Text;
+  LTaskDialog.Text := edMessage.Text;
+  LTaskDialog.FooterText := FooterTextMemo.Text;
+  LTaskDialog.ExpandedText := ExpandedTextMemo.Text;
+  LTaskDialog.VerificationText := VerificationTextMemo.Text;
+  LTaskDialog.MainIcon := rgMainIcon.ItemIndex;
+  LTaskDialog.Execute(Self.Handle);
+  ShowSelection(LTaskDialog.ModalResult);
 end;
 
 procedure TMainForm.TaskDialogTimer(Sender: TObject; TickCount: Cardinal; var Reset: Boolean);

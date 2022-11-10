@@ -43,14 +43,16 @@ uses
   , Winapi.Messages
   , Winapi.Windows
   , System.Math
-  , Vcl.ButtonStylesAttributes;
+  , Vcl.ButtonStylesAttributes
+  , Vcl.Menus
+  ;
 
 const
   StyledButtonsVersion = '0.9.5';
   DEFAULT_BTN_WIDTH = 75;
   DEFAULT_BTN_HEIGHT = 25;
 type
-  TStyledButtonMode = (bsmNormal, bsmDown, bsmFocused, bsmHot, bsmDisabled);
+  TStyledButtonState = (bsmNormal, bsmPressed, bsmSelected, bsmHot, bsmDisabled);
   TStyledGraphicButton = class;
   TStyledButton = class;
 
@@ -83,63 +85,81 @@ type
   TStyledGraphicButton = class(TGraphicControl)
   private
     FButtonStyleNormal: TStyledButtonAttributes;
-    FButtonStyleDown: TStyledButtonAttributes;
-    FButtonStyleFocused: TStyledButtonAttributes;
+    FButtonStylePressed: TStyledButtonAttributes;
+    FButtonStyleSelected: TStyledButtonAttributes;
     FButtonStyleHot: TStyledButtonAttributes;
     FButtonStyleDisabled: TStyledButtonAttributes;
     FModalResult: TModalResult;
     FMouseInControl: Boolean;
     FState: TButtonState;
-    FPen: TPen;
-    FBrush: TBrush;
     FImageMargins: TImageMargins;
     FRadius: Integer;
     FBorderType: TBtnBorder;
     FStyleFamily: TStyledButtonFamily;
     FStyleClass: TStyledButtonClass;
     FStyleAppearance: TStyledButtonAppearance;
+
+    FDisabledImages: TCustomImageList;
     FImages: TCustomImageList;
     FImageChangeLink: TChangeLink;
+
+    FDisabledImageIndex: TImageIndex;
+    FHotImageIndex: TImageIndex;
     FImageIndex: TImageIndex;
+    FPressedImageIndex: TImageIndex;
+    FSelectedImageIndex: TImageIndex;
     {$IFDEF D10_4+}
+    FDisabledImageName: TImageName;
+    FHotImageName: TImageName;
     FImageName: TImageName;
+    FPressedImageName: TImageName;
+    FSelectedImageName: TImageName;
     {$ENDIF}
+
     FImageAlignment: TImageAlignment;
     FTag: Integer;
-    function IsPressed: Boolean;
-    function IsDefault: Boolean;
+
     procedure SetImageMargins(const AValue: TImageMargins);
     function IsRadius: Boolean;
     procedure SetRadius(const AValue: Integer);
-    function IconAssigned: Boolean;
-    function GetPictureWidth: Integer;
-    function GetPictureHeight: Integer;
+    function GetImage(out AImageList: TCustomImageList;
+      out AImageIndex: Integer): Boolean;
     function IsStoredStyleClass: Boolean;
     function IsStoredStyleFamily: Boolean;
     function IsStoredStyleAppearance: Boolean;
     procedure SetStyleFamily(const AValue: TStyledButtonFamily);
     procedure SetStyleClass(const AValue: TStyledButtonClass);
     procedure SetStyleAppearance(const AValue: TStyledButtonAppearance);
-    procedure StyleChanged(Sender: TObject);
     procedure ApplyButtonStyle;
 
+    procedure SetDisabledImages(const AValue: TCustomImageList);
     procedure SetImages(const AValue: TCustomImageList);
-    procedure SetImageIndex(const AValue: TImageIndex);
-    {$IFDEF D10_4+}
-    procedure SetImageName(const AValue: TImageName);
-    function IsImageNameStored: Boolean;
-    {$ENDIF}
-    function IsImageIndexStored: Boolean;
 
-    function GetAttributes(const AMode: TStyledButtonMode): TStyledButtonAttributes;
+    function IsImageIndexStored: Boolean;
+    procedure SetDisabledImageIndex(const AValue: TImageIndex);
+    procedure SetHotImageIndex(const AValue: TImageIndex);
+    procedure SetImageIndex(const AValue: TImageIndex);
+    procedure SetPressedImageIndex(const AValue: TImageIndex);
+    procedure SetSelectedImageIndex(const AValue: TImageIndex);
+
+    {$IFDEF D10_4+}
+    procedure UpdateImageIndex(Name: TImageName; var Index: TImageIndex);
+    procedure UpdateImageName(Index: TImageIndex; var Name: TImageName);
+    function IsImageNameStored: Boolean;
+    procedure SetDisabledImageName(const AValue: TImageName);
+    procedure SetHotImageName(const AValue: TImageName);
+    procedure SetImageName(const AValue: TImageName);
+    procedure SetPressedImageName(const AValue: TImageName);
+    procedure SetSelectedImageName(const AValue: TImageName);
+    {$ENDIF}
+
+    function GetAttributes(const AMode: TStyledButtonState): TStyledButtonAttributes;
     procedure ImageMarginsChange(Sender: TObject);
     procedure SetImageAlignment(const AValue: TImageAlignment);
     procedure DrawButton;
-    procedure DrawBorder;
-    procedure DrawImage(const IX, IY: Integer);
+    procedure DrawBackgroundAndBorder;
     procedure DrawText(const AText: string; var ARect: TRect; AFlags: Cardinal);
     function GetDrawingStyle: TStyledButtonAttributes;
-    function UseVCLStyles: Boolean;
     function IsCustomBorderType: Boolean;
     procedure SetBorderType(const AValue: TBtnBorder);
     procedure ImageListChange(Sender: TObject);
@@ -156,11 +176,15 @@ type
     function IsStyleNormalStored: Boolean;
     function IsStyleDisabledStored: Boolean;
     function IsStyleDownStored: Boolean;
+    function GetButtonState: TStyledButtonState;
   protected
+    function IsPressed: Boolean; virtual;
+    function IsDefault: Boolean; virtual;
     function GetFocused: Boolean; virtual;
     function GetCanFocus: Boolean; virtual;
-    procedure UpdateImage; virtual;
+    procedure UpdateImageIndexAndName; virtual;
     {$IFDEF D10_4+}
+    procedure UpdateImages; virtual;
     procedure CheckImageIndexes;
     {$ENDIF}
     procedure ActionChange(Sender: TObject; CheckDefaults: Boolean); override;
@@ -177,7 +201,8 @@ type
     procedure CMMouseEnter(var Message: TNotifyEvent); message CM_MOUSEENTER;
     procedure CMMouseLeave(var Message: TNotifyEvent); message CM_MOUSELEAVE;
     procedure Notification(AComponent: TComponent; AOperation: TOperation); override;
-    function CalcImageRect(var ATextRect: TRect): TRect;
+    function CalcImageRect(var ATextRect: TRect;
+      const AImageWidth, AImageHeight: Integer): TRect;
   public
     procedure AssignStyleTo(ADest: TStyledGraphicButton); virtual;
     procedure AssignTo(ADest: TPersistent); override;
@@ -227,18 +252,29 @@ type
     property Touch;
     property Visible;
 
+    property ButtonState: TStyledButtonState read GetButtonState;
     property BorderType: TBtnBorder read FBorderType write SetBorderType stored IsCustomBorderType default btRounded;
     property Caption: TCaption read GetText write SetText stored IsCaptionStored;
     property Cursor default crHandPoint;
     property Height default DEFAULT_BTN_HEIGHT;
     property ImageAlignment: TImageAlignment read FImageAlignment write SetImageAlignment default iaLeft;
+    property DisabledImageIndex: TImageIndex read FDisabledImageIndex write SetDisabledImageIndex default -1;
+    property DisabledImages: TCustomImageList read FDisabledImages write SetDisabledImages;
+    property HotImageIndex: TImageIndex read FHotImageIndex write SetHotImageIndex default -1;
+    property Images: TCustomImageList read FImages write SetImages;
     property ImageIndex: TImageIndex read FImageIndex write SetImageIndex stored IsImageIndexStored default -1;
+    property PressedImageIndex: TImageIndex read FPressedImageIndex write SetPressedImageIndex default -1;
+    property SelectedImageIndex: TImageIndex read FSelectedImageIndex write SetSelectedImageIndex default -1;
+
     {$IFDEF D10_4+}
+    property DisabledImageName: TImageName read FDisabledImageName write SetDisabledImageName;
+    property HotImageName: TImageName read FHotImageName write SetHotImageName;
     property ImageName: TImageName read FImageName write SetImageName stored IsImageNameStored;
+    property PressedImageName: TImageName read FPressedImageName write SetPressedImageName;
+    property SelectedImageName: TImageName read FSelectedImageName write SetSelectedImageName;
     {$ENDIF}
     property ImageMargins: TImageMargins read FImageMargins write SetImageMargins;
     property ModalResult: TModalResult read FModalResult write FModalResult default 0;
-    property Images: TCustomImageList read FImages write SetImages;
     property Radius: Integer read FRadius write SetRadius stored IsRadius default DEFAULT_RADIUS;
     property StyleFamily: TStyledButtonFamily read FStyleFamily write SetStyleFamily stored IsStoredStyleFamily;
     property StyleClass: TStyledButtonClass read FStyleClass write SetStyleClass stored IsStoredStyleClass;
@@ -247,8 +283,8 @@ type
     property Width default DEFAULT_BTN_WIDTH;
 
     property ButtonStyleNormal: TStyledButtonAttributes read FButtonStyleNormal write SetButtonStyleNormal stored IsStyleNormalStored;
-    property ButtonStyleDown: TStyledButtonAttributes read FButtonStyleDown write SetButtonStyleDown stored IsStyleDownStored;
-    property ButtonStyleFocused: TStyledButtonAttributes read FButtonStyleFocused write SetButtonStyleFocused stored IsStyleFocusedStored;
+    property ButtonStylePressed: TStyledButtonAttributes read FButtonStylePressed write SetButtonStyleDown stored IsStyleDownStored;
+    property ButtonStyleSelected: TStyledButtonAttributes read FButtonStyleSelected write SetButtonStyleFocused stored IsStyleFocusedStored;
     property ButtonStyleHot: TStyledButtonAttributes read FButtonStyleHot write SetButtonStyleHot stored IsStyleHotStored;
     property ButtonStyleDisabled: TStyledButtonAttributes read FButtonStyleDisabled write SetButtonStyleDisabled stored IsStyleDisabledStored;
   end;
@@ -290,8 +326,6 @@ uses
   , Vcl.Forms
   , Vcl.ActnList
   , Vcl.StandardButtonStyles
-//  , Winapi.GDIPAPI
-//  , Winapi.GDIPOBJ
   ;
 
 { TButtonFocusControl }
@@ -338,26 +372,40 @@ end;
 
 procedure TStyledGraphicButton.AssignStyleTo(ADest: TStyledGraphicButton);
 begin
-  ADest.FBrush.Assign(Self.FBrush);
-  ADest.FPen.Assign(Self.FPen);
   ADest.Font.Assign(Self.Font);
   ADest.FRadius := Self.FRadius;
   ADest.FImageMargins.Assign(FImageMargins);
-  ADest.FBorderType := Self.FBorderType;
   ADest.FButtonStyleNormal.Assign(Self.FButtonStyleNormal);
-  ADest.FButtonStyleDown.Assign(Self.FButtonStyleDown);
-  ADest.FButtonStyleFocused.Assign(Self.FButtonStyleFocused);
+  ADest.FButtonStylePressed.Assign(Self.FButtonStylePressed);
+  ADest.FButtonStyleSelected.Assign(Self.FButtonStyleSelected);
   ADest.FButtonStyleHot.Assign(Self.FButtonStyleHot);
   ADest.FButtonStyleDisabled.Assign(Self.FButtonStyleDisabled);
   ADest.SetButtonStyles(Self.FStyleFamily,
     Self.FStyleClass, Self.FStyleAppearance);
+  ADest.BorderType := Self.FBorderType;
   if Assigned(FImages) then
   begin
     ADest.FImageAlignment := Self.FImageAlignment;
     ADest.Images := Images;
+    ADest.DisabledImageIndex := Self.DisabledImageIndex;
     ADest.ImageIndex := Self.ImageIndex;
+    ADest.HotImageIndex := Self.HotImageIndex;
+    ADest.SelectedImageIndex := Self.SelectedImageIndex;
+    ADest.PressedImageIndex := Self.PressedImageIndex;
     {$IFDEF D10_4+}
+    ADest.DisabledImageName := Self.DisabledImageName;
     ADest.ImageName := Self.ImageName;
+    ADest.HotImageName := Self.HotImageName;
+    ADest.SelectedImageName := Self.SelectedImageName;
+    ADest.PressedImageName := Self.PressedImageName;
+    {$ENDIF}
+  end;
+  if Assigned(FDisabledImages) then
+  begin
+    ADest.DisabledImages := DisabledImages;
+    ADest.DisabledImageIndex := Self.DisabledImageIndex;
+    {$IFDEF D10_4+}
+    ADest.DisabledImageName := Self.DisabledImageName;
     {$ENDIF}
   end;
 end;
@@ -380,7 +428,6 @@ end;
 {$IFDEF HiDPISupport}
 procedure TStyledGraphicButton.ChangeScale(M, D: Integer; isDpiChange: Boolean);
 begin
-  FPen.Width := MulDiv(FPen.Width, M, D);
   FImageMargins.Left := MulDiv(FImageMargins.Left, M, D);
   FImageMargins.Top := MulDiv(FImageMargins.Top, M, D);
   FImageMargins.Right := MulDiv(FImageMargins.Right, M, D);
@@ -423,7 +470,7 @@ end;
 
 procedure TStyledGraphicButton.ImageListChange(Sender: TObject);
 begin
-  UpdateImage;
+  UpdateImageIndexAndName;
   Invalidate;
 end;
 
@@ -440,15 +487,14 @@ begin
   inherited Create(AOwner);
   FButtonStyleNormal := TStyledButtonAttributes.Create(Self);
   FButtonStyleNormal.Name := 'Normal';
-  FButtonStyleDown := TStyledButtonAttributes.Create(Self);
-  FButtonStyleDown.Name := 'Down';
-  FButtonStyleFocused := TStyledButtonAttributes.Create(Self);
-  FButtonStyleFocused.Name := 'Focused';
+  FButtonStylePressed := TStyledButtonAttributes.Create(Self);
+  FButtonStylePressed.Name := 'Down';
+  FButtonStyleSelected := TStyledButtonAttributes.Create(Self);
+  FButtonStyleSelected.Name := 'Focused';
   FButtonStyleHot := TStyledButtonAttributes.Create(Self);
   FButtonStyleHot.Name := 'Hot';
   FButtonStyleDisabled := TStyledButtonAttributes.Create(Self);
   FButtonStyleDisabled.Name := 'Disabled';
-
   ControlStyle := [csCaptureMouse, csClickEvents, csSetCaption, csDoubleClicks];
   FImageChangeLink := TChangeLink.Create;
   FImageChangeLink.OnChange := ImageListChange;
@@ -462,15 +508,13 @@ begin
   Width := DEFAULT_BTN_WIDTH;
   Height := DEFAULT_BTN_HEIGHT;
   FRadius := DEFAULT_RADIUS;
-  // Pen
-  FPen := TPen.Create;
-  FPen.Style := psClear;
-  FPen.OnChange := StyleChanged;
-  // Brush
-  FBrush := TBrush.Create;
-  FBrush.OnChange := StyleChanged;
   FMouseInControl := false;
+  FDisabledImageIndex := -1;
+  FHotImageIndex := -1;
+  FImageAlignment := iaLeft;
   FImageIndex := -1;
+  FPressedImageIndex := -1;
+  FSelectedImageIndex := -1;
   {$IFDEF D10_4+}
   FImageName := '';
   {$ENDIF}
@@ -511,8 +555,8 @@ begin
     FStyleClass,
     FstyleAppearance,
     FButtonStyleNormal,
-    FButtonStyleDown,
-    FButtonStyleFocused,
+    FButtonStylePressed,
+    FButtonStyleSelected,
     FButtonStyleHot,
     FButtonStyleDisabled);
 
@@ -523,12 +567,10 @@ destructor TStyledGraphicButton.Destroy;
 begin
   Images := nil;
   FreeAndNil(FImageChangeLink);
-  FreeAndNil(FPen);
-  FreeAndNil(FBrush);
   FreeAndNil(FImageMargins);
   FreeAndNil(FButtonStyleNormal);
-  FreeAndNil(FButtonStyleDown);
-  FreeAndNil(FButtonStyleFocused);
+  FreeAndNil(FButtonStylePressed);
+  FreeAndNil(FButtonStyleSelected);
   FreeAndNil(FButtonStyleHot);
   FreeAndNil(FButtonStyleDisabled);
 
@@ -553,31 +595,57 @@ begin
   Invalidate;
 end;
 
-function TStyledGraphicButton.GetPictureHeight: Integer;
-begin
-  if IconAssigned then
-    Result := Images.Height
-  else
-    Result := 0;
-end;
-
-function TStyledGraphicButton.GetPictureWidth: Integer;
-begin
-  if IconAssigned then
-    Result := Images.Width
-  else
-    Result := 0;
-end;
-
 function TStyledGraphicButton.GetText: TCaption;
 begin
   Result := inherited Caption;
 end;
 
-function TStyledGraphicButton.IconAssigned: Boolean;
+function TStyledGraphicButton.GetImage(out AImageList: TCustomImageList;
+  out AImageIndex: Integer): Boolean;
 begin
-  Result := Assigned(Images) and ((FImageIndex <> -1)
-    {$IFDEF D10_4+}or (FImageName <> ''){$ENDIF});
+  case ButtonState of
+    bsmNormal:
+    begin
+      AImageList := FImages;
+      AImageIndex := FImageIndex;
+    end;
+    bsmPressed:
+    begin
+      AImageList := FImages;
+      if FPressedImageIndex <> -1 then
+        AImageIndex := FPressedImageIndex
+      else
+        AImageIndex := FImageIndex;
+    end;
+    bsmSelected:
+    begin
+      AImageList := FImages;
+      if FSelectedImageIndex <> -1 then
+        AImageIndex := FSelectedImageIndex
+      else
+        AImageIndex := FImageIndex;
+    end;
+    bsmHot:
+    begin
+      AImageList := FImages;
+      if FHotImageIndex <> -1 then
+        AImageIndex := FHotImageIndex
+      else
+        AImageIndex := FImageIndex;
+    end;
+    bsmDisabled:
+    begin
+      if Assigned(FDisabledImages) then
+        AImageList := FDisabledImages
+      else
+        AImageList := FImages;
+      if FDisabledImageIndex <> -1 then
+        AImageIndex := FDisabledImageIndex
+      else
+        AImageIndex := FImageIndex;
+    end;
+  end;
+  Result := Assigned(AImageList) and (AImageIndex <> -1);
 end;
 
 function TStyledGraphicButton.IsCaptionStored: Boolean;
@@ -599,7 +667,6 @@ end;
 
 function TStyledGraphicButton.IsDefault: Boolean;
 begin
-  //IsDefault := (Control is TCustomButton) and TCustomButton(Control).FActive;
   Result := False;
 end;
 
@@ -635,12 +702,12 @@ end;
 
 function TStyledGraphicButton.IsStyleDownStored: Boolean;
 begin
-  Result := FButtonStyleDown.IsChanged;
+  Result := FButtonStylePressed.IsChanged;
 end;
 
 function TStyledGraphicButton.IsStyleFocusedStored: Boolean;
 begin
-  Result := FButtonStyleFocused.IsChanged;
+  Result := FButtonStyleSelected.IsChanged;
 end;
 
 function TStyledGraphicButton.IsStyleHotStored: Boolean;
@@ -658,11 +725,11 @@ begin
   Result := TGraphicButtonActionLink;
 end;
 
-function TStyledGraphicButton.GetAttributes(const AMode: TStyledButtonMode): TStyledButtonAttributes;
+function TStyledGraphicButton.GetAttributes(const AMode: TStyledButtonState): TStyledButtonAttributes;
 begin
   case Amode of
-    bsmDown: Result := FButtonStyleDown;
-    bsmFocused: Result := FButtonStyleFocused;
+    bsmPressed: Result := FButtonStylePressed;
+    bsmSelected: Result := FButtonStyleSelected;
     bsmHot: Result := FButtonStyleHot;
     bsmDisabled: Result := FButtonStyleDisabled;
   else
@@ -677,10 +744,7 @@ end;
 
 procedure TStyledGraphicButton.DrawText(const AText: string; var ARect: TRect; AFlags: Cardinal);
 var
-  Details:  TThemedElementDetails;
-  ThemeTextColor: TColor;
   TextFormat: TTextFormatFlags;
-  LStyle: TCustomStyleServices;
   R: TRect;
 
   function CanvasDrawText(ACanvas: TCanvas; const AText: string; var Bounds: TRect; Flag: Cardinal): Integer;
@@ -691,153 +755,44 @@ var
 
 begin
   TextFormat := TTextFormatFlags(AFlags);
-  if UseVCLStyles then
-  begin
-    LStyle := StyleServices;
-    if LStyle.GetElementColor(Details, ecTextColor, ThemeTextColor) then
-    begin
-      if not Enabled or (seFont in StyleElements) then
-        Canvas.Font.Color := ThemeTextColor;
-      LStyle.DrawText(Canvas.Handle, Details, AText, ARect, TextFormat, Canvas.Font.Color);
-    end
-    else
-    begin
-      Canvas.Refresh;
-      LStyle.DrawText(Canvas.Handle, Details, AText, ARect, TextFormat);
-    end;
-  end
-  else
-  begin
-    //Drawing Caption
-    R := ARect;
-    CanvasDrawText(Canvas, AText, R, AFlags or DT_CALCRECT);
-    OffsetRect(R, (ARect.Width - R.Width) div 2, (ARect.Height - R.Height) div 2);
-    CanvasDrawText(Canvas, AText, R, AFlags);
-  end;
+  //Drawing Caption
+  R := ARect;
+  CanvasDrawText(Canvas, AText, R, AFlags or DT_CALCRECT);
+  OffsetRect(R, (ARect.Width - R.Width) div 2, (ARect.Height - R.Height) div 2);
+  CanvasDrawText(Canvas, AText, R, AFlags);
 end;
 
-function TStyledGraphicButton.UseVCLStyles: Boolean;
-begin
-  Result := False;
-end;
-
-(*
-function CreateRoundRectangle(rectangle: TGPRect;
-  radius: integer): TGPGraphicsPath;
+procedure TStyledGraphicButton.DrawBackgroundAndBorder;
 var
-  path : TGPGraphicsPath;
-  l, t, w, h, d : integer;
-begin
-  path := TGPGraphicsPath.Create;
-  l := rectangle.X;
-  t := rectangle.y;
-  w := rectangle.Width;
-  h := rectangle.Height;
-  d := radius div 2; // divide by 2
-
-  // the lines beween the arcs are automatically added by the path
-  path.AddArc(l, t, d, d, 180, 90); // topleft
-  path.AddArc(l + w - d, t, d, d, 270, 90); // topright
-  path.AddArc(l + w - d, t + h - d, d, d, 0, 90); // bottomright
-  path.AddArc(l, t + h - d, d, d, 90, 90); // bottomleft
-  path.CloseFigure();
-  result := path;
-end;
-*)
-
-procedure TStyledGraphicButton.DrawBorder;
-var
-  Details:  TThemedElementDetails;
-  LStyle: TCustomStyleServices;
   DrawRect: TRect;
-(*
-  GPGraphics: TGPGraphics;
-  GPPen: TGPPen;
-  GPRect: TGPRect;
-
-  function ConvertColor(Color: TColor; Alpha: Byte): Cardinal;
-  begin
-    with TColors(Color) do
-      Result := Winapi.GDIPAPI.MakeColor(Alpha, R, G, B);
-  end;
-*)
 begin
   DrawRect := ClientRect;
 
-  if UseVCLStyles then
-  begin
-    LStyle := StyleServices;
-    if IsPressed then
+  //Draw Rectancle or RoundRect
+  case FBorderType of
+    TBtnBorder.btRectangle, TBtnBorder.btSquare:
     begin
-      Details := LStyle.GetElementDetails(tbPushButtonPressed);
-    end
-    else if FMouseInControl then
+      CanvasDrawRect(Canvas, DrawRect);
+    end;
+    TBtnBorder.btRounded:
     begin
-      Details := LStyle.GetElementDetails(tbPushButtonHot);
-    end
-    else if Focused or IsDefault then
+      CanvasDrawRoundRect(Canvas, DrawRect, FRadius);
+    end;
+    TBtnBorder.btCircle:
     begin
-      Details := LStyle.GetElementDetails(tbPushButtonDefaulted);
-    end
-    else if Enabled then
-      Details := LStyle.GetElementDetails(tbPushButtonNormal);
-
-    LStyle.DrawElement(Canvas.Handle, Details, DrawRect);
-  end
-  else
-  begin
-    //Reduce Canvas
-    if Canvas.Pen.Style = psSolid then
-      InflateRect(DrawRect, -Canvas.Pen.Width div 2, -Canvas.Pen.Width div 2)
-    else
-      InflateRect(DrawRect, Canvas.Pen.Width div 2, Canvas.Pen.Width div 2);
-
-    //Draw Rectancle or RoundRect
-    case FBorderType of
-      btedgy:
-      begin
-        Canvas.Rectangle(DrawRect.Left, DrawRect.Top,
-          DrawRect.Left + DrawRect.Width,
-          DrawRect.Top + DrawRect.Height);
-      end;
-      btRounded:
-      begin
-        Canvas.RoundRect(DrawRect.Left, DrawRect.Top,
-          DrawRect.Left + DrawRect.Width, DrawRect.Top + DrawRect.Height,
-          FRadius, FRadius);
-        (*
-        GPRect.X := DrawRect.Left;
-        GPRect.Y := DrawRect.Top;
-        GPRect.Width := DrawRect.Width;
-        GPRect.Height := DrawRect.Height;
-        GPGraphics := TGPGraphics.Create(Canvas.Handle);
-        GPPen := TGPPen.Create(ConvertColor(Canvas.Pen.Color, 255));
-        try
-          GPGraphics.DrawPath(GPPen, CreateRoundRectangle(GPRect, Radius));
-        finally
-          GPPen.Free;
-          GPGraphics.Free;
-        end;
-        *)
-      end;
+      CanvasDrawCircle(Canvas, DrawRect);
     end;
   end;
 end;
 
-procedure TStyledGraphicButton.DrawImage(
-  const IX, IY: Integer);
-begin
-  if IconAssigned then
-    Images.Draw(Canvas, IX, IY, FImageIndex, Enabled);
-end;
-
-function TStyledGraphicButton.CalcImageRect(var ATextRect: TRect): TRect;
+function TStyledGraphicButton.CalcImageRect(var ATextRect: TRect;
+  const AImageWidth, AImageHeight: Integer): TRect;
 var
   IW, IH, IX, IY: Integer;
 begin
   //Calc Image Rect
-  IH := GetPictureHeight;
-  IW := GetPictureWidth;
+  IH := AImageHeight;
+  IW := AImageWidth;
   if (IH > 0) and (IW > 0) then
   begin
     IX := ATextRect.Left + 2;
@@ -917,6 +872,14 @@ begin
   if (Images = nil) or not Images.IsImageNameAvailable then
     Exit;
   Images.CheckIndexAndName(FImageIndex, FImageName);
+  Images.CheckIndexAndName(FHotImageIndex, FHotImageName);
+  Images.CheckIndexAndName(FPressedImageIndex, FPressedImageName);
+  Images.CheckIndexAndName(FSelectedImageIndex, FSelectedImageName);
+  //Images.CheckIndexAndName(FStylusHotImageIndex, FStylusHotImageName);
+  if FDisabledImages <> nil then
+    FDisabledImages.CheckIndexAndName(FDisabledImageIndex, FDisabledImageName)
+  else
+    Images.CheckIndexAndName(FDisabledImageIndex, FDisabledImageName);
 end;
 {$ENDIF}
 
@@ -924,39 +887,45 @@ procedure TStyledGraphicButton.DrawButton;
 var
   LTextFlags: Cardinal;
   LTextRect, LImageRect: TRect;
+  LImageList: TCustomImageList;
+  LImageIndex: Integer;
 begin
   GetDrawingStyle;
   LTextFlags := 0;
-  DrawBorder;
+  DrawBackgroundAndBorder;
 
   LTextRect := ClientRect;
-  LImageRect := CalcImageRect(LTextRect);
-  DrawImage(LImageRect.Left, LImageRect.Top);
-
+  if GetImage(LImageList, LImageIndex) then
+  begin
+    LImageRect := CalcImageRect(LTextRect, LImageList.Width, LImageList.Height);
+    LImageList.Draw(Canvas, LImageRect.Left, LImageRect.Top, LImageIndex, Enabled);
+  end;
   if LTextRect.IsEmpty then
     LTextRect := ClientRect;
   DrawText(Caption, LTextRect, DrawTextBiDiModeFlags(LTextFlags));
 end;
 
-function TStyledGraphicButton.GetDrawingStyle: TStyledButtonAttributes;
+function TStyledGraphicButton.GetButtonState: TStyledButtonState;
 begin
   //Getting drawing styles
   if not Enabled then
-    Result := GetAttributes(bsmDisabled)
+    Result := bsmDisabled
   else if FState = bsDown then
-    Result := GetAttributes(bsmDown)
+    Result := bsmPressed
   else if FMouseInControl and not Focused then
-    Result := GetAttributes(bsmHot)
+    Result := bsmHot
   else if Focused then
-    Result := GetAttributes(bsmFocused)
+    Result := bsmSelected
   else
-    Result := GetAttributes(bsmNormal);
-  Canvas.Pen := FPen;
+    Result := bsmNormal;
+end;
+
+function TStyledGraphicButton.GetDrawingStyle: TStyledButtonAttributes;
+begin
+  //Getting drawing styles
+  Result := GetAttributes(ButtonState);
   Canvas.Pen.Style := Result.BorderStyle;
-  if Canvas.Pen.Style <> psClear then
-    Canvas.Pen.Width := Round(Result.BorderWidth)
-  else
-    Canvas.Pen.Width := 0;
+  Canvas.Pen.Width := Result.BorderWidth;
   Canvas.Pen.Color := Result.BorderColor;
   Canvas.Brush.Style := Result.BrushStyle;
   if Canvas.Brush.Style <> bsClear then
@@ -965,7 +934,6 @@ begin
   Canvas.Font.Name := Result.FontName;
   Canvas.Font.Color := Result.FontColor;
   Canvas.Font.Style := Result.FontStyle;
-  FBorderType := Result.BorderType;
 end;
 
 function TStyledGraphicButton.GetFocused: Boolean;
@@ -983,13 +951,28 @@ begin
   if FBorderType <> AValue then
   begin
     FBorderType := AValue;
+(*
+    FButtonStyleNormal.BorderType := FBorderType;
+    FButtonStyleDown.BorderType := FBorderType;
+    FButtonStyleFocused.BorderType := FBorderType;
+    FButtonStyleHot.BorderType := FBorderType;
+    FButtonStyleDisabled.BorderType := FBorderType;
+*)
+    if FBorderType in [TBtnBorder.btCircle, TBtnBorder.btSquare] then
+      Width := Height;
     Invalidate;
   end;
 end;
 
 procedure TStyledGraphicButton.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+var
+  LWidth: Integer;
 begin
-  inherited;
+  if FBorderType in [TBtnBorder.btCircle, TBtnBorder.btSquare] then
+    LWidth := AHeight
+  else
+    LWidth := AWidth;
+  inherited SetBounds(ALeft, ATop, LWidth, AHeight);
   Repaint;
 end;
 
@@ -1002,6 +985,22 @@ begin
   end;
 end;
 
+procedure TStyledGraphicButton.SetDisabledImageIndex(const AValue: TImageIndex);
+begin
+  if AValue <> FDisabledImageIndex then
+  begin
+    FDisabledImageIndex := AValue;
+    {$IFDEF D10_4+}
+    if (FDisabledImages <> nil) and FDisabledImages.IsImageNameAvailable then
+      FDisabledImageName := FDisabledImages.GetNameByIndex(FDisabledImageIndex)
+    else
+      if (FDisabledImages = nil) and (FImages <> nil) and FImages.IsImageNameAvailable then
+        FDisabledImageName := FImages.GetNameByIndex(FDisabledImageIndex);
+    {$ENDIF}
+    UpdateImageIndexAndName;
+  end;
+end;
+
 procedure TStyledGraphicButton.SetImageIndex(const AValue: TImageIndex);
 begin
   if AValue <> FImageIndex then
@@ -1011,12 +1010,26 @@ begin
     if (FImages <> nil) and FImages.IsImageNameAvailable then
        FImageName := FImages.GetNameByIndex(FImageIndex);
     {$ENDIF}
-    UpdateImage;
+    UpdateImageIndexAndName;
     Invalidate;
   end;
 end;
 
 {$IFDEF D10_4+}
+procedure TStyledGraphicButton.SetDisabledImageName(const AValue: TImageName);
+begin
+  if AValue <> FDisabledImageName then
+  begin
+    FDisabledImageName := AValue;
+    if (FDisabledImages <> nil) and FDisabledImages.IsImageNameAvailable then
+      FDisabledImageIndex := FDisabledImages.GetIndexByName(FDisabledImageName)
+    else
+      if (FDisabledImages = nil) and (FImages <> nil) and FImages.IsImageNameAvailable then
+        FDisabledImageIndex := FImages.GetIndexByName(FDisabledImageName);
+    UpdateImageIndexAndName;
+  end;
+end;
+
 function TStyledGraphicButton.IsImageNameStored: Boolean;
 begin
   Result := (ActionLink = nil) or
@@ -1030,13 +1043,64 @@ begin
     FImageName := AValue;
     if (FImages <> nil) and FImages.IsImageNameAvailable then
       FImageIndex := FImages.GetIndexByName(FImageName);
-    UpdateImage;
+    UpdateImageIndexAndName;
     Invalidate;
+  end;
+end;
+
+procedure TStyledGraphicButton.UpdateImages;
+begin
+  if CheckWin32Version(5, 1) and (FImageIndex <> -1) then
+  begin
+    CheckImageIndexes;
+  end;
+end;
+
+procedure TStyledGraphicButton.UpdateImageName(Index: TImageIndex;
+  var Name: TImageName);
+begin
+  if (FImages <> nil) and FImages.IsImageNameAvailable then
+      Name := FImages.GetNameByIndex(Index);
+  UpdateImageIndexAndName;
+end;
+
+procedure TStyledGraphicButton.UpdateImageIndex(Name: TImageName;
+  var Index: TImageIndex);
+begin
+  if (FImages <> nil) and FImages.IsImageNameAvailable then
+      Index := FImages.GetIndexByName(Name);
+  UpdateImageIndexAndName;
+end;
+
+procedure TStyledGraphicButton.SetHotImageName(const AValue: TImageName);
+begin
+  if AValue <> FHotImageName then
+  begin
+    FHotImageName := AValue;
+    UpdateImageIndex(AValue, FHotImageIndex);
+  end;
+end;
+
+procedure TStyledGraphicButton.SetPressedImageName(const AValue: TImageName);
+begin
+  if AValue <> FPressedImageName then
+  begin
+    FPressedImageName := AValue;
+    UpdateImageIndex(AValue, FPressedImageIndex);
+  end;
+end;
+
+procedure TStyledGraphicButton.SetSelectedImageName(const AValue: TImageName);
+begin
+  if AValue <> FSelectedImageName then
+  begin
+    FSelectedImageName := AValue;
+    UpdateImageIndex(AValue, FSelectedImageIndex);
   end;
 end;
 {$ENDIF}
 
-procedure TStyledGraphicButton.UpdateImage;
+procedure TStyledGraphicButton.UpdateImageIndexAndName;
 begin
 {$IFDEF D10_4+}
   if (FImages <> nil) and FImages.IsImageNameAvailable then
@@ -1048,6 +1112,37 @@ begin
     CheckImageIndexes;
   end;
 {$ENDIF}
+end;
+
+procedure TStyledGraphicButton.SetDisabledImages(const AValue: TCustomImageList);
+begin
+  if AValue <> FDisabledImages then
+  begin
+    if DisabledImages <> nil then
+    begin
+      DisabledImages.RemoveFreeNotification(Self);
+      DisabledImages.UnRegisterChanges(FImageChangeLink);
+    end;
+    FDisabledImages := AValue;
+    if DisabledImages <> nil then
+    begin
+      DisabledImages.RegisterChanges(FImageChangeLink);
+      DisabledImages.FreeNotification(Self);
+    end;
+    UpdateImageIndexAndName;
+    Invalidate;
+  end;
+end;
+
+procedure TStyledGraphicButton.SetHotImageIndex(const AValue: TImageIndex);
+begin
+  if AValue <> FHotImageIndex then
+  begin
+    FHotImageIndex := AValue;
+    {$IFDEF D10_4+}
+    UpdateImageName(AValue, FHotImageName);
+    {$ENDIF}
+  end;
 end;
 
 procedure TStyledGraphicButton.SetImages(const AValue: TCustomImageList);
@@ -1065,7 +1160,7 @@ begin
       FImages.RegisterChanges(FImageChangeLink);
       FImages.FreeNotification(Self);
     end;
-    UpdateImage;
+    UpdateImageIndexAndName;
     Invalidate;
   end;
 end;
@@ -1078,6 +1173,17 @@ begin
   inherited;
   if LOldValue <> Caption then
     Invalidate;
+end;
+
+procedure TStyledGraphicButton.SetPressedImageIndex(const AValue: TImageIndex);
+begin
+  if AValue <> FPressedImageIndex then
+  begin
+    FPressedImageIndex := AValue;
+    {$IFDEF D10_4+}
+    UpdateImageName(AValue, FPressedImageName);
+    {$ENDIF}
+  end;
 end;
 
 procedure TStyledGraphicButton.SetButtonStyleNormal(const AValue: TStyledButtonAttributes);
@@ -1099,17 +1205,17 @@ end;
 
 procedure TStyledGraphicButton.SetButtonStyleDown(const AValue: TStyledButtonAttributes);
 begin
-  if not SameStyledButtonStyle(FButtonStyleDown, AValue) then
+  if not SameStyledButtonStyle(FButtonStylePressed, AValue) then
   begin
-    FButtonStyleDown := AValue;
+    FButtonStylePressed := AValue;
   end;
 end;
 
 procedure TStyledGraphicButton.SetButtonStyleFocused(const AValue: TStyledButtonAttributes);
 begin
-  if not SameStyledButtonStyle(FButtonStyleFocused, AValue) then
+  if not SameStyledButtonStyle(FButtonStyleSelected, AValue) then
   begin
-    FButtonStyleFocused := AValue;
+    FButtonStyleSelected := AValue;
   end;
 end;
 
@@ -1132,6 +1238,17 @@ begin
   begin
     FRadius := AValue;
     Invalidate;
+  end;
+end;
+
+procedure TStyledGraphicButton.SetSelectedImageIndex(const AValue: TImageIndex);
+begin
+  if AValue <> FSelectedImageIndex then
+  begin
+    FSelectedImageIndex := AValue;
+    {$IFDEF D10_4+}
+    UpdateImageName(AValue, FSelectedImageName);
+    {$ENDIF}
   end;
 end;
 
@@ -1186,11 +1303,6 @@ begin
   Invalidate;
 end;
 
-procedure TStyledGraphicButton.StyleChanged(Sender: TObject);
-begin
-  Invalidate;
-end;
-
 procedure TStyledGraphicButton.Loaded;
 begin
   inherited;
@@ -1205,6 +1317,8 @@ begin
   begin
     if AComponent = Images then
       Images := nil;
+    if AComponent = DisabledImages then
+      DisabledImages := nil;
   end;
 end;
 
@@ -1385,8 +1499,11 @@ end;
 procedure TStyledButton.MouseDown(Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
-  SetFocus;
-  inherited;
+  if Enabled then
+  begin
+    SetFocus;
+    inherited;
+  end;
 end;
 
 end.

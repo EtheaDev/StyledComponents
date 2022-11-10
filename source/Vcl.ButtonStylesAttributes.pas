@@ -27,14 +27,17 @@ unit Vcl.ButtonStylesAttributes;
 
 interface
 
+{$INCLUDE StyledComponents.inc}
+
 uses
   Vcl.Graphics
   , System.Classes
   , System.Contnrs
+  , System.Types
   , Vcl.Controls;
 
 const
-  DEFAULT_RADIUS = 4;
+  DEFAULT_RADIUS = 6;
 
 resourcestring
   ERROR_FAMILY_NOT_FOUND = 'Styled Button Family "%s" not found';
@@ -46,7 +49,7 @@ Type
   TStyledButtonAppearance = string;
 
   //Type of border
-  TBtnBorder = (btRounded, btedgy, btCircle);
+  TBtnBorder = (btRounded, btSquare, btRectangle, btCircle);
 
   //List of available elements
   TButtonFamilies = array of TStyledButtonFamily;
@@ -126,6 +129,11 @@ function SameStyledButtonStyle(Style1, Style2: TStyledButtonAttributes): Boolean
 procedure CloneButtonStyle(const ASource: TStyledButtonAttributes;
   var ADest: TStyledButtonAttributes);
 
+//drawing procedure
+procedure CanvasDrawRoundRect(const ACanvas: TCanvas; ARect: TRect; ARadius: Integer);
+procedure CanvasDrawCircle(const ACanvas: TCanvas; ARect: TRect);
+procedure CanvasDrawRect(const ACanvas: TCanvas; ARect: TRect);
+
 //ButtonFamily Factory
 procedure RegisterButtonFamily(
   const AStyledButtonAttributes: IStyledButtonAttributes);
@@ -150,6 +158,10 @@ implementation
 
 uses
   Winapi.Windows
+{$ifdef GDIPlusSupport}
+  , Winapi.GDIPAPI
+  , Winapi.GDIPOBJ
+{$endif}
   , System.SysUtils
   , System.UITypes
   , System.Math;
@@ -514,6 +526,175 @@ begin
     FRadius := Value;
     InvalidateControl;
   end;
+end;
+
+procedure AdjustCanvasRect(const ACanvas: TCanvas;
+  var ARect: TRect; ADrawingRect: Boolean);
+var
+  LWidth: Integer;
+begin
+  if not ADrawingRect then
+  begin
+    //Drawing RoundRect with border
+    LWidth := (ACanvas.Pen.Width) div 2;
+    InflateRect(ARect, -LWidth, -LWidth);
+    if not Odd(ACanvas.Pen.Width) then
+    begin
+      ARect.Width := ARect.Width +1;
+      ARect.Height := ARect.Height +1;
+    end;
+  end
+  else
+  begin
+    if ACanvas.Pen.Style <> psClear then
+    begin
+      //Reduce Canvas to draw a Square of Pen.Width
+      LWidth := ACanvas.Pen.Width div 2;
+      InflateRect(ARect, -LWidth, -LWidth);
+      if not Odd(ACanvas.Pen.Width) then
+      begin
+        ARect.Width := ARect.Width +1;
+        ARect.Height := ARect.Height +1;
+      end;
+    end;
+  end;
+  if ARect.Height < 2 then
+    ARect.Height := 2;
+  if ARect.Width < 2 then
+    ARect.Width := 2;
+end;
+
+procedure GPInflateRectF(var ARect: TGPRectF;
+  const AValue: Single);
+begin
+  ARect.X := ARect.X + (AValue / 2);
+  ARect.Y := ARect.Y + (AValue / 2);
+  ARect.Width := ARect.width - AValue -1;
+  ARect.Height := ARect.Height - AValue -1;
+end;
+
+{$ifdef GDIPlusSupport}
+function GetRoundRectangle(rectangle: TGPRectF;
+  radius: Single): TGPGraphicsPath;
+var
+  path : TGPGraphicsPath;
+  l, t, w, h, d : Single;
+begin
+  path := TGPGraphicsPath.Create;
+  l := rectangle.X;
+  t := rectangle.y;
+  w := rectangle.Width;
+  h := rectangle.Height;
+  d := radius / 2;
+
+  // the lines beween the arcs are automatically added by the path
+  path.AddArc(l, t, d, d, 180, 90); // topleft
+  path.AddArc(l + w - d, t, d, d, 270, 90); // topright
+  path.AddArc(l + w - d, t + h - d, d, d, 0, 90); // bottomright
+  path.AddArc(l, t + h - d, d, d, 90, 90); // bottomleft
+  path.CloseFigure();
+  result := path;
+end;
+
+function GPColor(Col: TColor): TGPColor;
+var
+  ColRef: COLORREF;
+begin
+  ColRef := ColorToRGB(Col);
+  Result := MakeColor(GetRValue(ColRef), GetGValue(ColRef),
+  GetBValue(ColRef));
+end;
+
+procedure CanvasDrawRoundRect(const ACanvas: TCanvas; ARect: TRect;
+  ARadius: Integer);
+var
+  LGraphics: TGPGraphics;
+  LSolidPen: TGPPen;
+  LBrush: TGPBrush;
+  LColor: TGPColor;
+  LRect: TGPRectF;
+  Path: TGPGraphicsPath;
+  LBorderWidth: Single;
+  X, Y, W, H: Single;
+begin
+  LGraphics := nil;
+  LSolidPen := nil;
+  try
+    X := ARect.Left;
+    Y := ARect.Top;
+    W := ARect.Width;
+    H := ARect.Height;
+    LRect := Winapi.GDIPAPI.MakeRect(X, Y, W, H);
+    LBorderWidth := ACanvas.Pen.Width;
+    //Reduce canvas to draw a rectangle of Pen Width
+    GPInflateRectF(LRect, LBorderWidth);
+    LGraphics := TGPGraphics.Create(ACanvas.Handle);
+    LGraphics.SetSmoothingMode(SmoothingModeAntiAlias);
+    LColor := GPColor(ACanvas.Pen.Color);
+    Path := GetRoundRectangle(LRect, ARadius*2);
+    LBrush := TGPSolidBrush.Create(GPColor(ACanvas.Brush.Color));
+    LGraphics.FillPath(LBrush, Path);
+    LSolidPen := TGPPen.Create(LColor, LBorderWidth);
+    LGraphics.DrawPath(LSolidPen, Path);
+  finally
+    LGraphics.Free;
+    LSolidPen.Free;
+  end;
+end;
+
+procedure CanvasDrawCircle(const ACanvas: TCanvas; ARect: TRect);
+var
+  LGraphics: TGPGraphics;
+  LSolidPen: TGPPen;
+  LBrush: TGPBrush;
+  LColor: TGPColor;
+  LRect: TGPRectF;
+  LBorderWidth: Single;
+  X, Y, W, H: Single;
+begin
+  LGraphics := nil;
+  LSolidPen := nil;
+  try
+    X := ARect.Left;
+    Y := ARect.Top;
+    W := ARect.Width;
+    H := ARect.Height;
+    LRect := Winapi.GDIPAPI.MakeRect(X, Y, W, H);
+    LBorderWidth := ACanvas.Pen.Width;
+    //Reduce canvas to draw a rectangle of Pen Width
+    GPInflateRectF(LRect, LBorderWidth);
+    LGraphics := TGPGraphics.Create(ACanvas.Handle);
+    LGraphics.SetSmoothingMode(SmoothingModeAntiAlias);
+    LColor := GPColor(ACanvas.Pen.Color);
+    LBrush := TGPSolidBrush.Create(GPColor(ACanvas.Brush.Color));
+    LGraphics.FillEllipse(LBrush, LRect);
+    LSolidPen := TGPPen.Create(LColor, LBorderWidth);
+    LGraphics.DrawEllipse(LSolidPen, LRect);
+  finally
+    LGraphics.Free;
+    LSolidPen.Free;
+  end;
+end;
+{$else}
+procedure CanvasDrawCircle(const ACanvas: TCanvas; ARect: TRect);
+begin
+  ACanvas.Ellipse(ARect.Left, ARect.Top,
+    ARect.Left + ARect.Width, ARect.Top + ARect.Height);
+end;
+
+procedure CanvasDrawRoundRect(const ACanvas: TCanvas; ARect: TRect;
+  ARadius: Integer);
+begin
+  AdjustCanvasRect(ACanvas, ARect, False);
+  ACanvas.Pen.Style := psSolid;
+  ACanvas.RoundRect(ARect, ARadius, ARadius);
+end;
+{$endif}
+
+procedure CanvasDrawRect(const ACanvas: TCanvas; ARect: TRect);
+begin
+  AdjustCanvasRect(ACanvas, ARect, True);
+  ACanvas.Rectangle(ARect);
 end;
 
 initialization

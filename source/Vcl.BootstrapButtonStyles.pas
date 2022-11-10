@@ -33,7 +33,7 @@ uses
   Vcl.ButtonStylesAttributes;
 
 const
-  BORDER_WIDTH = 3;
+  BOOTSTRAP_BORDER_WIDTH = 3;
 
   btn_primary = 'Primary';
   btn_secondary = 'Secondary';
@@ -189,7 +189,7 @@ begin
     //Outline: Border and FontColor same as Button Color
     ANormalStyle.BrushStyle := bsClear;
     ANormalStyle.BorderStyle := psSolid;
-    ANormalStyle.BorderWidth := BORDER_WIDTH;
+    ANormalStyle.BorderWidth := BOOTSTRAP_BORDER_WIDTH;
     ANormalStyle.FontColor := LButtonColor;
     ANormalStyle.BorderColor := LButtonColor;
   end
@@ -215,7 +215,7 @@ begin
       ButtonColor := LButtonColor;
       BorderColor := LightenColor(LButtonColor, 50);
       BorderStyle := psSolid;
-      BorderWidth := BORDER_WIDTH;
+      BorderWidth := BOOTSTRAP_BORDER_WIDTH;
       FontColor   := LFontColor;
       BrushStyle  := bsSolid;
     end;
@@ -226,7 +226,7 @@ begin
       ButtonColor := LButtonColor;
       //BorderColor := LightenColor(LButtonColor, 50);
       BorderStyle := psClear;
-      BorderWidth := BORDER_WIDTH;
+      BorderWidth := BOOTSTRAP_BORDER_WIDTH;
       FontColor := LFontColor;
       BrushStyle  := bsSolid;
     end;
@@ -239,7 +239,7 @@ begin
       else
         ButtonColor := DarkenColor(LButtonColor, 20);
       BorderStyle := psSolid;
-      BorderWidth := BORDER_WIDTH;
+      BorderWidth := BOOTSTRAP_BORDER_WIDTH;
       FontColor := LFontColor;
       BrushStyle  := bsSolid;
     end;
@@ -257,7 +257,7 @@ begin
     ADownStyle.ButtonColor := DarkenColor(LButtonColor, 20);
     ADownStyle.BorderColor := LightenColor(LButtonColor, 50);
     ADownStyle.BorderStyle := psSolid;
-    ADownStyle.BorderWidth := BORDER_WIDTH;
+    ADownStyle.BorderWidth := BOOTSTRAP_BORDER_WIDTH;
 
     //Button Hot: color as Down but no Border
     AHotStyle.ButtonColor := ADownStyle.ButtonColor;
@@ -265,7 +265,7 @@ begin
     //Button Focused
     AFocusedStyle.ButtonColor := DarkenColor(LButtonColor, 20);
     AFocusedStyle.BorderStyle := psSolid;
-    AFocusedStyle.BorderWidth := BORDER_WIDTH;
+    AFocusedStyle.BorderWidth := BOOTSTRAP_BORDER_WIDTH;
 
     //Button Disabled
     ADisabledStyle.ButtonColor := LightenColor(ANormalStyle.ButtonColor, 70);//ColortoGrayscale(LButtonColor);

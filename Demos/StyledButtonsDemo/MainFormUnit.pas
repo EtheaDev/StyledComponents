@@ -51,20 +51,32 @@ uses
   System.Actions,
   Vcl.ActnList,
   Vcl.ButtonStylesAttributes,
-  Vcl.StyledButtonEditorUnit, Vcl.ImageCollection;
+  Vcl.StyledButtonEditorUnit, Vcl.ImageCollection, Vcl.Menus;
 
 type
   TMainForm = class(TForm)
-    NormalButton: TButton;
     ActionList: TActionList;
     TestAction: TAction;
     StyledButton: TStyledButton;
     VirtualImageList: TVirtualImageList;
     ImageCollection: TImageCollection;
+    Button1: TButton;
+    Button2: TButton;
+    StyledButton2: TStyledButton;
+    StyledButton1: TStyledButton;
+    DisabledVirtualImageList: TVirtualImageList;
+    PopupMenu1: TPopupMenu;
+    New1: TMenuItem;
+    Open1: TMenuItem;
+    Save1: TMenuItem;
+    SaveAs1: TMenuItem;
+    Exit1: TMenuItem;
     procedure ButtonClick(Sender: TObject);
     procedure ButtonMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure TestActionExecute(Sender: TObject);
+    procedure StyledButton1Click(Sender: TObject);
+    procedure StyledButton2Click(Sender: TObject);
   private
     procedure CreateAllButtons;
     procedure CreateButtons(
@@ -133,6 +145,7 @@ begin
   LStyledButton.ImageIndex := AImageIndex;
   LStyledButton.StyleFamily := AFamily;
   LStyledButton.StyleClass := AClass;
+  //LStyledButton.BorderType := btRectangle;
   LStyledButton.ImageAlignment := AImagePos;
   LStyledButton.SetBounds(ALeft, ATop, LWidth, LHeight);
   LStyledButton.OnClick := ButtonClick;
@@ -147,6 +160,7 @@ begin
   LStyledButtonOutline.StyleFamily := AFamily;
   LStyledButtonOutline.StyleClass := AClass;
   LStyledButtonOutline.StyleAppearance := 'outline';
+  //LStyledButtonOutline.BorderType := btRectangle;
   LStyledButtonOutline.ImageAlignment := AImagePos;
   LStyledButtonOutline.SetBounds(ALeft+150, ATop, LWidth, LHeight);
   //LStyledButtonOutline.OnClick := ButtonClick;
@@ -171,6 +185,7 @@ begin
   LStyledButtonVCL.StyleFamily := 'Classic';
   LStyledButtonVCL.StyleClass := AVCLStyle;
   LStyledButtonVCL.StyleAppearance := DEFAULT_APPEARANCE;
+  //LStyledButtonOutline.BorderType := btRectangle;
   LStyledButtonVCL.Enabled := True;
   LStyledButtonVCL.ImageAlignment := AImagePos;
   LStyledButtonVCL.SetBounds(ALeft+450, ATop, LWidth, LHeight);
@@ -210,20 +225,30 @@ procedure TMainForm.CreateAllButtons;
 begin
   CreateButtons(Self, 10, 10 , 'Classic', 'Normal','Windows', 'Windows', 0, iaLeft);
   //Bootstrap Buttons
-  CreateButtons(Self, 10, 70 , 'Bootstrap', btn_Primary  ,'Primary',  'Tablet Dark',      1, iaRight);
+  CreateButtons(Self, 10, 70 , 'Bootstrap', btn_Primary  ,'Primary',  'Tablet Light',     1, iaRight);
   CreateButtons(Self, 10, 130, 'Bootstrap', btn_Secondary,'Secondary','Windows10',        2, iaTop);
   CreateButtons(Self, 10, 190, 'Bootstrap', btn_Success  ,'Success',  'Iceberg Classico', 3, iaBottom);
   CreateButtons(Self, 10, 250, 'Bootstrap', btn_Danger   ,'Danger',   'Ruby Graphite',    4, iaCenter);
-  CreateButtons(Self, 10, 310, 'Bootstrap', btn_Warning  ,'Warning',  'Golden Graphite',  -1, iaLeft);
-  CreateButtons(Self, 10, 370, 'Bootstrap', btn_Info     ,'Info',     'Windows10 Green',  -1, iaRight);
-  CreateButtons(Self, 10, 430, 'Bootstrap', btn_Light    ,'Light',    'Tablet Light',     -1, iaTop);
-  CreateButtons(Self, 10, 490, 'Bootstrap', btn_Dark     ,'Dark',     'Windows10 Dark',   -1, iaBottom);
+  CreateButtons(Self, 10, 310, 'Bootstrap', btn_Warning  ,'Warning',  'Golden Graphite',  5, iaLeft);
+  CreateButtons(Self, 10, 370, 'Bootstrap', btn_Info     ,'Info',     'Windows10 Green',  6, iaRight);
+  CreateButtons(Self, 10, 430, 'Bootstrap', btn_Light    ,'Light',    'Tablet Dark',      7, iaTop);
+  CreateButtons(Self, 10, 490, 'Bootstrap', btn_Dark     ,'Dark',     'Windows10 Dark',   8, iaBottom);
 end;
 
 procedure TMainForm.Loaded;
 begin
   CreateAllButtons;
   inherited;
+end;
+
+procedure TMainForm.StyledButton1Click(Sender: TObject);
+begin
+  StyledButton.Enabled := not StyledButton.Enabled;
+end;
+
+procedure TMainForm.StyledButton2Click(Sender: TObject);
+begin
+  EditStyledButton(StyledButton2);
 end;
 
 initialization

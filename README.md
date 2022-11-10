@@ -2,7 +2,7 @@
 
 ## Delphi VCL Components (Button and TaskDialog) with Custom Graphic Styles
 
-### Actual official "beta" version: 0.9.5
+### Actual official "beta" version: 0.9.8
 
 | Component | Description |
 | - | - |
@@ -54,6 +54,10 @@ Activating "Use Styled Dialog" you can use a special form to show complete custo
 
 ![StyledButtonDemo.jpg](./Images/CustomDialog.jpg)
 
+*Shield Dialog with footer*
+
+![ShieldButtonDemo.jpg](./Images/ShieldDialog.jpg)
+
 **Demos\Delphi10_4+\StyledButtonInControlList**
 
 A simple demo to show how to use StyledGraphicButton into a ControlList (only for D10.4+)
@@ -68,6 +72,18 @@ A simple demo to show how to use StyledGraphicButton into a ControlList (only fo
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+
+10 Nov 2022: version 0.9.8
+StyledButton:
+- Added DisabledImages, DisabledImageName, DisabledImageIndex, PressedImageIndex, PressedImageName, HotImageIndex, HotImageName, SelectedImageIndex, SelectedImageName.
+- Used GDI+ for rendering of buttons
+- Added Circle and Square Buttons styles
+
+StyledDialog:
+- Added Footer area and Text
+- Added full support for component TStyledTaskDialog (eg.shield icon)
+- Fixed Focused and DefaulButton
+- Updated test demo
 
 07 Nov 2022: version 0.9.5 (VCL)
 - Added Styled Button properties: StyleFamily, StyleClass and StyleAppearance

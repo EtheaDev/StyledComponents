@@ -1,4 +1,4 @@
-{$Define ItaMessages}
+{.$Define ItaMessages}
 
 // Delphi XE3
 {$IFDEF VER240}
@@ -141,6 +141,10 @@
   {$DEFINE D10_3+}
   {$DEFINE D10_4+}
   {$DEFINE D11+}
+{$ENDIF}
+
+{$IFDEF DXE6+}
+  {$Define GDIPlusSupport}
 {$ENDIF}
 
 {$IFDEF D10_3+}

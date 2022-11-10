@@ -457,17 +457,11 @@ function TStyledTaskDialog.DoExecute(ParentWnd: HWND): Boolean;
 type
   TTaskDialogIcon = (tdiWarning, tdiError,
     tdiInformation, tdiShield, tdiNone);
-const
-  IconMap: array[TTaskDialogIcon] of TMsgDlgType =
-    (TMsgDlgType.mtWarning,
-     TMsgDlgType.mtError,
-     TMsgDlgType.mtInformation,
-     TMsgDlgType.mtCustom,
-     TMsgDlgType.mtConfirmation);
 var
   LTaskDlgType: TMsgDlgType;
 begin
   LTaskDlgType := GetTaskDlgType(MainIcon);
+
   //Use a custom interface if registered
   if Assigned(TaskDialogExecute) then
     Result := TaskDialogExecute.DoExecute(ParentWnd,

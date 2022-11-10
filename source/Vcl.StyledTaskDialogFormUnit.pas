@@ -54,7 +54,7 @@ type
   end;
 
   TStyledTaskDialogForm = class(TForm)
-    BottomPanel: TPanel;
+    FooterPanel: TPanel;
     CenterPanel: TPanel;
     ImagePanel: TPanel;
     ButtonsPanel: TPanel;
@@ -77,6 +77,7 @@ type
     IgnoreButton: TStyledButton;
     NoToAllButton: TStyledButton;
     YesToAllButton: TStyledButton;
+    FooterTextLabel: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure ButtonClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -86,14 +87,18 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure HelpButtonClick(Sender: TObject);
   private
+    FFocusedButton: TStyledButton;
     FCustomIcons: TStyledDialogIcons;
     FTaskDialog: TCustomTaskDialog;
     FDialogType: TMsgDlgType;
     FCommonButtons: TTaskDialogCommonButtons;
     FDefaultButton: TTaskDialogCommonButton;
     FButtons: TTaskDialogButtons;
+    FMainIcon: TTaskDialogIcon;
     procedure GetIconNameAndIndex(ATaskDialog: TMsgDlgType;
-      out AImageName: string; out AImageIndex: Integer);
+      out AImageName: string; out AImageIndex: Integer); overload;
+    procedure GetIconNameAndIndex(ATaskDialogIcon: TTaskDialogIcon;
+      out AImageName: string; out AImageIndex: Integer); overload;
     procedure ShowDialogForm;
     procedure SetCommonButtons(const AValue: TTaskDialogCommonButtons);
     procedure SetHelpContext(const AValue: Integer);
@@ -105,10 +110,13 @@ type
     procedure AdjustHeight;
     procedure AdjustWidth;
     procedure AdjustButtonsCaption;
-    procedure SetButtons(const Value: TTaskDialogButtons);
+    procedure SetButtons(const AValue: TTaskDialogButtons);
     procedure PlayMessageDlgSound;
     procedure FocusDefaultButton;
     procedure LoadImage;
+    procedure SetFocusToButton(AStyledButton: TStyledButton);
+    procedure SetFooterText(const AValue: string);
+    function GetFooterText: string;
 (*
     property Button: TTaskDialogButtonItem read FButton write FButton;
 *)
@@ -123,12 +131,12 @@ type
     property ExpandedText: string read FExpandedText write SetExpandedText;
     property Flags: TTaskDialogFlags read FFlags write SetFlags default [tfAllowDialogCancellation];
     property FooterIcon: TTaskDialogIcon read FFooterIcon write SetFooterIcon default tdiNone;
-    property FooterText: string read FFooterText write SetFooterText;
     property Handle: HWND read FHandle;
 *)
+    property FooterText: string read GetFooterText write SetFooterText;
     property HelpContext: Integer read GetHelpContext write SetHelpContext default 0;
+    property MainIcon: TTaskDialogIcon read FMainIcon write FMainIcon default tdiInformation;
 (*
-    property MainIcon: TTaskDialogIcon read FMainIcon write SetMainIcon default tdiInformation;
     property ProgressBar: TTaskDialogProgressBar read FProgressBar write FProgressBar;
     property RadioButton: TTaskDialogRadioButtonItem read FRadioButton;
     property RadioButtons: TTaskDialogButtons read FRadioButtons write SetRadioButtons;
@@ -184,13 +192,13 @@ end;
 
 { TStyledTaskDialogForm }
 
-procedure TStyledTaskDialogForm.SetButtons(const Value: TTaskDialogButtons);
+procedure TStyledTaskDialogForm.SetButtons(const AValue: TTaskDialogButtons);
 var
   I: Integer;
   LTaskDialogButtonItem: TTaskDialogBaseButtonItem;
   LStyledButton: TStyledButton;
 begin
-  FButtons := Value;
+  FButtons := AValue;
   for I := FButtons.Count -1 downto 0 do
   begin
     LTaskDialogButtonItem := FButtons[I];
@@ -214,19 +222,36 @@ begin
       LStyledButton.Caption := LTaskDialogButtonItem.Caption;
       LStyledButton.Visible := True;
       LStyledButton.ModalResult := LTaskDialogButtonItem.ModalResult;
+      if LTaskDialogButtonItem.Default then
+        SetFocusToButton(LStyledButton);
     end;
   end;
 end;
 
+procedure TStyledTaskDialogForm.SetFocusToButton(AStyledButton: TStyledButton);
+begin
+  AStyledButton.SetFocus;
+  FFocusedButton := AStyledButton;
+end;
+
+procedure TStyledTaskDialogForm.SetFooterText(const AValue: string);
+begin
+  FooterTextLabel.Caption := AValue;
+  FooterPanel.Visible := AValue <> '';
+end;
+
 procedure TStyledTaskDialogForm.FocusDefaultButton;
 begin
-  case DefaultButton of
-    tcbOk: OKbutton.SetFocus;
-    tcbYes: YesButton.SetFocus;
-    tcbNo: NoButton.SetFocus;
-    tcbCancel: CancelButton.SetFocus;
-    tcbRetry: RetryButton.SetFocus;
-    tcbClose: CloseButton.SetFocus;
+  if not Assigned(FFocusedButton) then
+  begin
+    case DefaultButton of
+      tcbOk: SetFocusToButton(OKbutton);
+      tcbYes: SetFocusToButton(YesButton);
+      tcbNo: SetFocusToButton(NoButton);
+      tcbCancel: SetFocusToButton(CancelButton);
+      tcbRetry: SetFocusToButton(RetryButton);
+      tcbClose: SetFocusToButton(CloseButton);
+    end;
   end;
 end;
 
@@ -258,21 +283,21 @@ procedure TStyledTaskDialogForm.AdjustHeight;
 const
   margins = 8;
 var
-  LBottomPanelHeight: Integer;
+  LFooterPanelHeight: Integer;
   LMinHeight, LCalcHeight: Integer;
 begin
-  if BottomPanel.Visible then
-    LBottomPanelHeight := BottomPanel.Height
+  if FooterPanel.Visible then
+    LFooterPanelHeight := FooterPanel.Height
   else
-    LBottomPanelHeight := 0;
+    LFooterPanelHeight := 0;
   LCalcHeight :=
     AutoSizeLabel.Height + margins +
     TitleLabel.Height + margins +
-    LBottomPanelHeight + margins +
+    LFooterPanelHeight + margins +
     ButtonsPanel.Height + margins +
     margins + margins;
   LMinHeight := ImageList.Height +
-    LBottomPanelHeight + margins +
+    LFooterPanelHeight + margins +
     ButtonsPanel.Height +
     margins + margins;
 
@@ -329,7 +354,10 @@ var
   LIconIndex: Integer;
   LBitmap: TBitmap;
 begin
-  GetIconNameAndIndex(FDialogType, LIconName, LIconIndex);
+  if FMainIcon <> tdiNone then
+    GetIconNameAndIndex(FMainIcon, LIconName, LIconIndex)
+  else
+    GetIconNameAndIndex(FDialogType, LIconName, LIconIndex);
   LBitmap := TBitmap.Create;
   try
     LBitmap.PixelFormat := pf32bit;
@@ -348,8 +376,6 @@ begin
   CommonButtons := FTaskDialog.CommonButtons;
   Buttons := FTaskDialog.Buttons;
   DefaultButton := FTaskDialog.DefaultButton;
-  LoadImage;
-
 (*
     property Button: TTaskDialogButtonItem read FButton write FButton;
 *)
@@ -361,11 +387,11 @@ begin
     property ExpandedText: string read FExpandedText write SetExpandedText;
     property Flags: TTaskDialogFlags read FFlags write SetFlags default [tfAllowDialogCancellation];
     property FooterIcon: TTaskDialogIcon read FFooterIcon write SetFooterIcon default tdiNone;
-    property FooterText: string read FFooterText write SetFooterText;
     property Handle: HWND read FHandle;
 *)
+    FooterText := FTaskDialog.FooterText;
+    MainIcon := FTaskDialog.MainIcon;
 (*
-    property MainIcon: TTaskDialogIcon read FMainIcon write SetMainIcon default tdiInformation;
     property ProgressBar: TTaskDialogProgressBar read FProgressBar write FProgressBar;
     property RadioButton: TTaskDialogRadioButtonItem read FRadioButton;
     property RadioButtons: TTaskDialogButtons read FRadioButtons write SetRadioButtons;
@@ -386,6 +412,7 @@ begin
     property OnTimer: TTaskDlgTimerEvent read FOnTimer write FOnTimer;
     property OnVerificationClicked: TNotifyEvent read FOnVerificationClicked write FOnVerificationClicked;
 *)
+  LoadImage;
 end;
 
 procedure TStyledTaskDialogForm.TextLabelLinkClick(Sender: TObject;
@@ -438,7 +465,7 @@ procedure TStyledTaskDialogForm.FormCreate(Sender: TObject);
 //var
 //  LRegion: hrgn;
 begin
-  BottomPanel.Visible := False;
+  FooterPanel.Visible := False;
 
 //  LRegion := CreateRoundRectRgn(0, 0, Self.width, Self.height, 20, 20);
 //  SetwindowRgn(handle, LRegion, true);
@@ -458,7 +485,12 @@ begin
   if Key = VK_ESCAPE then
     CancelButton.Click
   else if key = VK_RETURN then
-    OKButton.Click;
+  begin
+    if Assigned(FFocusedButton) then
+      FFocusedButton.Click
+    else
+      OKButton.Click;
+  end;
 end;
 
 procedure TStyledTaskDialogForm.PlayMessageDlgSound;
@@ -480,6 +512,11 @@ begin
   FocusDefaultButton;
 end;
 
+function TStyledTaskDialogForm.GetFooterText: string;
+begin
+  Result := FooterTextLabel.Caption;
+end;
+
 function TStyledTaskDialogForm.GetHelpContext: Integer;
 begin
   Result := inherited HelpContext;
@@ -489,10 +526,21 @@ procedure TStyledTaskDialogForm.GetIconNameAndIndex(
   ATaskDialog: TMsgDlgType; out AImageName: string; out AImageIndex: Integer);
 const
   ImageNames: array[TMsgDlgType] of string =
-    ('Warning', 'Error', 'Information', 'Confirmation', 'Shield');
+    ('Warning', 'Error', 'Information', 'Confirmation', 'Custom');
 begin
   AImageName := ImageNames[ATaskDialog];
   AImageIndex := Ord(ATaskDialog);
+end;
+
+procedure TStyledTaskDialogForm.GetIconNameAndIndex(
+  ATaskDialogIcon: TTaskDialogIcon; out AImageName: string; out AImageIndex: Integer);
+const
+  ImageNames: array[tdiNone..tdiShield] of string =
+    ('Custom', 'Warning', 'Error', 'Information', 'Shield');
+  ImageIndexes: array[tdiNone..tdiShield] of integer = (4, 0, 1, 2, 5);
+begin
+  AImageName := ImageNames[ATaskDialogIcon];
+  AImageIndex := ImageIndexes[ATaskDialogIcon];
 end;
 
 function TStyledTaskDialogForm.GetText: string;
