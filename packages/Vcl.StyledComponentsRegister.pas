@@ -73,6 +73,7 @@ uses
   , Vcl.ButtonStylesAttributes
   , Vcl.StandardButtonStyles
   , Vcl.BootstrapButtonStyles
+  , Vcl.AngularButtonStyles
   , Vcl.StyledButtonEditorUnit
   , Vcl.StyledCmpStrUtils
   , System.Contnrs
@@ -84,7 +85,7 @@ uses
 
 function TButtonFamilyPropertyEditor.GetAttributes: TPropertyAttributes;
 begin
-  Result := [paValueList];
+  Result := [paValueList, paMultiSelect];
 end;
 
 procedure TButtonFamilyPropertyEditor.GetValues(Proc: TGetStrProc);
@@ -133,9 +134,9 @@ end;
 function TStyledGraphicButtonComponentEditor.GetVerb(Index: Integer): string;
 begin
   if Index = 0 then
-    Result := 'Show Editor...'
+    Result := 'Styled Button Editor...'
   else if Index = 1 then
-    Result := 'Visit project page on GitHub...';
+    Result := 'Project page on GitHub...';
 end;
 
 function TStyledGraphicButtonComponentEditor.GetVerbCount: Integer;

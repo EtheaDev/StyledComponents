@@ -27,6 +27,8 @@ unit Vcl.StyledTaskDialogFormUnit;
 
 interface
 
+{$INCLUDE StyledComponents.inc}
+
 uses
   Winapi.Windows,
   Winapi.Messages,
@@ -40,7 +42,8 @@ uses
   Vcl.StdCtrls,
   Vcl.ExtCtrls,
   Vcl.ImgList,
-  System.ImageList, //If you are using an older Delphi version, remove this line
+  //System.ImageList, //If you are using an older Delphi version, remove this line
+  System.UITypes,
   Vcl.StyledButton,
   Vcl.StyledTaskDialog,
   Vcl.StandardButtonStyles,
@@ -65,8 +68,6 @@ type
     TitleLabel: TLabel;
     TextLabel: TLinkLabel;
     AutoSizeLabel: TLabel;
-    ImageList: TImageList;
-    Image: TImage;
     CancelButton: TStyledButton;
     YesButton: TStyledButton;
     NoButton: TStyledButton;
@@ -113,10 +114,11 @@ type
     procedure SetButtons(const AValue: TTaskDialogButtons);
     procedure PlayMessageDlgSound;
     procedure FocusDefaultButton;
-    procedure LoadImage;
+    procedure LoadDialogImage;
     procedure SetFocusToButton(AStyledButton: TStyledButton);
     procedure SetFooterText(const AValue: string);
     function GetFooterText: string;
+    function GetFocusedButton: TStyledButton;
 (*
     property Button: TTaskDialogButtonItem read FButton write FButton;
 *)
@@ -160,12 +162,18 @@ type
   protected
     procedure UpdateCustomIcons;
     procedure Loaded; override;
+    procedure LoadImage(const AImageIndex: TImageIndex;
+      AImageName: string); virtual;
+    procedure DefaultDialogSize(out AClientWidth, AClientHeight: Integer); virtual;
   public
     procedure SetDialogFont(const AFont: TFont);
     constructor Create(AOwner: TComponent); override;
   end;
 
+  TStyledTaskDialogFormClass = class of TStyledTaskDialogForm;
+
 procedure UseStyledDialogForm(const AActivate: Boolean);
+procedure RegisterTaskDialogFormClass(AFormClass: TStyledTaskDialogFormClass);
 
 implementation
 
@@ -181,11 +189,17 @@ uses
 
 var
   DialogLauncher: ITaskDialogLauncher;
+  TaskDialogFormClass: TStyledTaskDialogFormClass;
+
+procedure RegisterTaskDialogFormClass(AFormClass: TStyledTaskDialogFormClass);
+begin
+  TaskDialogFormClass := AFormClass;
+end;
 
 procedure UseStyledDialogForm(const AActivate: Boolean);
 begin
   if AActivate then
-    RegisterCustomExecute( DialogLauncher)
+    RegisterCustomExecute(DialogLauncher)
   else
     UnregisterCustomExecute;
 end;
@@ -282,24 +296,23 @@ end;
 procedure TStyledTaskDialogForm.AdjustHeight;
 const
   margins = 8;
+  IMAGE_HEIGHT = 128;
 var
   LFooterPanelHeight: Integer;
   LMinHeight, LCalcHeight: Integer;
 begin
   if FooterPanel.Visible then
-    LFooterPanelHeight := FooterPanel.Height
+    LFooterPanelHeight := FooterPanel.Height + margins
   else
     LFooterPanelHeight := 0;
   LCalcHeight :=
     AutoSizeLabel.Height + margins +
     TitleLabel.Height + margins +
-    LFooterPanelHeight + margins +
-    ButtonsPanel.Height + margins +
-    margins + margins;
-  LMinHeight := ImageList.Height +
-    LFooterPanelHeight + margins +
-    ButtonsPanel.Height +
-    margins + margins;
+    LFooterPanelHeight +
+    ButtonsPanel.Height + margins;
+  LMinHeight := IMAGE_HEIGHT +
+    LFooterPanelHeight +
+    ButtonsPanel.Height + margins;
 
   Constraints.MinHeight := LMinHeight +
     Height - ClientHeight;
@@ -313,7 +326,6 @@ begin
 
   MessageScrollBox.VertScrollBar.Visible :=
     LCalcHeight > Constraints.MinHeight;
-  //TextLabel.Visible := False;
 end;
 
 procedure TStyledTaskDialogForm.AdjustWidth;
@@ -321,7 +333,9 @@ var
   LFormWidth, I: Integer;
   LStyledButton: TStyledButton;
   LMargins: Integer;
+  LWidth, LHeight: Integer;
 begin
+  DefaultDialogSize(LWidth, LHeight);
   LMargins := ButtonsPanel.Margins.Left;
   LFormWidth := LMargins;
   for I := 0 to ComponentCount -1 do
@@ -334,7 +348,7 @@ begin
     end;
   end;
   LFormWidth := LFormWidth + LMargins;
-  Width := Max(Width, LFormWidth);
+  Width := Max(LWidth, LFormWidth);
 end;
 
 procedure TStyledTaskDialogForm.SetText(const AValue: string);
@@ -348,24 +362,16 @@ begin
   TitleLabel.Caption := AValue;
 end;
 
-procedure TStyledTaskDialogForm.LoadImage;
+procedure TStyledTaskDialogForm.LoadDialogImage;
 var
   LIconName: string;
   LIconIndex: Integer;
-  LBitmap: TBitmap;
 begin
   if FMainIcon <> tdiNone then
     GetIconNameAndIndex(FMainIcon, LIconName, LIconIndex)
   else
     GetIconNameAndIndex(FDialogType, LIconName, LIconIndex);
-  LBitmap := TBitmap.Create;
-  try
-    LBitmap.PixelFormat := pf32bit;
-    ImageList.GetBitmap(lIconIndex, LBitmap);
-    Image.Picture.Bitmap.Assign(LBitmap);
-  finally
-    LBitmap.free;
-  end;
+  LoadImage(LIconIndex, LIconName);
 end;
 
 procedure TStyledTaskDialogForm.ShowDialogForm;
@@ -412,7 +418,8 @@ begin
     property OnTimer: TTaskDlgTimerEvent read FOnTimer write FOnTimer;
     property OnVerificationClicked: TNotifyEvent read FOnVerificationClicked write FOnVerificationClicked;
 *)
-  LoadImage;
+  //Load and show Image
+  LoadDialogImage;
 end;
 
 procedure TStyledTaskDialogForm.TextLabelLinkClick(Sender: TObject;
@@ -461,6 +468,13 @@ begin
   FDefaultButton := tcbOk;
 end;
 
+procedure TStyledTaskDialogForm.DefaultDialogSize(out AClientWidth, AClientHeight: Integer);
+begin
+  //Values for 96 DPI
+  AClientWidth := 600;
+  AClientHeight := 280;
+end;
+
 procedure TStyledTaskDialogForm.FormCreate(Sender: TObject);
 //var
 //  LRegion: hrgn;
@@ -480,14 +494,33 @@ begin
   FCustomIcons[mtCustom].Free;
 end;
 
+function TStyledTaskDialogForm.GetFocusedButton: TStyledButton;
+var
+  I: Integer;
+begin
+  for I := 0 to ComponentCount -1 do
+  begin
+    if (Components[I] is TStyledButton) then
+    begin
+      Result := TStyledButton(Components[I]);
+      if Result.Focused then
+        Exit;
+    end;
+  end;
+  Result := FFocusedButton;
+end;
+
 procedure TStyledTaskDialogForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+var
+  LButton: TStyledButton;
 begin
   if Key = VK_ESCAPE then
     CancelButton.Click
   else if key = VK_RETURN then
   begin
-    if Assigned(FFocusedButton) then
-      FFocusedButton.Click
+    LButton := GetFocusedButton;
+    if LButton <> nil then
+      LButton.Click
     else
       OKButton.Click;
   end;
@@ -588,6 +621,12 @@ begin
   inherited;
 end;
 
+procedure TStyledTaskDialogForm.LoadImage(const AImageIndex: TImageIndex;
+  AImageName: string);
+begin
+  ; //In descendant Form use this method to load the image and place it into ImagePanel
+end;
+
 function TTaskDialogLauncherHandler.DoExecute(ParentWnd: HWND;
   const ADialogType: TMsgDlgType;
   const ATaskDialog: TCustomTaskDialog): Boolean;
@@ -595,7 +634,7 @@ var
   LForm: TStyledTaskDialogForm;
   LFont: TFont;
 begin
-  LForm := TStyledTaskDialogForm.Create(nil);
+  LForm := TaskDialogFormClass.Create(nil);
   try
     LForm.FTaskDialog := ATaskDialog;
     LForm.FDialogType := ADialogType;
@@ -613,6 +652,7 @@ begin
 end;
 
 initialization
+  TaskDialogFormClass := TStyledTaskDialogForm;
   //Create handler for execute custom TaskDialog Form
   DialogLauncher := TTaskDialogLauncherHandler.Create;
   //Register the handler

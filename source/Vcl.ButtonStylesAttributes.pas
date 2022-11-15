@@ -49,7 +49,10 @@ Type
   TStyledButtonAppearance = string;
 
   //Type of border
-  TBtnBorder = (btRounded, btSquare, btRectangle, btCircle);
+  TStyledButtonDrawType = (btRounded, btRect, btEllipse);
+  //Type of Draw for Border
+  TBorderDrawStyle = (brdClear, brdSolid); //similar to Pen.psClear and Pen.psSolid
+  TButtonDrawStyle = (btnClear, btnSolid); //similar to Brush.bsClear and Brush.bsSolid
 
   //List of available elements
   TButtonFamilies = array of TStyledButtonFamily;
@@ -58,10 +61,10 @@ Type
 
   TStyledButtonAttributes = class(TComponent)
   private
-    FBorderType: TBtnBorder;
+    FDrawType: TStyledButtonDrawType;
     FBorderWidth: Integer;
-    FBorderStyle: TPenStyle;
-    FBrushStyle: TBrushStyle;
+    FBorderDrawStyle: TBorderDrawStyle;
+    FButtonDrawStyle: TButtonDrawStyle;
     FBorderColor: TColor;
     FFontColor: TColor;
     FFontStyle: TFontStyles;
@@ -72,9 +75,9 @@ Type
     FRadius: Integer;
     procedure InvalidateControl;
     procedure SetBorderColor(const Value: TColor);
-    procedure SetBorderStyle(const Value: TPenStyle);
-    procedure SetBrushStyle(const Value: TBrushStyle);
-    procedure SetBorderType(const Value: TBtnBorder);
+    procedure SetBorderDrawStyle(const Value: TBorderDrawStyle);
+    procedure SetButtonDrawStyle(const Value: TButtonDrawStyle);
+    procedure SetDrawType(const Value: TStyledButtonDrawType);
     procedure SetBorderWidth(const Value: Integer);
     procedure SetButtonColor(const Value: TColor);
     procedure SetFontColor(const Value: TColor);
@@ -86,17 +89,19 @@ Type
     procedure ResetChanged;
     function IsChanged: Boolean;
     procedure Assign(ASource: TPersistent); override;
+    function PenStyle: TPenStyle;
+    function BrushStyle: TBrushStyle;
   published
-    property BorderType : TBtnBorder  read FBorderType   write SetBorderType;
-    property BorderWidth: Integer     read FBorderWidth  write SetBorderWidth;
-    property BorderStyle: TPenStyle   read FBorderStyle  write SetBorderStyle;
-    property BrushStyle : TBrushStyle read FBrushStyle   write SetBrushStyle;
-    property BorderColor: TColor      read FBorderColor  write SetBorderColor;
-    property FontColor  : TColor      read FFontColor    write SetFontColor;
-    property FontStyle  : TFontStyles read FFontStyle    write SetFontStyle;
-    property FontName   : TFontName   read FFontName     write SetFontName;
-    property ButtonColor: TColor      read FButtonColor  write SetButtonColor;
-    property Radius     : Integer     read FRadius       write SetRadius;
+ property DrawType: TStyledButtonDrawType read FDrawType write SetDrawType;
+ property BorderWidth: Integer read FBorderWidth write SetBorderWidth;
+ property BorderDrawStyle: TBorderDrawStyle read FBorderDrawStyle write SetBorderDrawStyle default brdSolid;
+ property ButtonDrawStyle: TButtonDrawStyle read FButtonDrawStyle write SetButtonDrawStyle default btnSolid;
+ property BorderColor: TColor read FBorderColor write SetBorderColor;
+ property FontColor: TColor read FFontColor write SetFontColor;
+ property FontStyle: TFontStyles read FFontStyle write SetFontStyle;
+ property FontName: TFontName read FFontName write SetFontName;
+ property ButtonColor: TColor read FButtonColor write SetButtonColor;
+ property Radius: Integer read FRadius write SetRadius;
   end;
 
   //  Abstraction of Graphic Button Attributes
@@ -106,7 +111,7 @@ Type
       const AFamily:  TStyledButtonFamily;
       const AStyle: TStyledButtonClass;
       const AAppearance: TStyledButtonAppearance;
-      var ANormalStyle, ADownStyle, AFocusedStyle,
+      var ANormalStyle, APressedStyle, ASelectedStyle,
       AHotStyle, ADisabledStyle: TStyledButtonAttributes);
     function ButtonFamilyName: string;
     function GetButtonClasses: TButtonClasses;
@@ -129,10 +134,9 @@ function SameStyledButtonStyle(Style1, Style2: TStyledButtonAttributes): Boolean
 procedure CloneButtonStyle(const ASource: TStyledButtonAttributes;
   var ADest: TStyledButtonAttributes);
 
-//drawing procedure
-procedure CanvasDrawRoundRect(const ACanvas: TCanvas; ARect: TRect; ARadius: Integer);
-procedure CanvasDrawCircle(const ACanvas: TCanvas; ARect: TRect);
-procedure CanvasDrawRect(const ACanvas: TCanvas; ARect: TRect);
+//drawing Button: using GPI or not
+procedure CanvasDrawShape(const ACanvas: TCanvas; ARect: TRect;
+  const ADrawType: TStyledButtonDrawType; const ACornerRadius: Integer);
 
 //ButtonFamily Factory
 procedure RegisterButtonFamily(
@@ -142,17 +146,17 @@ function GetButtonFamilyName(const Index: Integer): TStyledButtonFamily;
 function GetButtonFamilyClasses(const AFamily: TStyledButtonFamily): TButtonClasses;
 function GetButtonFamilyAppearances(const AFamily: TStyledButtonFamily): TButtonAppearances;
 
-procedure StyleFamilyCheckAttributes(
+function StyleFamilyCheckAttributes(
   const AFamily: TStyledButtonFamily;
   var AClass: TStyledButtonClass;
-  var AAppearance: TStyledButtonAppearance);
+  var AAppearance: TStyledButtonAppearance): Boolean;
 
 procedure StyleFamilyUpdateAttributes(
   const AFamily: TStyledButtonFamily;
   const AClass: TStyledButtonClass;
   const AAppearance: TStyledButtonAppearance;
-  var ANormalStyle, ADownStyle,
-  AFocusedStyle, AHotStyle, ADisabledStyle: TStyledButtonAttributes);
+  var ANormalStyle, APressedStyle,
+  ASelectedStyle, AHotStyle, ADisabledStyle: TStyledButtonAttributes);
 
 implementation
 
@@ -169,14 +173,16 @@ uses
 function SameStyledButtonStyle(Style1, Style2: TStyledButtonAttributes): Boolean;
 begin
   Result :=
-    (Style1.BorderType  = Style2.BorderType ) and
+    (Style1.DrawType = Style2.DrawType) and
     (Style1.BorderWidth = Style2.BorderWidth) and
-    (Style1.BorderStyle = Style2.BorderStyle) and
+    (Style1.BorderDrawStyle = Style2.BorderDrawStyle) and
+    (Style1.ButtonDrawStyle = Style2.ButtonDrawStyle)  and
     (Style1.BorderColor = Style2.BorderColor) and
-    (Style1.FontColor   = Style2.FontColor  ) and
-    (Style1.FontStyle   = Style2.FontStyle  ) and
-    (Style1.FontName    = Style2.FontName   ) and
-    (Style1.ButtonColor = Style2.ButtonColor);
+    (Style1.FontColor = Style2.FontColor) and
+    (Style1.FontStyle = Style2.FontStyle) and
+    (Style1.FontName = Style2.FontName) and
+    (Style1.ButtonColor = Style2.ButtonColor) and
+    (Style1.Radius = Style2.Radius);
 end;
 
 function ColortoGrayscale(AColor : TColor): TColor;
@@ -235,14 +241,16 @@ procedure CloneButtonStyle(
   const ASource: TStyledButtonAttributes;
   var ADest: TStyledButtonAttributes);
 begin
-  ADest.BorderType := ASource.BorderType;
+  ADest.DrawType := ASource.DrawType;
   ADest.BorderWidth := ASource.BorderWidth;
-  ADest.BorderStyle := ASource.BorderStyle;
+  ADest.BorderDrawStyle := ASource.BorderDrawStyle;
+  ADest.ButtonDrawStyle := ASource.ButtonDrawStyle;
   ADest.BorderColor := ASource.BorderColor;
-  ADest.FontName := ASource.FontName;
-  ADest.FontColor := ASource.FontColor;
   ADest.FontStyle := ASource.FontStyle;
+  ADest.FontColor := ASource.FontColor;
+  ADest.FontName := ASource.FontName;
   ADest.ButtonColor := ASource.ButtonColor;
+  ADest.Radius := ASource.Radius;
 end;
 
 var
@@ -268,10 +276,10 @@ begin
   end;
 end;
 
-procedure StyleFamilyCheckAttributes(
+function StyleFamilyCheckAttributes(
   const AFamily: TStyledButtonFamily;
   var AClass: TStyledButtonClass;
-  var AAppearance: TStyledButtonAppearance);
+  var AAppearance: TStyledButtonAppearance): Boolean;
 var
   I: Integer;
   LButtonFamily: TButtonFamily;
@@ -281,6 +289,7 @@ var
   LDefaultAppearance: TStyledButtonAppearance;
   LClassFound, LAppearanceFound: Boolean;
 begin
+  Result := True;
   if GetButtonFamily(AFamily, LButtonFamily) then
   begin
     LClasses := LButtonFamily.FStyledAttributes.GetButtonClasses;
@@ -297,7 +306,10 @@ begin
       end;
     end;
     if not LClassFound then
+    begin
       AClass := LDefaultClass;
+      Result := False;
+    end;
 
     LAppearances := LButtonFamily.FStyledAttributes.GetButtonAppearances;
     LDefaultAppearance := LAppearances[0];
@@ -313,7 +325,10 @@ begin
       end;
     end;
     if not LAppearanceFound then
+    begin
       AAppearance := LDefaultAppearance;
+      Result := False;
+    end;
   end;
 end;
 
@@ -321,8 +336,8 @@ procedure StyleFamilyUpdateAttributes(
   const AFamily: TStyledButtonFamily;
   const AClass: TStyledButtonClass;
   const AAppearance: TStyledButtonAppearance;
-  var ANormalStyle, ADownStyle,
-  AFocusedStyle, AHotStyle, ADisabledStyle: TStyledButtonAttributes);
+  var ANormalStyle, APressedStyle,
+  ASelectedStyle, AHotStyle, ADisabledStyle: TStyledButtonAttributes);
 var
   LButtonFamily: TButtonFamily;
 begin
@@ -330,13 +345,13 @@ begin
   begin
     LButtonFamily.FStyledAttributes.UpdateAttributes(
       AFamily, AClass, AAppearance,
-      ANormalStyle, ADownStyle, AFocusedStyle,
+      ANormalStyle, APressedStyle, ASelectedStyle,
       AHotStyle, ADisabledStyle);
 
     //Attributes defined with Family/Class/Appearance reset any changes
     ANormalStyle.ResetChanged;
-    ADownStyle.ResetChanged;
-    AFocusedStyle.ResetChanged;
+    APressedStyle.ResetChanged;
+    ASelectedStyle.ResetChanged;
     AHotStyle.ResetChanged;
     ADisabledStyle.ResetChanged;
   end;
@@ -390,6 +405,15 @@ begin
   Result := FIsChanged;
 end;
 
+function TStyledButtonAttributes.PenStyle: TPenStyle;
+begin
+  case BorderDrawStyle of
+    brdClear: Result := psClear;
+  else
+    Result := psSolid;
+  end;
+end;
+
 procedure TStyledButtonAttributes.ResetChanged;
 begin
   FIsChanged := False;
@@ -402,10 +426,10 @@ begin
   if ASource is TStyledButtonAttributes then
   begin
     LSource := TStyledButtonAttributes(ASource);
-    FBorderType   := LSource.FBorderType;
+    FDrawType   := LSource.FDrawType;
     FBorderWidth  := LSource.FBorderWidth;
-    FBorderStyle  := LSource.FBorderStyle;
-    FBrushStyle   := LSource.FBrushStyle;
+    FBorderDrawStyle  := LSource.FBorderDrawStyle;
+    FButtonDrawStyle   := LSource.FButtonDrawStyle;
     FBorderColor  := LSource.FBorderColor;
     FFontColor    := LSource.FFontColor;
     FFontStyle    := LSource.FFontStyle;
@@ -417,10 +441,22 @@ begin
     inherited Assign(ASource);
 end;
 
+function TStyledButtonAttributes.BrushStyle: TBrushStyle;
+begin
+  case FButtonDrawStyle of
+    btnClear: Result := bsClear;
+  else
+    Result := bsSolid;
+  end;
+end;
+
 constructor TStyledButtonAttributes.Create(AOwner: TComponent);
 begin
   inherited;
   FRadius := DEFAULT_RADIUS;
+  FBorderDrawStyle := brdSolid;
+  FButtonDrawStyle := btnSolid;
+
   if AOwner is TGraphicControl then
   begin
     FOwnerControl := TGraphicControl(AOwner);
@@ -447,29 +483,29 @@ begin
   end;
 end;
 
-procedure TStyledButtonAttributes.SetBorderStyle(const Value: TPenStyle);
+procedure TStyledButtonAttributes.SetBorderDrawStyle(const Value: TBorderDrawStyle);
 begin
-  if FBorderStyle <> Value then
+  if FBorderDrawStyle <> Value then
   begin
-    FBorderStyle := Value;
+    FBorderDrawStyle := Value;
     InvalidateControl;
   end;
 end;
 
-procedure TStyledButtonAttributes.SetBrushStyle(const Value: TBrushStyle);
+procedure TStyledButtonAttributes.SetButtonDrawStyle(const Value: TButtonDrawStyle);
 begin
-  if FBrushStyle <> Value then
+  if FButtonDrawStyle <> Value then
   begin
-    FBrushStyle := Value;
+    FButtonDrawStyle := Value;
     InvalidateControl;
   end;
 end;
 
-procedure TStyledButtonAttributes.SetBorderType(const Value: TBtnBorder);
+procedure TStyledButtonAttributes.SetDrawType(const Value: TStyledButtonDrawType);
 begin
-  if FBorderType <> Value then
+  if FDrawType <> Value then
   begin
-    FBorderType := Value;
+    FDrawType := Value;
     InvalidateControl;
   end;
 end;
@@ -574,51 +610,51 @@ begin
 end;
 
 {$ifdef GDIPlusSupport}
-function GetRoundRectangle(rectangle: TGPRectF;
-  radius: Single): TGPGraphicsPath;
+function GetRoundRectangle(ARectangle: TGPRectF;
+  ARadius: Single): TGPGraphicsPath;
 var
-  path : TGPGraphicsPath;
+  LPath : TGPGraphicsPath;
   l, t, w, h, d : Single;
 begin
-  path := TGPGraphicsPath.Create;
-  l := rectangle.X;
-  t := rectangle.y;
-  w := rectangle.Width;
-  h := rectangle.Height;
-  d := radius / 2;
+  LPath := TGPGraphicsPath.Create;
+  l := ARectangle.X;
+  t := ARectangle.y;
+  w := ARectangle.Width;
+  h := ARectangle.Height;
+  d := ARadius / 2;
 
   // the lines beween the arcs are automatically added by the path
-  path.AddArc(l, t, d, d, 180, 90); // topleft
-  path.AddArc(l + w - d, t, d, d, 270, 90); // topright
-  path.AddArc(l + w - d, t + h - d, d, d, 0, 90); // bottomright
-  path.AddArc(l, t + h - d, d, d, 90, 90); // bottomleft
-  path.CloseFigure();
-  result := path;
+  LPath.AddArc(l, t, d, d, 180, 90); // topleft
+  LPath.AddArc(l + w - d, t, d, d, 270, 90); // topright
+  LPath.AddArc(l + w - d, t + h - d, d, d, 0, 90); // bottomright
+  LPath.AddArc(l, t + h - d, d, d, 90, 90); // bottomleft
+  LPath.CloseFigure();
+  result := LPath;
 end;
 
-function GPColor(Col: TColor): TGPColor;
+function GPColor(AColor: TColor): TGPColor;
 var
   ColRef: COLORREF;
 begin
-  ColRef := ColorToRGB(Col);
+  ColRef := ColorToRGB(AColor);
   Result := MakeColor(GetRValue(ColRef), GetGValue(ColRef),
   GetBValue(ColRef));
 end;
 
-procedure CanvasDrawRoundRect(const ACanvas: TCanvas; ARect: TRect;
-  ARadius: Integer);
+procedure CanvasDrawShape(const ACanvas: TCanvas; ARect: TRect;
+  const ADrawType: TStyledButtonDrawType; const ACornerRadius: Integer);
 var
   LGraphics: TGPGraphics;
-  LSolidPen: TGPPen;
+  LPen: TGPPen;
   LBrush: TGPBrush;
-  LColor: TGPColor;
+  LButtonColor, LPenColor: TGPColor;
   LRect: TGPRectF;
-  Path: TGPGraphicsPath;
+  LPath: TGPGraphicsPath;
   LBorderWidth: Single;
   X, Y, W, H: Single;
 begin
   LGraphics := nil;
-  LSolidPen := nil;
+  LPen := nil;
   try
     X := ARect.Left;
     Y := ARect.Top;
@@ -626,76 +662,77 @@ begin
     H := ARect.Height;
     LRect := Winapi.GDIPAPI.MakeRect(X, Y, W, H);
     LBorderWidth := ACanvas.Pen.Width;
-    //Reduce canvas to draw a rectangle of Pen Width
-    GPInflateRectF(LRect, LBorderWidth);
     LGraphics := TGPGraphics.Create(ACanvas.Handle);
     LGraphics.SetSmoothingMode(SmoothingModeAntiAlias);
-    LColor := GPColor(ACanvas.Pen.Color);
-    Path := GetRoundRectangle(LRect, ARadius*2);
-    LBrush := TGPSolidBrush.Create(GPColor(ACanvas.Brush.Color));
-    LGraphics.FillPath(LBrush, Path);
-    LSolidPen := TGPPen.Create(LColor, LBorderWidth);
-    LGraphics.DrawPath(LSolidPen, Path);
-  finally
-    LGraphics.Free;
-    LSolidPen.Free;
-  end;
-end;
+    LPenColor := GPColor(ACanvas.Pen.Color);
+    LButtonColor := GPColor(ACanvas.Brush.Color);
 
-procedure CanvasDrawCircle(const ACanvas: TCanvas; ARect: TRect);
-var
-  LGraphics: TGPGraphics;
-  LSolidPen: TGPPen;
-  LBrush: TGPBrush;
-  LColor: TGPColor;
-  LRect: TGPRectF;
-  LBorderWidth: Single;
-  X, Y, W, H: Single;
-begin
-  LGraphics := nil;
-  LSolidPen := nil;
-  try
-    X := ARect.Left;
-    Y := ARect.Top;
-    W := ARect.Width;
-    H := ARect.Height;
-    LRect := Winapi.GDIPAPI.MakeRect(X, Y, W, H);
-    LBorderWidth := ACanvas.Pen.Width;
-    //Reduce canvas to draw a rectangle of Pen Width
-    GPInflateRectF(LRect, LBorderWidth);
-    LGraphics := TGPGraphics.Create(ACanvas.Handle);
-    LGraphics.SetSmoothingMode(SmoothingModeAntiAlias);
-    LColor := GPColor(ACanvas.Pen.Color);
-    LBrush := TGPSolidBrush.Create(GPColor(ACanvas.Brush.Color));
-    LGraphics.FillEllipse(LBrush, LRect);
-    LSolidPen := TGPPen.Create(LColor, LBorderWidth);
-    LGraphics.DrawEllipse(LSolidPen, LRect);
+    if ACanvas.Pen.Style = psClear then
+      LPen := TGPPen.Create(TAlphaColorRec.Null, LBorderWidth)
+    else
+      LPen := TGPPen.Create(LPenColor, LBorderWidth);
+
+    if (ADrawType in [btRounded]) then
+    begin
+      //Reduce canvas to draw a rounded rectangle of Pen Width
+      GPInflateRectF(LRect, LBorderWidth);
+      //Drawing a Rounded Rect
+      LPath := GetRoundRectangle(LRect, ACornerRadius*2);
+      if ACanvas.Brush.Style = bsSolid then
+      begin
+        LBrush := TGPSolidBrush.Create(LButtonColor);
+        LGraphics.FillPath(LBrush, LPath);
+      end;
+      LGraphics.DrawPath(LPen, LPath);
+    end
+    else if (ADrawType in [btRect]) then
+    begin
+      //Drawing Rectangular button (no need to GDI+)
+      AdjustCanvasRect(ACanvas, ARect, True);
+      if ACanvas.Brush.Style = bsSolid then
+        ACanvas.FillRect(ARect);
+      ACanvas.Rectangle(ARect);
+    end
+    else
+    begin
+      //Reduce canvas
+      GPInflateRectF(LRect, LBorderWidth);
+      //Drawing Circle or Ellipsis
+      if ACanvas.Brush.Style = bsSolid then
+      begin
+        LBrush := TGPSolidBrush.Create(LButtonColor);
+        LGraphics.FillEllipse(LBrush, LRect);
+      end;
+      LGraphics.DrawEllipse(LPen, LRect);
+    end;
   finally
     LGraphics.Free;
-    LSolidPen.Free;
+    LPen.Free;
   end;
 end;
 {$else}
-procedure CanvasDrawCircle(const ACanvas: TCanvas; ARect: TRect);
+procedure CanvasDrawShape(const ACanvas: TCanvas; ARect: TRect;
+  const ADrawType: TStyledButtonDrawType; const ACornerRadius: Integer);
 begin
-  ACanvas.Ellipse(ARect.Left, ARect.Top,
-    ARect.Left + ARect.Width, ARect.Top + ARect.Height);
-end;
-
-procedure CanvasDrawRoundRect(const ACanvas: TCanvas; ARect: TRect;
-  ARadius: Integer);
-begin
-  AdjustCanvasRect(ACanvas, ARect, False);
-  ACanvas.Pen.Style := psSolid;
-  ACanvas.RoundRect(ARect, ARadius, ARadius);
+  if ADrawType in [btRounded] then
+  begin
+    AdjustCanvasRect(ACanvas, ARect, False);
+    ACanvas.RoundRect(ARect, ACornerRadius, ACornerRadius);
+  end
+  else if ADrawType in [btRect] then
+  begin
+    AdjustCanvasRect(ACanvas, ARect, True);
+    if ACanvas.Brush.Style = bsSolid then
+      ACanvas.FillRect(ARect);
+    ACanvas.Rectangle(ARect);
+  end
+  else
+  begin
+    ACanvas.Ellipse(ARect.Left, ARect.Top,
+      ARect.Left + ARect.Width, ARect.Top + ARect.Height);
+  end;
 end;
 {$endif}
-
-procedure CanvasDrawRect(const ACanvas: TCanvas; ARect: TRect);
-begin
-  AdjustCanvasRect(ACanvas, ARect, True);
-  ACanvas.Rectangle(ARect);
-end;
 
 initialization
   FFamilies := TObjectList.Create(True);

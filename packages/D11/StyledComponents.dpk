@@ -66,6 +66,7 @@ contains
   Vcl.ButtonStylesAttributes in '..\..\source\Vcl.ButtonStylesAttributes.pas',
   Vcl.StandardButtonStyles in '..\..\source\Vcl.StandardButtonStyles.pas',
   Vcl.BootstrapButtonStyles in '..\..\source\Vcl.BootstrapButtonStyles.pas',
+  Vcl.AngularButtonStyles in '..\..\source\Vcl.AngularButtonStyles.pas',
   Vcl.StyledTaskDialog in '..\..\source\Vcl.StyledTaskDialog.pas',
   Vcl.StyledCmpMessages in '..\..\source\Vcl.StyledCmpMessages.pas',
   Vcl.StyledCmpStrUtils in '..\..\source\Vcl.StyledCmpStrUtils.pas';

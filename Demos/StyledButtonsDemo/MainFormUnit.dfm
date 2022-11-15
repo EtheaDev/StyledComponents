@@ -10,1527 +10,1355 @@ object MainForm: TMainForm
   Font.Height = -11
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OldCreateOrder = True
   ShowHint = True
-  StyleName = 'Tablet Light'
+  OnCreate = FormCreate
+  PixelsPerInch = 96
   TextHeight = 13
-  object StyledButton: TStyledButton
-    Tag = 0
-    Left = 8
-    Top = 597
-    Width = 119
-    Height = 40
-    Action = TestAction
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -12
-    Font.Name = 'Segoe UI'
-    Font.Style = []
-    ParentFont = False
-    HotImageIndex = 3
-    Images = VirtualImageList
-    ImageIndex = 1
-    DisabledImageName = 'department_Disabled'
-    HotImageName = 'calendar'
-    ImageName = 'assistant'
-    StyleFamily = 'Bootstrap'
-    StyleClass = 'Danger'
-    StyleAppearance = 'Outline'
-    TabOrder = 1
-  end
-  object StyledButton2: TStyledButton
-    Tag = 0
-    Left = 193
-    Top = 583
-    Width = 60
-    Height = 54
-    Hint = 'Hint of Action'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -12
-    Font.Name = 'Segoe UI'
-    Font.Style = []
-    OnClick = StyledButton2Click
-    ParentFont = False
-    Caption = ''
-    ImageAlignment = iaCenter
-    Images = VirtualImageList
-    ImageIndex = 0
-    ImageName = 'approval'
-    StyleFamily = 'Bootstrap'
-    StyleClass = 'Warning'
-    TabOrder = 2
-  end
-  object StyledButton1: TStyledButton
-    Tag = 0
-    Left = 133
-    Top = 583
-    Width = 54
-    Height = 54
-    Hint = 'Hint of Action'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -12
-    Font.Name = 'Segoe UI'
-    Font.Style = []
-    OnClick = StyledButton1Click
-    ParentFont = False
-    BorderType = btCircle
-    Caption = ''
-    ImageAlignment = iaCenter
-    Images = VirtualImageList
-    ImageIndex = 8
-    ImageName = 'department'
-    StyleFamily = 'Bootstrap'
-    StyleClass = 'Danger'
-    TabOrder = 3
-  end
-  object Button1: TButton
-    Left = 133
-    Top = 643
-    Width = 120
-    Height = 40
-    Hint = 'Hint of Action'
-    Caption = 'Action'
-    Enabled = False
-    HotImageIndex = 4
-    HotImageName = 'cancel'
-    ImageIndex = 0
-    ImageName = 'approval'
-    Images = VirtualImageList
+  object Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 874
+    Height = 70
+    Align = alTop
     TabOrder = 0
-    StyleName = 'Tablet Light'
-    OnClick = TestActionExecute
-    OnMouseDown = ButtonMouseDown
+    object StyledButton: TStyledButton
+      Tag = 0
+      Left = 10
+      Top = 14
+      Width = 172
+      Height = 40
+      Action = TestAction
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 0
+    end
+    object StyledButton2: TStyledButton
+      Tag = 0
+      Left = 279
+      Top = 9
+      Width = 50
+      Height = 50
+      Hint = 'Hint of Action'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+      Caption = ''
+      ImageAlignment = iaCenter
+      Images = VirtualImageList32
+      ImageIndex = 18
+      ImageName = 'home-black'
+      StyleDrawType = btEllipse
+      StyleFamily = 'Bootstrap'
+      StyleClass = 'Warning'
+      StyleAppearance = 'Outline'
+      TabOrder = 2
+    end
+    object StyleLabel: TLabel
+      Left = 564
+      Top = 14
+      Width = 130
+      Height = 13
+      Caption = 'Change application style:'
+    end
+    object StyledButton1: TStyledButton
+      Tag = 0
+      Left = 203
+      Top = 9
+      Width = 54
+      Height = 50
+      Hint = 'Hint of Action'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+      Caption = ''
+      ImageAlignment = iaCenter
+      Images = VirtualImageList32
+      ImageIndex = 11
+      ImageName = 'launch-white'
+      StyleFamily = 'Bootstrap'
+      StyleClass = 'Danger'
+      TabOrder = 1
+    end
+    object Button1: TButton
+      Left = 379
+      Top = 17
+      Width = 134
+      Height = 37
+      Caption = 'Vcl Button'
+      ImageName = 'approval'
+      PopupMenu = PopupMenu
+      TabOrder = 3
+    end
+    object cbChangeStyle: TComboBox
+      Left = 564
+      Top = 33
+      Width = 190
+      Height = 21
+      Style = csDropDownList
+      TabOrder = 4
+      OnSelect = cbChangeStyleSelect
+    end
   end
-  object Button2: TButton
-    Left = 7
-    Top = 643
-    Width = 120
-    Height = 40
-    Hint = 'Hint of Action'
-    Caption = 'Action'
-    ImageIndex = 1
-    ImageName = 'assistant'
-    Images = VirtualImageList
-    PopupMenu = PopupMenu1
-    TabOrder = 4
-    StyleName = 'Windows10'
-    OnClick = TestActionExecute
-    OnMouseDown = ButtonMouseDown
+  object PageControl1: TPageControl
+    Left = 0
+    Top = 70
+    Width = 874
+    Height = 621
+    ActivePage = tsBootstrap
+    Align = alClient
+    TabOrder = 1
+    object tsBootstrap: TTabSheet
+      Caption = 'Bootstrap Buttons'
+      object BootStrapLinkLabel: TLinkLabel
+        AlignWithMargins = True
+        Left = 3
+        Top = 3
+        Width = 860
+        Height = 17
+        Align = alTop
+        Caption = 
+          'Similar to: <A HREF="https://getbootstrap.com/docs/4.0/component' +
+          's/buttons/">https://getbootstrap.com/docs/4.0/components/buttons' +
+          '/</A>'
+        TabOrder = 0
+        OnLinkClick = LinkLabelLinkClick
+        ExplicitWidth = 352
+      end
+      object gbBootstrapNormal: TGroupBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 26
+        Width = 860
+        Height = 59
+        Align = alTop
+        Caption = 'Normal Buttons'
+        TabOrder = 1
+        object btn_Primary: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 5
+          Top = 18
+          Width = 72
+          Height = 36
+          Align = alLeft
+          Caption = 'Primary'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Primary'
+          TabOrder = 1
+          ExplicitLeft = 13
+          ExplicitTop = 27
+          ExplicitHeight = 34
+        end
+        object btn_Secondary: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 83
+          Top = 18
+          Width = 92
+          Height = 36
+          Align = alLeft
+          Caption = 'Secondary'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Secondary'
+          TabOrder = 2
+        end
+        object btn_Success: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 181
+          Top = 18
+          Width = 92
+          Height = 36
+          Align = alLeft
+          Caption = 'Success'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Success'
+          TabOrder = 3
+          ExplicitLeft = 239
+          ExplicitTop = 20
+        end
+        object btn_Danger: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 279
+          Top = 18
+          Height = 36
+          Align = alLeft
+          Caption = 'Danger'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Danger'
+          TabOrder = 4
+        end
+        object btn_Warning: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 360
+          Top = 18
+          Width = 81
+          Height = 36
+          Align = alLeft
+          Caption = 'Warning'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Warning'
+          TabOrder = 5
+        end
+        object btn_Info: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 447
+          Top = 18
+          Width = 59
+          Height = 36
+          Align = alLeft
+          Caption = 'Info'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Info'
+          TabOrder = 6
+        end
+        object btn_Light: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 512
+          Top = 18
+          Width = 59
+          Height = 36
+          Align = alLeft
+          Caption = 'Light'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Light'
+          TabOrder = 7
+          ExplicitLeft = 557
+          ExplicitTop = 20
+        end
+        object btn_Dark: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 577
+          Top = 18
+          Width = 59
+          Height = 36
+          Align = alLeft
+          Caption = 'Dark'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Dark'
+          TabOrder = 0
+          ExplicitLeft = 628
+          ExplicitTop = 20
+        end
+      end
+      object gbBootstrapOutlined: TGroupBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 91
+        Width = 860
+        Height = 59
+        Align = alTop
+        Caption = 'Outlined Buttons'
+        TabOrder = 2
+        object btn_OutlinePrimary: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 5
+          Top = 18
+          Width = 72
+          Height = 36
+          Align = alLeft
+          Caption = 'Primary'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Primary'
+          StyleAppearance = 'Outline'
+          TabOrder = 1
+          ExplicitLeft = 13
+          ExplicitTop = 27
+          ExplicitHeight = 34
+        end
+        object btn_OutlineSecondary: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 83
+          Top = 18
+          Width = 92
+          Height = 36
+          Align = alLeft
+          Caption = 'Secondary'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Secondary'
+          StyleAppearance = 'Outline'
+          TabOrder = 2
+        end
+        object btn_OutlineSuccess: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 181
+          Top = 18
+          Width = 92
+          Height = 36
+          Align = alLeft
+          Caption = 'Success'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Success'
+          StyleAppearance = 'Outline'
+          TabOrder = 3
+          ExplicitLeft = 239
+          ExplicitTop = 20
+        end
+        object btn_OutlineDanger: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 279
+          Top = 18
+          Height = 36
+          Align = alLeft
+          Caption = 'Danger'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Danger'
+          StyleAppearance = 'Outline'
+          TabOrder = 4
+        end
+        object btn_OutlineWarning: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 360
+          Top = 18
+          Width = 81
+          Height = 36
+          Align = alLeft
+          Caption = 'Warning'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Warning'
+          StyleAppearance = 'Outline'
+          TabOrder = 5
+        end
+        object btn_OutlineInfo: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 447
+          Top = 18
+          Width = 59
+          Height = 36
+          Align = alLeft
+          Caption = 'Info'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Info'
+          StyleAppearance = 'Outline'
+          TabOrder = 6
+        end
+        object btn_OutlineLight: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 512
+          Top = 18
+          Width = 59
+          Height = 36
+          Align = alLeft
+          Caption = 'Light'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Light'
+          StyleAppearance = 'Outline'
+          TabOrder = 7
+          ExplicitLeft = 557
+          ExplicitTop = 20
+        end
+        object btn_OutlineDark: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 577
+          Top = 18
+          Width = 59
+          Height = 36
+          Align = alLeft
+          Caption = 'Dark'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Dark'
+          StyleAppearance = 'Outline'
+          TabOrder = 0
+          ExplicitLeft = 628
+          ExplicitTop = 20
+        end
+      end
+      object gbBuutstrapDisabled: TGroupBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 156
+        Width = 860
+        Height = 59
+        Align = alTop
+        Caption = 'Disabled Buttons'
+        TabOrder = 3
+        object btn_DisabledPrimary: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 5
+          Top = 18
+          Width = 72
+          Height = 36
+          Align = alLeft
+          Enabled = False
+          Caption = 'Primary'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Primary'
+          TabOrder = 1
+          ExplicitLeft = 13
+          ExplicitTop = 27
+          ExplicitHeight = 34
+        end
+        object btn_DisabledSecondary: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 83
+          Top = 18
+          Width = 92
+          Height = 36
+          Align = alLeft
+          Enabled = False
+          Caption = 'Secondary'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Secondary'
+          TabOrder = 2
+        end
+        object btn_DisabledSuccess: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 181
+          Top = 18
+          Width = 92
+          Height = 36
+          Align = alLeft
+          Enabled = False
+          Caption = 'Success'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Success'
+          TabOrder = 3
+          ExplicitLeft = 239
+          ExplicitTop = 20
+        end
+        object btn_DisabledDanger: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 279
+          Top = 18
+          Height = 36
+          Align = alLeft
+          Enabled = False
+          Caption = 'Danger'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Danger'
+          TabOrder = 4
+        end
+        object btn_DisabledWarning: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 360
+          Top = 18
+          Width = 81
+          Height = 36
+          Align = alLeft
+          Enabled = False
+          Caption = 'Warning'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Warning'
+          TabOrder = 5
+        end
+        object btn_DisabledInfo: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 447
+          Top = 18
+          Width = 59
+          Height = 36
+          Align = alLeft
+          Enabled = False
+          Caption = 'Info'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Info'
+          TabOrder = 6
+        end
+        object btn_DisabledLight: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 512
+          Top = 18
+          Width = 59
+          Height = 36
+          Align = alLeft
+          Enabled = False
+          Caption = 'Light'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Light'
+          TabOrder = 7
+          ExplicitLeft = 557
+          ExplicitTop = 20
+        end
+        object btn_DisabledDark: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 577
+          Top = 18
+          Width = 59
+          Height = 36
+          Align = alLeft
+          Enabled = False
+          Caption = 'Dark'
+          StyleFamily = 'Bootstrap'
+          StyleClass = 'Dark'
+          TabOrder = 0
+          ExplicitLeft = 628
+          ExplicitTop = 20
+        end
+      end
+    end
+    object tsAngular: TTabSheet
+      Caption = 'Angular Buttons'
+      object AngularLinkLabel: TLinkLabel
+        AlignWithMargins = True
+        Left = 3
+        Top = 3
+        Width = 860
+        Height = 17
+        Align = alTop
+        Caption = 
+          'Similar to: <A HREF="https://material.angular.io/components/butt' +
+          'on/overview">https://material.angular.io/components/button/overv' +
+          'iew</A>'
+        TabOrder = 0
+        OnLinkClick = LinkLabelLinkClick
+        ExplicitWidth = 350
+      end
+      object gbAngularBasic: TGroupBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 82
+        Width = 860
+        Height = 59
+        Align = alTop
+        Caption = 'Basic Buttons'
+        TabOrder = 2
+        ExplicitWidth = 856
+        object btn_BasicBasic: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 5
+          Top = 18
+          Width = 72
+          Height = 36
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = 'Basic'
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Basic'
+          StyleAppearance = 'Basic'
+          TabOrder = 0
+          ExplicitLeft = 13
+          ExplicitTop = 27
+          ExplicitHeight = 34
+        end
+        object btn_BasicPrimary: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 83
+          Top = 18
+          Width = 102
+          Height = 36
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = 'Primary'
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'DeepPurple'
+          StyleAppearance = 'Basic'
+          TabOrder = 1
+        end
+        object btn_BasicAccent: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 191
+          Top = 18
+          Width = 92
+          Height = 36
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = 'Accent'
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Amber'
+          StyleAppearance = 'Basic'
+          TabOrder = 2
+          ExplicitLeft = 239
+          ExplicitTop = 20
+        end
+        object btn_BasicWarn: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 289
+          Top = 18
+          Width = 59
+          Height = 36
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = 'Warn'
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Warn'
+          StyleAppearance = 'Basic'
+          TabOrder = 3
+          ExplicitLeft = 447
+        end
+        object btn_BasicDisabled: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 354
+          Top = 18
+          Width = 80
+          Height = 36
+          Align = alLeft
+          Enabled = False
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = 'Disabled'
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Basic'
+          StyleAppearance = 'Basic'
+          TabOrder = 4
+          ExplicitLeft = 512
+        end
+      end
+      object gbAngularRaised: TGroupBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 147
+        Width = 860
+        Height = 59
+        Align = alTop
+        Caption = 'Raised Buttons'
+        TabOrder = 3
+        ExplicitWidth = 856
+        object btn_RaisedBasic: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 5
+          Top = 18
+          Width = 72
+          Height = 36
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = 'Basic'
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Basic'
+          StyleAppearance = 'Raised'
+          TabOrder = 0
+          ExplicitLeft = 13
+          ExplicitTop = 27
+          ExplicitHeight = 34
+        end
+        object btn_RaisedPrimary: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 83
+          Top = 18
+          Width = 102
+          Height = 36
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = 'Primary'
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'DeepPurple'
+          StyleAppearance = 'Raised'
+          TabOrder = 1
+        end
+        object btn_RaisedAccent: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 191
+          Top = 18
+          Width = 92
+          Height = 36
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = 'Accent'
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Amber'
+          StyleAppearance = 'Raised'
+          TabOrder = 2
+          ExplicitLeft = 239
+          ExplicitTop = 20
+        end
+        object btn_RaisedWarn: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 289
+          Top = 18
+          Width = 59
+          Height = 36
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = 'Warn'
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Warn'
+          StyleAppearance = 'Raised'
+          TabOrder = 3
+          ExplicitLeft = 447
+        end
+        object btn_RaisedDisabled: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 354
+          Top = 18
+          Width = 80
+          Height = 36
+          Align = alLeft
+          Enabled = False
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = 'Disabled'
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Basic'
+          StyleAppearance = 'Raised'
+          TabOrder = 4
+          ExplicitLeft = 512
+        end
+      end
+      object AngularThemesPanel: TPanel
+        Left = 0
+        Top = 23
+        Width = 866
+        Height = 56
+        Align = alTop
+        BevelOuter = bvNone
+        TabOrder = 1
+        OnResize = AngularThemesPanelResize
+        ExplicitWidth = 862
+        object rgAngularLightThemes: TRadioGroup
+          AlignWithMargins = True
+          Left = 3
+          Top = 3
+          Width = 407
+          Height = 50
+          Align = alLeft
+          Caption = 'Angular Light Themes'
+          Columns = 2
+          ItemIndex = 0
+          Items.Strings = (
+            'Deep Purple && Amber'
+            'Indigo && Pink')
+          TabOrder = 0
+          OnClick = rgAngularLightThemesClick
+        end
+        object rgAngularDarkThemes: TRadioGroup
+          AlignWithMargins = True
+          Left = 416
+          Top = 3
+          Width = 447
+          Height = 50
+          Align = alClient
+          Caption = 'Angular Dark Themes'
+          Columns = 2
+          Items.Strings = (
+            'Pink && Blue-grey'
+            'Purple && Green')
+          TabOrder = 1
+          OnClick = rgAngularDarkThemesClick
+          ExplicitWidth = 443
+        end
+      end
+      object gpAngularStroked: TGroupBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 212
+        Width = 860
+        Height = 59
+        Align = alTop
+        Caption = 'Stroked Buttons'
+        TabOrder = 4
+        ExplicitWidth = 856
+        object btn_StrokedBasic: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 5
+          Top = 18
+          Width = 72
+          Height = 36
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = 'Basic'
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Basic'
+          StyleAppearance = 'Stroked'
+          TabOrder = 0
+          ExplicitLeft = 13
+          ExplicitTop = 27
+          ExplicitHeight = 34
+        end
+        object btn_StrokedPrimary: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 83
+          Top = 18
+          Width = 102
+          Height = 36
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = 'Primary'
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'DeepPurple'
+          StyleAppearance = 'Stroked'
+          TabOrder = 1
+        end
+        object btn_StrokedWarn: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 289
+          Top = 18
+          Width = 59
+          Height = 36
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = 'Warn'
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Warn'
+          StyleAppearance = 'Stroked'
+          TabOrder = 3
+          ExplicitLeft = 447
+        end
+        object btn_StrokedDisabled: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 354
+          Top = 18
+          Width = 80
+          Height = 36
+          Align = alLeft
+          Enabled = False
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = 'Disabled'
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Basic'
+          StyleAppearance = 'Stroked'
+          TabOrder = 4
+          ExplicitLeft = 512
+        end
+        object btn_StrokedAccent: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 191
+          Top = 18
+          Width = 92
+          Height = 36
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = 'Accent'
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Amber'
+          StyleAppearance = 'Stroked'
+          TabOrder = 2
+          ExplicitLeft = 239
+          ExplicitTop = 20
+        end
+      end
+      object gbAngularFlat: TGroupBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 277
+        Width = 860
+        Height = 59
+        Align = alTop
+        Caption = 'Flat Buttons'
+        TabOrder = 5
+        ExplicitWidth = 856
+        object btn_FlatBasic: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 5
+          Top = 18
+          Width = 72
+          Height = 36
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = 'Basic'
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Basic'
+          StyleAppearance = 'Flat'
+          TabOrder = 0
+          ExplicitLeft = 13
+          ExplicitTop = 27
+          ExplicitHeight = 34
+        end
+        object btn_FlatPrimary: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 83
+          Top = 18
+          Width = 102
+          Height = 36
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = 'Primary'
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'DeepPurple'
+          StyleAppearance = 'Flat'
+          TabOrder = 1
+        end
+        object btn_FlatWarn: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 289
+          Top = 18
+          Width = 59
+          Height = 36
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = 'Warn'
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Warn'
+          StyleAppearance = 'Flat'
+          TabOrder = 3
+          ExplicitLeft = 447
+        end
+        object btn_FlatDisabled: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 354
+          Top = 18
+          Width = 80
+          Height = 36
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = 'Disabled'
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Basic'
+          StyleAppearance = 'Flat'
+          TabOrder = 4
+          ExplicitLeft = 512
+        end
+        object btn_FlatAccent: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 191
+          Top = 18
+          Width = 92
+          Height = 36
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = 'Accent'
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Amber'
+          StyleAppearance = 'Flat'
+          TabOrder = 2
+          ExplicitLeft = 239
+          ExplicitTop = 20
+        end
+      end
+      object GroupBox1: TGroupBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 342
+        Width = 860
+        Height = 68
+        Align = alTop
+        Caption = 'Icon Buttons'
+        TabOrder = 6
+        object btn_IconHome: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 110
+          Top = 18
+          Width = 48
+          Height = 45
+          Margins.Left = 20
+          Margins.Right = 20
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = ''
+          ImageAlignment = iaCenter
+          Images = VirtualImageList32
+          ImageIndex = 0
+          ImageName = 'home-deeppurple'
+          StyleDrawType = btEllipse
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'DeepPurple'
+          StyleAppearance = 'Basic'
+          TabOrder = 0
+          ExplicitLeft = 75
+          ExplicitHeight = 36
+        end
+        object btn_IconDots: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 22
+          Top = 18
+          Width = 48
+          Height = 45
+          Margins.Left = 20
+          Margins.Right = 20
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = ''
+          ImageAlignment = iaCenter
+          Images = VirtualImageList32
+          ImageIndex = 10
+          ImageName = 'dots-vertical-black'
+          StyleDrawType = btEllipse
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'DeepPurple'
+          StyleAppearance = 'Basic'
+          TabOrder = 1
+          ExplicitLeft = 5
+          ExplicitHeight = 36
+        end
+        object btn_IconMenu: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 198
+          Top = 18
+          Width = 48
+          Height = 45
+          Margins.Left = 20
+          Margins.Right = 20
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = ''
+          ImageAlignment = iaCenter
+          Images = VirtualImageList32
+          ImageIndex = 4
+          ImageName = 'menu-amber'
+          StyleDrawType = btEllipse
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Amber'
+          StyleAppearance = 'Basic'
+          TabOrder = 2
+          ExplicitLeft = 145
+          ExplicitHeight = 36
+        end
+        object btn_IconHeart: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 286
+          Top = 18
+          Width = 48
+          Height = 45
+          Margins.Left = 20
+          Margins.Right = 20
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = ''
+          ImageAlignment = iaCenter
+          Images = VirtualImageList32
+          ImageIndex = 8
+          ImageName = 'heart'
+          StyleDrawType = btEllipse
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Warn'
+          StyleAppearance = 'Basic'
+          TabOrder = 3
+          ExplicitLeft = 215
+          ExplicitHeight = 36
+        end
+        object btn_IconLaunchDisabled: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 374
+          Top = 18
+          Width = 48
+          Height = 45
+          Margins.Left = 20
+          Margins.Right = 20
+          Align = alLeft
+          Enabled = False
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = ''
+          ImageAlignment = iaCenter
+          Images = VirtualImageList32
+          ImageIndex = 12
+          ImageName = 'launch-black'
+          StyleDrawType = btEllipse
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Basic'
+          StyleAppearance = 'Basic'
+          TabOrder = 4
+          ExplicitLeft = 285
+          ExplicitHeight = 36
+        end
+      end
+      object GroupBox2: TGroupBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 416
+        Width = 843
+        Height = 87
+        Margins.Right = 20
+        Align = alTop
+        Caption = 'FAB'
+        TabOrder = 7
+        ExplicitLeft = -14
+        ExplicitTop = 453
+        ExplicitWidth = 860
+        object btn_FABTrash: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 22
+          Top = 18
+          Width = 64
+          Height = 64
+          Margins.Left = 20
+          Margins.Right = 20
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = ''
+          ImageAlignment = iaCenter
+          Images = VirtualImageList32
+          ImageIndex = 13
+          ImageName = 'trash-white'
+          StyleDrawType = btEllipse
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'DeepPurple'
+          StyleAppearance = 'Flat'
+          TabOrder = 3
+          ExplicitLeft = 13
+          ExplicitTop = 23
+        end
+        object btn_FABBookmark: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 126
+          Top = 18
+          Width = 64
+          Height = 64
+          Margins.Left = 20
+          Margins.Right = 20
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = ''
+          ImageAlignment = iaCenter
+          Images = VirtualImageList32
+          ImageIndex = 16
+          ImageName = 'bookmark-black'
+          StyleDrawType = btEllipse
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Amber'
+          StyleAppearance = 'Flat'
+          TabOrder = 2
+          ExplicitLeft = 162
+          ExplicitTop = 20
+        end
+        object btn_FABHome: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 230
+          Top = 18
+          Width = 64
+          Height = 64
+          Margins.Left = 20
+          Margins.Right = 20
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = ''
+          ImageAlignment = iaCenter
+          Images = VirtualImageList32
+          ImageIndex = 17
+          ImageName = 'home-white'
+          StyleDrawType = btEllipse
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Warn'
+          StyleAppearance = 'Flat'
+          TabOrder = 1
+          ExplicitLeft = 313
+          ExplicitTop = 3
+        end
+        object btn_FABHeartDisabled: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 334
+          Top = 18
+          Width = 64
+          Height = 64
+          Margins.Left = 20
+          Margins.Right = 20
+          Align = alLeft
+          Enabled = False
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = ''
+          ImageAlignment = iaCenter
+          Images = VirtualImageList32
+          ImageIndex = 8
+          ImageName = 'heart'
+          StyleDrawType = btEllipse
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Basic'
+          StyleAppearance = 'Flat'
+          TabOrder = 0
+          ExplicitLeft = 413
+          ExplicitTop = 20
+        end
+      end
+    end
+    object tsClassic: TTabSheet
+      Caption = 'Classic'
+      ImageIndex = 2
+    end
   end
   object ActionList: TActionList
-    Images = VirtualImageList
-    Left = 404
-    Top = 442
+    Left = 550
+    Top = 463
     object TestAction: TAction
-      Caption = 'Action'
+      Caption = 'Show Editor'
       Hint = 'Hint of Action'
-      ImageIndex = 0
       ImageName = 'approval'
       OnExecute = TestActionExecute
     end
   end
-  object VirtualImageList: TVirtualImageList
-    Images = <
-      item
-        CollectionIndex = 0
-        CollectionName = 'approval'
-        Name = 'approval'
-      end
-      item
-        CollectionIndex = 1
-        CollectionName = 'assistant'
-        Name = 'assistant'
-      end
-      item
-        CollectionIndex = 2
-        CollectionName = 'calculator'
-        Name = 'calculator'
-      end
-      item
-        CollectionIndex = 3
-        CollectionName = 'calendar'
-        Name = 'calendar'
-      end
-      item
-        CollectionIndex = 4
-        CollectionName = 'cancel'
-        Name = 'cancel'
-      end
-      item
-        CollectionIndex = 5
-        CollectionName = 'capacitor'
-        Name = 'capacitor'
-      end
-      item
-        CollectionIndex = 6
-        CollectionName = 'cd_logo'
-        Name = 'cd_logo'
-      end
-      item
-        CollectionIndex = 7
-        CollectionName = 'cell_phone'
-        Name = 'cell_phone'
-      end
-      item
-        CollectionIndex = 8
-        CollectionName = 'department'
-        Name = 'department'
-      end
-      item
-        CollectionIndex = 9
-        CollectionName = 'deployment'
-        Name = 'deployment'
-      end>
-    ImageCollection = ImageCollection
-    PreserveItems = True
-    Width = 24
-    Height = 24
-    Left = 432
-    Top = 336
-  end
-  object ImageCollection: TImageCollection
-    Images = <
-      item
-        Name = 'approval'
-        SourceImages = <
-          item
-            Image.Data = {
-              89504E470D0A1A0A0000000D49484452000000C8000000C80806000000AD58AE
-              9E000010264944415478DAED9D7B6C14D51AC0CF992D6928B5F722D75BB97AF1
-              FA004CA848001FE0EE0A3108DD16F44F5EE11FA3104910A1437C10AD06D1B005
-              B1094630FE4310F853A1DD82C480BB2BF8A006B4E442517C5CBDDAE48A099612
-              4277CFFDA674C812DAA5BB3BE73B67CE7CBFA49969BB3BDF39A7F3DBEF7CD379
-              704610C4A070D50D20089D214108220F240841E4810421883C90200491071284
-              20F2408210441E481082C80309421079204108220F240841E48104D1880DC9FA
-              C9CE724DB4E52BD56D212E438268423C155B018BCDFDDFAEB4238966D56D2248
-              10E534276ACB2F56F23DF0979875D52F043B50DE2DE6AD88B55D54DDC6204382
-              2864632A362ECBD809580D0DF2928CC5D884D59144A7EAB60615124411F164DD
-              62C6C5F621BD58F02576B47587EA36071112049946D16855A4BEDCCEB95858C8
-              FB84E03B7B22F72D69E48D59D57D08122408229B0ED7DF92C9648FC1EAA82237
-              F17B28644D5A35BDE517D57D090A24081230A5AA8329D55E4F3626F85C9872B5
-              AAEE5310204110D8908A6D86815EE1E5360563CD6B228995AAFB663A24884436
-              1D9E7D6326133A02AB632585381D0A65A6AD9ABEFFACEABE9A0A092289A6F49C
-              B01056122316E7D96843785F5A759F4D84049140532AB616A640AF62C6843FE4
-              4B0D91C43AD57D370DA3051182F1A674EC4758FD03BE3AA0B71DF0C30E962DEB
-              B01FDEFBBDD7F1E2FB1F1DC186870EC047FA838A3AFC19BB909965CFFEE8BCE7
-              7DFB64EEEDCCEAAD81BED5400154033F72BE46368413B771EE94446662B420F0
-              49BE00FE72EF5FE76567AE8823AC0E16621D55E5BF9D5A3AB5FD5221B1E2C939
-              1319B78EA9EE731F223BC98EEEFBBA90B76C3D3A65D8B98B378F6719D8F17936
-              57843BF2BD0F76A04590B976A9EEB22C8C16249E8A9D84C5B81236D1C558BF3C
-              96D5B7ACE8ED39B17CE6A1EEDC1741965A06D9EA6DD5FDCD053ED59F864FF777
-              727FB6E5E08CCA9EB28A097D3B7FB65F82CB99A0BA84509D762471B7EAFECAC2
-              5841DE48D78F0989EC0F124374F789C3F930589FA2BABF83D00E6DBCD42F42A5
-              AC20196EFDEBB970CB4FAA3B2B03630581ECE17C7A3EA5BA1D01611B649165AA
-              1B21032305E92FCE33AADB1124603A1732B1583752902116E78487985AAC1B29
-              8807C53951384616EBC60982509C13836062B16E9C20549C2BC5B862DD2841A8
-              38578F69C5BA51825071AE1ED38A75A304A1E25C0B8C2AD68D11848A737D30A9
-              583746102ACEB5C29862DD0841A838D70F538A752304A1E25C3F4C29D68D1084
-              8A732D31A258F7BD20549CEB8B09C5BAEF05A1E25C6B7C5FACFB5A102ACEF5C7
-              EFC5BAAF05A1E25C7FFC5EACFB5A102ACE7D81AF8B75DF09E24CAB36A663F321
-              73BCCC480EBFD0093BDA2BABC389DD7E9B6EF94690FEA3552F302AC8FDCEB60C
-              B7D6FBE5E896D68250B6301A5F64152D05A16C1138B4CD2ADA0842D982601A66
-              15E58250B62006418BACA24410CA16440128CD2AA88250B6204A043DAB481784
-              B2052101B4AC225D90782AE6D87EABEC384420F9D98E24C6C80C8021C87158DC
-              233B0E1148BE0141EE9519004310E764C205B2E31081641708B2486600F982A4
-              63CFC32CF135D9718800C2D98B7638F1BADC109289A76AE742980F65C721D460
-              5916CB66B38AA28BC7EC48DB5E9911E40BD2F7F0C7CC77B2E310F8DC3D7602AF
-              BE6934FBF48B43A2B7B717BF01D9D09D321EC69A0BCAFF41A00E51F5114348C2
-              916374F53FFAD6B359A14412A83F2CD9314810A26072E57051218949827CCBAE
-              F33861C21F0C24870BB224674090BB6407C111241DFB8009360F2316218F7C72
-              B8A049C2D91E3B9C785C769F913248ED3A08F502462C420E4391C3054712B1DE
-              8EB4AD95DD6F1C419275F319173B316211DE53881C2ED225117CA11D6DDD2DBB
-              EF38827C5A57C3B2E26B8C5884B71423878B54492C3ED17EA8B54376FF5104D9
-              7A74CAB07317AA2F62C422BCA314395C64495235BCAB7CE9D4F64BB2C700ED7A
-              103AD4EB2FBC90C34586241887781D3005F91516D558F188E2F1520E178F25E9
-              024146638C05A6200760F108563CA23864C8E172F68FB3ECF889762F2E70FA18
-              049985311E7882246BDF649C3F83158F281C9972789A418478CB8EB63D8B3126
-              7882A4EB9E808EBD8B158F280CDFC8E1C0F99376B8F53D8C71C19C623D008B23
-              58F188A1E32B392E330DA6589F638C0D9A205B0ECEA8EC29AB3887158F181A3E
-              948355F4F6542D9F79A81B637C506FFB43877AF5C28F7238601DE275C016C4C9
-              209598318981F1AB1C4037085225757072C01524597B180AAC07316312D7E263
-              399C23589FD9D1B6E91287E72AB033C897B098821993B81A5FCB719976C820F7
-              C90C900B9A204DE9D83221D8DB58F1886B31408E3E38674F378413EF480FC4D0
-              4E779F339171EB18462C62604C91E30A223BC98EEE937E86B8FCBB9AEC7F7404
-              AB28FB53761C62708C93C3A5A7F7067BF647E76586902F0815E64A31560E0784
-              825DAA204DA9D85AC1D8AB3263108363B41CFDC00EFC524324B14EE2F6E5D094
-              9E1316C24ACADA3E919F20C8E1C27936DA10DE9796B26D191BDD7478F68D994C
-              E87F728785188C20C9E1120A65FEB66AFAFEB35E6F578A20F154EC142CC64A1F
-              15E21A8228473FA7ED4862BCD71BF55C900DA9D866D8E80A9C31217209B01C7D
-              40BDDBBC269258E9E5363D15249EACAB635C48BDDB3631304197E30A82CFB5A3
-              ADAD5E6DCE3341361DAEBF2593C9FE47CDA8041B92E36A4221EB9FABA6B7FCE2
-              C5B63C11A451345A23D25F74C1EA28A5231340488E01F9FD7CF8FEEA46DE58F2
-              E5159E08B22159B78373B150F5A8040D92637084E03BD7445B1797BA9D920581
-              BA6331D41DDB550F48318CFCEB2876D3A8BFF3CEEFFE8DFE80FA5221398680E0
-              4BA01ED951CA264A1264632A360E72D849D5E3500C8E1C936A26F7F5FFD7AEFF
-              B293A74FF846129263E858305CAB2389CE62DF5FB420CD89DAF28B3770E7BAE0
-              90EA4128945C395CFC2209C9513099F23F45E58A585B51B7BE2D5A907832B61F
-              DE8D72F32E2F19480E17DD2521398A44B003763431BB98B71625483C1573FE11
-              B85975BF0B259F1C2EBA4A427294CC4A3B92682EF44D050BB221593F99F3EC51
-              D5BD2D94A1C8E1A29B2424873708614D5D136DF9AA90F704429042E470D14512
-              92C33B500471F0D314AB18395C544B4272780ACE14CBC50F457A2972B8A89284
-              E4F010EC22DD41F7C3BC5EC8E1822D09C9E1296A0EF33AE8FA8F422FE570C192
-              84E4F01665FF2874D1ED5493BF548D6493274E957221986C49480E8F517DAA89
-              8B4E272B969595B187EE9FC12D4BCEE5F6B2242139BC459B93151D743BDDDD6F
-              92901C9EA3D7E9EE0EBA5D30E51749480EEFD1EE822917DD2EB9D55D12924302
-              BA5E72EBA2DB4D1B749584E4F01EED6FDAE0A2DB6D7F749384E490823F6EFBE3
-              A0E38DE3749184E49083AF6E1CE7A0E3AD47554B4272C8C177B71E75D1F1E6D5
-              AA242139E4E0DB9B57BBE8F8F8036C49480E49F8FDF1070EBA3E40074B129243
-              22263C40C741D747B0C996C4D9719D183208BC1CA63C82CD45D78778CA964406
-              4197C3B88778BAE8FA18683F4912743998A98F8176D0B16077F1832424074329
-              CC73C1CE20E760518919B310749684E4B8423764902AAC60D882947CFAB16C74
-              9484E4B81A10C4C28A85B6176C3938A3B2A7ACE21C56BC52D0491292E35A2A7A
-              7BAA96CF3CD48D110B6D0F80ECF1002C8E60C52B151D24213906651A6491CF31
-              02E10992AE7B020AAC77B1E279814A49488E3C70FEA41D6E7D0F2514569FE2C9
-              DA37A163CF60C5F30A1592901CD74188B7EC68DBB318A130A7580760F108563C
-              2FC19484E418121FC3140BE5A6859882FC0A8B6AAC785E832109C93164BA4090
-              D118813005D1FE10EFF5902909C9511858877A5104D97A74CAB07317AA8BBAF5
-              A36EC89084E4289CAAE15DE54BA7B65F921D07E76CDE4FEB6A5856483FF3120B
-              2F2521398AC4E213ED875A3B6487413ADDBD6E3EE36227462C2CBC9084E42801
-              C117DAD1D6DDB2C3E00892AA5D07A15EC08885492992901CA522D6DB91B6B5B2
-              A3E008928E7DC0049B87110B9B622421393C80B33D7638F1B8FC3008C453B16F
-              617107462C15142209C9E11967EC48E22ED941B004F1FD21DEEB311449480E6F
-              C138D44B8278483E49480EEF314290F827736F6756E63BD97174612049480E49
-              644377DA0FEFFD5E6608F982A46AE742980F65C7D1895C49480E9988C7EC489B
-              D4A709C817241D7B9E09F69AEC38BAE1483261FCBDFCC4A9E324872C387BD10E
-              275E971B4232507FBC0F8B05B2E310816417D4218B6406C010E4382CEE911D87
-              0824DF8020F7CA0C8021C84FB0B855761C2290FC0C828C911940BA204230BE31
-              1D9B2F187B19BE1D273B1E11083A61C77D657538B19B7326F5D9F5A8175BBF91
-              AE1F131259E79CACA730E312C6B02DC3ADF5CF855B7EC20AA8E4961D94558802
-              40CB1603A1FCC64F9455884140CF1603A15C1017CA2A04539C2D06421B4172A1
-              AC1238B4C81603A1A5202E94558C46BB6C31105A0B920B651563D0365B0C846F
-              0471A1ACE24B7C912D06C27782E4124FC54E329244773AED48E26ED58D28165F
-              0BD2948A2D808FA3F755B783181CD8C116354412BB54B7A384F6FB1767BAD594
-              8E6554B783189C867022E4B769552EBE16C401A659CED34EA970D7936D30BD5A
-              A6BA11A5E07B41FA8F6EFDA0BA1DC4B564B8F52FBF1CAD1A0CDF0BE240C5BA96
-              F8BA38773142102AD6F5C3EFC5794E3FFC0F15EBFAE1F7E2DCC508411CA858D7
-              0ADF17E72EC60842C5BA3E98509CBB1823880315EB5A604471EE62942054ACAB
-              C794E23CA73FE640C5BA7A4C29CE5D8C12C4818A75A518539CBB18270815EBEA
-              30A93877314E10072AD695605471EE62A42054ACE3635A719ED32FF3A0621D1F
-              D38A7317230571A0621D15E38A731763054128D6BB21557530CE87C1FA14D5FD
-              1D847668E32568630DAC57CA0A626271EE62AC200E1E14EB5DF0D5D1278265F5
-              2D2B7A7B4E2C9F79A83BF745309D5B06D3BAB755F7371798EE3C0DD39E77727F
-              B6E5E08CCA9EB28A097DC264B335FDE2385FD5258432B23877315A902116EB67
-              60142E4B20408210EBA82AFFEDD4D2A9ED970A89154FCE99C8B8754C759FFB10
-              D9497674DFD785BC65EBD129C3CE5DBC793CCB8030BC5F1ED1274FDEC7779B5A
-              9CE7F4CF5CFA8BF51F61F50FE6640257846C59878C873FC6F73F3A820D0F1D80
-              9DEB41451DFE8C5DC8CCB2677F74DEF3BEF53D8CB537571CE76B2464A9DB4C2C
-              CE5D8C16441590B9D6C21EF32A664CF843BE049FE4EB54F7DD3448104934A5E7
-              8485B09218B138CF461BC2FBD2AAFB6C22248844361D9E7D6326133A02AB6325
-              85381D0A65A6AD9ABEFFACEABE9A0A0982C086546C330CF40A2FB70953B8E635
-              91C44AD57D331D12048978B2AE8E71E1CD43EF059F6B475B5B55F72908902088
-              6C3A5C7F4B2693750E058F2A7213BF8742D6A455D35B7E51DD97A0408220D328
-              1AAD8AD497DB39170B0B799F107C674FE4BE258DBC31ABBA0F41820451044CB9
-              16C3946BFB905E2CF8129852ED50DDE62042822864632A360ED2C109580D0DF2
-              928CC5D884D59144A7EAB60615124431CD89DAF28B957C0FFC25665DF50BC10E
-              94778B792B626D1755B731C890209A104FC59CC3C09BFBBF5D694712CDAADB44
-              90205AB121593FD959AE89B67CA5BA2DC465481082C80309421079204108220F
-              240841E4810421883C9020049107128420F2408210441E481082C80309421079
-              204108220F240841E4E1FF3F9B0A507A13F6BB0000000049454E44AE426082}
-          end>
-      end
-      item
-        Name = 'assistant'
-        SourceImages = <
-          item
-            Image.Data = {
-              89504E470D0A1A0A0000000D49484452000000C8000000C80806000000AD58AE
-              9E00001D934944415478DAED9D097C14E5D9C09F7737C7269B9B3B1C21090450
-              510E8F8A4A5B6D0B8180480D415B6BAD164FD4FA41FC6A3DD67E4A219747AC57
-              6DD5B6802436060804822868954301050139840012EE10084936C7EEFB3D9303
-              21D99D637766DE99DDF7CF2F99CDEEECECF3CCBC7FDE6366DF21C0E170BC4258
-              07C0E118192E088723021784C311810BC2E188C005E17044E082703822704138
-              1C11B8200A71381C217575750FE2C39BF1A73B831028FE3809214EB7DBDD80CB
-              53F8F711FC398A3F072C16CBB7F5F5F5BB0B0B0B1B59EFAB40800BA280ECECEC
-              684AA950102358C7229303F8B30E25FA1C97AB72727276B10EC86C704114307B
-              F6ECF7713195751C7EB20D7FFE833FF3737373BF631D8CD1E18228000571B38E
-              410316600DF30AD62EEB59076244B8200AD0421022710C685B9F432FDEC47ECD
-              5FF2F3F30FE8F89986860BA2005F049112400D3490682FFE3C854DB0455AC76E
-              74B8200A90EA83E821835C549426DB6EB7BFEC70389A58E7C402C31C5033D079
-              14CB484248A182304F545656E6161717BB58E7A227A639C04680660E1CE1B286
-              3EBA2E2AF937DB2312499D250CF7A0BEBB5028E52DC4DAFAD328FC58427DD986
-              CFB26087FE3EECD0BFA96BD20CE1824840EFE86587E6C8FB8192A7F0CF68D6F1
-              78C38D87F25468141C0F898223A1B170D0D69D548625480AE4A32CD558934ECA
-              CBCB5BC73A6FADE1827881DE9E9C042E32171F66B18EC51F04710EDABAC1CEF0
-              5E646B643FA846893CE6EB9B28A5D83FF90DF64FCEB1CE532BB8209DA059A997
-              E1EF37F0E1B5AC63D1821662819D117D605D540AF9CED6B36BFEBE8992999B9B
-              FB1FD6B9690117A41D9A993C04ACE42D2C1ED7B18E452FDCD87FFA3AA21FAC8E
-              1B464E845CDC7AF4419425589B4CC7DAC4C93A2F35097A41E8ED03E2C115F216
-              3EBC85752C2CA9B1464045DCA564933DE9A2E7958AE272B9461714146C619D8F
-              5A04AD2054C87D7AEA9340E9B3AC6331124D24043E8E19423E8A1D7AD1F34A44
-              C10EFCBDD881FF1BEB5CD4202805A15983466103632D3EB4B38EC5A808C3C815
-              B19790B53169E79F5322092164514E4ECEEDA0EFA532AA135482D04CB08235F5
-              35FC2FEE1ED6B198857A4B18BCDF6D34D91E9178FE3905A2ECC07EC9D5D82FA9
-              679D87AF048D20342B69188075133EB4B18EC58C1C0E8D85D77BFD843459425A
-              FF5620893334343479CE9C39C758E7E00B412108CD4A79141705ACE3303B8211
-              ABB023BF3A66E885CFC912C562B10C9C376FDE41D6392825A005A1334687C299
-              D38BF1E178D6B1041247C362E1A5DE3711777BF151509B0CC9CDCDDDC33A7E25
-              04AC20747A6A7FEC6BECC48791AC6309445C5874E677BF866C8FECDBFAB75C49
-              AC566BCADCB9732B59C72F978014844E4FB9120FD746D6710403EBA253A1347E
-              446B39922B0921A45F4E4E4E15EBD865C5CA3A00B5C1FE86F07D8DF759C7114C
-              1C084F80577BFD5491244EA733AEB0B0F02CEBD8A5082841E8F4E4BB81928038
-              416536AA43EC302F71BC12490E565656A61AFDFB250123081FA9628F70CE644E
-              DF74D24C42E44AB20A3BEDE358C72D4640088235C72CAC397258C7C10168B484
-              C0DC3EE349BD355C962494D2A7F2F2F29E671DB7374C2F08CD4ABD177FBFC63A
-              0ECE0F0827139FEB3B9134CAAC4950921B519235ACE3F684A905A1D3536EC7DD
-              FF6FD67170BAD260098567FB4E2294105992B4B4B4747FE18517AA59C7DD19D3
-              0A82CDAA1BB059B596751C1CEF9CB546C0F37D27C8EAB81342BECAC9C919C53A
-              E62E71B10EC0176866EA20B0D0DDACE3E048531516D77AD65D782C250936B566
-              6153CB50032DA61384665E120516A7E1C7CF393FF075643F58D0FD1A5992B85C
-              AEA482828243AC63EEC07C8264A50857E48E641D0747191F248C24EBA352E4F4
-              4776E4E6E65EC63ADE0E4C2508CA310F17B359C7C1F18D3989E9E44C48A41C49
-              7E8792BCC33A5E01D30842A7258FC59EDC1AD671707CE78CD50673FA4E94D5D4
-              723A9D1146B809902904E1FD8EC06153541214255C29290976D8FF8A1DF699AC
-              E335872059291FE2E246D67170D4E1A53E3F2355A1B1729A5A89D8D43ACA3256
-              C30B42A7A7DE82FF9D04E4A464C18A82F3232528C8AD2C6335B42034233112EC
-              B6809DD63298A968FFEAAED1877D8D2D4856CA4230F9DCB8B2201A1F076ABCA9
-              7784AFEBFE71C05439B54829D622CCEE0B695841DAE7C8DDCA3A0E55D05A007F
-              60288FDC13882CAFD332EC81C3DA43B8946410EB381461641194A0A3344FF79B
-              4C845B348809420829CCC9C97984C5AE30E401354DC73C5084104363597644F4
-              81777B8C91AC45EC767B88C3E1D0FD2EC3863CC0587B0833F1196F82B7601042
-              0C8D64F953BF9B498B2544EABCC8AFF3F2F216E89DB2E10E38CAF12B5CFC8B75
-              1CAD049A1049310057F5A6F05D0DC096E3FEE5A6A22C1BA292A1246194542DB2
-              1B3BEB43156C56150C57005090165C589805106852080CED0630B2078530EB0F
-              CFAD3F4260970AFD5E1544A1B8CBFF57C688566868681FBDA73035546160D6F7
-              0844290446F4A470597700AB97F43E3A48E050AD3A9FE5A72825F123C986E894
-              F64D79DD96036B913F6BB5BB3C61A88281B5C7015CF4D7317B43E5AF0A1453FA
-              511F0A43E340D6E15DBE8FC08906153FDF37514E5B23616EDF74A95AE4240AD2
-              53C166FDC630058466A68E060BFD42878C0D93B3AAD84200AE413106C6287B9F
-              302EF4C11E02E79AD48DC70751E6F49D40CE58230CD5CC324C61A1D352CA309A
-              091A666A985C5525CE86350676BC7BF9712FA016B4A46837816695E7705328C9
-              9A9834288F1B2E5A8B504A1FCDCBCB7B59DD40BD6388424333FB458025AC4EA3
-              0C0D91A3EA08420835467CB83ADB6B4439DEFB56FD7DA5401261E2B967FB4D92
-              6A667D81CDAC6B548FD30B86283C747ACA1F7077E4AB9C992172539D8EA15A7B
-              A8FADBAE6B06787F3753499EED9BD13AE95CDBDB3CBF0F05D16D94D31085083B
-              E7DFE322D1EF0DB56564889C54C7D350AD16D434022CDEABCD3E9421CAD2F82B
-              C87FA307B5AFEEB59935029B59BA5CA7C7BC30D1DB927B819B1C51291BE6F9A8
-              8ED450AD161C6F0028DFC7A42639149E00AF48CF14FF04D62273F5D815CC0B14
-              9D9EFA94DFB7620E3431940ED56AC1F7B500AB0F3291E4F101BF243FACDE757D
-              42C8A73939393FD66337302F587E37AF02490E5F876AB5626F0DC067877597E4
-              2F89E3494D88BD7D558FEB52AC41346E6BB6C1B470D13B7AD9A1C9EEFBA9DC40
-              91438DA15AADF8E614C0A6A3BA4AF29F845164635472FB6A9ED7ABACAC0CD5E3
-              DE226C05F1F5C2C4401143EDA15AADF80205D9714AFDED7A9144CECC272E976B
-              744141C116AD53672B882F270703410E2D876AB562EDF7042ACFA8BB4D2F829C
-              088982BCC471A2FD10D0697239D63588B22FC0985D0EBD866AB562452581632A
-              9FCFF5228954471D5A4F87E43EAE75CACC0A1CCD4C89050B9C5610A979E56031
-              54AB0514CB69E97704CEAA38E1A1EF8294A12093B54E999D2059C999F8F18B14
-              446AAED26584A15A2D7061592DDE455A2F4D510B0F92C818C9DA89825CAA75BA
-              0C0549791517F7C98CD23C25CC6843B55AD084722C54F1BA2D0F82BCD1732CD9
-              67EB71C12A5DD6A9414112B44E95A520C208C415322234871C461EAAD582FA66
-              AC4954BA6ECB83200BBA5D4DBEB6F7BF6095AEEBE8714D164B41E475D08D2E88
-              59866AB5E06C53DB7749D4A0932465F197934FA3075FF072100942332F09038B
-              D329233AE3CA61C6A15A2D38D900B04C85EBB63A09F261CC50581577A968473D
-              7005B96DD0A5E0766F93119DF10431FB50AD16549D03587540D55952D6C6A4C1
-              F2F62F4FB5BD1C4C824C4FBE1528299288CC587204CA50AD56EC3B03F0E9F7BE
-              EF9C4E827C169D0A4BE24704A920D3529F0442C567A7308220813A54AB15C2E5
-              285FF878DD562741D647A7C007F123835490E9297FC774EF92888C5D890C86A1
-              5AADD8748CC0372795BF4F4290B6552E5E277005C94A598E8BF11291E91F5BB0
-              0DD56A85D0D4DAE7C3755B174812E482246FC68F1E211295BE7105F350AD5654
-              60A7FD88C27B1F7141DA13CD4A3D8CBFFB8844A54F5C7CA85643B02C2FDE47A0
-              467A34FF82B770415A13CD4A11EADF6891A8B48D8B0FD5EA839BB69D6D77B6C8
-              5B9F0BD29E68568A7039A8F7FFB6B512840FD5EA4FB3BBEDBA2D2A63E61F2E48
-              7BA2529799A8298830547B2D36A386C4B34A97D3803548D12EE99DCF05694F54
-              0F41F850ADB1A86D022891B86E8B0BD29EA89682C485B79DDCE343B5C6A31A3B
-              EC4BBFF37E6CB920ED896A21081FAA350747EB0056567A3EBE5C90F644D51484
-              0FD59A8F036701D61CEA7A8CB920ED89AA21081FAA3537C2EDDF84DBC05D0817
-              A43D517F04E143B581837023D1AD277EF89B0BD29EA85241F8506DE0F2791581
-              3DED93DB7041DA13952B081FAA0D0E3E3C48E0702D17E47CA2528258880BC625
-              59F9506D902014FBA25DE7A0A125AAE32931416AEB9DE06C6E861D07AA1EB8F0
-              7502963A74ACD275B2D7FA4D9BDE6C562334E30922D41EC976178C1D28A7F7AD
-              DACDEC399A225DCE3EA974C1FE3A6B472DD2599016971BF61C3E06C76B2E9AEB
-              5CECF8AF75B9AC777FF961C93E6D03D7008F825CD8EF48C69A63EC40459B6491
-              074712F9E5EB934A4041CEFFB93E2A85760872BAB60EB6EE3FECE95D92C71D7D
-              7B78E3CA25AF689F808A5C2488A7112BE582FCB03F38464079B9EA2A88508388
-              C92120EF7853C8DE50B1384F9F4454E0BC20DE86737D17A46D777058E25B99F2
-              204871CC15F0D9F6BD62EF927FAC29B96A4345E9267D92F1935641C4CE75F827
-              48EB47B0C88BE34779F220C89CDADE9DFB1C9D51729CBFDBB072F16005EBFB99
-              908FD0F9C3E3E1E3FA6A3827929BFF82B47E94DEB90539FE95250F823C7A4872
-              1453D1316E016BDF4D2B4B14DD30565741A8032C30246D1FB861006C741138E6
-              253F750469FD483DF30B62FC2F479D04290A1B0405C722A4DEA5E8F8124A1E5C
-              5F51FA9ABE8929802E1CF27FF8FB4FE79FD88B5D91ED6E353BE91E3F56CF1C83
-              1075CA5027415EB5A4C13F4F495E99ADE8D852202F6C5C59FA3FFA272727B8C5
-              43A2A19E769D0BE624E6F899EBE2381809B2EFD05958B5AE8A1C3A5A07EEF6AF
-              88DA234261F0801848BFA12F8DB687E9B5BB34A5B6AE09CA3F3D4CF61C3C0B75
-              0D6DE7D32C8440FFDE76F8F9B58934A5BFA22B173411241FD2A0F8B46C418897
-              E73BF30EF6437EA77F7232A00BD3DEC4C53D1E5F6CC47C56634DD2DC9E97BA82
-              B47EBCD88BD5671AE11F257B48F559F11938460EEB0EB7FE22891A61D247DF76
-              0285F72B0E902D3BC527764B88B1C1EFA60EA609B1920554BD1D71A120A104F2
-              7BA4D1E2ED6152DBA71231743EEE861644FCF212E1D58E7E898E820872E4BDB3
-              4DF67EE8DF2B0AEE9B3EC474920872BCFEDE2E72E898FCB9AA66FD76B89424EA
-              0BD20B3779B595E66F1904C5DB42FDDDBE3904A18B068F053759236B65A15FD2
-              1449604C92EA61747EA2A9D90D8E57372BDE074393E3E037930799AA6FF3CF25
-              7BC9B7FB6B14BFCFF1C0281A16EAF19A4075CBCEE70700C2EA290C6AFBACFC4D
-              C124C8C2B4B77171A7EC37D87A13B0C5AA1E46E727967D72887CB6E5984F1B7B
-              F48E4B69CF04C951164370BCBA015EFCD7769F8EF575237BC1C4B1FD3DFD67A0
-              6ED97162F7D479F4FCE7049B20DFE32251F61B225190306D05696E71C3337F55
-              5E7B7490D4270AEE9D36D414B5C81B45DF92034AA701BD80671F1C454343BAD4
-              22EA969D2614A43E780551763F741D041146ACDE2AF1EF1E7B731EB9D214823C
-              F1D2977EE579CFD4344F235B5C10B530A2209F6E3A0AE5FFF5E3862F88E3FE91
-              34CCE0DF896F6A7281E3B52D7EE5997E7D3F7AC3E8DE9D9FE682A8851105295B
-              7B887CFE956FFD8F0E1EBB7338ED1E67EC69864ED63442C1BBF247E93C316644
-              2FC8F871977E0817442D8C28C897DB4F42C987957EE5FFFC23A30D3FDC2B0CEF
-              FEE9A54D7E0539F56703E9959776EFFC3417442D5010F1C9AA3BA38320474E34
-              40E102DF46763A08963EC8CCDB2FA57D7A7419B1E382A8050AF20D2E2E91FD06
-              1D041178F2E54DC42D67D6710F78697618127F9A93C22528CF3D3C5AFB61DEA0
-              16E4BDB4A7315487EC37E824C8D7BBAB6151B96FF7F816398166387C3D212A90
-              959E42AF484BF0F41217442DE8FC61496071ED97FD069D0411786DD1CED68B13
-              95E0A54D6E687CE97309172FDE9F35CC5B2DC90551136C66095702CABB1C567D
-              41A8F717945DA334E5C6247AF5F01E1AEE29EDD8B8ED04947E7440D6319779CD
-              997AE527E805796FF05D40C9DF65ADACA320AD2F0A57DC6F3906CB3F3DE4757F
-              C4C584C3B471C9746062149899CAAA7350B4723FA939DBE8759D0937F4A7C225
-              2644BA747041D4842E1C826D192A7D0193BA82C8EE48BBDD14B6ED390DD8E422
-              55C7EBC1166E85C45E91346D402C0CE8135893D81D3C5207BB0F9E81AA63F5C4
-              D9E882C49E9142938A0E1F1C0F168BA262A14E19EA2448C1E64150B4555D4108
-              A5FF585FB1E41E251BD05790F943C781C55D2EB9222341383EA189200B77F587
-              97D645A95B8350F2FC868AD2A7F44F4E49C40BD2F2F153FF20BA927A827039F4
-              C1FF72D4499043676D905992ACB220306D43C5E2F7F54DCC97A817A67D868B6B
-              BDAEA08E205C0E7DF1AF2C75124460CC3BC388C8251852DF26EC58E73CB53161
-              B61DC5C54DFA25E52374F9A0703863F908BC49E2BF205C0E36F85E9E3C0852B4
-              33015ED8D88B7499D6DDFB77D13BF3C3DB289DBFA162C91DFA25A4025E9B5B11
-              B853C2E37CDE2CCB9C383E96A9C61A8086AEF340DD347F48435DB3C5DBC08E6C
-              415A5C61F19B3E2C3E030A617EA55D5BC79D965C34BA15D1130589F76973ACF3
-              E1B4A2BC5C359E46418E5F70FC4803B8C9D4B1FF1EBEB9C9DDE4ED3A195982B8
-              DD64D417AB4ABFD227118D683F4F224CEA1506113D509004456F671D3FC723F2
-              CB5763350A7242388E4D40E8FD64FA9EB73B5EBA263D3D06DC61ABF0E1554AB6
-              6F21E49CCBEDBA7C63C552F95771F89C804EB45E9612D5F32D088BF999D4AAAC
-              63E52842BCAC359DFD10CE1DBF87FC6AE7016FAB5C3DEEE61B70238FE3C30962
-              DB8CB14740DFEE71B4476CF483B9B9B98A665254163423E88A0CF967DD398101
-              A17793F1656FCB5DDDE17084D5D5D5894E644608B93B272747F6363D6E83F57E
-              F1045D3E291D235BC63A0E8E8E509848262C953E89DCCEAC59B37AA200474537
-              49E92FF3F2F23EF0272C630AB272E265E0B66C651D0747472CEECBC9B865DFC8
-              5DFDB1C71E4BB35AADDF8AAD8302DD8435C8C7FE84654C4196A787030969601D
-              074747684B049950DE2877F5D9B367FF02172BC4D671B95CA30B0A0AB6F81396
-              210511A0E593947D8F9D636A48FA5245DF3ECBCECE9E8D4DA879A2DB2424166B
-              905AB9DBF4B80DD63BC61B2848352E7C3E5BC83115352888A2717DAC41E6E3E2
-              36B175D4B88FBA9105113A6CE358C7C1D185952848BA9237A0204207BDA7C82A
-              2751909E72B7E70DE30AB27CD2D3189D83751C1C1DA0E0201396FE59EEEA3367
-              CE0CB7D96CA27D546C7E55E4E5E58DF73734E30A529E711386B78A751C1C3DA0
-              3F27E965ABE5AE3D6BD6AC49D8BF582CB60EBEFE30F63F7CBE3FFAF9EDB0DE35
-              DEA045996110ED74FABF258EE1A9B5D9C834F997A163F34AB2F98D820C4041BE
-              F73734C30A2280B5480D86A8E87E601CB341CF62ED217B3066C68C19A1B1B1B1
-              92C3C16A74D0058C2DC8F249F331C2DBFCDF12C7B0505888FD8F5FC95D1D9B57
-              BFC7DAE10D89D54A50905BD508CFE082644C0289B626C7E4507A339950B654EE
-              EAD8BC129A6221E29BA4D761077D9D1AE1195B902F6784C28923B2CFAE724C48
-              8F3EE1E4CA379BE5AC9A9D9D7D2B16FE22A9F5D46A5E09185A10015A3E49D9BC
-              BE1C33B183A42FBD4CCE8A0E87C3525757D72263D5175190C7D40AD00C823C80
-              0BBF87EB3886E42114E455392B62EDF11CD61E4F48AD67B55ABBCD9D3BF7B45A
-              011A5F908F33A3C0E93CCB3A0E8E06D86C31E4A7C59273BE62BF2315177B646C
-              713ED61E8A276610C3F08208602DB219172358C7C15195AFB0F61825B51236AD
-              42CE9D3B779A1022676ACB4414E4A88CF564631241264FC5DF8A26FCE2181D72
-              2B495F5222B5D6AC59B38A518E5FCAD8E0DF508E7B558F92C9BEF1017EF97B60
-              21E7F2766C5A3D8F8B3FCAD99ED3E98C282C2C547DC4D33C822CCF7811087998
-              751C1C15A0F46532A1EC51B155508E99B87849E6166FC3DA639116A19A4790B2
-              89F160B59C621D0747055CEE6E246399D791A6ECEC6C07A5F469995B5B8372DC
-              A855A8A6114480AE98F40150B899751C1C3F20B0988C5F7A8BB757B1CFF12EF6
-              397E2D777376BB3D0A3BF2F5DA856B2268F99481F8DFCF3ED67170FCC19A42D2
-              4B2B3B3F8BB5463FAC35BE04F12F415D841ADF3997C25482086067BD14179359
-              C7C1F18925D8399FD2F949EC6F3C828B17946C0865FA755E5EDE02AD03369F20
-              4B33FA420839C43A0EB5D887BDAA573E25E4EB2A02F5ED57244586025C9148E1
-              A11B284DE9C63A421569A1FDC9A4B2C31D7F3EFEF8E363DC6EF7127CA8E8FBE8
-              D8049B9D939393AF47C8A61344006B91D7713183751CFE20C8F03FA5847C5525
-              7E0846A028F9532815A431396F62ED719FF0006B0CE1ABB0C294A0494A378235
-              07561C79D97A056D4E418A322320DAA9ECDECD06429063F25B165227F33B74F6
-              306C9BDCE336B524055F0C1C79E46CF80CFCDFFF7E5FB781EFFD23D61CF37C7D
-              BF4F9FA9E787A9095D91710F50F226EB387C21E36F16724AE1B84BB74880B2DF
-              BB4D3161776D530854D58643D5391BEC3A6527FB6A22D588FBB7B9B9B9FFD43B
-              17D30A22804DAD9DB818C23A0E2554EC22F0CC0ACF3758A612C56858521FE819
-              17CD3A05C550EADF4CFC168BE5FA79F3E67DCE2276730BB26C421258AC3EDFFB
-              810537145A484BA78B66A4C4E8009B1830F6F2C1AC5350843F7260BE9B1B1A1A
-              6E2C2C2C647635B7A90511A0E5190F631A2FB28E430E42DFE3A6572FBE09B95C
-              393AB87EF820B05A54FBC29CA6F85973CCC426D55F59E7607A4104B0A9B51117
-              57B28E438A2D87093CF03EF14B901183FA43AC3D42D99B18E1A320A5D8A4BA0B
-              9B548AEF27A8058121C80753E2C0E6AA661D87142BBF25E058E99F20C306F486
-              9EF1C69F09C90739D6B8DDEE87F2F3F377B08EFD4202421001AC4584FBD76D60
-              1D87187B4F02DC31DFBF26D6954392C06E0B679D8A284AE4A0940A37B8999597
-              9767C8BE64C0082260F4EFAF0B83B4D7BD6CE9B2CF9548F2E32BD258A7218A1C
-              39B0F32DDC71363F32327291C3E19033110333024A1001A39F65FF7D91857C73
-              A473D0F2EE482ADC9C7224F6418C8C174184294097A0181FECDFBF7F4D7171B1
-              8B759C720938410468F9E44FF0F7F5ACE3F044653581DBFE457CDAEF778EE906
-              095156D6297481E0BF1637546D3916FB0F94A0069B4DA7F1473847B5159B4EA6
-              BDE2A12DB700847EFC931070466F03839E442C584348F1D7CA767DE615141EFB
-              89D21E8B6EEC025BED70F2D335866E2EF942400A22D0769FC3D0BDF8A82FEB58
-              3C91FB112125DBE4EDFEA9C329CCBED1A87290C3409B0729B9BFA09908584104
-              E8928C4808213B314B4336DC57EF6E1BF66DF1321D458805C0318ED29BD20CEA
-              068543D0428791C9659A7DA38F35012D8840FB7D46846F9D0D631D8B373EDB0F
-              F0751521BB8EB7FD3DA467EBF741E875C9AC23136527D4DA462AB9AF87190978
-              410450122B4AB2121F6AF6E5FE20E32394631CCA619AD1285F090A413AA0E593
-              84696466B28EC3E41492F4A58FB00E422F824A1001BA22E32EA0E4EFACE33025
-              84DE4DC697BDCD3A0C5D53661D000B68F9E4CBF1F757ACE330176404495FB295
-              7514BA67CD3A0056D095BFB0833BAC1477C14DAC6331367435589AA6907115A6
-              3EE1E72B412B4807589BDC89BF83AAD9201F7217D61AEFB28E82E91E601D8011
-              A0CBD37B000911AE2A1DC33A1683F039D0965BC884F213AC03610D17E402E8F2
-              8C294088E494FC010DA553C984B252D66118052E48275ACF9944353C83A23CC9
-              3A167D13A7CFC1B9886783E1DC8612B8205EC066570C40E83C2054F59BB2180A
-              2ADC73BCF9716C4EF1DBDC79800B2241FB6D179EC5870FB18E45655E0197FB19
-              B1DB1070B820B269BB677BD54CDC65822C72EE976744EA309367A04762A1DC7B
-              93073B5C101FA02B3246819B3C817B6F2AEB58E4050C2560A173C8F8B2CDAC43
-              311B5C103FA1E513C701B1DC67B81BFB10580CD4FD3A495FB692752866860BA2
-              22B47CF210DCA3D300DC13B1F37BB5AE1F4EE84600CB3214B588A42FD9C57A5F
-              040A5C100DA12BA6F601681E8385F647B8ABAFC1672E0185F7C2F040356E6B07
-              6E6B031EBDF500A19F93F12547FCDC26C70B5C10065087C302576D146E35D61B
-              AC21BDC1ED8EC2669A0D88DBD6B682C589CD2327582CE7C0D572149F390A5F5C
-              7D9C381CFC56D83AC305E17044E0827038227041381C11B8201C8E085C100E47
-              042E088723021784C311810BC2E188C005E17044E0827038227041381C11B820
-              1C8E085C100E47042E088723021784C311810BC2E188F0FF9D444C6E3A0B69F7
-              0000000049454E44AE426082}
-          end>
-      end
-      item
-        Name = 'calculator'
-        SourceImages = <
-          item
-            Image.Data = {
-              89504E470D0A1A0A0000000D49484452000000C8000000C80806000000AD58AE
-              9E00000C134944415478DAEDDC7F6C16F51DC0F1BBA7A550A854CB5440484751
-              441463F687418C0DB4D1DAC1126642B669A236D8E13FD38C44932D845F235B82
-              C912CD12210D292181CD9000893A28D2D260AAC6C842A6A8A8256B98F26BC5B4
-              2085429FDBF792FB72B5B95EEF7B774FBFDF7BF27E25CD536C1FEED372EFE79E
-              C7FBDE635B004665EB1E00301981002108040841204008020142100810824080
-              10040284201020048100210804084120400802014210081082408010590EC4AE
-              AFAFBF279FCFDF67DBF66DE2CF93740F841FB9EA38CEF7B95CEE8BF6F6F6AFC5
-              9F1DDD03C591A9401A1B1BA70E0E0EBE287EF1CDE28F7375CF0325DDE281ACA5
-              ACAC6CEB810307FA750F13552602696868A81261BC217EC14FEB9E05C98907B8
-              DD229497DADADA2EEA9E652CC607525757E71E2DB6E99E0305B1BAA3A3A345F7
-              10618C0D64C3860DB9A3478FEE179F2ED73D0B0AEA9DDADADA15E2DF3BAF7B90
-              204606B272E5CA92DEDEDEE3E2D3FB75CF82717162DAB4690FEDD9B36748F720
-              231919C8D2A54BDF17AF371ED53D07C68F785DD275E4C891C774CF31927181D4
-              D7D76F12BFACB5BAE7C0F8130F8A9BDBDBDBD7E99EE34733E91E60B8254B96CC
-              CFE5729FEB9E03FAE4F3F9059D9D9D5FEA9E43322A90BABA3AF717334FF71CD0
-              EAAB8E8E8EF9BA87908C09441C3D1689A3C707BAE7807EE228B2581C453ED23D
-              87CB9840C4D1A34DDC3CAE7B0E18E13D711469D03D84CB8840BC731E3774CF01
-              73D4D6D6969A706EC48840C4D1A356DC74AADEAFF2CE32EB67CBA7D977DE5D6E
-              D939237E14789CBC639DFB66C0FAD73BBD4EDFB9C1387FC512711439AAFBE730
-              62AF1281AC1737EB55EE73674DB955B77AA611F3235CC7B6EF9C73A70654EFB6
-              5104B251F7EC46EC602290BDE26685CA7D7EFD97B9B69DD33D39A270C413A57F
-              FCA15B75B9FB7E11C853BA673725902E71F348D4EF2FBFA5D45AB1B6DA88D911
-              CDFECD3DCEC025A597991F8A40B4AFA63062271381FC5BDC3C10F5FBABEE9A68
-              35BC34CB88D9114DDB1BFF752E7E7B4DE52E9F89401ED43DB7113B997220B344
-              20BF23902C39F4B76F9DDED35755EE724204B250F7DC46EC640452FC08240102
-              297E04920081143F024980408A1F81244020C58F40122090E24720091048E15C
-              1BBC61759F3A13FA3D736B665813CB4A47FDFA85FFF58B8FBE51BF5E36718275
-              F79CE9A1DB20900408A470DC9D7BEFDB1F867ECF2F7FB1C8BAE32795A37EBDF3
-              FDCFAC93DF7C1BFA77AC6E0A5F9D4E20091048E110483246EC6404523804928C
-              113B1981140E812463C44E4620854320C918B1931148E110483246EC64045238
-              04928C113B1981140E812463C44E4620C58F40122090E24720091048F1239004
-              08A4F8114802AA81B86F18F7F335B38D981DD1FCF3AFA755DF408E4024D54072
-              25B6F5AB3FD718313BA279EB8FA79CFC90D25B631188A41A886BF16FEEB0AB1F
-              BA45F7E888A0E7F825EB83BF9F577DE3380291E204E2BE17EF92A6E9F6F47993
-              758F8F1067BFBA6275B69E75DCF7EA554420529C40A4C995A5D61D3593AC0993
-              4A74FF1818E6FAD521EBFCA9ABD695BED86FDA4F2052924050B4084422100420
-              108940108040240241000291080401084422100420108940108040A4FAFAFA53
-              8EE3FC54F71C30876DDB3DEDEDED73B4CFA17B00D7134F3C3170E3C68D49BAE7
-              80394A4B4BAF1E3A74A85CF71C04022311C83004829108649865CB96F50D0C0C
-              4CD53D07CC515E5EDEFFEEBBEF5626FF9B92312290A6A626FE2F16463AD1DADA
-              CAFFC57211080210884420084020128120008148048200042211080210884420
-              0840201281200081487103B9FDF6DBDDB3F0764D4D8DBBB84D79BBFDFDFDD627
-              9F7CE2747575598E13ED5D37A64C9962353434D8F7DE7BAF3561C204E56D0E0C
-              0C589F7EFAA9D5DEDEEE5CBF7E3DD27DDCEDD4D7D7DB0B172E744FA0296FD3DD
-              CEC99327ADB6B636E7871F7E88741FF7B7D978ED9AB5F4DA35BB2AE2EF66B8BC
-              F8F8BCB4D47AABBCDCF92E9753BEBF4520BE38815457575BCF3DF75C2AF39F39
-              73C66A696919732FA8ACACB45E7EF9E554B6393434646DD9B265CC48DC385E7D
-              F555BBA4249D776D79FDF5D79DBEBEBE31BF6FDDE5CB76B598310D5BA64C714E
-              9696AADE8D40A43881AC5DBBD6CEC57B640AB46FDF3EC77D641F634E7BF6ECD9
-              A96DF3E38F3FB60E1E3C181AE6934F3E693FFCF0C3A96DF3F4E9D396D8F142B7
-              B94844DB7CE54A6AFB869BD96F2B2B95DF388E403CAA81545454586BD6AC4975
-              F6EEEE6E6BD7AE5DA1FF88EBD6AD4B759BEED3ADD75E7B2D749BAFBCF28A1DE7
-              6955984D9B36856EF3F7228E07223EFD8B6ACDD4A94E9FDAD360029154039931
-              6386D5DCDC9CEAECE7CF9FB7B66EDD3AAE81B8C6DA59756C73E3A54BF6AC7C3E
-              DD6D5654383D6A4F130944520D64E6CC99D60B2FBC90EAEC172E5CB0DE7CF34D
-              E376561DDBDC245E7FDC95D2EB0FE94F2290FF10483C0462D63609C447201E02
-              19F67502B989403C0432ECEB04721381780864D8D709E42602F110C8B0AF13C8
-              4D04E22190615F27909B321908E7410ABB4DCE83F832190867D293E14C7A7499
-              0CC4C55AAC78588BA526B381B09A371E56F3AAC96C202EAE078986EB41E2CB74
-              20286A0422110802108844200840201281200081480482000422110802108844
-              200840201281200081489C280CA7E544A1F87D2E58B0C09A376F9E3D79F264E5
-              6DBABFCFB367CF5AC78E1D8B74E63E0081482C35199DAEA5268D8D8D76555555
-              2ADB3C7CF8B073EEDC39D5BB1188C462C5D1E958AC3867CE1C6BF1E2C5A9ED1B
-              EED164F7EEDD2C568C8BE5EEA3D3B1DCBDAEAECE76AFB949D3DEBD7B1DF7E755
-              402012174C99B5CD65CB96D9B7DE7A6BAADB3C70E08073F1E24595BB1088C425
-              B7666D73F9F2E5B6FB7A2B4DEE53C9DEDE5E95BB10884420666D93407C04E221
-              101F81F808C443203E02F1118887407C04E223100F81F808C447201E02F11188
-              2F9381701EA4B0DBE43C882F938170263D19CEA44797C9405CACC58A87B5586A
-              321B08AB79E36135AF9ACC06E2E27A9068B81E24BE4C0782A246201281200081
-              4804820004221108021088442008402012812000814804820004221108021088
-              C489C2709C28D427B381B0D4241E969AA8C96C202C568C87C58A6A321908CBDD
-              9361B97B74990C840BA60ABB4D2E98F26532102EB92DEC36B9E4D647201E02F1
-              11888F403C04E223101F817808C447203E02F110888F407C04E221101F81F808
-              C443203E02F1653210CE8314769B9C07F1653210CEA427C399F4E83219888BB5
-              58F1B0164B4D660361356F3CACE65593D9405C5C0F120DD783C497E94050D408
-              4422100420108940108040240241000291080401084422100420108940108040
-              2402410002913851188E1385FA643610969AC4C3521335990D84C58AF1B05851
-              4D260361B97B322C778F2E938170C15461B7C90553BE4C06C225B785DD2697DC
-              FA08C443203E02F1118887407C04E223100F81F808C447201E02F111888F403C
-              04E223101F817808C44720BE4C06C27990C26ED390F3209F89401E4CFB675765
-              4A205DE2E691A8DFCF99F464327226FD4311C8A3A90E11832981EC15372B54EE
-              C35AAC7832B4166BBF98F3A9D47EF0988C08E4F9E79F5F6FDBF67A95FBB09A37
-              9EACACE615516DDCB163C7C6540648C0884056AD5A559BCFE73B55EFC7F520D1
-              64F17A10F1EC60C9F6EDDB8F2ADF31654604B261C3865C4F4FCF0DDD73C01CE2
-              1942A9D82FF2BAE730221097789AD5261EB51ED73D07F413479FF7C4D3AB06DD
-              73B84C0A649108E403DD73403F11C86211C847BAE770191388ABA9A9E94B7133
-              4FF71CD0EAABD6D6D6F9BA87908C0A441C45E68BA3C8E7BAE7803EE2E8B1401C
-              3DBED43D876454202E11C92611C95ADD7360FC8938368B38D6E99E6338E30271
-              89A75AEF8B1BED675131AEBAC453ABC7740F31929181AC5CB9B2A4A2A2E2B8F8
-              F47EDDB3605C9CB87CF9F2437BF6EC19D23DC8484606E2F2CE8DEC179F2ED73D
-              0B0AEA9DEAEAEA15269CF308626C2092784DD22C5E936CD33D07D2275E73AC16
-              AF395A74CF11C6F8405CAB56ADAA1A1A1A7A4384F2B4EE59909C0863774949C9
-              4BDBB76F575AFFAE432602919E79E699A96565652F8A4F9BC5C75CDDF34049B7
-              F868191C1CDCBA6BD7AE7EDDC34495A94046CEFEECB3CFDE231E89EE134796DB
-              C4A352BA174D2011F16F3220FE4DBE1747FE2F76EEDCF9B5F84FAACBDD8D90E5
-              4080822310200481002108040841204008020142100810824080100402842010
-              20048100210804084120400802014210081082408010FF0758B65B7D87FE7701
-              0000000049454E44AE426082}
-          end>
-      end
-      item
-        Name = 'calendar'
-        SourceImages = <
-          item
-            Image.Data = {
-              89504E470D0A1A0A0000000D49484452000000C8000000C80806000000AD58AE
-              9E00000BA64944415478DAEDDD7D6C53D71906F073AE9DC4D8E623C0B2405BAD
-              595212585A4212C2062905024153274457554213629AA61590AAAEDAA49521B1
-              8FA231F86353C5A6513A4DD3BA6A42AABAB26955452025A590B52184D06690D0
-              503AB1922CE31BDBE4C3F6D9356E131292434E72CFB9F69BE7272127263EEFBD
-              EF799FD8C696E10C0046C4DD3E00805486800048202000120808800402022081
-              80004820200012080880040202208180004820200012132A204208BEFFEDFA55
-              8CF3459C895CC178A77DE5FB6B572C3EC839176E1F5F2A41AF92264440F63636
-              66E4DCE8FDB9BDD15B46FA197B0076764DC9FCE9C6F2F23EB78FD74DE8D560E4
-              03F2FA9123B33C51CF19FBCB29A3F8F11B316F6CEE934B9776B87DDC6E40AFEE
-              463A20070E1C08DCCA08DE54BDDDA4BED0E4D5AB5787DD3E7E93D0ABE1910EC8
-              FEB78FBD695F7C7D0C377D6BED8A258FBB7DFC26A157C3231B90BF1E7A778E65
-              59AD63BD7D3C1E2FFAE6CA47CFBA7D1E26A05723231B90376A8FBDC8397B76AC
-              B71782ED7EA26AC9736E9F8709E8D5C8C806C47EC8D06E5F7C791C4B7C6C3F74
-              2870FB3C4C40AF4646392051FBC21AC712717BD3BD6E9F8709E8D5C82807243E
-              DE35EC4D1FCFD0A40DF46A64088804D54D1F0ABD1A1902224175D38742AF4686
-              804850DDF4A1D0AB91B91E90D0AA855522CED7D907526D7FFB8053EB1EDAFAEB
-              719FDBCA1D3F98106FCA4BC15E5DB017ABE196D8173C78BCD6C5D6B81310F18D
-              327F38E2DDC6B8785E578D14DCF49495F2BD127C57C01FDDCEFF712262B431CC
-              858084572E7A5A08F192EE3A29BFE929245D7AC539DF1438F4FECB66BAF2594D
-              538512F71A9188B74670B1D844BD74D9F454904EBDE282D7FBFDD16A53F72646
-              02726359D94C8FC773DEEE60C044BD8474DA74B7A55BAFEC830DC762B1BC2975
-              272E19A8A557D7B26541BF27D2657FE9D35DEB4EE9B6E96E4AD35E754762FE9C
-              9CBABA90CE22DA0312AAAA38655F3CACBBCE5069BAE9AE48E35E7D18AC6D98AF
-              B380D68084562EDCC204DFA1B3C6707A63717664DB8BE33EB7A5DB9F13991E92
-              FFBCDF2FED7BC5C5D6E0A1E33BB52DAF6BE19BD58B73782CDAA96BFD91F4D91B
-              FE5E7B27EFF9D3BE71AF95F5ED75ECAB05B922836848A8F44A78BCB9936BEABB
-              74ACAD2D20A19515AF30C1D6EB6BCBF04E7CD2C5233D51E6D4A6FBB3BCACECC1
-              1C920FB5C8F48AB35783871A36E8595A03B16C992FEC89187F51A7EBC62DD6D6
-              71F5F63939B5E90985B3B245CE9449A64F472B6ABD0AC4FC7E5E57D7EDF4BA5A
-              0212AEAAD868FF1AD9A3BF2D83BDDB76B1FF7C9CDCF484470B6793BA17A1D62B
-              FB6436076A1BF66A58D779A1AA8A23F645A5F6AEDCE17AA4977D70E192B64D7F
-              E4819962AA3FD3E4296943B4574783B50D4B9D5E545740C6FDEE5055A72F5EE1
-              976F0EDCC33ABDE93326FBD8BCD9D349DC8B50ED951D10C7FF85C0F18088A7E6
-              6586AF041D7F2C782FFFFCA88347E3037BE2F4A67B2DCEBEF6D02C1201A1DAAB
-              C0F4908FBF76BAD7C9351D0FC8ADEA8ABC588C9D33D796A43B1F532738BDE909
-              549E8750ED95C7C3F227D5349C77724DC703125AB5B084C57993B9B62451DD74
-              1DC8F6CA12A5C183C79B9D5CD2F18084972F2A1396386EAE2B494337BD77CF1F
-              98F08FFDBD913C1266999BBF3BE83AAA01A1D22B6EB18AC0C1864647D774FA20
-              DD0AC8D1B31D5C88813DE9FBF14F58BC68DE98D7B35A4FB38C5FBED0FF3DE79C
-              55CEA1F11C846AAF101089E67FFF8FDFEC1EF834FE78E563ACEF7B9BC7BC5EC6
-              EFF730EBE83BFDDF4FF665B0922F7D814440A8F60A0191E8BC1E611F755E1B38
-              1FCB623D7FFCCB98D7CBFACEB7121F3ADBFFFD43B9D344EE54BFE9D3D2826AAF
-              101089B8FD90E198FDD061D075650B59DFB33F545E2B63F7AF987562F0292CB1
-              1F3258DCF5CFB87004D55E2120F770B6E32AFFEF8D5B83AE8BAD7D92459F786A
-              D46B78DF788D79F6BF3EE8BA2F4E99C4E6CCCA26F1F0EA73147B8580DCC370BF
-              196F5FBFB892F56D7CE69EB7CFD8FB5B66D51FBDEB7A4AF71EFD3D21D82B0464
-              14AE867B58CB7F2EDF7D5E99592CFAF81A165F5EC5C4D469030DB87E8D59876B
-              99F7CDBF33D6DB73D7CD8AEF9F21B203596E9D0E7AA5000119A54B376FB13317
-              AF8EFBDCE6CECE163327D37A9BFB50947A858028B81CEA66A73FBD32E6F39B77
-              DF74312368F473265C43A5570888A2585CB056FBC9E895D0E8DF3B39DDDEE822
-              FB49A6C7A2F59CE35E28F40A0119A39E688C755C8BF04FAF8613FF9FDE5D7F6F
-              5916BB2F3BC0664DF38B2CAFC7EDC375553AF70A017148E2ADDEBDF62064DA1B
-              EC4D91DF7EA92A9D7A8580004820200012080880445A04A4F347DF5F136C7AEF
-              6FE6DA0290142A5BB43677D76E4767CFF1805CF8C5CFD6671F7EEBCFE6DA0290
-              746DC5EA0DF76F7DC1D1D94340800C0404400201019040400024101000090404
-              40222D02F2F1EF7EB3665A7D1D5E0701E3AE572E5F9BB7E999D47E1DE4C499F6
-              328B33BC920EC609C62B4A8BF253FB95740404DC828000482020001208088004
-              0202208180004820200012080880040202208180004820200012080880040202
-              2081800048202000120888827F9DFB847777F78EF9F63E5F26FB4AFE83D2FF6B
-              0F35465FC3040444C13B8D1F8CFBDC1E2B7F44BAE9A831FA1A2620200AA80C16
-              951A2620200AA80C16951A2620200AA80C16951A2620200AA80C16951A262020
-              0AA80C16951A2620200AA80C16951A2620200AA80C16951A2620200AA80C1695
-              1A2620200AA80C16951A2620200AA80C16951A2620200AA80C16951A2620200A
-              A80C16951A2620200AA80C16951A2620200AA80C16951A2620200AA80C16951A
-              2620200012080880040202208180004820200012080880040202208180004820
-              200AA87CE01A951A2620200AA8BC024DA586090888022A8345A586090888022A
-              8345A586090888022A8345A586090888022A8345A586090888022A8345A58609
-              0888022A8345A586090888022A8345A586090888022A8345A586090888022A83
-              45A586090888022A8345A586090888022A8345A586090888022A8345A5860908
-              88022A8345A586090888022A8345A586090888022A8345A58609080880040202
-              2081800048202000120808800402022081800048202000120888022A1FB846A5
-              86090888022AAF4053A9610202A280CA6051A9610202A280CA6051A9610202A2
-              80CA6051A9610202A280CA6051A9610202A280CA6051A9610202A280CA6051A9
-              610202A280CA6051A9610202A280CA6051A9610202A280CA6051A9610202A280
-              CA6051A9610202A280CA6051A9610202A280CA6051A9610202A280CA6051A961
-              0202A280CA6051A9610202A280CA6051A9610202022081800048202000120808
-              80040202208180004820200012080880445A04E4E4D9B3252C6E35996B0BC067
-              AC78E98239739A9D5CD2F1809C6A6DCD8B33EF39735D0148B258347F7E51D179
-              27D7743C202D2D2D997D5E5FB7B9B600246544BB7DC5C5C563FF0CD561381E90
-              8493ADED71332D0118B0A0A8C0727A4D2D01696A6D3F622F5CA9BF25004982B1
-              A3A545054B9D5E574B409ACFB46F149CEDD1DF1680242ED8E692B9057B1D5F57
-              C7C11E3E7FDE37AD2716D1DF1680A46B591EFFF2BC3CC79FFB6A094842736BFB
-              2BF6DDDE7ABD6D01B83DC4AF9614156CD0B4B61EA7DADB73E251D6A9AF2D0049
-              9697E5CE2F28E8D2B1B6B6802434B59DDBC285D8A1B3064C6C82F3ADA585F93B
-              75ADAF352009275BDB4FD9170FEBAE0313D2870B8A0AE6EB2CA03D202D2D2DC1
-              3EAF2F71F7E7D35D0B2694EE8C68774E717171486711ED0149686C6B9BE9119E
-              C45B000226EA0179E1188FE59517165ED25DC84840121A1B2FFA3DC1488DFDE5
-              62533581A4FA58C85F5D5E3EDBC8CB08C602F2B9E633ED4F0BCE5E325D17D21F
-              176C53C9DC82978DD674E34413F726DE40789BE0FC7937EA437AE142EC8A8603
-              DB4DDD6B0CAAEDF6C937B59DABB21BB0CEFEB2DAFEF380DBC70329E182FDA7C6
-              FE05BAAFB430BFD6CD03713D2000A90C01019040400024101000090404400201
-              0190404000241010000904044002010190404000241010000904044002010190
-              4040002410100009040440020101904040002410100009040440020101904040
-              002410100009040440E2FF19DAF4509DAC7BD10000000049454E44AE426082}
-          end>
-      end
-      item
-        Name = 'cancel'
-        SourceImages = <
-          item
-            Image.Data = {
-              89504E470D0A1A0A0000000D49484452000000C8000000C80806000000AD58AE
-              9E0000128D4944415478DAED9D7FB0555515C7D7E3213FCAD1C8905FA310F87C
-              3FEE7D304D68921392E34F34A73F081543116D1C8B21CA444BD4F15749A61143
-              394E2AA4016AFCD154626A43486398D234C0BB3CF0690A8E209A924EC5CF077D
-              F73DE70EF0BCEFBC7BDF5E7BAF7DCE5D9F9933E7F21CF7596B9FFDDD3FCEDE7B
-              ED3A5214A55BEAA40D5094905181284A022A1045494005A22809A84014250115
-              88A224A00251940454208A92800A4451125081284A022A1045494005A22809A8
-              401425011588A224A00251940454208A92800A4451125081284A022A10454940
-              05A22809A8401425011588A224A00251940454208A92800AC431ED44A30E10E5
-              EB899A0FE1C29F1A700DC73514D7C00A93D98DEB1D5CDB7175E0A5B577E2EA4B
-              D48604DF94F631CBA8401869236A41864E861026E13E017F1AE4E9D1BBF0CCB5
-              78E66ADC57E6893649E74556508158B08168346AF169289497E29F39697BBA50
-              C0CB7D12ADD7B2B144FF943626ADA840AA045DA609078966E1E7E5D2B654C9F2
-              3E448BD0255B2B6D489A508154C066A246F4F96FC2CF19D2B630B10463A2F94D
-              445BA40D091D154837AC233A0623E899F8791BAE61D2F6386207AE3B77133D3A
-              9E68BFB43121A202E902C61583D015B91D19335BDA169F601CB5105DC73B305E
-              D9256D4B48A84062DA8886223316E2E714695B845901B1CCCE479F956B9E9A17
-              0806DD27A0E65C809F5748DB12184BD192CEC1A0FE7D694324A959819831C600
-              A2BB9101374ADB1232684DEEDB4334AF56C7283529904D4497E1C52F93B6234D
-              A0A04C6B217A42DA0E01BF6B872D44233A8956421CADD2B6A41114968DF54493
-              1B89DE96B6C5A3CFB5015A8DB910C6BDD2766401149A9BD19AFC58DA0E4FBE66
-              9B8D444330D85C43D12241858F8E834413D114EF9436C4259916481BD11438F8
-              94B41D5906ADF2D43CD10A693B5C914981E0A5D5A14BF5307E5E2D6D4B8DB018
-              5DAE6BEB8A599F2D322790785E631D7E8E94B6A542F6E2FA37AE3DF1851E211D
-              175F95EE170981AD307C7CD6E64D32251088A315E2582F6D47195E31FB355080
-              FE6E363A21D337A35BF29F6A124077F164DC505153735DF415EE6C8AFE1614F0
-              715C7371E8970D32239002D185B83D2D6D07D88F4C5D0E413C3D80E8B931441F
-              3AF63B87E79D8B8AE1ABB84F94763EE6A21CD133D24670900981A0905C87DB83
-              82266C4346FE1C85F471E9354C6D51CB3203F67C5DD20E703D44F290B00DD6A4
-              5E2092F31B78EE3DFD89163610BD279D0FE540C5F125DC6EC1759EC4F3B3305F
-              926A81A0B6BCAB2E2A003E590F61DC80966295B4FF95B28EE813E8EE5D571715
-              D67A9FCF369508F2EA56E93CE82DA9158880389EC500F4DB1880BE2AEDBB0D68
-              55BE465177F4D3BE9E996691A452203EBB5578CE1A08E31BE82A7448FBCDC946
-              74BBE0D7AFF073888FE7A5B5BB953A81781C90BF8FCCF90A5EEA4BD23EBB0495
-              CDF44391507C90BA817BAA04E2EB536EBCA36E91B4BFBEF83351DF13D165A528
-              30856B52F509383502F13409F8F201A24BC611BD2BEDAF04E8769D8402F13CAE
-              535D3E274D9389A91048BC7CC4E9A75464C42C74A77E21ED6B08B4212FE2FDF9
-              CE804806A761594AF00289171E9AC880AED656ED83F872AD44AF4BFB1A126DD1
-              64E3A30E1FB11515D2E8D01738062F108C3B1E2177AB7257F5439FB8215A30A8
-              C4A0423A17A5F6590F8F5A8CF1C835D2FE2611B4405CEEE74001F82106E2F3A4
-              7D0C0D8FE22812FA7E92600512EF04DCE1C8E91968DE1F93F631347C8BA304BA
-              B8C342DD9918AC400A51DC58F66DB2280017E6050A41E8488923A6035DAD46E9
-              3C284790027138537E165EC45FA4FD0B0D6171140975A63D388198D03C0788DE
-              7290B48AA30C2188A3445FA293420B29149C403645AB6559E35669B7AA3C2189
-              C360E26EA11519276D47179BC2C145C4431D909727347194082D8263300289CF
-              E3609D8FD04FB9E509551C257613F50F251670300269239ACF1C487A15C61CE7
-              48FB151AA18BC3600266E7FD2C9CEC912004E260ADD5BE7E44C7EB0CF9D1A441
-              1C254259AB1584400A448F13E3F91C105B83AEAD3A1AD7E240DA3399D76E2D45
-              0F60BA87AC49445C20F1C94EDB191DD255B95D702D0EE4F9F9C8F3E7B95701C3
-              E6E1D25162C4055288D65A711D7BF6326A9D33A47D0A095FE228FD1B22D9CCB8
-              9F6405DEE754E79994EC9F1CE6C0CC7AC67EE601B446B5BAD9A91CBEC561309B
-              AE307ED8CAF58C4E8C4F250F161515086A9B055CA7C9D6DA36D99E90104709F4
-              0A7E444C5FA1CCE9BB78AF735CF951819F3230CF7BBC8FA678B0942FA121290E
-              43BCC77D1FD7F324E745C404C2199D044E7C31EBD1472A455A1C47D8C1192D45
-              2C1A8AA440CCA2B461B6E998B85568822749F91112A188A34421DACFC311776B
-              070432C2955F3DF8EC9FCD448D9DC5F94116071AB316D4AD3784260E431C9CEE
-              8F1CCFAF276A6E8AF6087945442085684269064352CFE6A25859354D88E22881
-              77FD2FE20973BA04EF7AA62B1F137CF74FA138D96D0F6AA7A6B4C7CAB5256471
-              18E258C04F72D8928B4EDFF28A7781A05F3501EA789121A9F5C8B0CFF9B63F24
-              4217478942F405CA3AAA3CD471262AC4B5AEFCED260FFC82CC5A8ADBE5B6E9A0
-              609C93A62308B8498B380C6D44DF417AF73324B53CC7B866AFC27CF00B57F74A
-              A2B90D853489C360CE271958E5998CDDE1FBBD7B15C806A2D168675FB34D27CD
-              E74DD89236719428445FB3AC4FBAEA243A656C1469D30B5E0582973B0F2FF74E
-              DB74FA110D09F5D83397A4551C86F838B817186CBC0D36DEED2A0FCA3CCF1F85
-              28A277CE32996D4860944FBB4320CDE228C1D4BD2EE498837A24E15B20D61904
-              836FC28BBCCFA7DDD264411C060CD61FE3387DD7E738C49B4090392D75C59B1D
-              216CA2F14956C461304754E3797FB24D07F991CF17B3C63DDE0482D6E37B641F
-              396F3F6A8FFEBE6C96264BE228C1D4CD9A8B72F0131FF6FA6C41FE80874DB634
-              F6B1169E252AC193457118500E56E3D9136DD240BEAC440B72B10F7B7DB62066
-              E7E020CB642E45CDF11B5F364B915571C4BECD816F0F5826B30BE5E0041FF6FA
-              148875D33A00021B43F4A12F9B25C8B2380C85E82BA6F5F984BE06EA5E04D24E
-              34EA20C3E44ED667CFB32E8E121C95250AC2E866A2375DDBEA4520A82E2E8643
-              BFB34CE61508E40B3EEC95A056C461284405FB649B34A0B04B5A31AE756DAB17
-              81E0E5DF88973FDF260DE9CDFB2EA925711838F603F99A0FF32210A60CB9AA25
-              8AC098296A4D1C06A6D5BD5E3650F9128839B8E64C9B34D0A49EDE5A5C189A1D
-              6A511C0608E402D8B6D232991773D1FA2EA7F812888993FB599B3450908ECB33
-              2D990E815A1587010239B9CE7E80FD060432C6B5ADBE04F25FDC06DAA491A52F
-              58B52C8E120C5FB276A34C7CD2B59DBE0462FD592F2B02517144A4A54CA44520
-              7B73962D5008A8380EA302E1CD8C9D3986207392A8388E262DDDEEB408646BCE
-              72902F898AE3E370445D54811C660B32A3D987ADDCA838CA5388A22436D8A4A1
-              02394C0732A3D187AD9CA838BAA710859EB57AA72A90C3A46E0CA2E2480665E2
-              0DDC46DAA4A102398C976FDE5CA8387A46C7204767462A3EE971A0E2A88C42F1
-              5C1CBBEDD32A10CF99618B8AA372D2522674A909132A8EEA484BB73B4D8B1547
-              E589B6F9B0B75A541CD5D146742C7CFAC832994C2D56B45EEE8E023839CF745A
-              11272A8EEAD948341EDD81972D93C9D47277EB0D5328843740203FF5616FA5A8
-              387A07D3019FD9D930C5B1E5D6578654E1938AA397A08BB500FECDB64923535B
-              6E9982360413B45AC561077A147FC3ED349B343215B4214B617F541CF668D89F
-              3230C5646DCD15939241C561CFEB44C7EF21DA659B4EA602C71938428FC2D8EF
-              A2002DF065F391A83878603AF5367BA147398257A380AEC9134DF26573091507
-              1FC8CB25C8CB2B6DD2C86AF06A8EE30FBC8F43541CBCA01CECC5ED18CB643279
-              FC01D7013ADE8E7F5671F082973F143E6FB74D279307E8183806EAC89C5FE72D
-              9BE84A5071F0C3341F96CD23D80C4C87783ACF2015871B38825653960FF1E43A
-              061A9C958BD677B9B051C5E1800EA2C1FB8876DAA693E963A037108DAE277A8D
-              21A9E720900BB8ED5371B803E38FBBE0FF2DB6E974129D329661D2B952BC0AC4
-              C0346168B6A31D3B9EE87F5C76A938DCC2F5DE7D7FC59410C852DC2EB74D8773
-              75AF8AC32D5CC73F83E510C8153E6DF72E9076A209A84A5E6448AA3367FF3D5D
-              C5E101548AFFC06D9C6D3A683ACE6C265AEBD376EF02317035B76479EAAD8AC3
-              3DA8104FC5CBDECC9196C462552981586FA08AF90099F699DEFC8F2A0E3FE05D
-              3F83DBF90C4989EC07121108AA93C6CE28B29E35A89D2E68257AAE9AFF47C5E1
-              07E473C3A128C4A835F544CD4D4C69558388400CA859DE269E688955455D5471
-              F80383F3D5C88F890C49EDC03B1E21E183A440AEC3ED4126272A3AE053C5E10F
-              E4F519C8EBBF3225773D04F290841F6202594774CCC06865270BEF12F5FB32D1
-              81EEFEBB8AC32FA800DF23A63D1BBB89FA8F27DA2FE18798400C1C9BF78F603E
-              6A99EF97FB0F2A0EBFE0BDCE429E2CE4480BEF6D619E688E942FA202D94034A8
-              3EDA69C80206EC2331607FEBC8BFA938FCB29EE8C4BE44EF70A5D78956682CC3
-              16DDDE222A10039AE2A7709BC2911684F02A6A9BA6D2BF551CFEC1FB7C09B7D3
-              99925B815EC154497FC405C2B589A60404311B2259A4E2F00FF2FC9BC8F3455C
-              E921ADE179C6D6A837880BC45088BE40B1ADB141C6CEAC8B26239DA0E2F8381B
-              89C6F429AE6A6763295A8FE9D27E05219076F4330F465F3D8247C5F171A08AFE
-              FB883EC4CF7E5C69426C839B19C7A7BD25088118D0D59A0F636E94B623091547
-              790AD14ADDB3B9D2430FE03E74AD6E92F6CB108C40B8E745B85171940715DBDD
-              C89B1F70A62939EFD195600462C020EF32D41ECBA4EDE88A8AA33C785F57E27D
-              2DE14C13793D0D79FD84B46F47D81316C8F4F5873C6ECAEF09154779D0729C5F
-              17ADD46503E96D6C61D837C26C53586C211A71A0CB649F142A8EF214A2836B5E
-              E04EB72FD1498DD122D660084E2006B42273D18ADC2B69838AA33CAEC481FCBE
-              B98521F2A603BBC2A410ADFD6F9078B68AA33C2EBA55311D39A24669FFCA11AC
-              4036120DE9131D36EF151547795C0CC84B1C241AD6CA1033CB05C10AC4801A6B
-              4A5DB456CB5766A838CAE0E2536E09886E6A9E6885B48FDD11B4400CE86A3D82
-              DBD51E3242C5D1857886FC69629C04ECC26274ADAE91F63389E005821AA66E53
-              14496FA4C367CCCC3BEA3EA495786D9539CD8B6DF94817B6A2421A5D57CCFE70
-              095E20061F6BB54AAB80A57D0D01EE55B9E50865AD554FA442200688A4F56071
-              3F8E3BCC7E125CE7B606320FE39B78B393398D986B3F4759208E71CD51A4FFE0
-              498D400C68EF2FA4A84FEC9AF9EF12DD9AB4C73D6B706E93ED818B726E3E153B
-              21550231704643E9894AA3A5A49938FAC8EFC9CFA19862D1497A4BEA0462F03C
-              D3BE135DBBABAA0D4E173A26A81BFCFA2553DCAA1E0975A6BC02BBD309D77913
-              55F001453560AF630187401C2BF767C4130EB4225099DD93479755DAF7DE905A
-              8118044462E8C40B9FBB075D05CEF3495C131F41703F795E2D9B667118522D10
-              83F0C246D3EDBAC7D57170B69863CFF612CD16A8448AA4B55BD5C587F4E373E0
-              DE1DE6F45DDC96F83AA2BA3B4C94983E44D361CFB7C8FEC04C1B5237202F4726
-              0462F0F809B8475038D7A090FE16F7E773D16CB4335E273A1EDDBDF3F0222F3A
-              149DDC657DA81003A9FA949B44660462F03199D84BB6E15A75289A1C33C73E6C
-              CA477FAB18B40CC7E2FF6F32C700C0C7CFE3C54DC09F4F9376AC2B699A04AC84
-              4C09C4102F4B59470ED76E396037AE8FE2CB9CBE3520BE3E85ABBFB47115B215
-              E2189F86E523D590398118E2058E0F938755C04A91C5188C5F1BFAC2C3DE9049
-              8194F0BD9FA416097D3F872D99168821DE99B88684B6EF66980EF4052786BA13
-              908BCC0BA444088120B24216E637AAF0B5763021853A89568614772B4D98B855
-              F54493430BCDE3D8E7DA23D4088E21135AC4438F7ED7262616F080281841D001
-              B3A53181A4F710CD0B2556AE6F6A562025E2799305C4783E494658DA87684ED6
-              E635AAA5E60552223EE9CAECA863390E2EC5AC88F7E78B9EEC140A2A902E9883
-              455173DECE78FA6E2A30A7C9A225BD43F2C0CC10518174437C5EC94CFCBC0DD7
-              30697B1C612257DEB99BE8D15A1D63F4840AA4023613357646271ECD90B68589
-              25F544F39BA2F8C74A022A902AC1A07E02BA22B3285A5A9E2696A3EBB80883EE
-              B5D286A40915880518AF8CEE4B340DFDF74BF1CF9CB43D5D28E0E53E798068D9
-              D82832A5D20B54208CB411B5204327433093E2FD1A833C3D7A179EB916CF5C8D
-              FBCA7C712E54E14005E21874C946A116CF9B8D4E28BCE8E114174D0EC73514D7
-              C00A9331FB45CC67D7EDB83AF0D2DA31266A47EBD58604DF94F631CBA8401425
-              011588A224A00251940454208A92800A4451125081284A022A1045494005A228
-              09A8401425011588A224A00251940454208A92800A4451125081284A022A1045
-              494005A22809A8401425011588A224A00251940454208A92800A445112508128
-              4A022A1045494005A22809A840142581FF03C0613514623B0684000000004945
-              4E44AE426082}
-          end>
-      end
-      item
-        Name = 'capacitor'
-        SourceImages = <
-          item
-            Image.Data = {
-              89504E470D0A1A0A0000000D49484452000000C8000000C80806000000AD58AE
-              9E0000067E4944415478DAEDDCCF4BD4791CC7F1EF47670BFB6537AF1DF61074
-              4858AB4BF8830E82953146DE422AFC17BA05E1A94BA760D965D9F22218120EA9
-              87768B3403C1BD247488D8BA4A44692415E577BEFB19CA10D77DA9F376187DEF
-              F301EA679CEF9BF9CE179E33DF11674202E03F856AEF00B09511082010082010
-              0820100820100820100820100820100820100820100820100820100820100820
-              1008201008201008201008201008201008201008201008201008201008201008
-              2010082010082010082010082010082010082010082010082010082010082010
-              0820100820100820100820100820100820100820100820100820100820100820
-              10082010082010082010082010082010082010082010C8266BEB1A3D9966A137
-              1ED863F16283DAB698A52F270B9D3F5A6EAF393F7A2D24E172B5EFF7363617BF
-              66B224F437E416068686BAD3E55712C826693D3BD6941593FB71B96FBD33C534
-              4D26EF76D6586EF7F8E9E13BB5B91DF96ADF7F2F4216BAC60B1D85EF97ABBD43
-              1EB4E447CFC543797BA37369BA98BC7F377F6266A2E761B9B77DB47D70BA6ED7
-              DEA66A1F035FB2AB13C3A7FA4A2B0231FAF6CC315DCE6C299085776F469E4C5C
-              3C53CEFCE1B69BEDB9DA9D37F6ECDD6F3A4DC3BFC553AEF38F863B0608C4A825
-              3F369F6CE0B46AB9AF81BC4DB2B4E6E0CCE39EE71B9D6F6CB93557FBC38ED704
-              52190B5FD23D0462507A415ECCC248B9F34B81448B759F77D74F4D757F5CEF6C
-              634BFF6FF171EE520CE46F02A98C10923E023168CE8F15E201EC2C777E592025
-              6F17738B879E3EE87DB5D6DC521CA53581545298251083787A359BACF1A75C65
-              45205F65E1CAFE9AECFAF8F8854F2BB72FBDE608C5301897F54BBF2390CA2210
-              831848D132BF6A20DF8517F1DBB324297E88EB03717D64B5AD08A4B208C4A0B2
-              81AC0F815416811810887F04624020FE11880181F847200604E21F811810887F
-              04624020FE85ECE7E4A76AEFC476D5FAE7D85F967902D9FA42F64B627A14FC3F
-              6BFB63D4F40CBC9E40B22C64EA7A02A92C02312010FF08C48040FC23100302F1
-              8F400C08C43F02312010FF08C48040FC23100302F18F400C08C43F02312010FF
-              08C48040FC23100302F18F400C08C43F02312010FF08C48040FC23100302F1AF
-              14C8CD6AEFC4761503B960992790AD8FB7DC1AF0965BFF08C48040FC23100302
-              F18F400C08C43F02312010FF08C48040FC23100302F18F400C08C43F02312010
-              FF08C48040FC23100302F18F400C08C43F02312010FF08C48040FC23100302F1
-              8F400C08C43F02312010FF08C48040FC23100302F18F400C08C43F02312010FF
-              08C48040FC23100302F18F400C08C4BF90FD9AFC5EED9DD8AEDAEE8D5EB4CCF3
-              C1715B1F1F3D6AC0478FFA47200604E21F811810887F04624020FE11880181F8
-              47200604E21F811810887F04624020FE11880181F847200604E21F811810887F
-              04624020FE11880181F847200604E21F811810887F04624020FE950269AAF64E
-              6C57ADF7C6A62DF3BCA370EBE32DB706BCE5D63F02312010FF08C48040FC2310
-              0302F18F400C08C43F02312010FF08C48040FC231083CA06125EC46FCF92A4F8
-              21AE0FC4F591D5B62290CA22108318C86CFCD150EEFCAA8164E1CAFE9AECFAF8
-              F8854F2BB73FDC76B33D14C3605CD62FFD8E402A8B400C9AF3638578003BCB9D
-              5F11C8DBC5DCE2A1A70F7A5FAD35D7D8D2FF5B2CE952694D2095146609C4A0AD
-              6BF464310B23E5CE2F0B64B1EEF3EEFAA9A9EE8FEB9D5D8A84402A2784A48F40
-              8CE269D67CFCB1AF9CD9A540B2B4E6E0CCE39EE71B9D6F6CB9351703794D2095
-              B1F025DD432046AD67C79AB26252D63F2D7E0DE4CDC893898B67CA992FBD26C9
-              D5EEBC41209B2F4BC2F947C31D0304B2095AF2A3E7E213F2ED8DCE950279FF6E
-              FEC4CC44CFC3726FFB68FBE074DDAEBDFC47F6A6CAAE4E0C9FEA2BAD0864937C
-              7B26B99F6CE074AB98A6C9E4DDCE1ACBED1E3F3D7CA736B7235FEDFBEF45C842
-              D778A1A3F0FD72B577C89BD20BF7340BBDF1C01E4BD6F81370314B5F4E163A4D
-              A747CDF9D16B210997AB7DBFB7B1B9F835134FA9FA1B720B034343DDE9F22B09
-              0410080410080410080410080410080410080410080410080410080410080410
-              0804100804100804100804100804100804100804100804100804100804100804
-              1008041008041008041008041008041008041008041008041008041008041008
-              0410080410080410080410080410080410080410080410080410080410080410
-              0804100804100804100804100804100804100804100804100804100804100804
-              10FE017D289DC99F4227FD0000000049454E44AE426082}
-          end>
-      end
-      item
-        Name = 'cd_logo'
-        SourceImages = <
-          item
-            Image.Data = {
-              89504E470D0A1A0A0000000D49484452000000C8000000C80806000000AD58AE
-              9E000011D14944415478DAED9D0B7C5C559DC7CFB993F4959949D25A8BB89424
-              ED07A16A57DBB2A01F7705A1C9B4E0A3B2E0626B92B2484DFA50D015E1234BE1
-              B3A2B8BB28D22654843C0AB85BF8E8C707344955EA634165E9964777456B5211
-              57584B9BCC4C2821997BF67FF398CCDCB9F77FEF9D3B99998CBFEFA7FDCCCCB9
-              E79EF33FE79EEFBDE73E66220500C01659E8000028662008000C100400060802
-              0003040180018200C00041006080200030401000182008000C10040006080200
-              03040180018200C00041006080200030401000182008000C1004000608020003
-              040180018200C00041006080200030401000182008000C100400060802000304
-              0180018200C00041006080200030401000182008000C10040006080200030401
-              80018200C00041006080200030401000182008000C10040006080200C3AC13A4
-              6ECF89CA843EB7AE4C09CDEBBA894062F8D896F0AF0ADD06307B9835821862A8
-              B1F28728E28B7D375AAA0FF4B784BF5FE83681E267D60852DB16FB0DBD2CCB55
-              798131B1E4E88ED09F0ADD2E50DCCC0A41EAEE1E5EA374FD97B92D555D3FD01A
-              FEE742B70D1437B342909AF6D816A9447B8E9B7EDF406BF0EA42B70DE489755F
-              9BBB40AF5EE875B55921485D7BAC4529B13B97652A213B8FB506AF72CC78F9BE
-              39E1D8A91BA9FE2DF469894DAE9F2AA9DF1CEFD97C902BAAE2A207976865A3B7
-              51E55752CFCFB38F4DF4E99AB8E1D5FD4DFF65B53CD4D03564BC58AEAB2596C4
-              F75F953175AC58DBF10E4DD30ED9D47728DEDBB466EA73B0A1AB870646BDCBAE
-              7C562AF5E5685FF30376198291AE56DAC1EDB26FAFBA33DEDB7CAD5345C148F7
-              8735A56EA278FFD2264B3FD57367B4AFE92EAF31D80141382EE898179AABFD1F
-              BD0BBA2A53895BE27D4DB7582D0BD5779C2DA4F6DF5E6294426E8AF6363E9851
-              162308ADF50FB1DEC67FCD5827D2F5456AF4F5D67DE14B90A97ABF45F5FEAD65
-              DB1BBA7E412FE7322B0FC67A9BD8BD3B95710FBDFCBDCB609EA75856504C2AD9
-              2608E20D3782841B3ADB29DF162FE5060265B5838F6EFC9D399D36F000BD9CE9
-              35CE9836345FECDF31622A8B1144FC8A06DB0A2FF5E74610E3EAA07E5EB467F3
-              9369893B776AA1276AC79CD6B53BF28DC75EBFF7DD42EA3FF318CE0DD40FB727
-              DB0441BCE146101A54BAE782A5B83DD6D374436A52C5FA8ED3B484F6BF9959C5
-              8B14C7113AF4E8528AD32DA70E4A6C8EF5357599E2E20411B1F0FC0AF1D015A7
-              920934FF0EE995A7ECF2BB14E464CAFB4AFA6F751FEA2B34283F9D9A108E74AF
-              574A395E52A7FAAE8DF636DD69B91D225D0F51909779DC122F512CA727035EDB
-              59AF6BF28E94E5C611EB348BF5D28EF210C486377CE0DED0C848D950C67A9ABC
-              30BEBFF1C762F59EF2D0A2791FA51EEC306539481BE67DA909C6DC99E6E90F9B
-              F2F550BEF569F9EA3B5BA494E6767650BEB4A985932034356BA2A9D9DE64FEFA
-              BD1FA23DF0B7ECFBC259108A214D888A48E7459A92074C257D27D6DBBC213525
-              DCD0F5EF54FEE5E901CA01DA2954D3BBAAE998C5D324C83BADE2A3F6BE4C2F8B
-              4DDB6F673C3CEF4BB42378DDEEFCCA1C735A5C918E7395D27E911696925F88F6
-              35DE94DE97B3804208126CE87C2B0DB4674DC94F52A79F979A401BCF98162C4A
-              493A4279DE9E9EA79BF6AA2AFD92B29237C6FA1ABFE458A7148FD111E922539D
-              AC20D4B89FD051E782A98F3448FF8D06E915D3451A472EF117D3D9BD0B623480
-              DA95484F1107E23D4D0DA658338EC2946F97D4453505B231AD8E91A573C4C10B
-              33A663566598E309D5777D99CAFB0C1FF33410C4012741E8B0FE2ECAF41FE9EB
-              883E1A4891D434630A2184BE3C25D36FA3BDCD8FA4E7E9DA49F1FF636A9AD594
-              A2F2E2FBEAF440E0A848CFF814099276826B23C8F7E8FFFBA73ED0496A60EA24
-              D53CC028F19B54FF95299FB310C46AE0CA47A9DE4B93E5ACBB7F85D413CF99D7
-              93425F4F47916AA5A4F9CAD706AAE73BCEF55809D271B6D4E474CCBA545657B3
-              A6B70904617114A461EF5F532FFFD894FC086D98F70B8FD0C9FE3F517D37A6A6
-              51C7EF2041D24E1AAB221D3509A5F59BF2654C3DAC04A1739846EAA3EEE9F5F4
-              F5D1DECD3DF32FED7A73D9A8F87D4AD61E25E5099AF27D74BA2FBC0BB260EDBD
-              A707B4B217D35B2AF792204DD37176DE6E5C5533F78771E1A1525BB4401F1B7B
-              C5B45532A66893ED7514C4F33681203CA52648B916A81AD51383C9F5E89C27DA
-              D77C45B8BEF35A122279D9570975B990DA06AF82101B8C42C7F32B314F0A8DA6
-              336A4D6A066AE3F6786F63723B91202F51246F4C2F464649A2AAC976B81AF810
-              C481121524738AB5AE7399AECBDF98F21DA67CABD263CB14C41830E6F4C9B49F
-              D3DBBF4AA61D7F6D6E70F1FC8E2C0471442B2B5B34F4C8C6F1AB5D95973C509D
-              79849898DE515D1B27DAD1BD9F52D2CE59745D5F357C60F361537B2108472104
-              A95CDBBD46D7D42FD3D7C93C0709D677DF29A55A3BF5590AF5233A07D9969627
-              D2F979EAFC5B4D557C9E36F26DA90915EB3BDEAE25B4A74DF97E4EF9DE9D9A60
-              2B487DE73768AE956C93A6D4B9BA94C9FB1253220423DDF7E75A1029E475D1DE
-              C6AF4EF78BE515398397A9BEA727D611C6058FCAF43ECEBCABEEEE1C64FC4A5D
-              EA450FDDEA7ED01410C4014741AC4E9885384A9D7E566A026D3C638F99DCC856
-              7B7CCBC16271F21DACEFBA99CE256E36D59971D4B21324DCD01151427B3425F9
-              19FABF32D96629B6C57B9ADA7229883105D495FC74BCAFF147A618D38E5C1EC8
-              B8AB6E294878FE3CE3126F324FA4FB0E9AFB7DCADC277695401007B2BD51A8E9
-              2A3274A0B9CF784F03EDEF68A0A53D0A3235F74F4D0BAFEB385FE9DAE336D5BC
-              40FF8D7A8C9B5A73CC0BAD369A9D20E282C7CA42735F78DDA61E1118D1170E1E
-              DC3C988D2063E5E20C39AA8DF787A68D8EC583C1A1D4019A86CBBBE7B6DBC674
-              579DDA6B4CB956A6E6A123D6DDD177F56FA3BAF4D0FAAEB34442647C110E82F8
-              C0A520FF432F6FF152AE713529DAD3747F5AA28F01A3945C497BE7B44BA5B682
-              4C2C338E7A751645FD81F29C61BCC94690D4CBC64E84EBBBD6D1D1EA118B4527
-              2DD2AA33FAD0747E16AAEFFE1C557D9BF00095F1432A63ADDD7208E2801B41E8
-              FCE27D747EF1032FE5D2A1BF9CF6AC09733A0DDC2FD0CB0D5ECAB2BBBBEC2088
-              310FFF6C465952DC4AE2EE1C6FD74C0B62BA3139D9988C4770C6E38D7437D35E
-              E03EAEDD4BEABB2B5E952AE6A5EF34A1AD19EAFDD821BBE510C401B78FBB3327
-              9B9904C4D9B1479B7E6DB79806AF719F6293CB109F2F4BBC76FEC91F6C19B228
-              C75690CAFACED5A927E6C9D0A45E37D8B3F9D8789B665810CBBBE71647428385
-              EBEE0FA75E9E4ED667BAAB5E11E95AA9297158B8400AD51CED6DEEE6F2401007
-              5C7F1F84A8BE784F652230AF9962782F7D7C13755BC5F8024D45A9A07E4AFF6E
-              BCAFE96137651927FF092DF031DAA39F47BDBF98D61FFF5E086D88519A969C54
-              4A3D4342EEA3BDED13766584225D9DB4DEEAE914F97CEAA3E634408DF39D5481
-              FA49A00F4E7DA029D076AAEB9AE9D5C5F753F7EEB4BE7149FACAD43ACD8FCFD8
-              5175414755624EE027C6684B89EF38C577A1DD3A24E403D2748EA1B4C047E2FB
-              3799BE1EA0241DD52FA3BE339E6133BE7E6DDC4FA11D833C45CBFE48D21F2C0B
-              94DD7B62FFA6A8F336ED5E3A1A505F4F4D339EF68DF535A53D58094100608020
-              0030401000181C05A9D91D3F2D20E59B0B19A4AE12570A29AFCB65991004B8C1
-              5610122322A5FA36BD9D5BE82067020802DC602948DDEE58ABF1A59642073793
-              4010E0860C416AF644CF9609E9E9D73766231004B8214390DAB6F8F768F85C52
-              E8C0661A0802DC602148CCF88999F2420736D3B811A46ECFAB4B5562EC61EAA6
-              356ECB9DE4F7015DAC3FBA2D74C429E38A7D6ACEAB7F1A6EA7F3BDCD85EE1347
-              94783E211397BCD05AD5EF267B6D7B6C1BADF3B542879D655BEF1A680D7ECA4A
-              10EF3F75330B712388DFBE187D2D58F1E275F2149787EA38482F7F53E8FEF0C2
-              EBBA5AFC876DE157B83C35EDB19BA5CA78747FB6710F04B1A16E57F42CA549BF
-              7F4B64FB406BC8F6FECDD2B6C1EA8008BCE2A5C0A24089DD035B43DBB92CA532
-              8E20880D35ED276BA42A733595B0458A6F0CB484AEB15B7CE6AEE1559AA6FF67
-              A1FB220B0E93F8ABB80CA5328E20880D13E71F89633359C7B2B6E1D5BAD09FF4
-              526691708404611F5E2C957104416C80202C10A4D48120BE8020A50E04F10504
-              297520882F2048A903417C01414A1D08E20B0852EA40105F4090994009F18426
-              E5AF75255CFC3A869AAB09F15E35F1836A33100B04F10104C935099158EEF621
-              B7546ADAA2D718BFA297EB7820882F1E2741DEC36580201E5052B41C6B09EDC9
-              767D8AC9F8B163573F3BE33A26089235B4C3FA4C7F6BF00E2E0F04F1809BA73F
-              396ADB6337D168BB25DBF5AD8020597362A025B85848FE47E4208807E870ECEB
-              6F39D4B4C53E4181B6E532A61213C4F17B27FE51A768B81C088C056F3DBA438E
-              38E5CEF138FA23FD3FE132AFF1CBF06FCA55C510C486D92248B17E333247E368
-              5094CB73063E1E7CD9CB4AC697D04E1D1F7E987AE7522FEB5901416C8020FEC8
-              C538CAF6C2CE38FB54A0F6787CD46F0C10C40608E28F1C8CA3288D9B2A3F05D4
-              B5C58ED089D2397ECA80203640107FE4601C39DE6B718CA13DF60C75D0DBFC94
-              01416C8020FE80201E8020D640101608E21608927D1D85028278008258034158
-              20885B2048F675140A08E20108620D046181206E8120D9D75128208807208835
-              10840582B8058214058AFE3DB83010BAEAA92DD2F1118E62106469DB605D9956
-              BED04F1910C4060862D726D17FAC35B4DC295F3108920B20880D1084418A1D03
-              2D21F62F9041100F40106B66AB204AA843C75AC3ECDF4C81201E8020D6CC5641
-              447E7EB40182B80582141D10249740106B2088BF3AF20104B10182B040905C02
-              41AC8120FEEAC80710C40608C20241720904B10682F8AB231F40101B20080B04
-              C92510C41A08E2AF0E276AEF8EAF55BA5AE6A70C0862433E04397377EC1C4DE6
-              E3571173CEEC10044FF3664F310862304B7FC31682E41208C2B46D57F4835293
-              DFCE65DBF20004C92510C4A97D43E74BA1197F0365652EDB388340905C02418A
-              8B7C0C5E08E20108525C4010F740101B20080B04C92510A4B88020EE81203640
-              101608924B2048710141DC03416C80202C1024974090E20282B80782D8004158
-              20482E098CBD5E7574C7A268B6EBD7B5473FA794BC2D973141105FE44310DF3B
-              568AE1357A99E3A78CBC0822A5BABABF257C5FB6EBD7B5C79E524ABC33973141
-              105FE44510EAC10F0DB486BF9BCD9A35BB86CE939AF684DF08F22288819E482C
-              FBDDF6AA01CF0D9D81E9950104F1459E0419E72354D7435E56C8951C06791364
-              02F58094F271A5AB311791197F02F8727AB3C6B9DC2C2229224196DE1D5B51A6
-              8BEDF4F62D4A086DB2FDD228404C6F23A9C60FC6E34B26D3E4E4725D4E55A868
-              9926C7D3859A5E7FBA9C89727DCDCB457E05996CAA78CE65A79F257C4EABD2AB
-              9DE9861529C522486D5BF46ADA0C5F2F747F7824FF8214080862435E04D9A702
-              B5C7E38E7F4AA0088120A54E3108B27C57ECAD094D3C5BE8BEC8020852EA1483
-              20F8D186E20782D80041582048A903417C01414A1D08E20B0852EA40105F4090
-              520782F80282943A10C41710A4D48120BEF8B31624462F15850E6CA68120BEF8
-              731624DA49C98D850E2C0FDC4B1BF9E3760BCFB86BF8F4B280FEA2CF3AEEA13A
-              B6D82DACD91D7F8794EA50A13B220B0E53BB5671194A569065EDB137EA4ABC54
-              E8C0661C253F3BB035F82F5C16DF1B59C966AAA3DB6EF1EA3DAAFC44223E52E8
-              AEF0DE2E71D7C0D6D027B92CB56DF138655C50E850FDB6545AA51A7F5741E8AA
-              B7D0D1CD246EBEE5E8F39B8CC3036F0856892B6482CB54D3166BA38DF08942F7
-              8717D4C8D8C263D7560F727966F1736649A4921BA5DDC265BB8796EB5233BE05
-              F89E42079A638E684ADFF0DBAD9547DD64A669D027691AF4152F1528211E1323
-              6397390DA2943ABE48755C5FE88E71448AE7A416B8B47FCB8217DC649F184381
-              3EEA919A4287EE1145726CEADF1AFCA6F45F1600A50B040180018200C0004100
-              6080200030401000182008000C1004000608020003040180018200C000410060
-              80200030401000182008000C1004000608020003040180018200C00041006080
-              200030401000182008000C1004000608020003040180018200C0004100608020
-              0030401000182008000C1004000608020003040180018200C000410060802000
-              30401000182008000C1004000608020003040180018200C00041006080200030
-              401000182008000C1004000608020003040180E1FF012A4E7493F7CF8B630000
-              000049454E44AE426082}
-          end>
-      end
-      item
-        Name = 'cell_phone'
-        SourceImages = <
-          item
-            Image.Data = {
-              89504E470D0A1A0A0000000D49484452000000C8000000C80806000000AD58AE
-              9E00000A604944415478DAEDDD7D6C55671DC0F1E7392D6513E6226F038602B2
-              C1601D2C38043464996630CC26CE524658984C63B22830E33BB2647709B56E3A
-              33DAFE41628C0DC8025C0AEB8642210A0B3114D81843A07638818C37793122A0
-              B4B4E7F13661B9C6ABA7A7F79C739F5F9FFBFDFC4397F4ECF93D0FF7BBAEB92F
-              472B00FF97B63D00201981000108040840204000020102100810804080004E07
-              3275F69C09DA375F314A4FD24A0F304A7D6094BFB3BDCDFBF5C15DAFFDDDF67C
-              90CFC940BAC250BEDA94F9726CC0B7D5DFDA76F91BBB76EDBA6E7B5EC8E55C20
-              53677DA94229930EF9ED6DA5BE19F3871DAF9FB13D3764722A90690F7FF1B3C6
-              D3BB7B78595BE627C9C7F84982FFC59D4052296FEA9E773AF2BCBA7E6F53E357
-              6D6F01F23813C8D45973BE99F9A336DFEBDBDAF4007E71C77F732990A3993FEE
-              C9F77AA3CCD27D4DAFD7D9DE07647129103FDABF416FDEDBF45A85ED7D401602
-              F990566FEFDDD638C5F63E200B81640FE2487353E37DB6F7015908247B100482
-              1C04923D0802410E02C91E0481200781640F8240908340B2074120C84120D983
-              2010E42090EC411008721048F62008043908247B1004821C04923D0802410E02
-              C91E0481200781640F8240908340B2074120C84120D9832010E42090EC411008
-              721048F62008043908247B1004821C04923D0802410E02C91E0481200781640F
-              8240908340B2074120C84120D9832010E42090EC411008723813C86766CF3D1D
-              E5FA92BE6547877C627483ED7D88A0FD4E65F465CFE813FDAEF439545F9F2ADA
-              4FBE772690B94B7F14F1A34711A0CD28BDB6D4D32FAF7F65458BED610A8940D0
-              53ADBED14F6FAAAD6AB63D48211008F2A3D5E66BFE95055B6B6BDB6C8F92EC36
-              1D41205618ED7B77A5EB561CB73D48520804916963CAD3B5D5476DCF91C8DE6C
-              0F101702B1ABD4EF18B1AEEE25E76E864A2088CBF9F20165C353A994537F0F04
-              82D818A55F6CA8A95A667B8E38110862D5D95E3674F3AAD479DB73C485401033
-              BD7A634DD522DB53C4B61BDB03C48540E4D0678FF549A7D39DB6E788652FB607
-              880B81C861B4AE6C5859E5C4EBDA8A3E107F64B9F2C7CFD0A6FF40DB5B10455F
-              BDA4BC96DDC63B79B8C7D71A633634D456CFB7BD8758CEC1F60071C92790CEC9
-              5FD0FE2727DB1E5D34EF2F0754C981DF9A1E5DA4CD858D2BABEFB03D7B1C8A36
-              1073DB20D531EB1967F69FA4D2A655465FB9D8A36B36D6FCD8B33D771C9C7980
-              F43410FFDE0775E7F819B6C7EE154A5A762BEFC89B3DFA294220C2F43490CE07
-              1ED5FEA8FB6D8FDD2B78270EAA92B7B610486FD6F3401ECB0432C9F6D8BD8277
-              F25D55B2FF0D02E9CD08243904E20002490E813880409243200E2090E4108803
-              08243904E20002490E813880409243200E2090E410880308243904E20002490E
-              813880409243200E2090E410880308243904E20002490E813880409243200E20
-              90E410880308243904E20002490E813880409243200E2090E410880308243904
-              E20002490E813880409243200E2090E410880308243904E20002490E81388040
-              9243200E2090E410880308243904E20002490E813880409243200EE0063AC9E1
-              063A0EE0166CC9E1166C0EE0269EC9E1269E0EE036D0C9C8EB36D08A40C4C927
-              902EFEC872E58F9FA14DFF81B6B7208ABE7A49792DBB8D77F2705ED7138830F9
-              06826410883004220B81084320B210883004220B81084320B210883004220B81
-              084320B210883004220B81084320B210883004220B81084320B210883004220B
-              81084320B210883004220B81084320B210883004220B81081357209EE7A9D1E3
-              27AA41C3EFD425A57D02BFB7B3E386BA78E6B439DE7248F97EF8E55D59230881
-              08134720B70F1CACE67C6D715E67D2F8CB3A73F9D285A259A33B04224C1C812C
-              FCDEF35AEBFCFE5E8DF1D59A9FBED0ED7BB75D59A33B04224CD440060F1BA166
-              2FFC7AA4F3D8BAE617E6C2D953CEAF11068108133590BB274E56D31F9913E93C
-              F66C6B34C70E1D707E8D30084498A8818CBB7F8A9A3AF3D148E7B177C76F4CEB
-              3BFB9C5F230C021186400AB7461804220C81146E8D3008441811816CDF625A0F
-              EE777E8D30084498A8818C1C77AF7A70CEBC48E7F166E30673B2F588F36B8441
-              20C2440DA4EC965BD5FCA53F8C741EEB6A7E62DAAFFFCBF935C2201061E278A2
-              F0D39F9FADEFF9D4B4BCAEFDD3DBCD6ADFEFB676FB049B2B6B7487408489EBB5
-              5813A64C57531E7A44877D84741DE0FE9DDBCCD1FD7B8A6E8D2004220CAFE695
-              8540842110590844180291854084211059084418029185408421105908441802
-              91854084211059084498B802F948FF8FAAFBA6CFD083868D50A13EECE0EC29F5
-              C73DBBCD3FAFFEA3E8D6084220C2C411C8B05163D4C3F39ECAEB4C766C586DCE
-              9E78BF68D6E80E8108133510ED796AE1779F8F741E6B7EF68231011F9BE3CA1A
-              611088305103193A72B49AF9C4A248E7B17D7DBD3977F2B8F36B844120C2440D
-              64ECA407D4B4598F453A8FE6A637CC7BEFBEE5FC1A6110883022DE5128E0EDB0
-              BCE5365E0472932B0F5E02891781DCE4CA839740E24520378DCD3CB0A6457C60
-              356FDF62DE0BF8B00357D608834084891AC88831E3D4E72A16443A8FDF37BC6A
-              4EBDDFEAFC1A61108830510329292D534F7E7B79A4F358FBF32AD3D9D1EEFC1A
-              61108830713C931EE5FFDFC37E96942B6B7487408489EBB558433F3E4A4D7E68
-              A61E34F4CE50DF7FF1DC697560E77673EE831345B7461002118657F3CA4220C2
-              10882C04220C81C84220C210882C04220C81C84220C210882C04220C81C84220
-              C210882C04220C4F14167E8D2004220C2F3529EC1ADD21106178B162E1D60883
-              4084E1E5EE855B230C021186374C156E8D30084418DE725BB835C220106108A4
-              706B844120C21048E1D608834084E183E30AB7461804220C1F3D5AB835C22010
-              61F8F0EAC2AD11068108C3ED0F0ABB46770844186EA053F83582108830BC9A57
-              160211864064211061E63EBBECAFCAE8C1B6E74086361736AEACBEC3F618B16C
-              C5F60071A958B26C9DD67A9EED39A094316643436DF57CDB73C4C19D409E5D5E
-              A18D49DB9E039940B4AE6C5859D5607B8E38381348656565891976F70DDB7320
-              F3A03A7BAC4F3A9DEEB43D472C7BB13D409CE62E5D5E9FF9EFD753B6E7286E7A
-              F5C69AAA45B6A7886D37B60788D3E3CFA4869494B59FB33D4731EB6C2F1BBA79
-              55EABCED39E2E254205D2A962EAFD6CAFCC0F61CC5C828FD62434DD532DB73C4
-              C9B94052A99477F86FED67325F0EB13D4B91395F3EA06C78E6FC9D7A3ECAB940
-              BACC5FFCFDE11D5EE929DB73149352BF63C4BABA97CED89E236E4E06D2A572C9
-              B20946EBC3B6E72806DA98F2746DF551DB7324B237DB0324A972F173A38DE7FF
-              D9F57D5A64B4EFDD95AE5B11EDCD238239FFC099BD6449DF7EDE6DAF667E837C
-              DCF62C4ED16AF335FFCA82ADB5B56DB64749769B45E2CB4B964FF3B4F955E6CB
-              71B667E9E55A7DA39FDE545BD56C7B9042289A403EF4C4B79E1BDFE19BEF6865
-              9ECCFC635FDBF3F4126D46E9B5A59E7E79FD2B2B5A6C0F53484517C87F5AB428
-              75CBB5DB6E4CF4B51995F94DF376CF57A5B66792C0F75447E6B78BCB9ED127FA
-              5DE973A8BE3E75DDF64CB6147520407708040840204000020102100810804080
-              0004020420102000810001080408402040000201021008108040800004020420
-              1020C0BF01570E2641B75F01290000000049454E44AE426082}
-          end>
-      end
-      item
-        Name = 'department'
-        SourceImages = <
-          item
-            Image.Data = {
-              89504E470D0A1A0A0000000D49484452000000C8000000C80806000000AD58AE
-              9E0000079C4944415478DAEDDD5D88547518C7F1FF991DC7D75D1C5FD215B70D
-              5705A38B2ED6F5C22D3050C28B2822918A2009C28BA28B2074BBF485E826EA42
-              8230880A31A2E8A24221A1D60B752FBA880475455B71B555475C5D75F6E5340B
-              9126CC4FD7F93FFF73CECCF703822273CE33C7F9EECAC3614FE4005415253D00
-              9066040208040208040208040208040208040208049212BD7DE71F8D269ADE9B
-              FC7D9C1BFFA0BB73C95F49CF040249D4A14371BE307BE85517C73D957F898EFF
-              FD65ECFA5D14ED2CDF58F8E5BA75D158D2B3362A0249C0E163179E7013D1F6CA
-              D5DFFC402F88DD3E978B77AD5DBDF88FA4676F340412485FDFF959B7E2DC9B51
-              1CBD5FF963F1210F538AA378C78C68E2D3CECE252349BFA7464020C67AFBFEEE
-              8E26E2C92836783EF4813817EDE8EE7CA437E9F758CF08C4C09123E7E68F4585
-              772AFF37EA0973C668673E2E7FB466CDD2CB49BFF77A43201EF51EBBF05C14E7
-              2ADF2DE2CE642688FAE2686247F7EAC53F247D2DEA0581D4E8AEF5ECD6A467B9
-              C71ED6C5B523908720D7B369C3BAB826043205535ECFA60DEBE2292390FBF0B4
-              9E4D1BD6C50F8840AA305CCFA60DEB628140EE127E3D9B36AC8BEF45202E0DEB
-              D9B4615DFCDF95487A80A4A4783D9B360DBD2E6EA84032B59E4D9B065D173744
-              20995FCFA64D03AD8BEB36903A5DCFA64DDDAF8BEB2E90065ACFA64D5DAE8BEB
-              2210D6B369533FEBE24C07C27A36EDB2BF2ECE5C20AC67332B93EBE24C04C27A
-              B68E646C5D9CEA4058CFD6B90CAC8B531708EBD98694DA75716A02613D8B7FA5
-              6A5D9C6820AC67A125BF2E4E2410D6B3989AE4D6C5C102613D0B4F82AE8B8304
-              72F8C8C593AC67E155ECFAD7AE59B4C2FA346102397A7122C479D058D6762DCA
-              599F834090590402080402080402080402080402080452C5D878ECCE966E99CE
-              5C68CAB9B6E2F49A8E511A19735746464DE79C376B9A2BCECAD7748C81D26D57
-              1EB7FD1AD65E9CE1F24D7E3F6E045245FFA59BEEDDEFCF98CFFEDD1BABE25A5E
-              FFC9AF83D12F27AE9ACEF8CCCAB9EEADA75B6B9AF385CF8E9B5FCB0F9F7F2C5E
-              BE60A6D76312481504720781D822108140FC21108140EC10882D021108C41F02
-              1108C40E81D822108140FC21108140EC10882D021108C41F021108C40E81D822
-              108140FC21108140EC10882D021108C41F021108C40E81D822108140FC211081
-              40EC10882D021108C41F021108C40E81D822108140FC21108140EC1088AD4C06
-              72F1DAA8DB7970C074F6D6E682DBB661694D1FBC9F8F97DC8F7F964CE7DCF878
-              317E76556D0FE2DA7DE05C34385CB61CD3F5AC6F8B17B54CF37A4C0201040201
-              0402010402010402010402010402010402010402010402010402010402010402
-              A962F289486F7F7BDA74F6C52D05B76753474D372B7EDD37147DF3FB25CB31DD
-              4B4F2E702F772EAC69CEADFBFBA30BD76C6F56FCF8C56571AD4FECBA178154C1
-              EDEE7770BBBB2D021108C41F021108C40E81D822108140FC21108140EC10882D
-              021108C41F021108C40E81D822108140FC21108140EC10882D021108C41F0211
-              08C40E81D822108140FC21108140EC10882D021108C41F021108C40E81D82210
-              8140FC21108140EC10882D021108C41F021108C40E81D822108140FC2110819F
-              6A020B0402080402080402080402080402080402080402080402080402080402
-              080402080452456964CC7DD537643AFBBC59F99A1F4C73F4ECF5CAAF61D339BB
-              DA9BE3AEF639351D63F2413F572AD7D4D22B956B59AC5C539F08A40AEEE6BD83
-              BB796D11884020FE108840207608C416810804E20F8108046287406C11884020
-              FE108840207608C416810804E20F8108046287406C11884020FE108840207608
-              C416810804E20F8108046287406C11884020FE108840207608C416810804E20F
-              8108046287406C11884020FE108840207608C416810804E20F8108BE03B9717B
-              DCFD76FA9AE9CC730A79D7DDD15CD3314E55423E3574CB74CEE50B67B85A3F78
-              BDFDC3EE7AD9F687363CB5ACC5CD9EDEE4F59804020804020804020804020804
-              02080402080402080402080402080402080402080452C5D878ECCE966CEF712A
-              34E55C5B71FA945E135F1A70EEA6EDCD89F73573AE8B16B44DE92503A5DBAE3C
-              6EFB35ACBD38C3E59BFC7EDC08A48AB4DECD3BBA6B63140F9EB01E4B8A5A57B8
-              69DB7F9AD2DCDCCD5B1D810804E20F810804120E81F845200281F84320028184
-              43207E11884020FE10884020E110885F042210883F042210483804E217810804
-              E20F810804120E81F845200281F8432002818443207E11884020FE10884020E1
-              10885F042210883F042210483804E217810804E20F810804120E81F845200281
-              F8432082EF402E5E1B753B0F0E98CEDEDA5C70DB362C6D8840761F38170D0E97
-              4DE7EA59DF162F6A99E6F598049231590D24AB08246308242C02C91802098B40
-              328640C222908C2190B008246308242C02C91802098B40328640C2AA9B403EDF
-              77A2210259F2C5A6A870B93FD119CAF33BDCF9D7F6374420AF6F5E4920594220
-              611148C610485804923104121681640C81844520194320611148C61048580492
-              31041256DD04B277DFC9AD21CE93B4E2D1BDABF257CF2C4C7286B1B98F0D95BA
-              B61C4FFA5A84B065F38A3DD6E708120890550402080402080402080402080402
-              08040208040208040208040208040208040208040208040208040208040208FF
-              00CA961C5F3E81D2E30000000049454E44AE426082}
-          end>
-      end
-      item
-        Name = 'deployment'
-        SourceImages = <
-          item
-            Image.Data = {
-              89504E470D0A1A0A0000000D49484452000000C8000000C80806000000AD58AE
-              9E000010534944415478DAEDDD0B7454D5BDC7F1FFCE0412880484AB06D492A2
-              BCCAF5412D20D4A5D2875AACC05DF6B6E8A58AF55A34B7565012DBB5EA5A5980
-              5D2E45A1601590C700967A519B42511121C4584521286F88040221402090F7E4
-              9DD9F79CE4624392D93367F29FEC939DDF672D8C0B3293FFEC99EFCC3927F310
-              04000109DD0300B8190201504020000A08044001810028201000050402A08040
-              0014100880020201504020000A08044001810028201000050402A08040001410
-              0880020201504020000A9D2E10F90AF5A0381A480DD67FC13D3C544867285FA4
-              925FF7289C3A45207225C5520DCDB6FE7786F5275AF73CA07484243D279EA075
-              BA07E1E0FA40E4121A6F2DF856DD738043828E5A8FF2A3451215EB1EA57D17C3
-              C5E4629A647D49D33D07B4839FFA75E6485C1B887CD5DACF88A65CDD73403B59
-              8F24623A0DD63D46F8E3BB947C9D32ACE96ED73D07309034A5B3EE93B83210B9
-              90E2A93B95E89E03D81C118FD350DD4384C39D81BC4ED3ACC956E89E03181550
-              74673C04ECCE4016D30BD69714DD7300234189D6BE489EEE319C8FED4272092D
-              B7B65B1FD13D0730F2D3289144BB748FE1943B0359DCB879354DF71CC06AB4B5
-              1F92A57B08A71008741404C205811809817041204642205C1088911008170462
-              2404C205811809817041204642205C10889110081704622404C2058118098170
-              E92C8154D711E51713F96AAD9965C7FE6C8F75CDF5E949744D5F975E89AD2110
-              2E6E0FA4A286E81F7B48E4BBE4152B6312896E1F4CD29DD7E637100817370772
-              AE9C68D576F7AD5B5FEBD1E491EF938C72DD64DF40205CDC1A48BD9F68FE1677
-              AE996DF01544934752076FEC850C8170716B20DBB249649DD03D85DAA3D6A348
-              5F77BEA51E02E1E2D640E66D26E1D6BBE78BBE7B2DD10F87BBF251048170716B
-              202F6D76E77A3577756FA207C720102EAEBCC21148F8AEBD9C68CA2804C2C595
-              57B85B0359944EA2BA5EF7146A630711DD763D02E182401CD8799C28E36B77AE
-              D9454977908C8BD13D459B100817B70662DF2F2FDC46A2C6A58F228DBF301CE2
-              CA470F1B02E1E2DA402CBE1AA2A59924EA5D76331C9E40F4D31B5D1B870D8170
-              717320B6063F51A6B5A995E582B7418B8D26BA7B04C92157E99E242804C2C5ED
-              8134673F2FCB7E54E9E8BB6E4F1451EF58A2EE9DE7E384100897CE1408840C81
-              7041204642205C10889110081704622404C205811809817041204642205C1088
-              9110081704622404C205811809817041204642205C10889110081704622404C2
-              05811809817041204642205C10889110081704622404C2058118098170412046
-              42205C10889110081704622404C205811809817041204642205C108891100817
-              04622404C205811809817041204642205C10889110081704622404C205811809
-              817041204642205C10889110081704622404C205811809817041204642205C10
-              889110081704622404C205811809817041204642205C10889110081704622404
-              C205811809817041204642205C10889110081704622404C20581180981704120
-              4642205C10889110081704622404C205811809817041204642205C1088911008
-              1704622404C205811809817041204642205C10889110081704622404C2058118
-              09817041204642205C10889110081704622404C205811809817041204642205C
-              10889110081704622404C2058118098170914B6839497A44F71CC0C84FA34412
-              EDD23D8653EE0C6431BD607D49D13D0730129428A6539EEE319C8FED42F2756B
-              F34A346E6681290A285AA45A8F239D8C3B035948F1D49D4A74CF016C8E58FB1F
-              43750F110E570662B31E4532ACE96ED73D07309034453C41EB748F110EF706F2
-              2A0DA468CAD53D07B493A0A3D6BEC760DD63843FBE8B593BEB93AC2F69BAE780
-              76F0533F9144C5BAC70897AB03B1C92534DE7A88DEAA7B0E70C87AE4A0061ADD
-              99E368BA189D805C49B15443B3ADFF9D61FD89D63D0F281DB1EED09EEBACFB1C
-              2DB107F2F0732F8C10E4D9A7FB82812B55587F8AAC3F87AD9BDE5752C87F5646
-              F93E7A3B35B556F7608144209079B708923B755F30E854F2A5147FF2D4362C5D
-              F1E2B3E5BA87690E8180DB6CF0F8C553CB9F9F7542F720360402AE64DD30DFEE
-              E1E9F9E86BA9FF53A1790E5E7F58E49D78AAB070BDCE0B05EE26A5B51B1F2A21
-              7FE19D9DF2B6AE59D90379FE8DB553734E9E5AA3EB0241E7133418496F2646FB
-              A6A5A6A676F873B91008B88A22966CF2F8467A5353AB3B721E0402AEA388A4B8
-              A18ABEB5665EB2AFA366610F64D15FFE7E776149E9A68EBA00D039F8ADDB7C5D
-              7D03F92AABC8575515D269DA0E459C48F4540CB636B7EA3B626EF640D2D23FB9
-              4550148E62815255752DE5159CA52379A744833FF0AE455B91587FB175D59CE4
-              1F77C49C0804B43B7BA198B20E7C2DEAFD0D6DFE7B9B8F24523EE59D9BB228D2
-              B32110708DEC13F9743837AFCDDB649B9178EA0779537F7F3C9233B93A90A2E2
-              622A2D2DA58AF20A8A898DA1DEF1F1D4B75F5FEA16DD2D926BA2545D5D43C5C5
-              45D65C6554DF504FF1BDE2A94F9FDE146FCDA693296B555C564E995FEE0B3112
-              B9DF3B27E5C6485E06D705929373943EDFB143E4E7E707FC9E5EBD7AD1C89B6E
-              9263C68C268FC713C9F569545D5D4D9F7EF699D8B3771FD5D6067E5EDDE0EBAF
-              A771636F95FDFBF78FF84C26AF55A515D6479FEF0A291221E5C49573533646EA
-              F2B82690D3A7CFD0BB6969C2E7737604EF07E3C7CBD1A3BE1791C5F15B3B8FE9
-              DB3244D62E67EF569390904093274E94F6BD65247485B52AABA8A46D59BB5BDD
-              3EDBD8D43AEB9D931CB17B245704B26BD797F4D1D6AD61CF72F5D503E8C12953
-              24E73D64656525BDB17C85A80AF190645B7EFEB39FC94183BECD3653575BABBC
-              8273F4D5E19C10229177589B5A9FB05DA066B407F2F1C79962FB175FB4FBE7F6
-              E8D1839E4C4A92519EA8769F977D852F7CF5CF2C6B33F1BE9FCAEF0C1FCE7156
-              5D72AD3EDEB54F94945FFA0CF8569B59449B56CE499EC031434B5A03397C389B
-              FEBE6103DB0C890307D2945FFC3CF427C2B5C1DE5458F4E7D7DA756FD8D2AFA6
-              4D93575E7945BBCEA3ABAE55658DB53FB27D57D04791EE67E363962E9D5EC736
-              C8FFD316484D6D0DCD5FB090FDE7DF77EFBD72C488EF847DFA2D5BD31D6F4707
-              1325A22825F999B06F8C5D7DADB6EF3D24CE155DFAD2F6569B59524EF0CE4D61
-              7F0687B640DEDFB449ECDD1B9957E63E9B3C4B0AE1FCA2D94760162C5C1491D7
-              E9DF73D75DF2E69B6F0AEBB45D7DAD8A4ACBE993AF2E3DF4DB3A105AE69D9BFC
-              6BEE59B404E26FF0D38B2FBF1CB1378C0877BB7F6B7ABAD8991599F7578E8AB2
-              EE1967397F14C15A35599FF159B0CDAC3CEF9CE444EE59B404927DE46B4A4B5B
-              1FF4670F1D3A84C6DD3A56FEDB15FD1A77060FEC3F48199999414F37D0DABE7E
-              208CEDEB5716FC49A88EDD5FF4937BEE9643060FA66EDDBAD1E93367287DDB36
-              51507036E8E9921E7F5CC6C7F7723413D6AAC967BB0F88C292D24BBEA7E5A388
-              1548FB8F3AB4A02590B4F5EB4576F6D7CAF3B9F38E3BE4AD6346B7FAFBE2E262
-              5AF2C6B2A073FF2E25D9D1956EFFD677C1C2E0DBF93367FC56C6748F61BD4C58
-              ABE097E9F0F17CCA3E9EA7DCCCF2797CB1DCEF90A2259037962D17178A8A94E7
-              A3BAD23EFC70B3F86ACF1EE5E99D6E5B9FB1EEDD56AD79537902FBDEF0A61BDB
-              7E66436D5D1DBD327F81F2F437FCFB08BA77C204473746AC5593D38545B4F3C0
-              616520F50DD157BFF9C799679CAC6F305A0299377FBEA8AF0BFC74FEEBAE1B44
-              FF79FFFD01AFF463C78ED1BA77DE55CE9EF4F874E9E4F951A11C467DEAC9DF48
-              FB7708812C7AF535E1AB0CFCDBED6F5D7B2D3DF8C014478160AD9A9C2F29A34F
-              77EF5706D220FD23D6CC7DF69093F50D464B202FBCF892F2E70E1F368C264DBC
-              2FE0957E323F9FFEB2F6AFCAF378ECD15FC97EFDFA853CF7FE030768E37BEF2B
-              CF73D6D333657474E037767C7DC952613F61309001FDFBD343BF9CEA2810AC55
-              93A2B272FAE44BF5912CBF876E5E9D9ABCD7C9FA06A32590D7162F1165656501
-              FFBD77EF787A62FAF48057FA8E1D3B293D234339FBD33367C8EEDD427F266B5E
-              DE495AFBD65BCAF3B4EFD1EC7BB64082DD98870D194A93274F741408D6AAC9D9
-              A212FA7CEFC120813424AE4EFD1DEBA758690964ED5FDF1279274F2ACF67DAC3
-              BF94095725B4FA7BFBB7B72FBDFC8A90527D3B73BAE369DF08ED1BA3EA7B1212
-              AEA2690F3DD4E6F9EEDDB78FDEFF6093F2F463468FA2F177DEE9682EAC5593A3
-              F967687F4EAE32909E9E9EF1DCEFA3A525909D5959B4357D5BD09F6D3F15C27E
-              4AC44515BE0A7AEB7FD789F3E72F284F77F9E597D3F4C7FEDBF1A1CB60F76A36
-              FB70AABDF3D8FC1E37942BDC36F5C107E435D75CE36826AC5593AC4347C4A9B3
-              85977C8FB187799D3EC1CDBE122BAD1DBA9A9AD08EE0DD7EDB6D72DCB8B18E67
-              7FF76F69E2484E4E48DF1BD7338EA2BB45936A3BBA25A7F7D458AB7F792FF38B
-              562FC96D1148B91508FBEB0BB43DD564D98A95D6BDDB79EE1FDF28D811944042
-              397C19AE1B6FB88126FCE49EB09E8FD5D5D7AABAA68E3EDCBE53FD5413A20FAC
-              40EEE59E455B20E7CE15D20AAF97FDE77F77E448BAEBC73F0AFB8981DED56B44
-              414101F75834F3A9DFCA989898B04EDBD5D7EAC0D1E322E7E4E94BBEA7652052
-              D063AB66272FE79E45EBD3DD376CDC280E1E643D6C4DCF3C3D43B6E775D82525
-              A5B478E952D675F9E10FC6CB51DF6BDF2BF9BAEA5A49BFA40D99DB833FDDDD23
-              AE5C9A3A8BFD61566B20F6D1157B81ED17F573F8B5B5B3D9D7DA066FAF63C772
-              69DD3BEFB0AC8DBDA3FA1F9326B5EB7517B6AEBA56078E9D103979A75AAC45AB
-              5714E67AE7A45CC7B2302D687F45615D6D9DF550BD3AE8D329827968EA543960
-              00DF4B930F1E3A441BFEB1B15DEB635FE193274DB41EFD7996B9ABAD95AFAA9A
-              B67CF165082FB91549DE39B316B35DA0E6E7CC7D86E1BE69C3A6CD9BC5EEDD7B
-              9C9E8CFAF4E94353FFEB017959DC65EC8B636FFB7B57AD167EE9FC4DC53936AB
-              BAF25AD9E7F35EE64EEBFC9447AE1A257A7CDD23F556A4AE09C4565A56469B3E
-              DC2C7273837F3C7A5C5C5CE3918EEB060D8AC4BA5CC2BE316EDEB245F8FDC1AF
-              7CFB088C7D8587BB438EB56A8C8032B2F688B236DEB5A5552082667B6727A746
-              EAF2B82A907F2D82A4A3C78ED1F1E32744695929559455504C8F98C6371C1B70
-              55821C367C18C5C6C6466A4D022A2B2B6FDC9CB870E17CE3BE407D7DD39BA1F5
-              EE136FBFCF93E35F0272306DADEC478E8FB3F685160745E629EECDB93210E89A
-              EC7D8EF41D7B5A6D56D9DA8AC32FE8FED5B393D32239130201EDEC43B9078FE7
-              B53A5AF5CDBFB7F9310832DD3B27E547919E0D818036F66FC88FE69F6AF54BC0
-              E6027D988EAFC213F7F6FCA7F9DE6F2800F640D67EB0656C6DADFFD3480F0E9D
-              8BBD6F617F804E45651515975788B3854514E8E30E2E0A144794F40F5F31F7D9
-              EC8E981B1FC106AE14F063D8FC51E3BCCF3FF37947CD8140C055949F78DBC171
-              D81008B842B08F82EEC8CDAAE610086813F4F3D19BBE2BDD57117D5F47EC90B7
-              853D90879F9B778B2089A358D06E1DF17B8E601008B88FA0D9BE28DF1F23F91B
-              F2D047618640203C32D7DAD37829D153B1ACA33E033D14080474B13F15E79F52
-              D0DF62A2C4FA48BCD889037B204F3EB930C6175F7583EE0B06EE52DF2DCADA5C
-              6A28B98C7A1571BF354F2445EC6DF5014C80400014100880020201504020000A
-              08044001810028201000050402A080400014100880020201504020000A080440
-              01810028201000050402A08040001410088002020150F83F0FDF4F508C3D5CF9
-              0000000049454E44AE426082}
-          end>
-      end>
-    Left = 550
-    Top = 338
-  end
-  object DisabledVirtualImageList: TVirtualImageList
-    Images = <
-      item
-        CollectionIndex = 0
-        CollectionName = 'approval'
-        Disabled = True
-        Name = 'approval_Disabled'
-      end
-      item
-        CollectionIndex = 1
-        CollectionName = 'assistant'
-        Disabled = True
-        Name = 'assistant_Disabled'
-      end
-      item
-        CollectionIndex = 2
-        CollectionName = 'calculator'
-        Disabled = True
-        Name = 'calculator_Disabled'
-      end
-      item
-        CollectionIndex = 3
-        CollectionName = 'calendar'
-        Disabled = True
-        Name = 'calendar_Disabled'
-      end
-      item
-        CollectionIndex = 4
-        CollectionName = 'cancel'
-        Disabled = True
-        Name = 'cancel_Disabled'
-      end
-      item
-        CollectionIndex = 5
-        CollectionName = 'capacitor'
-        Disabled = True
-        Name = 'capacitor_Disabled'
-      end
-      item
-        CollectionIndex = 6
-        CollectionName = 'cd_logo'
-        Disabled = True
-        Name = 'cd_logo_Disabled'
-      end
-      item
-        CollectionIndex = 7
-        CollectionName = 'cell_phone'
-        Disabled = True
-        Name = 'cell_phone_Disabled'
-      end
-      item
-        CollectionIndex = 8
-        CollectionName = 'department'
-        Disabled = True
-        Name = 'department_Disabled'
-      end
-      item
-        CollectionIndex = 9
-        CollectionName = 'deployment'
-        Disabled = True
-        Name = 'deployment_Disabled'
-      end>
-    ImageCollection = ImageCollection
-    PreserveItems = True
-    Width = 24
-    Height = 24
-    Left = 548
-    Top = 415
-  end
-  object PopupMenu1: TPopupMenu
-    Left = 425
-    Top = 534
+  object PopupMenu: TPopupMenu
+    Left = 566
+    Top = 544
     object New1: TMenuItem
       Caption = '&New'
     end
@@ -1546,5 +1374,109 @@ object MainForm: TMainForm
     object Exit1: TMenuItem
       Caption = 'E&xit'
     end
+  end
+  object VirtualImageList32: TVirtualImageList
+    Images = <
+      item
+        CollectionIndex = 0
+        CollectionName = 'home-deeppurple'
+        Name = 'home-deeppurple'
+      end
+      item
+        CollectionIndex = 1
+        CollectionName = 'home-indigo'
+        Name = 'home-indigo'
+      end
+      item
+        CollectionIndex = 2
+        CollectionName = 'home-pink'
+        Name = 'home-pink'
+      end
+      item
+        CollectionIndex = 3
+        CollectionName = 'home-purple'
+        Name = 'home-purple'
+      end
+      item
+        CollectionIndex = 4
+        CollectionName = 'menu-amber'
+        Name = 'menu-amber'
+      end
+      item
+        CollectionIndex = 5
+        CollectionName = 'menu-pink'
+        Name = 'menu-pink'
+      end
+      item
+        CollectionIndex = 6
+        CollectionName = 'menu-Blue-grey'
+        Name = 'menu-Blue-grey'
+      end
+      item
+        CollectionIndex = 7
+        CollectionName = 'menu-green'
+        Name = 'menu-green'
+      end
+      item
+        CollectionIndex = 8
+        CollectionName = 'heart'
+        Name = 'heart'
+      end
+      item
+        CollectionIndex = 9
+        CollectionName = 'dots-vertical-white'
+        Name = 'dots-vertical-white'
+      end
+      item
+        CollectionIndex = 10
+        CollectionName = 'dots-vertical-black'
+        Name = 'dots-vertical-black'
+      end
+      item
+        CollectionIndex = 11
+        CollectionName = 'launch-white'
+        Name = 'launch-white'
+      end
+      item
+        CollectionIndex = 12
+        CollectionName = 'launch-black'
+        Name = 'launch-black'
+      end
+      item
+        CollectionIndex = 13
+        CollectionName = 'trash-white'
+        Name = 'trash-white'
+      end
+      item
+        CollectionIndex = 14
+        CollectionName = 'trash-black'
+        Name = 'trash-black'
+      end
+      item
+        CollectionIndex = 15
+        CollectionName = 'bookmark-white'
+        Name = 'bookmark-white'
+      end
+      item
+        CollectionIndex = 16
+        CollectionName = 'bookmark-black'
+        Name = 'bookmark-black'
+      end
+      item
+        CollectionIndex = 17
+        CollectionName = 'home-white'
+        Name = 'home-white'
+      end
+      item
+        CollectionIndex = 18
+        CollectionName = 'home-black'
+        Name = 'home-black'
+      end>
+    ImageCollection = dmResources.ImageCollection
+    PreserveItems = True
+    Width = 32
+    Height = 32
+    Left = 460
+    Top = 542
   end
 end

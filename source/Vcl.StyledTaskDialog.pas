@@ -74,11 +74,6 @@ function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer; overload;
 function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn): Integer; overload;
-(*
-function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
-  Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn;
-  CustomButtonCaptions: array of string): Integer; overload;
-*)
 function StyledMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint;
   X: Integer = -1; Y: Integer = -1): Integer; overload;
@@ -155,13 +150,6 @@ end;
 
 function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn): Integer; overload;
-begin
-  Result := StyledTaskDlgPos(Title, Msg, DlgType, Buttons, DefaultButton,
-    HelpCtx, -1, -1);
-end;
-
-function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
-  Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn; CustomButtonCaptions: array of string): Integer; overload;
 begin
   Result := StyledTaskDlgPos(Title, Msg, DlgType, Buttons, DefaultButton,
     HelpCtx, -1, -1);

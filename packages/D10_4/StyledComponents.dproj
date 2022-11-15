@@ -104,6 +104,7 @@
         <DCCReference Include="..\..\source\Vcl.ButtonStylesAttributes.pas"/>
         <DCCReference Include="..\..\source\Vcl.StandardButtonStyles.pas"/>
         <DCCReference Include="..\..\source\Vcl.BootstrapButtonStyles.pas"/>
+        <DCCReference Include="..\..\source\Vcl.AngularButtonStyles.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledTaskDialog.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledCmpMessages.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledCmpStrUtils.pas"/>

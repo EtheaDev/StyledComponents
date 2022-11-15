@@ -27,6 +27,8 @@ unit MainFormUnitOld;
 
 interface
 
+{$I ..\..\..\Source\StyledComponents.inc}
+
 uses
   Winapi.Windows,
   Winapi.Messages,
@@ -42,35 +44,113 @@ uses
   Vcl.ImgList,
   Vcl.StyledButton,
   Vcl.BootstrapButtonStyles,
+  Vcl.AngularButtonStyles,
   Vcl.StandardButtonStyles,
   System.Actions,
   Vcl.ActnList,
   Vcl.ButtonStylesAttributes,
-  Vcl.StyledButtonEditorUnit;
+  Vcl.StyledButtonEditorUnit,
+  Vcl.Menus,
+  Vcl.ComCtrls;
 
 type
   TMainForm = class(TForm)
-    NormalButton: TButton;
-    StyledButton: TStyledButton;
     ActionList: TActionList;
     TestAction: TAction;
-    ImageList: TImageList;
-    procedure ButtonClick(Sender: TObject);
-    procedure ButtonMouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
-    procedure FormClick(Sender: TObject);
+    PopupMenu: TPopupMenu;
+    New1: TMenuItem;
+    Open1: TMenuItem;
+    Save1: TMenuItem;
+    SaveAs1: TMenuItem;
+    Exit1: TMenuItem;
+    Panel1: TPanel;
+    StyledButton: TStyledButton;
+    StyledButton2: TStyledButton;
+    Button1: TButton;
+    StyleLabel: TLabel;
+    cbChangeStyle: TComboBox;
+    PageControl1: TPageControl;
+    tsBootstrap: TTabSheet;
+    tsAngular: TTabSheet;
+    tsClassic: TTabSheet;
+    BootStrapLinkLabel: TLinkLabel;
+    gbBootstrapNormal: TGroupBox;
+    btn_Primary: TStyledButton;
+    btn_Secondary: TStyledButton;
+    btn_Success: TStyledButton;
+    btn_Danger: TStyledButton;
+    btn_Warning: TStyledButton;
+    btn_Info: TStyledButton;
+    btn_Light: TStyledButton;
+    btn_Dark: TStyledButton;
+    gbBootstrapOutlined: TGroupBox;
+    btn_OutlinePrimary: TStyledButton;
+    btn_OutlineSecondary: TStyledButton;
+    btn_OutlineSuccess: TStyledButton;
+    btn_OutlineDanger: TStyledButton;
+    btn_OutlineWarning: TStyledButton;
+    btn_OutlineInfo: TStyledButton;
+    btn_OutlineLight: TStyledButton;
+    btn_OutlineDark: TStyledButton;
+    gbBuutstrapDisabled: TGroupBox;
+    btn_DisabledPrimary: TStyledButton;
+    btn_DisabledSecondary: TStyledButton;
+    btn_DisabledSuccess: TStyledButton;
+    btn_DisabledDanger: TStyledButton;
+    btn_DisabledWarning: TStyledButton;
+    btn_DisabledInfo: TStyledButton;
+    btn_DisabledLight: TStyledButton;
+    btn_DisabledDark: TStyledButton;
+    gbAngularRaised: TGroupBox;
+    btn_BasicBasic: TStyledButton;
+    btn_BasicPrimary: TStyledButton;
+    btn_BasicAccent: TStyledButton;
+    btn_BasicWarn: TStyledButton;
+    btn_BasicDisabled: TStyledButton;
+    btn_RaisedBasic: TStyledButton;
+    btn_RaisedPrimary: TStyledButton;
+    btn_RaisedAccent: TStyledButton;
+    btn_RaisedWarn: TStyledButton;
+    btn_RaisedDisabled: TStyledButton;
+    AngularThemesPanel: TPanel;
+    rgAngularLightThemes: TRadioGroup;
+    rgAngularDarkThemes: TRadioGroup;
+    gpAngularStroked: TGroupBox;
+    btn_StrokedBasic: TStyledButton;
+    btn_StrokedPrimary: TStyledButton;
+    btn_StrokedWarn: TStyledButton;
+    btn_StrokedDisabled: TStyledButton;
+    btn_StrokedAccent: TStyledButton;
+    gbAngularFlat: TGroupBox;
+    btn_FlatBasic: TStyledButton;
+    btn_FlatPrimary: TStyledButton;
+    btn_FlatWarn: TStyledButton;
+    btn_FlatDisabled: TStyledButton;
+    btn_FlatAccent: TStyledButton;
+    GroupBox1: TGroupBox;
+    btn_IconHome: TStyledButton;
+    btn_IconDots: TStyledButton;
+    btn_IconMenu: TStyledButton;
+    btn_IconHeart: TStyledButton;
+    btn_IconLaunchDisabled: TStyledButton;
+    GroupBox2: TGroupBox;
+    btn_FABTrash: TStyledButton;
+    btn_FABBookmark: TStyledButton;
+    ImageList32: TImageList;
+    btn_FABHome: TStyledButton;
+    btn_FABHeartDisabled: TStyledButton;
+    StyledButton1: TStyledButton;
     procedure TestActionExecute(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure cbChangeStyleSelect(Sender: TObject);
+    procedure LinkLabelLinkClick(Sender: TObject; const Link: string;
+      LinkType: TSysLinkType);
+    procedure rgAngularLightThemesClick(Sender: TObject);
+    procedure AngularThemesPanelResize(Sender: TObject);
+    procedure rgAngularDarkThemesClick(Sender: TObject);
   private
-    procedure CreateAllButtons;
-    procedure CreateButtons(const AParent: TWinControl;
-      const ALeft, ATop: Integer;
-      const AFamily: TStyledButtonFamily;
-      const AClass: TStyledButtonClass;
-      const ACaption, AVCLStyle: string;
-      const AImageIndex: Integer;
-      AImagePos: TImageAlignment);
+    procedure BuildStyleList;
   protected
-    procedure Loaded; override;
   end;
 
 var
@@ -80,125 +160,165 @@ implementation
 
 {$R *.dfm}
 
-procedure TMainForm.ButtonMouseDown(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
+uses
+  System.TypInfo
+  , Vcl.Themes
+  , WinApi.ShellAPI
+  ;
+
+{ TMainForm }
+
+procedure TMainForm.cbChangeStyleSelect(Sender: TObject);
 begin
-  if Sender is TButton then
-    ShowMessage(Format('TButton %s Down!',[TButton(Sender).Caption]))
-  else if Sender is TStyledButton then
-    ShowMessage(Format('TStyledButton %s Down!',[TStyledButton(Sender).Caption]));
+  Screen.Cursor := crHourGlass;
+  try
+    TStyleManager.TrySetStyle(cbChangeStyle.Text);
+  finally
+    Screen.Cursor := crDefault;
+  end;
+end;
+
+procedure TMainForm.FormCreate(Sender: TObject);
+begin
+  BuildStyleList;
 end;
 
 procedure TMainForm.TestActionExecute(Sender: TObject);
 begin
-  ShowMessage('Action executed!');
+  EditStyledButton(StyledButton);
 end;
 
-procedure TMainForm.ButtonClick(Sender: TObject);
+procedure TMainForm.LinkLabelLinkClick(Sender: TObject;
+  const Link: string; LinkType: TSysLinkType);
 begin
-  EditStyledButton(Sender as TStyledButton);
+  ShellExecute(handle, 'open',
+    PChar(Link), nil, nil, SW_SHOWNORMAL);
 end;
 
-procedure TMainForm.CreateButtons(const AParent: TWinControl;
-  const ALeft, ATop: Integer;
-  const AFamily: TStyledButtonFamily;
-  const AClass: TStyledButtonClass;
-  const ACaption, AVCLStyle: string;
-  const AImageIndex: Integer;
-  AImagePos: TImageAlignment);
-var
-  LWidth, LHeight: Integer;
-  LStyledButton: TStyledButton;
-  LStyledButtonOutline: TStyledButton;
-  LStyledButtonDisabled: TStyledButton;
-  LStyledButtonVCL: TStyledButton;
+procedure TMainForm.rgAngularDarkThemesClick(Sender: TObject);
 begin
-  LWidth := 100;
-  LHeight := 54;
-
-  LStyledButton := TStyledButton.Create(Self);
-  LStyledButton.Parent := AParent;
-  LStyledButton.Name := 'StyledButton'+ACaption;
-  LStyledButton.Caption := ACaption;
-  LStyledButton.Images := ImageList;
-  LStyledButton.ImageIndex := AImageIndex;
-  LStyledButton.StyleFamily := AFamily;
-  LStyledButton.StyleClass := AClass;
-  LStyledButton.ImageAlignment := AImagePos;
-  LStyledButton.SetBounds(ALeft, ATop, LWidth, LHeight);
-  LStyledButton.OnClick := ButtonClick;
-  //LStyledButton.OnMouseDown := ButtonMouseDown;
-
-  LStyledButtonOutline := TStyledButton.Create(Self);
-  LStyledButtonOutline.Parent := AParent;
-  LStyledButtonOutline.Name := 'StyledButtonOutline'+ACaption;
-  LStyledButtonOutline.Caption := ACaption;
-  LStyledButtonOutline.Images := ImageList;
-  LStyledButtonOutline.ImageIndex := AImageIndex;
-  LStyledButtonOutline.StyleFamily := AFamily;
-  LStyledButtonOutline.StyleClass := AClass;
-  LStyledButtonOutline.StyleAppearance := 'outline';
-  LStyledButtonOutline.ImageAlignment := AImagePos;
-  LStyledButtonOutline.SetBounds(ALeft+150, ATop, LWidth, LHeight);
-  //LStyledButtonOutline.OnClick := ButtonClick;
-  LStyledButtonOutline.OnMouseDown := ButtonMouseDown;
-
-  LStyledButtonDisabled := TStyledButton.Create(Self);
-  LStyledButtonDisabled.Parent := AParent;
-  LStyledButtonDisabled.Caption := ACaption;
-  LStyledButtonDisabled.Images := ImageList;
-  LStyledButtonDisabled.ImageIndex := AImageIndex;
-  LStyledButtonDisabled.StyleFamily := AFamily;
-  LStyledButtonDisabled.StyleClass := AClass;
-  LStyledButtonDisabled.Enabled := False;
-  LStyledButtonDisabled.ImageAlignment := AImagePos;
-  LStyledButtonDisabled.SetBounds(ALeft+300, ATop, LWidth, LHeight);
-
-  LStyledButtonVCL := TStyledButton.Create(Self);
-  LStyledButtonVCL.Parent := AParent;
-  LStyledButtonVCL.Caption := AVCLStyle;
-  LStyledButtonVCL.Images := ImageList;
-  LStyledButtonVCL.ImageIndex := AImageIndex;
-  LStyledButtonVCL.StyleFamily := 'Classic';
-  LStyledButtonVCL.StyleClass := AVCLStyle;
-  LStyledButtonVCL.StyleAppearance := DEFAULT_APPEARANCE;
-  LStyledButtonVCL.Enabled := True;
-  LStyledButtonVCL.ImageAlignment := AImagePos;
-  LStyledButtonVCL.SetBounds(ALeft+450, ATop, LWidth, LHeight);
-end;
-
-procedure TMainForm.FormClick(Sender: TObject);
-begin
-  if not Assigned(StyledButton.Action) then
-  begin
-    StyledButton.Action := TestAction;
-    NormalButton.Action := TestAction;
-  end
-  else
-  begin
-    StyledButton.Action := nil;
-    NormalButton.Action := nil;
+  TStyleManager.TrySetStyle('TabletDark');
+  rgAngularLightThemes.ItemIndex := -1;
+  BuildStyleList;
+  case rgAngularDarkThemes.ItemIndex of
+    0: //Pink & Blue-grey
+    begin
+      btn_BasicPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPink, BasicAttr);
+      btn_RaisedPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPink, RaisedAttr);
+      btn_StrokedPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPink, StrokedAttr);
+      btn_FlatPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPink, FlatAttr);
+      btn_BasicAccent.SetButtonStyle(AngularDarkTheme, btn_AccentBlueGray, BasicAttr);
+      btn_RaisedAccent.SetButtonStyle(AngularDarkTheme, btn_AccentBlueGray, RaisedAttr);
+      btn_StrokedAccent.SetButtonStyle(AngularDarkTheme, btn_AccentBlueGray, StrokedAttr);
+      btn_FlatAccent.SetButtonStyle(AngularDarkTheme, btn_AccentBlueGray, FlatAttr);
+      {$IFDEF D10_4+}
+        btn_IconHome.ImageName := 'home-pink';
+        btn_IconMenu.ImageName := 'menu-blue-grey';
+        btn_FABBookmark.ImageName := 'bookmark-white';
+      {$ELSE}
+        btn_IconHome.ImageIndex := 2;
+        btn_IconMenu.ImageIndex := 6;
+        btn_FABBookmark.ImageIndex := 15;
+      {$ENDIF}
+    end;
+    1: //Purple & Green
+    begin
+      btn_BasicPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPurple, BasicAttr);
+      btn_RaisedPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPurple, RaisedAttr);
+      btn_StrokedPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPurple, StrokedAttr);
+      btn_FlatPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPurple, FlatAttr);
+      btn_BasicAccent.SetButtonStyle(AngularDarkTheme, btn_AccentGreen, BasicAttr);
+      btn_RaisedAccent.SetButtonStyle(AngularDarkTheme, btn_AccentGreen, RaisedAttr);
+      btn_StrokedAccent.SetButtonStyle(AngularDarkTheme, btn_AccentGreen, StrokedAttr);
+      btn_FlatAccent.SetButtonStyle(AngularDarkTheme, btn_AccentGreen, FlatAttr);
+      {$IFDEF D10_4+}
+        btn_IconHome.ImageName := 'home-purple';
+        btn_IconMenu.ImageName := 'menu-green';
+        btn_FABBookmark.ImageName := 'bookmark-black';
+      {$ELSE}
+        btn_IconHome.ImageIndex := 3;
+        btn_IconMenu.ImageIndex := 7;
+        btn_FABBookmark.ImageIndex := 16;
+      {$ENDIF}
+    end;
   end;
+  btn_FlatPrimary.AssignStyleTo(btn_FABTrash);
+  btn_FlatAccent.AssignStyleTo(btn_FABBookmark);
 end;
 
-procedure TMainForm.CreateAllButtons;
+procedure TMainForm.rgAngularLightThemesClick(Sender: TObject);
 begin
-  CreateButtons(Self, 10, 10 , 'Classic', 'Normal','Windows', 'Windows', 0, iaLeft);
-  //Bootstrap Buttons
-  CreateButtons(Self, 10, 70 , 'Bootstrap', btn_Primary  ,'Primary',  'Tablet Dark',       1, iaRight);
-  CreateButtons(Self, 10, 130, 'Bootstrap', btn_Secondary,'Secondary','Lavender Classico', 2, iaTop);
-  CreateButtons(Self, 10, 190, 'Bootstrap', btn_Success  ,'Success',  'Iceberg Classico',  3, iaBottom);
-  CreateButtons(Self, 10, 250, 'Bootstrap', btn_Danger   ,'Danger',   'Ruby Graphite',     4, iaCenter);
-  CreateButtons(Self, 10, 310, 'Bootstrap', btn_Warning  ,'Warning',  'Golden Graphite',  -1, iaLeft);
-  CreateButtons(Self, 10, 370, 'Bootstrap', btn_Info     ,'Info',     'Light',            -1, iaRight);
-  CreateButtons(Self, 10, 430, 'Bootstrap', btn_Light    ,'Light',    'Luna',             -1, iaTop);
-  CreateButtons(Self, 10, 490, 'Bootstrap', btn_Dark     ,'Dark',     'Silver',           -1, iaBottom);
+  TStyleManager.TrySetStyle('Light');
+  rgAngularDarkThemes.ItemIndex := -1;
+  BuildStyleList;
+  case rgAngularLightThemes.ItemIndex of
+    0: //Deep Purple & Amber
+    begin
+      btn_BasicPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryDeepPurple, BasicAttr);
+      btn_RaisedPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryDeepPurple, RaisedAttr);
+      btn_StrokedPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryDeepPurple, StrokedAttr);
+      btn_FlatPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryDeepPurple, FlatAttr);
+      btn_BasicAccent.SetButtonStyle(AngularLightTheme, btn_AccentAmber, BasicAttr);
+      btn_RaisedAccent.SetButtonStyle(AngularLightTheme, btn_AccentAmber, RaisedAttr);
+      btn_StrokedAccent.SetButtonStyle(AngularLightTheme, btn_AccentAmber, StrokedAttr);
+      btn_FlatAccent.SetButtonStyle(AngularLightTheme, btn_AccentAmber, FlatAttr);
+      {$IFDEF D10_4+}
+        btn_IconHome.ImageName := 'home-deeppurple';
+        btn_IconMenu.ImageName := 'menu-amber';
+        btn_FABBookmark.ImageName := 'bookmark-black';
+      {$ELSE}
+        btn_IconHome.ImageIndex := 0;
+        btn_IconMenu.ImageIndex := 4;
+        btn_FABBookmark.ImageIndex := 16;
+      {$ENDIF}
+    end;
+    1: //Indigo & Pink
+    begin
+      btn_BasicPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryIndigo, BasicAttr);
+      btn_RaisedPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryIndigo, RaisedAttr);
+      btn_StrokedPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryIndigo, StrokedAttr);
+      btn_FlatPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryIndigo, FlatAttr);
+      btn_BasicAccent.SetButtonStyle(AngularLightTheme, btn_AccentPink, BasicAttr);
+      btn_RaisedAccent.SetButtonStyle(AngularLightTheme, btn_AccentPink, RaisedAttr);
+      btn_StrokedAccent.SetButtonStyle(AngularLightTheme, btn_AccentPink, StrokedAttr);
+      btn_FlatAccent.SetButtonStyle(AngularLightTheme, btn_AccentPink, FlatAttr);
+      btn_IconHome.ImageIndex := 1;
+      {$IFDEF D10_4+}
+        btn_IconHome.ImageName := 'home-indigo';
+        btn_IconMenu.ImageName := 'menu-pink';
+        btn_FABBookmark.ImageName := 'bookmark-white';
+      {$ELSE}
+        btn_IconHome.ImageIndex := 0;
+        btn_IconMenu.ImageIndex := 5;
+        btn_FABBookmark.ImageIndex := 15;
+      {$ENDIF}
+    end;
+  end;
+  btn_FlatPrimary.AssignStyleTo(btn_FABTrash);
+  btn_FlatAccent.AssignStyleTo(btn_FABBookmark);
 end;
 
-procedure TMainForm.Loaded;
+procedure TMainForm.AngularThemesPanelResize(Sender: TObject);
 begin
-  CreateAllButtons;
-  inherited;
+  rgAngularLightThemes.Width := AngularThemesPanel.Width div 2;
+end;
+
+procedure TMainForm.BuildStyleList;
+var
+  i, SelectedIndex: integer;
+  LStyleName, LActiveStyleName: string;
+begin
+  SelectedIndex := -1;
+  cbChangeStyle.Items.Clear;
+  LActiveStyleName := TStyleManager.ActiveStyle.Name;
+  for i := 0 to High(TStyleManager.StyleNames) do
+  begin
+    LStyleName := TStyleManager.StyleNames[i];
+    cbChangeStyle.Items.Add(LStyleName);
+    if SameText(LStyleName, LActiveStyleName)  then
+      SelectedIndex := i;
+  end;
+  cbChangeStyle.ItemIndex := SelectedIndex;
 end;
 
 initialization

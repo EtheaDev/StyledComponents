@@ -30,36 +30,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ExtCtrls, Grids, DBGrids, DB, DBClient, StdCtrls, DBCtrls,
-  Vcl.CheckLst, Vcl.StyledTaskDialog,
-
-{$IFDEF VCLSTYLEUTILS}
-  //VCLStyles support
-  Vcl.PlatformVclStylesActnCtrls,
-  Vcl.Styles.ColorTabs,
-  Vcl.Styles.ControlColor,
-  Vcl.Styles.DbGrid,
-  Vcl.Styles.DPIAware,
-  Vcl.Styles.Ext,
-  Vcl.Styles.Fixes,
-  Vcl.Styles.FormStyleHooks,
-  Vcl.Styles.NC,
-  Vcl.Styles.Utils.Menus,
-  Vcl.Styles.Utils.Misc,
-  Vcl.Styles.Utils,
-  Vcl.Styles.Utils.ScreenTips,
-  Vcl.Styles.Utils.SysControls,
-  Vcl.Styles.Utils.SysStyleHook,
-  Vcl.Styles.Utils.SystemMenu,
-  Vcl.Styles.WebBrowser,
-  Vcl.Styles.Hooks,
-  Vcl.Styles.OwnerDrawFix,
-  Vcl.Styles.Utils.ComCtrls,
-  Vcl.Styles.Utils.Forms,
-  Vcl.Styles.Utils.Graphics,
-  Vcl.Styles.Utils.StdCtrls,
-  Vcl.Styles.UxTheme,
-{$ENDIF}
-  UITypes;
+  Vcl.CheckLst, Vcl.StyledTaskDialog, UITypes;
 
 {$WARN SYMBOL_PLATFORM OFF}
 type
@@ -95,18 +66,21 @@ type
     CaptionEdit: TEdit;
     FontComboBox: TComboBox;
     FontLabel: TLabel;
+    cbChangeStyle: TComboBox;
+    StyleLabel: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure ShowDlg(Sender: TObject);
     procedure RaiseError(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure ChangeStyleButtonClick(Sender: TObject);
     procedure TaskDialogTimer(Sender: TObject; TickCount: Cardinal;
       var Reset: Boolean);
     procedure UseStyleDialogCompClick(Sender: TObject);
     procedure cbUseStyledDialogClick(Sender: TObject);
     procedure FontComboBoxSelect(Sender: TObject);
+    procedure cbChangeStyleSelect(Sender: TObject);
   private
     procedure ShowSelection(const AModalResult: TModalResult);
+    procedure BuildStyleList;
   public
     procedure ShowError(Sender: TObject; E: Exception);
   end;
@@ -125,23 +99,37 @@ uses
   , Vcl.StyledCmpStrUtils
   , Vcl.StyledTaskDialogFormUnit;
 
+procedure TMainForm.BuildStyleList;
+var
+  i, SelectedIndex: integer;
+  LStyleName, LActiveStyleName: string;
+begin
+  SelectedIndex := -1;
+  cbChangeStyle.Items.Clear;
+  LActiveStyleName := TStyleManager.ActiveStyle.Name;
+  for i := 0 to High(TStyleManager.StyleNames) do
+  begin
+    LStyleName := TStyleManager.StyleNames[i];
+    cbChangeStyle.Items.Add(LStyleName);
+    if SameText(LStyleName, LActiveStyleName)  then
+      SelectedIndex := i;
+  end;
+  cbChangeStyle.ItemIndex := SelectedIndex;
+end;
+
+procedure TMainForm.cbChangeStyleSelect(Sender: TObject);
+begin
+  Screen.Cursor := crHourGlass;
+  try
+    TStyleManager.TrySetStyle(cbChangeStyle.Text);
+  finally
+    Screen.Cursor := crDefault;
+  end;
+end;
+
 procedure TMainForm.cbUseStyledDialogClick(Sender: TObject);
 begin
   UseStyledDialogForm(cbUseStyledDialog.Checked);
-end;
-
-procedure TMainForm.ChangeStyleButtonClick(Sender: TObject);
-//var
-//  NewStyleName: string;
-begin
-(*
-  NewStyleName := CBSelectStyleName(Self.Font);
-  if StyleServices.Enabled then
-  begin
-    TStyleManager.SetStyle(NewStyleName);
-    WriteAppStyleToReg('Ethea', ExtractFileName(Application.ExeName),NewStyleName);
-  end;
-*)
 end;
 
 procedure TMainForm.FontComboBoxSelect(Sender: TObject);
@@ -158,13 +146,11 @@ var
 begin
   FontComboBox.Items.Assign(Screen.Fonts);
   FontComboBox.Text := Screen.IconFont.Name;
-
+  BuildStyleList;
   UnregisterCustomExecute;
   SetUseAlwaysTaskDialog(True);
   Font.Assign(Screen.IconFont);
   Screen.MessageFont.Assign(Font);
-
-//  InitializeDialogs(Self.Font, False);
 
   for dt := Low(TMsgDlgType) to High(TMsgDlgType)  do
     rgDlgType.Items.Add(GetEnumName(TypeInfo(TMsgDlgType), Ord(dt)));
@@ -264,7 +250,7 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
-//  FActionResourceVCL.Free;
+  ;
 end;
 
 procedure TMainForm.RaiseError(Sender: TObject);

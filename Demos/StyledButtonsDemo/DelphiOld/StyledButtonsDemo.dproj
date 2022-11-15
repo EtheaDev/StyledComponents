@@ -145,10 +145,10 @@
         </DCCReference>
         <DCCReference Include="..\..\..\source\Vcl.StyledButton.pas"/>
         <DCCReference Include="..\..\..\source\Vcl.BootstrapButtonStyles.pas"/>
+        <DCCReference Include="..\..\..\source\Vcl.AngularButtonStyles.pas"/>
         <DCCReference Include="..\..\..\source\Vcl.StandardButtonStyles.pas"/>
         <DCCReference Include="..\..\..\packages\Vcl.StyledButtonEditorUnit.pas">
             <Form>StyledButtonEditor</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

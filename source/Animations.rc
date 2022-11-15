@@ -1,0 +1,5 @@
+LOTTIE_INFORMATION RCDATA "..\Animations\information.json"
+LOTTIE_CUSTOM RCDATA "..\Animations\custom.json"
+LOTTIE_ERROR RCDATA "..\Animations\error.json"
+LOTTIE_WARNING RCDATA "..\Animations\warning.json"
+LOTTIE_SHIELD RCDATA "..\Animations\shield.json"

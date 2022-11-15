@@ -33,7 +33,7 @@ uses
   Vcl.ButtonStylesAttributes;
 
 const
-  BOOTSTRAP_BORDER_WIDTH = 3;
+  BOOTSTRAP_BORDER_WIDTH = 2;
 
   btn_primary = 'Primary';
   btn_secondary = 'Secondary';
@@ -51,7 +51,7 @@ Type
       const AFamily:  TStyledButtonFamily;
       const AClass: TStyledButtonClass;
       const AAppearance: TStyledButtonAppearance;
-      var ANormalStyle, ADownStyle, AFocusedStyle,
+      var ANormalStyle, ADownStyle, ASelectedStyle,
       AHotStyle, ADisabledStyle: TStyledButtonAttributes);
     function ButtonFamilyName: string;
     function GetButtonClasses: TButtonClasses;
@@ -125,17 +125,17 @@ begin
   else if SameText(AClass, btn_warning) then
   begin
     AButtonColor := htmlToColor(bs_warning);
-    AFontColor := clBlack;
+    AFontColor := htmlToColor('#212529');
   end
   else if SameText(AClass, btn_info) then
   begin
     AButtonColor := htmlToColor(bs_info);
-    AFontColor := clBlack;
+    AFontColor := htmlToColor('#212529');
   end
   else if SameText(AClass, btn_light) then
   begin
     AButtonColor := htmlToColor(bs_light);
-    AFontColor := clBlack;
+    AFontColor := htmlToColor('#212529');
   end
   else if SameText(AClass, btn_dark) then
   begin
@@ -169,17 +169,16 @@ procedure TBoostrapButtonStyles.UpdateAttributes(
   const AFamily:  TStyledButtonFamily;
   const AClass: TStyledButtonClass;
   const AAppearance: TStyledButtonAppearance;
-  var ANormalStyle, ADownStyle, AFocusedStyle, AHotStyle,
+  var ANormalStyle, ADownStyle, ASelectedStyle, AHotStyle,
   ADisabledStyle: TStyledButtonAttributes);
 var
   LFontColor, LButtonColor: TColor;
   LOutLine: Boolean;
 begin
-  //Do not call inherited
   BootstrapClassToColors(AClass, AAppearance, LFontColor, LButtonColor, LOutLine);
 
   //Default Style Attributes for Bootstrap Buttons
-  ANormalStyle.BorderType := btRounded;
+  ANormalStyle.DrawType := btRounded;
   ANormalStyle.FontStyle := [fsBold];
   ANormalStyle.FontName := 'Tahoma';
 
@@ -187,15 +186,15 @@ begin
   if LOutLine then
   begin
     //Outline: Border and FontColor same as Button Color
-    ANormalStyle.BrushStyle := bsClear;
-    ANormalStyle.BorderStyle := psSolid;
+    ANormalStyle.ButtonDrawStyle := btnClear;
+    ANormalStyle.BorderDrawStyle := brdSolid;
     ANormalStyle.BorderWidth := BOOTSTRAP_BORDER_WIDTH;
     ANormalStyle.FontColor := LButtonColor;
     ANormalStyle.BorderColor := LButtonColor;
   end
   else
   begin
-    ANormalStyle.BorderStyle := psClear;
+    ANormalStyle.BorderDrawStyle := brdClear;
     ANormalStyle.FontColor := LFontColor;
     ANormalStyle.ButtonColor := LButtonColor;
     ANormalStyle.BorderColor := ANormalStyle.ButtonColor;
@@ -203,7 +202,7 @@ begin
 
   //Clone Normal Style to Other Styles
   CloneButtonStyle(ANormalStyle, ADownStyle);
-  CloneButtonStyle(ANormalStyle, AFocusedStyle);
+  CloneButtonStyle(ANormalStyle, ASelectedStyle);
   CloneButtonStyle(ANormalStyle, AHotStyle);
   CloneButtonStyle(ANormalStyle, ADisabledStyle);
 
@@ -214,34 +213,33 @@ begin
     begin
       ButtonColor := LButtonColor;
       BorderColor := LightenColor(LButtonColor, 50);
-      BorderStyle := psSolid;
+      BorderDrawStyle := brdSolid;
       BorderWidth := BOOTSTRAP_BORDER_WIDTH;
       FontColor   := LFontColor;
-      BrushStyle  := bsSolid;
+      ButtonDrawStyle  := btnSolid;
     end;
 
     //Button Hot: color as Button Color
     with AHotStyle do
     begin
       ButtonColor := LButtonColor;
-      //BorderColor := LightenColor(LButtonColor, 50);
-      BorderStyle := psClear;
+      BorderDrawStyle := brdClear;
       BorderWidth := BOOTSTRAP_BORDER_WIDTH;
       FontColor := LFontColor;
-      BrushStyle  := bsSolid;
+      ButtonDrawStyle  := btnSolid;
     end;
 
     //Button Focused
-    with AFocusedStyle do
+    with ASelectedStyle do
     begin
       if SameText(AClass, btn_dark) then
         ButtonColor := LightenColor(LButtonColor, 20)
       else
         ButtonColor := DarkenColor(LButtonColor, 20);
-      BorderStyle := psSolid;
+      BorderDrawStyle := brdSolid;
       BorderWidth := BOOTSTRAP_BORDER_WIDTH;
       FontColor := LFontColor;
-      BrushStyle  := bsSolid;
+      ButtonDrawStyle  := btnSolid;
     end;
 
     //Button Disabled
@@ -256,16 +254,16 @@ begin
     //Button Down
     ADownStyle.ButtonColor := DarkenColor(LButtonColor, 20);
     ADownStyle.BorderColor := LightenColor(LButtonColor, 50);
-    ADownStyle.BorderStyle := psSolid;
+    ADownStyle.BorderDrawStyle := brdSolid;
     ADownStyle.BorderWidth := BOOTSTRAP_BORDER_WIDTH;
 
     //Button Hot: color as Down but no Border
     AHotStyle.ButtonColor := ADownStyle.ButtonColor;
 
     //Button Focused
-    AFocusedStyle.ButtonColor := DarkenColor(LButtonColor, 20);
-    AFocusedStyle.BorderStyle := psSolid;
-    AFocusedStyle.BorderWidth := BOOTSTRAP_BORDER_WIDTH;
+    ASelectedStyle.ButtonColor := DarkenColor(LButtonColor, 20);
+    ASelectedStyle.BorderDrawStyle := brdSolid;
+    ASelectedStyle.BorderWidth := BOOTSTRAP_BORDER_WIDTH;
 
     //Button Disabled
     ADisabledStyle.ButtonColor := LightenColor(ANormalStyle.ButtonColor, 70);//ColortoGrayscale(LButtonColor);
@@ -288,7 +286,6 @@ initialization
   ButtonAppearances[0] := 'Normal';
   ButtonAppearances[1] := 'Outline';
 
-  RegisterButtonFamily(
-    TBoostrapButtonStyles.Create);
+  RegisterButtonFamily(TBoostrapButtonStyles.Create);
 
 end.

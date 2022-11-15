@@ -3,7 +3,7 @@ object MainForm: TMainForm
   Top = 0
   HelpContext = 100
   Caption = 'StyledTaskDialog Demo (c) Ethea S.r.l.'
-  ClientHeight = 660
+  ClientHeight = 662
   ClientWidth = 731
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -158,11 +158,10 @@ object MainForm: TMainForm
     Left = 0
     Top = 432
     Width = 731
-    Height = 228
+    Height = 230
     Align = alBottom
     Caption = 'Use Style Dialog Component with extra feature'
     TabOrder = 12
-    ExplicitLeft = 7
     object ExpandedTextLabel: TLabel
       Left = 33
       Top = 41
@@ -194,6 +193,13 @@ object MainForm: TMainForm
       Height = 13
       Alignment = taRightJustify
       Caption = 'Dialog Caption:'
+    end
+    object StyleLabel: TLabel
+      Left = 529
+      Top = 186
+      Width = 121
+      Height = 13
+      Caption = 'Change application style:'
     end
     object ExpandedTextMemo: TMemo
       Left = 112
@@ -247,10 +253,10 @@ object MainForm: TMainForm
       WordWrap = False
     end
     object rgMainIcon: TRadioGroup
-      Left = 538
+      Left = 529
       Top = 76
-      Width = 190
-      Height = 121
+      Width = 192
+      Height = 109
       Caption = 'Main Icon'
       ItemIndex = 0
       Items.Strings = (
@@ -268,6 +274,15 @@ object MainForm: TMainForm
       Height = 21
       TabOrder = 0
       Text = 'Caption'
+    end
+    object cbChangeStyle: TComboBox
+      Left = 529
+      Top = 201
+      Width = 190
+      Height = 21
+      Style = csDropDownList
+      TabOrder = 7
+      OnSelect = cbChangeStyleSelect
     end
   end
   object FontComboBox: TComboBox

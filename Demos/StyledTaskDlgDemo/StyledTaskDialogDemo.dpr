@@ -33,14 +33,14 @@ uses
   Vcl.StyledCmpMessages in '..\..\source\Vcl.StyledCmpMessages.pas',
   Vcl.StyledCmpStrUtils in '..\..\source\Vcl.StyledCmpStrUtils.pas',
   Vcl.StyledTaskDialog in '..\..\source\Vcl.StyledTaskDialog.pas',
-  Vcl.StyledTaskDialogFormUnit in '..\..\source\Vcl.StyledTaskDialogFormUnit.pas' {StyledTaskDialogForm};
+  Vcl.StyledTaskDialogFormUnit in '..\..\source\Vcl.StyledTaskDialogFormUnit.pas' {StyledTaskDialogForm},
+  Vcl.StyledTaskDialogStdUnit in '..\..\source\Vcl.StyledTaskDialogStdUnit.pas' {StyledTaskDialogStd};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  //TStyleManager.TrySetStyle('Windows10');
   Application.CreateForm(TMainForm, MainForm);
   Application.OnException := MainForm.showError;
   Application.Run;
