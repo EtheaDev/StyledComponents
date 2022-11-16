@@ -12,6 +12,10 @@
 
 ---
 
+## Installation of Packages ##
+
+Open the package group Vcl.StyledComponents.groupproj from the correct Folder of your Delphi version (eg. \StyledComponents\Packages\D11), then build the run-time package: StyledComponentsDXX and install the design-time package: dclStyledComponentsDXX.
+
 ## Description of Styled Buttons ##
 
 **TStyledGraphicButton**, **TStyledButton** and **TStyledTaskDialog** are designed to expand Button functionalities.
