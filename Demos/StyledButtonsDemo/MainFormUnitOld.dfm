@@ -1004,6 +1004,7 @@ object MainForm: TMainForm
           Width = 80
           Height = 36
           Align = alLeft
+          Enabled = False
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -12
@@ -1253,7 +1254,7 @@ object MainForm: TMainForm
           StyleFamily = 'Angular-Light'
           StyleClass = 'Amber'
           StyleAppearance = 'Flat'
-          TabOrder = 3
+          TabOrder = 2
           ExplicitLeft = 162
           ExplicitTop = 20
         end
@@ -1281,7 +1282,7 @@ object MainForm: TMainForm
           StyleFamily = 'Angular-Light'
           StyleClass = 'Warn'
           StyleAppearance = 'Flat'
-          TabOrder = 2
+          TabOrder = 3
           ExplicitLeft = 313
           ExplicitTop = 3
         end
@@ -1357,7 +1358,7 @@ object MainForm: TMainForm
     Left = 460
     Top = 542
     Bitmap = {
-      494C0101130018002C0020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010113001800340020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000080000000A000000001002000000000000040
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
