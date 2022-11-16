@@ -44,6 +44,8 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     BevelOuter = bvNone
     ParentBackground = False
     TabOrder = 0
+    ExplicitTop = 175
+    ExplicitWidth = 584
     object FooterTextLabel: TLabel
       AlignWithMargins = True
       Left = 4
@@ -74,6 +76,8 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     Color = clWindow
     ParentBackground = False
     TabOrder = 1
+    ExplicitWidth = 576
+    ExplicitHeight = 124
     object ImagePanel: TPanel
       AlignWithMargins = True
       Left = 4
@@ -87,6 +91,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
+      ExplicitHeight = 116
     end
     object MessageScrollBox: TScrollBox
       Left = 136
@@ -98,6 +103,8 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       BevelOuter = bvNone
       BorderStyle = bsNone
       TabOrder = 1
+      ExplicitWidth = 440
+      ExplicitHeight = 124
       object TitleLabel: TLabel
         AlignWithMargins = True
         Left = 4
@@ -158,6 +165,8 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     BevelOuter = bvNone
     ParentBackground = False
     TabOrder = 2
+    ExplicitTop = 132
+    ExplicitWidth = 584
     object YesButton: TStyledButton
       Tag = 0
       AlignWithMargins = True

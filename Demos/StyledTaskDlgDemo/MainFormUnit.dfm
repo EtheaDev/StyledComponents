@@ -3,165 +3,32 @@ object MainForm: TMainForm
   Top = 0
   HelpContext = 100
   Caption = 'StyledTaskDialog Demo (c) Ethea S.r.l.'
-  ClientHeight = 662
-  ClientWidth = 731
+  ClientHeight = 573
+  ClientWidth = 729
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = True
   Position = poScreenCenter
   ShowHint = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  PixelsPerInch = 96
   TextHeight = 13
-  object DefaultButtonLabel: TLabel
-    Left = 512
-    Top = 353
-    Width = 74
-    Height = 13
-    Alignment = taRightJustify
-    Caption = 'Default Button:'
-  end
-  object TitleLabel: TLabel
-    Left = 8
-    Top = 7
-    Width = 24
-    Height = 13
-    Caption = 'Title:'
-  end
-  object MessageLabel: TLabel
-    Left = 8
-    Top = 51
-    Width = 26
-    Height = 13
-    Caption = 'Text:'
-  end
-  object FontLabel: TLabel
-    Left = 248
-    Top = 348
-    Width = 26
-    Height = 13
-    Alignment = taRightJustify
-    Caption = 'Font:'
-  end
-  object edTitle: TEdit
-    Left = 8
-    Top = 24
-    Width = 434
-    Height = 21
-    TabOrder = 0
-    Text = 'Task dialog Tester'
-  end
-  object edMessage: TMemo
-    Left = 10
-    Top = 64
-    Width = 434
-    Height = 275
-    TabOrder = 2
-    WordWrap = False
-  end
-  object btCustomTaskDialog: TButton
-    Left = 7
-    Top = 370
-    Width = 210
-    Height = 25
-    Caption = 'Show Custom Task Dialog'
-    TabOrder = 6
-    OnClick = ShowDlg
-  end
-  object rgDlgType: TRadioGroup
-    Left = 448
-    Top = 16
-    Width = 273
-    Height = 105
-    Caption = 'Dialog Type'
-    TabOrder = 1
-  end
-  object clbButtons: TCheckListBox
-    Left = 450
-    Top = 127
-    Width = 273
-    Height = 212
-    ItemHeight = 13
-    TabOrder = 3
-  end
-  object btCustomMsgDialog: TButton
-    Left = 8
-    Top = 401
-    Width = 210
-    Height = 25
-    Caption = 'Show Custom Message Dialog'
-    TabOrder = 8
-    OnClick = ShowDlg
-  end
-  object btRaiseErrorTaskDialog: TButton
-    Left = 513
-    Top = 372
-    Width = 210
-    Height = 25
-    Caption = 'Raise Error with Task Dialog'
-    TabOrder = 10
-    OnClick = RaiseError
-  end
-  object DefaultButtonComboBox: TComboBox
-    Left = 592
-    Top = 345
-    Width = 131
-    Height = 21
-    Style = csDropDownList
-    DropDownCount = 12
-    TabOrder = 5
-  end
-  object btNativeTaskDialog: TButton
-    Left = 234
-    Top = 370
-    Width = 210
-    Height = 25
-    Caption = 'Show Native Task Dialog'
-    TabOrder = 7
-    OnClick = ShowDlg
-  end
-  object btNativeMsgDialog: TButton
-    Left = 234
-    Top = 401
-    Width = 210
-    Height = 25
-    Caption = 'Show Native Message Dialog'
-    TabOrder = 9
-    OnClick = ShowDlg
-  end
-  object btRaiseErrorMsgDialog: TButton
-    Left = 513
-    Top = 401
-    Width = 210
-    Height = 25
-    Caption = 'Raise Error with Msg Dialog'
-    TabOrder = 11
-    OnClick = RaiseError
-  end
-  object cbUseStyledDialog: TCheckBox
-    Left = 8
-    Top = 347
-    Width = 137
-    Height = 17
-    Caption = 'Use modern Styled Dialog'
-    Checked = True
-    State = cbChecked
-    TabOrder = 4
-    OnClick = cbUseStyledDialogClick
-  end
   object ExtraGroupBox: TGroupBox
     Left = 0
-    Top = 432
-    Width = 731
+    Top = 343
+    Width = 729
     Height = 230
     Align = alBottom
     Caption = 'Use Style Dialog Component with extra feature'
-    TabOrder = 12
+    TabOrder = 0
+    ExplicitTop = 572
+    ExplicitWidth = 727
+    DesignSize = (
+      729
+      230)
     object ExpandedTextLabel: TLabel
       Left = 33
       Top = 41
@@ -195,8 +62,8 @@ object MainForm: TMainForm
       Caption = 'Dialog Caption:'
     end
     object StyleLabel: TLabel
-      Left = 529
-      Top = 186
+      Left = 523
+      Top = 184
       Width = 121
       Height = 13
       Caption = 'Change application style:'
@@ -204,59 +71,68 @@ object MainForm: TMainForm
     object ExpandedTextMemo: TMemo
       Left = 112
       Top = 42
-      Width = 411
+      Width = 405
       Height = 56
+      Anchors = [akLeft, akTop, akRight]
       Lines.Strings = (
         'Expanded Text'
         'second expanded line')
       TabOrder = 1
       WordWrap = False
+      ExplicitWidth = 403
     end
     object btUseStyledDialogComp: TButton
-      Left = 526
-      Top = 14
+      Left = 523
+      Top = 123
       Width = 195
       Height = 25
+      Anchors = [akTop, akRight]
       Caption = 'Use StyledTaskDialog comp.'
-      TabOrder = 4
+      TabOrder = 5
       OnClick = UseStyleDialogCompClick
     end
     object btUseNativeDialogComp: TButton
-      Left = 526
-      Top = 45
+      Left = 523
+      Top = 154
       Width = 195
       Height = 25
+      Anchors = [akTop, akRight]
       Caption = 'Use native TaskDialog comp.'
-      TabOrder = 5
+      TabOrder = 6
       OnClick = UseStyleDialogCompClick
     end
     object FooterTextMemo: TMemo
       Left = 112
       Top = 104
-      Width = 411
+      Width = 405
       Height = 56
+      Anchors = [akLeft, akTop, akRight]
       Lines.Strings = (
         'Footer Text'
         'second footer line')
       TabOrder = 2
       WordWrap = False
+      ExplicitWidth = 403
     end
     object VerificationTextMemo: TMemo
       Left = 112
       Top = 166
-      Width = 411
+      Width = 405
       Height = 56
+      Anchors = [akLeft, akTop, akRight]
       Lines.Strings = (
         'Verification Text'
         'second Verification line')
       TabOrder = 3
       WordWrap = False
+      ExplicitWidth = 403
     end
     object rgMainIcon: TRadioGroup
-      Left = 529
-      Top = 76
-      Width = 192
-      Height = 109
+      Left = 523
+      Top = 10
+      Width = 195
+      Height = 107
+      Anchors = [akTop, akRight]
       Caption = 'Main Icon'
       ItemIndex = 0
       Items.Strings = (
@@ -265,34 +141,222 @@ object MainForm: TMainForm
         'tdiError'
         'tdiInformation'
         'tdiShield')
-      TabOrder = 6
+      TabOrder = 4
     end
     object CaptionEdit: TEdit
       Left = 112
       Top = 15
-      Width = 411
+      Width = 405
       Height = 21
+      Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
       Text = 'Caption'
+      ExplicitWidth = 403
     end
     object cbChangeStyle: TComboBox
-      Left = 529
+      Left = 523
       Top = 201
-      Width = 190
+      Width = 196
       Height = 21
       Style = csDropDownList
       TabOrder = 7
       OnSelect = cbChangeStyleSelect
     end
   end
-  object FontComboBox: TComboBox
-    Left = 280
-    Top = 345
-    Width = 164
-    Height = 21
-    TabOrder = 13
-    Text = 'FontComboBox'
-    OnSelect = FontComboBoxSelect
+  object ClientPanel: TPanel
+    Left = 0
+    Top = 0
+    Width = 729
+    Height = 343
+    Align = alClient
+    TabOrder = 1
+    ExplicitWidth = 731
+    ExplicitHeight = 395
+    DesignSize = (
+      729
+      343)
+    object TitleLabel: TLabel
+      Left = 4
+      Top = 5
+      Width = 24
+      Height = 13
+      Caption = 'Title:'
+    end
+    object TextMessageLabel: TLabel
+      Left = 4
+      Top = 52
+      Width = 46
+      Height = 13
+      Caption = 'Message:'
+    end
+    object edTitle: TEdit
+      Left = 4
+      Top = 24
+      Width = 504
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      TabOrder = 0
+      Text = 'Task dialog Tester'
+      ExplicitWidth = 544
+    end
+    object edMessage: TMemo
+      Left = 4
+      Top = 70
+      Width = 504
+      Height = 163
+      Anchors = [akLeft, akTop, akRight, akBottom]
+      TabOrder = 1
+      WordWrap = False
+      ExplicitWidth = 544
+      ExplicitHeight = 232
+    end
+    object RightPanel: TPanel
+      Left = 514
+      Top = 1
+      Width = 214
+      Height = 341
+      Align = alRight
+      TabOrder = 3
+      ExplicitLeft = 554
+      ExplicitHeight = 410
+      DesignSize = (
+        214
+        341)
+      object DefaultButtonLabel: TLabel
+        Left = 10
+        Top = 297
+        Width = 74
+        Height = 13
+        Alignment = taRightJustify
+        Anchors = [akLeft, akBottom]
+        Caption = 'Default Button:'
+        ExplicitTop = 408
+      end
+      object rgDlgType: TRadioGroup
+        Left = 9
+        Top = 4
+        Width = 197
+        Height = 88
+        Caption = 'Dialog Type'
+        TabOrder = 0
+      end
+      object clbButtons: TCheckListBox
+        Left = 9
+        Top = 98
+        Width = 197
+        Height = 195
+        Anchors = [akLeft, akTop, akBottom]
+        ItemHeight = 13
+        TabOrder = 1
+      end
+      object DefaultButtonComboBox: TComboBox
+        Left = 9
+        Top = 313
+        Width = 189
+        Height = 21
+        Style = csDropDownList
+        Anchors = [akLeft, akBottom]
+        DropDownCount = 12
+        TabOrder = 2
+        ExplicitTop = 424
+      end
+    end
+    object PanelCenter: TPanel
+      Left = 4
+      Top = 239
+      Width = 505
+      Height = 98
+      Anchors = [akLeft, akBottom]
+      TabOrder = 2
+      ExplicitTop = 308
+      DesignSize = (
+        505
+        98)
+      object FontLabel: TLabel
+        Left = 262
+        Top = 9
+        Width = 71
+        Height = 13
+        Alignment = taRightJustify
+        Anchors = [akLeft, akBottom]
+        Caption = 'Message Font:'
+      end
+      object cbUseStyledDialog: TCheckBox
+        Left = 6
+        Top = 8
+        Width = 180
+        Height = 17
+        Caption = 'Use modern Styled Dialog'
+        Checked = True
+        State = cbChecked
+        TabOrder = 0
+        OnClick = cbUseStyledDialogClick
+      end
+      object btCustomTaskDialog: TButton
+        Left = 7
+        Top = 33
+        Width = 160
+        Height = 25
+        Caption = 'Custom Task Dialog'
+        TabOrder = 2
+        OnClick = ShowDlg
+      end
+      object btNativeTaskDialog: TButton
+        Left = 173
+        Top = 33
+        Width = 160
+        Height = 25
+        Caption = 'Native Task Dialog'
+        TabOrder = 3
+        OnClick = ShowDlg
+      end
+      object btRaiseErrorTaskDialog: TButton
+        Left = 339
+        Top = 33
+        Width = 160
+        Height = 25
+        Caption = 'Raise Error with Task Dialog'
+        TabOrder = 4
+        OnClick = RaiseError
+      end
+      object btCustomMsgDialog: TButton
+        Left = 6
+        Top = 64
+        Width = 160
+        Height = 25
+        Caption = 'Custom Message Dialog'
+        TabOrder = 5
+        OnClick = ShowDlg
+      end
+      object btNativeMsgDialog: TButton
+        Left = 173
+        Top = 64
+        Width = 160
+        Height = 25
+        Caption = 'Native Message Dialog'
+        TabOrder = 6
+        OnClick = ShowDlg
+      end
+      object btRaiseErrorMsgDialog: TButton
+        Left = 339
+        Top = 64
+        Width = 160
+        Height = 25
+        Caption = 'Raise Error with Msg Dialog'
+        TabOrder = 7
+        OnClick = RaiseError
+      end
+      object FontComboBox: TComboBox
+        Left = 339
+        Top = 6
+        Width = 160
+        Height = 21
+        Anchors = [akLeft, akBottom]
+        TabOrder = 1
+        Text = 'FontComboBox'
+        OnSelect = FontComboBoxSelect
+      end
+    end
   end
   object TaskDialog: TTaskDialog
     Buttons = <>

@@ -164,7 +164,7 @@ type
     procedure Loaded; override;
     procedure LoadImage(const AImageIndex: TImageIndex;
       AImageName: string); virtual;
-    procedure DefaultDialogSize(out AClientWidth, AClientHeight: Integer); virtual;
+    procedure DefaultDialogSize(out AClientWidth, AClientHeight, AImageSize: Integer); virtual;
   public
     procedure SetDialogFont(const AFont: TFont);
     constructor Create(AOwner: TComponent); override;
@@ -294,31 +294,34 @@ begin
 end;
 
 procedure TStyledTaskDialogForm.AdjustHeight;
-const
-  margins = 8;
-  IMAGE_HEIGHT = 128;
 var
   LFooterPanelHeight: Integer;
   LMinHeight, LCalcHeight: Integer;
+  LImageSize, LWidth, LHeight, LMargins: Integer;
+
 begin
+  LMargins := ImagePanel.Left * 2;
+  DefaultDialogSize(LWidth, LHeight, LImageSize);
   if FooterPanel.Visible then
-    LFooterPanelHeight := FooterPanel.Height + margins
+    LFooterPanelHeight := FooterPanel.Height + LMargins
   else
     LFooterPanelHeight := 0;
   LCalcHeight :=
-    AutoSizeLabel.Height + margins +
-    TitleLabel.Height + margins +
+    AutoSizeLabel.Height + LMargins +
+    TitleLabel.Height + LMargins +
     LFooterPanelHeight +
-    ButtonsPanel.Height + margins;
-  LMinHeight := IMAGE_HEIGHT +
-    LFooterPanelHeight +
-    ButtonsPanel.Height + margins;
+    ButtonsPanel.Height + LMargins;
+  LMinHeight := LImageSize + LMargins +
+    LFooterPanelHeight + LMargins +
+    ButtonsPanel.Height + LMargins;
 
   Constraints.MinHeight := LMinHeight +
     Height - ClientHeight;
 
-  ClientHeight := Min(Self.Monitor.Height - 100,
+  LHeight := Min(Self.Monitor.Height - 100,
     Max(LCalcHeight, LMinHeight));
+
+  ClientHeight := LHeight;
 
   TextLabel.Font.Assign(AutoSizeLabel.Font);
   TextLabel.Height := AutoSizeLabel.Height;
@@ -333,9 +336,9 @@ var
   LFormWidth, I: Integer;
   LStyledButton: TStyledButton;
   LMargins: Integer;
-  LWidth, LHeight: Integer;
+  LImageSize, LWidth, LHeight: Integer;
 begin
-  DefaultDialogSize(LWidth, LHeight);
+  DefaultDialogSize(LWidth, LHeight, LImageSize);
   LMargins := ButtonsPanel.Margins.Left;
   LFormWidth := LMargins;
   for I := 0 to ComponentCount -1 do
@@ -348,7 +351,7 @@ begin
     end;
   end;
   LFormWidth := LFormWidth + LMargins;
-  Width := Max(LWidth, LFormWidth);
+  ClientWidth := Max(LWidth, LFormWidth);
 end;
 
 procedure TStyledTaskDialogForm.SetText(const AValue: string);
@@ -468,11 +471,15 @@ begin
   FDefaultButton := tcbOk;
 end;
 
-procedure TStyledTaskDialogForm.DefaultDialogSize(out AClientWidth, AClientHeight: Integer);
+procedure TStyledTaskDialogForm.DefaultDialogSize(out AClientWidth, AClientHeight, AImageSize: Integer);
+var
+  LScaleFactor: Single;
 begin
+  LScaleFactor := Self.PixelsPerInch / 96;
   //Values for 96 DPI
-  AClientWidth := 600;
-  AClientHeight := 280;
+  AClientWidth := Round(600 * LScaleFactor);
+  AClientHeight := Round(280 * LScaleFactor);
+  AImageSize := Round(128 * LScaleFactor);
 end;
 
 procedure TStyledTaskDialogForm.FormCreate(Sender: TObject);
@@ -588,7 +595,6 @@ end;
 
 procedure TStyledTaskDialogForm.HelpButtonClick(Sender: TObject);
 begin
-  //TODO: implement call to Help
   Application.HelpContext(HelpContext);
 end;
 

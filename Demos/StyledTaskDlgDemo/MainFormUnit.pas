@@ -35,23 +35,8 @@ uses
 {$WARN SYMBOL_PLATFORM OFF}
 type
   TMainForm = class(TForm)
-    edTitle: TEdit;
-    edMessage: TMemo;
-    btCustomTaskDialog: TButton;
-    rgDlgType: TRadioGroup;
-    clbButtons: TCheckListBox;
-    btCustomMsgDialog: TButton;
-    btRaiseErrorTaskDialog: TButton;
-    DefaultButtonComboBox: TComboBox;
-    DefaultButtonLabel: TLabel;
-    btNativeTaskDialog: TButton;
-    btNativeMsgDialog: TButton;
-    btRaiseErrorMsgDialog: TButton;
     TaskDialog: TTaskDialog;
     StyledTaskDialog: TStyledTaskDialog;
-    TitleLabel: TLabel;
-    MessageLabel: TLabel;
-    cbUseStyledDialog: TCheckBox;
     ExtraGroupBox: TGroupBox;
     ExpandedTextLabel: TLabel;
     ExpandedTextMemo: TMemo;
@@ -64,10 +49,28 @@ type
     rgMainIcon: TRadioGroup;
     CaptionLabel: TLabel;
     CaptionEdit: TEdit;
+    ClientPanel: TPanel;
+    TitleLabel: TLabel;
+    edTitle: TEdit;
+    edMessage: TMemo;
+    TextMessageLabel: TLabel;
+    RightPanel: TPanel;
+    rgDlgType: TRadioGroup;
+    clbButtons: TCheckListBox;
+    DefaultButtonLabel: TLabel;
+    DefaultButtonComboBox: TComboBox;
+    PanelCenter: TPanel;
+    cbUseStyledDialog: TCheckBox;
+    btCustomTaskDialog: TButton;
+    btNativeTaskDialog: TButton;
+    btRaiseErrorTaskDialog: TButton;
+    btCustomMsgDialog: TButton;
+    btNativeMsgDialog: TButton;
+    btRaiseErrorMsgDialog: TButton;
     FontComboBox: TComboBox;
     FontLabel: TLabel;
-    cbChangeStyle: TComboBox;
     StyleLabel: TLabel;
+    cbChangeStyle: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure ShowDlg(Sender: TObject);
     procedure RaiseError(Sender: TObject);
