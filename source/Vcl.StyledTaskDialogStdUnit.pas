@@ -43,13 +43,13 @@ uses
   , Vcl.StyledTaskDialogFormUnit
   , Vcl.StandardButtonStyles
   , Vcl.BootstrapButtonStyles
-  //, System.ImageList  //If you are using an older Delphi version, remove this line
   , Vcl.ImgList
   , Vcl.StyledButton
   , Vcl.ExtCtrls
   , Vcl.StdCtrls
   , System.UITypes
-  , Vcl.Imaging.pngimage;
+  , Vcl.Imaging.pngimage
+  , Vcl.ButtonStylesAttributes;
 
 type
   TStyledTaskDialogStd = class(TStyledTaskDialogForm)

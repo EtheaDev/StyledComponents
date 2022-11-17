@@ -29,16 +29,17 @@ unit Vcl.AngularButtonStyles;
 interface
 
 uses
-  Vcl.Graphics,
-  Vcl.ButtonStylesAttributes;
+  Vcl.Graphics
+  , System.UITypes
+  , Vcl.ButtonStylesAttributes;
 
 const
-  ANGULAR_STROKED_WIDTH = 1;
+  ANGULAR_STROKED_WIDTH = 2;
   ANGULAR_RAISED_WIDTH = 3;
 
   //Button Family as Angular Themes
-  AngularLightTheme = 'Angular-Light';
-  AngularDarkTheme = 'Angular-Dark';
+  ANGULAR_LIGHT_FAMILY = 'Angular-Light';
+  ANGULAR_DARK_FAMILY = 'Angular-Dark';
 
   //Button Class as Angular Styling
   btn_Basic = 'Basic';
@@ -82,6 +83,10 @@ Type
     function ButtonFamilyName: string;
     function GetButtonClasses: TButtonClasses;
     function GetButtonAppearances: TButtonAppearances;
+    procedure GetStyleByModalResult(
+      const AModalResult: System.UITypes.TModalResult;
+      var AStyleClass: TStyledButtonClass;
+      var AStyleAppearance: TStyledButtonAppearance);
   end;
 
   //Base class for dark styles
@@ -100,6 +105,10 @@ Type
     function ButtonFamilyName: string;
     function GetButtonClasses: TButtonClasses;
     function GetButtonAppearances: TButtonAppearances;
+    procedure GetStyleByModalResult(
+      const AModalResult: System.UITypes.TModalResult;
+      var AStyleClass: TStyledButtonClass;
+      var AStyleAppearance: TStyledButtonAppearance);
   end;
 
 implementation
@@ -159,7 +168,7 @@ end;
 
 function TAngularButtonStyleLight.ButtonFamilyName: string;
 begin
-  Result := AngularLightTheme;
+  Result := ANGULAR_LIGHT_FAMILY;
 end;
 
 function TAngularButtonStyleLight.GetButtonAppearances: TButtonAppearances;
@@ -170,6 +179,31 @@ end;
 function TAngularButtonStyleLight.GetButtonClasses: TButtonClasses;
 begin
   Result := LightButtonClasses;
+end;
+
+procedure TAngularButtonStyleLight.GetStyleByModalResult(
+  const AModalResult: System.UITypes.TModalResult;
+  var AStyleClass: TStyledButtonClass;
+  var AStyleAppearance: TStyledButtonAppearance);
+begin
+  //if AModalResult is mrNone, define the defaults of Family
+  case AModalResult of
+    mrNone     : begin AStyleClass := btn_Basic; AStyleAppearance := FlatAttr; end;
+    mrYes      : begin AStyleClass := btn_PrimaryDeepPurple; AStyleAppearance := FlatAttr; end;
+    mrNo       : begin AStyleClass := btn_Warn; AStyleAppearance := FlatAttr; end;
+    mrOk       : begin AStyleClass := btn_PrimaryDeepPurple; AStyleAppearance := FlatAttr; end;
+    mrCancel   : begin AStyleClass := btn_Warn; AStyleAppearance := FlatAttr; end;
+    mrAbort    : begin AStyleClass := btn_Warn; AStyleAppearance := RaisedAttr; end;
+    mrRetry    : begin AStyleClass := btn_PrimaryDeepPurple; AStyleAppearance := RaisedAttr; end;
+    mrIgnore   : begin AStyleClass := btn_PrimaryDeepPurple; AStyleAppearance := RaisedAttr; end;
+    mrAll      : begin AStyleClass := btn_PrimaryDeepPurple; AStyleAppearance := RaisedAttr; end;
+    mrNoToAll  : begin AStyleClass := btn_Warn; AStyleAppearance := RaisedAttr; end;
+    mrYesToAll : begin AStyleClass := btn_PrimaryDeepPurple; AStyleAppearance := RaisedAttr; end;
+    mrClose    : begin AStyleClass := btn_Warn; AStyleAppearance := FlatAttr; end;
+    mrTryAgain : begin AStyleClass := btn_PrimaryDeepPurple; AStyleAppearance := FlatAttr; end;
+    mrContinue : begin AStyleClass := btn_PrimaryDeepPurple; AStyleAppearance := FlatAttr; end;
+    mrHelp     : begin AStyleClass := btn_Warn; AStyleAppearance := FlatAttr; end;
+  end;
 end;
 
 procedure TAngularButtonStyleLight.UpdateAttributes(
@@ -191,7 +225,6 @@ begin
   ANormalStyle.BorderWidth := 0;
   ANormalStyle.BorderDrawStyle := brdClear;
   ANormalStyle.FontStyle := [fsBold];
-  ANormalStyle.FontName := 'Segoe UI';
   ANormalStyle.ButtonColor := LButtonColor;
   ANormalStyle.FontColor := LFontColor;
 
@@ -344,7 +377,7 @@ end;
 
 function TAngularButtonStyleDark.ButtonFamilyName: string;
 begin
-  Result := AngularDarkTheme;
+  Result := ANGULAR_DARK_FAMILY;
 end;
 
 function TAngularButtonStyleDark.GetButtonAppearances: TButtonAppearances;
@@ -355,6 +388,31 @@ end;
 function TAngularButtonStyleDark.GetButtonClasses: TButtonClasses;
 begin
   Result := DarkButtonClasses;
+end;
+
+procedure TAngularButtonStyleDark.GetStyleByModalResult(
+  const AModalResult: System.UITypes.TModalResult;
+  var AStyleClass: TStyledButtonClass;
+  var AStyleAppearance: TStyledButtonAppearance);
+begin
+  //if AModalResult is mrNone, define the defaults of Family
+  case AModalResult of
+    mrNone     : begin AStyleClass := btn_Basic; AStyleAppearance := FlatAttr; end;
+    mrYes      : begin AStyleClass := btn_PrimaryPurple; AStyleAppearance := FlatAttr; end;
+    mrNo       : begin AStyleClass := btn_Warn; AStyleAppearance := FlatAttr; end;
+    mrOk       : begin AStyleClass := btn_PrimaryPurple; AStyleAppearance := FlatAttr; end;
+    mrCancel   : begin AStyleClass := btn_Warn; AStyleAppearance := FlatAttr; end;
+    mrAbort    : begin AStyleClass := btn_Warn; AStyleAppearance := RaisedAttr; end;
+    mrRetry    : begin AStyleClass := btn_PrimaryPurple; AStyleAppearance := RaisedAttr; end;
+    mrIgnore   : begin AStyleClass := btn_PrimaryPurple; AStyleAppearance := RaisedAttr; end;
+    mrAll      : begin AStyleClass := btn_PrimaryPurple; AStyleAppearance := RaisedAttr; end;
+    mrNoToAll  : begin AStyleClass := btn_Warn; AStyleAppearance := RaisedAttr; end;
+    mrYesToAll : begin AStyleClass := btn_PrimaryPurple; AStyleAppearance := RaisedAttr; end;
+    mrClose    : begin AStyleClass := btn_Warn; AStyleAppearance := FlatAttr; end;
+    mrTryAgain : begin AStyleClass := btn_PrimaryPurple; AStyleAppearance := FlatAttr; end;
+    mrContinue : begin AStyleClass := btn_PrimaryPurple; AStyleAppearance := FlatAttr; end;
+    mrHelp     : begin AStyleClass := btn_Warn; AStyleAppearance := FlatAttr; end;
+  end;
 end;
 
 procedure TAngularButtonStyleDark.UpdateAttributes(
@@ -373,8 +431,8 @@ begin
   ANormalStyle.DrawType := btRounded;
   ANormalStyle.BorderWidth := 0;
   ANormalStyle.BorderDrawStyle := brdClear;
+  ANormalStyle.ButtonDrawStyle := btnSolid;
   ANormalStyle.FontStyle := [fsBold];
-  ANormalStyle.FontName := 'Segoe UI';
   ANormalStyle.ButtonColor := LButtonColor;
   ANormalStyle.FontColor := LFontColor;
 

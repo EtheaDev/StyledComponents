@@ -69,12 +69,12 @@ type
     SaveAs1: TMenuItem;
     Exit1: TMenuItem;
     Panel1: TPanel;
-    StyledButton: TStyledButton;
+    ShowEditButton: TStyledButton;
     StyledButton2: TStyledButton;
     Button1: TButton;
     StyleLabel: TLabel;
     cbChangeStyle: TComboBox;
-    PageControl1: TPageControl;
+    PageControl: TPageControl;
     tsBootstrap: TTabSheet;
     tsAngular: TTabSheet;
     tsClassic: TTabSheet;
@@ -145,6 +145,28 @@ type
     btn_FABHome: TStyledButton;
     btn_FABHeartDisabled: TStyledButton;
     StyledButton1: TStyledButton;
+    gbAngularModalResult: TGroupBox;
+    btn_AngularOK: TStyledButton;
+    btn_AngularCancel: TStyledButton;
+    btn_AngularAbort: TStyledButton;
+    btn_AngularRetry: TStyledButton;
+    btn_AngularIgnore: TStyledButton;
+    btn_AngularYes: TStyledButton;
+    btn_AngularNo: TStyledButton;
+    btn_AngularClose: TStyledButton;
+    btn_AngularHelp: TStyledButton;
+    btn_AngularAll: TStyledButton;
+    gbBootstrapModalResult: TGroupBox;
+    btn_BootstrapOK: TStyledButton;
+    btn_BootstrapCancel: TStyledButton;
+    btn_BootstrapAbort: TStyledButton;
+    btn_BootstrapRetry: TStyledButton;
+    btn_BootstrapIgnore: TStyledButton;
+    btn_BootstrapYes: TStyledButton;
+    btn_BootstrapNo: TStyledButton;
+    btn_BootstrapClose: TStyledButton;
+    btn_BootstrapHelp: TStyledButton;
+    btn_BootstrapAll: TStyledButton;
     procedure TestActionExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure cbChangeStyleSelect(Sender: TObject);
@@ -154,6 +176,7 @@ type
     procedure AngularThemesPanelResize(Sender: TObject);
     procedure rgAngularDarkThemesClick(Sender: TObject);
   private
+    procedure RepaintAngularBtnWithMR(const AFamily: TStyledButtonFamily);
     procedure BuildStyleList;
   protected
   end;
@@ -190,7 +213,7 @@ end;
 
 procedure TMainForm.TestActionExecute(Sender: TObject);
 begin
-  EditStyledButton(StyledButton);
+  EditStyledButton(ShowEditButton);
 end;
 
 procedure TMainForm.LinkLabelLinkClick(Sender: TObject;
@@ -198,6 +221,20 @@ procedure TMainForm.LinkLabelLinkClick(Sender: TObject;
 begin
   ShellExecute(handle, 'open',
     PChar(Link), nil, nil, SW_SHOWNORMAL);
+end;
+
+procedure TMainForm.RepaintAngularBtnWithMR(const AFamily: TStyledButtonFamily);
+begin
+  btn_AngularOK.StyleFamily := AFamily;
+  btn_AngularCancel.StyleFamily := AFamily;
+  btn_AngularAbort.StyleFamily := AFamily;
+  btn_AngularRetry.StyleFamily := AFamily;
+  btn_AngularIgnore.StyleFamily := AFamily;
+  btn_AngularYes.StyleFamily := AFamily;
+  btn_AngularNo.StyleFamily := AFamily;
+  btn_AngularClose.StyleFamily := AFamily;
+  btn_AngularHelp.StyleFamily := AFamily;
+  btn_AngularAll.StyleFamily := AFamily;
 end;
 
 procedure TMainForm.rgAngularDarkThemesClick(Sender: TObject);
@@ -208,14 +245,14 @@ begin
   case rgAngularDarkThemes.ItemIndex of
     0: //Pink & Blue-grey
     begin
-      btn_BasicPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPink, BasicAttr);
-      btn_RaisedPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPink, RaisedAttr);
-      btn_StrokedPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPink, StrokedAttr);
-      btn_FlatPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPink, FlatAttr);
-      btn_BasicAccent.SetButtonStyle(AngularDarkTheme, btn_AccentBlueGray, BasicAttr);
-      btn_RaisedAccent.SetButtonStyle(AngularDarkTheme, btn_AccentBlueGray, RaisedAttr);
-      btn_StrokedAccent.SetButtonStyle(AngularDarkTheme, btn_AccentBlueGray, StrokedAttr);
-      btn_FlatAccent.SetButtonStyle(AngularDarkTheme, btn_AccentBlueGray, FlatAttr);
+      btn_BasicPrimary.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_PrimaryPink, BasicAttr);
+      btn_RaisedPrimary.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_PrimaryPink, RaisedAttr);
+      btn_StrokedPrimary.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_PrimaryPink, StrokedAttr);
+      btn_FlatPrimary.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_PrimaryPink, FlatAttr);
+      btn_BasicAccent.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_AccentBlueGray, BasicAttr);
+      btn_RaisedAccent.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_AccentBlueGray, RaisedAttr);
+      btn_StrokedAccent.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_AccentBlueGray, StrokedAttr);
+      btn_FlatAccent.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_AccentBlueGray, FlatAttr);
       {$IFDEF D10_4+}
         btn_IconHome.ImageName := 'home-pink';
         btn_IconMenu.ImageName := 'menu-blue-grey';
@@ -228,14 +265,14 @@ begin
     end;
     1: //Purple & Green
     begin
-      btn_BasicPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPurple, BasicAttr);
-      btn_RaisedPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPurple, RaisedAttr);
-      btn_StrokedPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPurple, StrokedAttr);
-      btn_FlatPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPurple, FlatAttr);
-      btn_BasicAccent.SetButtonStyle(AngularDarkTheme, btn_AccentGreen, BasicAttr);
-      btn_RaisedAccent.SetButtonStyle(AngularDarkTheme, btn_AccentGreen, RaisedAttr);
-      btn_StrokedAccent.SetButtonStyle(AngularDarkTheme, btn_AccentGreen, StrokedAttr);
-      btn_FlatAccent.SetButtonStyle(AngularDarkTheme, btn_AccentGreen, FlatAttr);
+      btn_BasicPrimary.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_PrimaryPurple, BasicAttr);
+      btn_RaisedPrimary.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_PrimaryPurple, RaisedAttr);
+      btn_StrokedPrimary.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_PrimaryPurple, StrokedAttr);
+      btn_FlatPrimary.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_PrimaryPurple, FlatAttr);
+      btn_BasicAccent.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_AccentGreen, BasicAttr);
+      btn_RaisedAccent.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_AccentGreen, RaisedAttr);
+      btn_StrokedAccent.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_AccentGreen, StrokedAttr);
+      btn_FlatAccent.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_AccentGreen, FlatAttr);
       {$IFDEF D10_4+}
         btn_IconHome.ImageName := 'home-purple';
         btn_IconMenu.ImageName := 'menu-green';
@@ -249,6 +286,7 @@ begin
   end;
   btn_FlatPrimary.AssignStyleTo(btn_FABTrash);
   btn_FlatAccent.AssignStyleTo(btn_FABBookmark);
+  RepaintAngularBtnWithMR(ANGULAR_DARK_FAMILY);
 end;
 
 procedure TMainForm.rgAngularLightThemesClick(Sender: TObject);
@@ -259,14 +297,14 @@ begin
   case rgAngularLightThemes.ItemIndex of
     0: //Deep Purple & Amber
     begin
-      btn_BasicPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryDeepPurple, BasicAttr);
-      btn_RaisedPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryDeepPurple, RaisedAttr);
-      btn_StrokedPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryDeepPurple, StrokedAttr);
-      btn_FlatPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryDeepPurple, FlatAttr);
-      btn_BasicAccent.SetButtonStyle(AngularLightTheme, btn_AccentAmber, BasicAttr);
-      btn_RaisedAccent.SetButtonStyle(AngularLightTheme, btn_AccentAmber, RaisedAttr);
-      btn_StrokedAccent.SetButtonStyle(AngularLightTheme, btn_AccentAmber, StrokedAttr);
-      btn_FlatAccent.SetButtonStyle(AngularLightTheme, btn_AccentAmber, FlatAttr);
+      btn_BasicPrimary.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_PrimaryDeepPurple, BasicAttr);
+      btn_RaisedPrimary.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_PrimaryDeepPurple, RaisedAttr);
+      btn_StrokedPrimary.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_PrimaryDeepPurple, StrokedAttr);
+      btn_FlatPrimary.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_PrimaryDeepPurple, FlatAttr);
+      btn_BasicAccent.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_AccentAmber, BasicAttr);
+      btn_RaisedAccent.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_AccentAmber, RaisedAttr);
+      btn_StrokedAccent.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_AccentAmber, StrokedAttr);
+      btn_FlatAccent.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_AccentAmber, FlatAttr);
       {$IFDEF D10_4+}
         btn_IconHome.ImageName := 'home-deeppurple';
         btn_IconMenu.ImageName := 'menu-amber';
@@ -279,14 +317,14 @@ begin
     end;
     1: //Indigo & Pink
     begin
-      btn_BasicPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryIndigo, BasicAttr);
-      btn_RaisedPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryIndigo, RaisedAttr);
-      btn_StrokedPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryIndigo, StrokedAttr);
-      btn_FlatPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryIndigo, FlatAttr);
-      btn_BasicAccent.SetButtonStyle(AngularLightTheme, btn_AccentPink, BasicAttr);
-      btn_RaisedAccent.SetButtonStyle(AngularLightTheme, btn_AccentPink, RaisedAttr);
-      btn_StrokedAccent.SetButtonStyle(AngularLightTheme, btn_AccentPink, StrokedAttr);
-      btn_FlatAccent.SetButtonStyle(AngularLightTheme, btn_AccentPink, FlatAttr);
+      btn_BasicPrimary.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_PrimaryIndigo, BasicAttr);
+      btn_RaisedPrimary.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_PrimaryIndigo, RaisedAttr);
+      btn_StrokedPrimary.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_PrimaryIndigo, StrokedAttr);
+      btn_FlatPrimary.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_PrimaryIndigo, FlatAttr);
+      btn_BasicAccent.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_AccentPink, BasicAttr);
+      btn_RaisedAccent.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_AccentPink, RaisedAttr);
+      btn_StrokedAccent.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_AccentPink, StrokedAttr);
+      btn_FlatAccent.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_AccentPink, FlatAttr);
       btn_IconHome.ImageIndex := 1;
       {$IFDEF D10_4+}
         btn_IconHome.ImageName := 'home-indigo';
@@ -301,6 +339,7 @@ begin
   end;
   btn_FlatPrimary.AssignStyleTo(btn_FABTrash);
   btn_FlatAccent.AssignStyleTo(btn_FABBookmark);
+  RepaintAngularBtnWithMR(ANGULAR_LIGHT_FAMILY);
 end;
 
 procedure TMainForm.AngularThemesPanelResize(Sender: TObject);

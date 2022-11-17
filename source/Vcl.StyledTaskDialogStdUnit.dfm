@@ -1,8 +1,22 @@
 inherited StyledTaskDialogStd: TStyledTaskDialogStd
   Caption = 'StyledTaskDialogStd'
+  ClientWidth = 592
+  ExplicitWidth = 600
   PixelsPerInch = 96
   TextHeight = 13
+  inherited BottomBevel: TBevel
+    Top = 120
+    Width = 592
+    ExplicitTop = 144
+    ExplicitWidth = 592
+  end
+  inherited FooterPanel: TPanel
+    Width = 592
+    ExplicitWidth = 592
+  end
   inherited CenterPanel: TPanel
+    Width = 584
+    ExplicitWidth = 584
     inherited ImagePanel: TPanel
       object Image: TImage
         Left = 0
@@ -15,6 +29,12 @@ inherited StyledTaskDialogStd: TStyledTaskDialogStd
       end
     end
   end
+  inherited ButtonsPanel: TPanel
+    Top = 123
+    Width = 592
+    ExplicitTop = 147
+    ExplicitWidth = 592
+  end
   object ImageList: TImageList
     ColorDepth = cd32Bit
     DrawingStyle = dsTransparent
@@ -24,7 +44,7 @@ inherited StyledTaskDialogStd: TStyledTaskDialogStd
     Left = 56
     Top = 56
     Bitmap = {
-      494C0101060008000C0080008000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010106000800080080008000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000000200000001000001002000000000000000
       0800000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

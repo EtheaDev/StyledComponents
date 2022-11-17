@@ -42,18 +42,20 @@ uses
   Vcl.StdCtrls,
   Vcl.ExtCtrls,
   Vcl.ImgList,
-  //System.ImageList, //If you are using an older Delphi version, remove this line
   System.UITypes,
   Vcl.StyledButton,
   Vcl.StyledTaskDialog,
   Vcl.StandardButtonStyles,
-  Vcl.BootstrapButtonStyles;
+  Vcl.BootstrapButtonStyles,
+  Vcl.AngularButtonStyles,
+  Vcl.ButtonStylesAttributes;
 
 type
   TTaskDialogLauncherHandler = class(TInterfacedObject, ITaskDialogLauncher)
     function DoExecute(ParentWnd: HWND;
       const ADialogType: TMsgDlgType;
-      const ATaskDialog: TCustomTaskDialog): Boolean;
+      const ATaskDialog: TCustomTaskDialog;
+      const ADialogBtnFamily: TStyledButtonFamily): Boolean;
   end;
 
   TStyledTaskDialogForm = class(TForm)
@@ -61,23 +63,23 @@ type
     CenterPanel: TPanel;
     ImagePanel: TPanel;
     ButtonsPanel: TPanel;
-    OKButton: TStyledButton;
-    AllButton: TStyledButton;
     BottomBevel: TBevel;
     MessageScrollBox: TScrollBox;
     TitleLabel: TLabel;
     TextLabel: TLinkLabel;
     AutoSizeLabel: TLabel;
-    CancelButton: TStyledButton;
     YesButton: TStyledButton;
     NoButton: TStyledButton;
-    RetryButton: TStyledButton;
-    CloseButton: TStyledButton;
-    HelpButton: TStyledButton;
+    OKButton: TStyledButton;
+    CancelButton: TStyledButton;
     AbortButton: TStyledButton;
+    RetryButton: TStyledButton;
     IgnoreButton: TStyledButton;
+    AllButton: TStyledButton;
     NoToAllButton: TStyledButton;
     YesToAllButton: TStyledButton;
+    HelpButton: TStyledButton;
+    CloseButton: TStyledButton;
     FooterTextLabel: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure ButtonClick(Sender: TObject);
@@ -92,6 +94,7 @@ type
     FCustomIcons: TStyledDialogIcons;
     FTaskDialog: TCustomTaskDialog;
     FDialogType: TMsgDlgType;
+    FDialogBtnFamily: TStyledButtonFamily;
     FCommonButtons: TTaskDialogCommonButtons;
     FDefaultButton: TTaskDialogCommonButton;
     FButtons: TTaskDialogButtons;
@@ -101,7 +104,6 @@ type
     procedure GetIconNameAndIndex(ATaskDialogIcon: TTaskDialogIcon;
       out AImageName: string; out AImageIndex: Integer); overload;
     procedure ShowDialogForm;
-    procedure SetCommonButtons(const AValue: TTaskDialogCommonButtons);
     procedure SetHelpContext(const AValue: Integer);
     function GetHelpContext: Integer;
     function GetText: string;
@@ -119,11 +121,13 @@ type
     procedure SetFooterText(const AValue: string);
     function GetFooterText: string;
     function GetFocusedButton: TStyledButton;
+    procedure InitDlgButtonsWithFamily(const AFamily: TStyledButtonFamily);
+    procedure UpdateButtonVisibility;
 (*
     property Button: TTaskDialogButtonItem read FButton write FButton;
 *)
     property Buttons: TTaskDialogButtons read FButtons write SetButtons;
-    property CommonButtons: TTaskDialogCommonButtons read FCommonButtons write SetCommonButtons default [tcbOk, tcbCancel];
+    property CommonButtons: TTaskDialogCommonButtons read FCommonButtons write FCommonButtons default [tcbOk, tcbCancel];
     property DefaultButton: TTaskDialogCommonButton read FDefaultButton write FDefaultButton default tcbOk;
 (*
     property CustomFooterIcon: TIcon read FCustomFooterIcon write SetCustomFooterIcon;
@@ -163,7 +167,7 @@ type
     procedure UpdateCustomIcons;
     procedure Loaded; override;
     procedure LoadImage(const AImageIndex: TImageIndex;
-      AImageName: string); virtual;
+      AImageName: string); virtual; abstract;
     procedure DefaultDialogSize(out AClientWidth, AClientHeight, AImageSize: Integer); virtual;
   public
     procedure SetDialogFont(const AFont: TFont);
@@ -172,8 +176,32 @@ type
 
   TStyledTaskDialogFormClass = class of TStyledTaskDialogForm;
 
+/// <summary>
+///  To activate or deactivate use of Custom Task Dialog
+/// </summary>
 procedure UseStyledDialogForm(const AActivate: Boolean);
+
+/// <summary>
+///  Register the custom StyledTaskDialog passing the Form Class
+///  The Form must inherits from TStyledTaskDialogForm
+/// </summary>
 procedure RegisterTaskDialogFormClass(AFormClass: TStyledTaskDialogFormClass);
+
+/// <summary>
+///  Unregister the custom StyledTaskDialog to use Standard Task Dialog
+/// </summary>
+procedure UnregisterTaskDialogFormClass;
+
+/// <summary>
+///  Define the Buttons Styles of the Dialog, passing:
+///  Family "string" (eg. 'Classic', 'Bootstrap', 'Angular-Light' or 'Angular-Dark')
+///  An array of StyledButtonClass "string" for each Button, Indexed by TMsgDlgBtn values:
+/// </summary>
+/// Example of default call:
+///
+procedure DefineButtonsStyle(const AFamily: TStyledButtonFamily;
+  const AClasses: TButtonClasses;
+  const AAppearance: TStyledButtonAppearance);
 
 implementation
 
@@ -190,10 +218,28 @@ uses
 var
   DialogLauncher: ITaskDialogLauncher;
   TaskDialogFormClass: TStyledTaskDialogFormClass;
+  DlgButtonClasses: TButtonClasses;
+
+procedure DefineButtonsStyle(const AFamily: TStyledButtonFamily;
+  const AClasses: TButtonClasses;
+  const AAppearance: TStyledButtonAppearance);
+begin
+  if Length(AClasses) <> mrYesToAll then
+    raise Exception.CreateFmt('AClasses array of DefineButtonsStyle must contains %d TStyledButtonClass',
+      [mrYesToAll]);
+
+
+end;
 
 procedure RegisterTaskDialogFormClass(AFormClass: TStyledTaskDialogFormClass);
 begin
   TaskDialogFormClass := AFormClass;
+  UseStyledDialogForm(True);
+end;
+
+procedure UnregisterTaskDialogFormClass;
+begin
+  TaskDialogFormClass := nil;
 end;
 
 procedure UseStyledDialogForm(const AActivate: Boolean);
@@ -228,14 +274,13 @@ begin
       mrNoToAll: LStyledButton := NoToAllButton;
       mrYesToAll: LStyledButton := YesToAllButton;
       mrClose: LStyledButton := CloseButton;
+      mrHelp: LStyledButton := HelpButton;
     else
       LStyledButton := HelpButton;
     end;
     if Assigned(LStyledButton) then
     begin
       LStyledButton.Caption := LTaskDialogButtonItem.Caption;
-      LStyledButton.Visible := True;
-      LStyledButton.ModalResult := LTaskDialogButtonItem.ModalResult;
       if LTaskDialogButtonItem.Default then
         SetFocusToButton(LStyledButton);
     end;
@@ -269,18 +314,6 @@ begin
   end;
 end;
 
-procedure TStyledTaskDialogForm.SetCommonButtons(
-  const AValue: TTaskDialogCommonButtons);
-begin
-  FCommonButtons := AValue;
-  CloseButton.Visible := (tcbClose in FCommonButtons);
-  RetryButton.Visible := (tcbRetry in FCommonButtons);
-  CancelButton.Visible := (tcbCancel in FCommonButtons);
-  OKButton.Visible := (tcbOk in FCommonButtons);
-  NoButton.Visible := (tcbNo in FCommonButtons);
-  YesButton.Visible := (tcbYes in FCommonButtons);
-end;
-
 procedure TStyledTaskDialogForm.SetDialogFont(const AFont: TFont);
 begin
   Self.Font.Assign(AFont);
@@ -291,6 +324,7 @@ end;
 procedure TStyledTaskDialogForm.SetHelpContext(const AValue: Integer);
 begin
   inherited HelpContext := AValue;
+  HelpButton.HelpContext := AValue;
 end;
 
 procedure TStyledTaskDialogForm.AdjustHeight;
@@ -298,7 +332,6 @@ var
   LFooterPanelHeight: Integer;
   LMinHeight, LCalcHeight: Integer;
   LImageSize, LWidth, LHeight, LMargins: Integer;
-
 begin
   LMargins := ImagePanel.Left * 2;
   DefaultDialogSize(LWidth, LHeight, LImageSize);
@@ -377,17 +410,55 @@ begin
   LoadImage(LIconIndex, LIconName);
 end;
 
+procedure TStyledTaskDialogForm.UpdateButtonVisibility;
+
+  function IsButtonVisible(const AButton: TStyledButton): Boolean;
+  var
+    I: Integer;
+    LTaskDialogButtonItem: TTaskDialogBaseButtonItem;
+  begin
+    Result := False;
+    for I := FButtons.Count -1 downto 0 do
+    begin
+      LTaskDialogButtonItem := FButtons[I];
+      if AButton.ModalResult = LTaskDialogButtonItem.ModalResult then
+      begin
+        Result := True;
+        break;
+      end;
+    end;
+  end;
+
+begin
+  YesButton.Visible := (tcbYes in FCommonButtons) or IsButtonVisible(YesButton);
+  NoButton.Visible := (tcbNo in FCommonButtons) or IsButtonVisible(NoButton);
+  OKButton.Visible := (tcbOk in FCommonButtons) or IsButtonVisible(OKButton);
+  CancelButton.Visible := (tcbCancel in FCommonButtons) or IsButtonVisible(CancelButton);
+  AbortButton.Visible := IsButtonVisible(AbortButton);
+  RetryButton.Visible := (tcbRetry in FCommonButtons) or IsButtonVisible(RetryButton);
+  IgnoreButton.Visible := IsButtonVisible(IgnoreButton);
+  AllButton.Visible := IsButtonVisible(AllButton);
+  NoToAllButton.Visible := IsButtonVisible(NoToAllButton);
+  YesToAllButton.Visible := IsButtonVisible(YesToAllButton);
+  HelpButton.Visible := HelpButton.HelpContext <> 0;
+  CloseButton.Visible := (tcbClose in FCommonButtons) or IsButtonVisible(CloseButton);
+end;
+
 procedure TStyledTaskDialogForm.ShowDialogForm;
 begin
   //Initialize components based on ATaskDialog attributes
   Caption := FTaskDialog.Caption;
   HelpContext := FTaskDialog.HelpContext;
-  CommonButtons := FTaskDialog.CommonButtons;
   Buttons := FTaskDialog.Buttons;
+  CommonButtons := FTaskDialog.CommonButtons;
   DefaultButton := FTaskDialog.DefaultButton;
 (*
     property Button: TTaskDialogButtonItem read FButton write FButton;
 *)
+  UpdateButtonVisibility;
+
+  if FDialogBtnFamily <> '' then
+    InitDlgButtonsWithFamily(FDialogBtnFamily);
 (*
     property CustomFooterIcon: TIcon read FCustomFooterIcon write SetCustomFooterIcon;
     property CustomMainIcon: TIcon read FCustomMainIcon write SetCustomMainIcon;
@@ -469,6 +540,7 @@ begin
   inherited;
   FCommonButtons := [tcbOk, tcbCancel];
   FDefaultButton := tcbOk;
+  FDialogBtnFamily := DEFAULT_CLASSIC_FAMILY;
 end;
 
 procedure TStyledTaskDialogForm.DefaultDialogSize(out AClientWidth, AClientHeight, AImageSize: Integer);
@@ -616,35 +688,50 @@ begin
   TitleLabel.Font.Height := Round(TitleLabel.Font.Height * 1.4);
   TitleLabel.Font.Color := clHighlight;
   TextLabel.Font.Height := Round(TextLabel.Font.Height * 1.2);
-
-  YesButton.ModalResult := mrYes;
-  NoButton.ModalResult := mrNo;
-  OKButton.ModalResult := mrOk;
-  CancelButton.ModalResult := mrCancel;
-  RetryButton.ModalResult := mrRetry;
-  CloseButton.ModalResult := mrClose;
-
   inherited;
 end;
 
-procedure TStyledTaskDialogForm.LoadImage(const AImageIndex: TImageIndex;
-  AImageName: string);
+procedure TStyledTaskDialogForm.InitDlgButtonsWithFamily(const AFamily: TStyledButtonFamily);
+
+  procedure UpdateButtonStyle(const AButton: TStyledButton);
+  begin
+    if AButton.Visible then
+      AButton.SetButtonStyle(AFamily, AButton.ModalResult);
+  end;
+
 begin
-  ; //In descendant Form use this method to load the image and place it into ImagePanel
+  UpdateButtonStyle(YesButton);
+  UpdateButtonStyle(NoButton);
+  UpdateButtonStyle(OKButton);
+  UpdateButtonStyle(CancelButton);
+  UpdateButtonStyle(AbortButton);
+  UpdateButtonStyle(RetryButton);
+  UpdateButtonStyle(IgnoreButton);
+  UpdateButtonStyle(AllButton);
+  UpdateButtonStyle(NoToAllButton);
+  UpdateButtonStyle(YesToAllButton);
+  UpdateButtonStyle(HelpButton);
+  UpdateButtonStyle(CloseButton);
 end;
+
+{ TTaskDialogLauncherHandler }
 
 function TTaskDialogLauncherHandler.DoExecute(ParentWnd: HWND;
   const ADialogType: TMsgDlgType;
-  const ATaskDialog: TCustomTaskDialog): Boolean;
+  const ATaskDialog: TCustomTaskDialog;
+  const ADialogBtnFamily: TStyledButtonFamily): Boolean;
 var
   LForm: TStyledTaskDialogForm;
   LFont: TFont;
+  LDlgBtnFamily: TStyledButtonFamily;
 begin
   LForm := TaskDialogFormClass.Create(nil);
   try
     LForm.FTaskDialog := ATaskDialog;
     LForm.FDialogType := ADialogType;
+    LForm.FDialogBtnFamily := ADialogBtnFamily;
     LFont := GetDialogFont;
+    LDlgBtnFamily := GetDialogBtnFamily;
     if Assigned(LFont) then
       LForm.SetDialogFont(LFont)
     else
@@ -663,5 +750,7 @@ initialization
   DialogLauncher := TTaskDialogLauncherHandler.Create;
   //Register the handler
   RegisterCustomExecute(DialogLauncher);
+  //Init default Dialog buttons Styles
+  SetLength(DlgButtonClasses, Ord(TMsgDlgBtn.mbClose)+1);
 
 end.

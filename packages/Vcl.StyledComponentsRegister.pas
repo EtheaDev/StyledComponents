@@ -225,8 +225,7 @@ procedure TStyledButtonsSelection.RequiresUnits(Proc: TGetStrProc);
 begin
   inherited RequiresUnits(Proc);
   //Units added to source to manage styles of buttons
-  proc('Vcl.StandardButtonStyles');
-  proc('Vcl.BootstrapButtonStyles');
+  proc('Vcl.ButtonStylesAttributes');
 end;
 
 procedure Register;

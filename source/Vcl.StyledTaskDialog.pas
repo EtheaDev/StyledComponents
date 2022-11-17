@@ -36,7 +36,7 @@ uses
   , Vcl.Dialogs
   , Vcl.Graphics
   , Vcl.Forms
-  , Vcl.StyledButton
+  , Vcl.ButtonStylesAttributes
   ;
 
 type
@@ -47,7 +47,8 @@ type
     ['{B2F16F98-C163-4706-A803-E624126D8DF6}']
     function DoExecute(ParentWnd: HWND;
       const ADialogType: TMsgDlgType;
-      const ATaskDialog: TCustomTaskDialog): boolean;
+      const ATaskDialog: TCustomTaskDialog;
+      const ADialogBtnFamily: TStyledButtonFamily): boolean;
   end;
 
 {$WARN SYMBOL_PLATFORM OFF}
@@ -88,11 +89,14 @@ function StyledTaskDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
   X: Integer = -1; Y: Integer = -1): Integer; overload;
 
 procedure SetUseAlwaysTaskDialog(Value: boolean);
-procedure RegisterCustomExecute(const AShowStyledTaskDialog: ITaskDialogLauncher);
+procedure RegisterCustomExecute(const AShowStyledTaskDialog: ITaskDialogLauncher;
+  const AButtonFamily: TStyledButtonFamily = '');
 procedure UnregisterCustomExecute;
-procedure InitializeDialogs(AFont: TFont; AUseTaskDialog: Boolean);
+procedure InitializeStyledTaskDialogs(AUseTaskDialog: Boolean; AFont: TFont;
+  const ADialogButtonsFamily: TStyledButtonFamily = '');
 function GetTaskDlgType(const AIcon: TTaskDialogIcon): TMsgDlgType;
 function GetDialogFont: TFont;
+function GetDialogBtnFamily: TStyledButtonFamily;
 
 implementation
 
@@ -111,11 +115,12 @@ uses
   , Vcl.Consts
   , Winapi.ShellApi
   , Vcl.StyledCmpMessages
+  , Vcl.StyledButton
   , Vcl.StyledCmpStrUtils;
-
 
 var
   TaskDialogExecute: ITaskDialogLauncher;
+  DialogButtonsFamily: TStyledButtonFamily;
   CustomIcons: TStyledDialogIcons;
   DialogFont: TFont;
   UseAlwaysTaskDialog: boolean;
@@ -132,6 +137,10 @@ begin
   Result := DialogFont;
 end;
 
+function GetDialogBtnFamily: TStyledButtonFamily;
+begin
+  Result := DialogButtonsFamily;
+end;
 
 function IsTaskMessageSupported : Boolean;
 begin
@@ -252,17 +261,19 @@ end;
 const
   tdbHelp = -1;
 
-procedure InitializeDialogs(AFont: TFont; AUseTaskDialog: Boolean);
+procedure InitializeStyledTaskDialogs(AUseTaskDialog: Boolean; AFont: TFont;
+  const ADialogButtonsFamily: TStyledButtonFamily = '');
 begin
   if Assigned(AFont) then
   begin
     if not Assigned(DialogFont) then
       DialogFont := TFont.Create;
     DialogFont.Assign(AFont);
-    UseAlwaysTaskDialog := AUseTaskDialog;
   end
   else
     FreeAndNil(DialogFont);
+  UseAlwaysTaskDialog := AUseTaskDialog;
+  DialogButtonsFamily := ADialogButtonsFamily;
 end;
 
 procedure UnregisterCustomIcons;
@@ -285,8 +296,8 @@ begin
   UseAlwaysTaskDialog := Value;
 end;
 
-procedure RegisterCustomExecute(
-  const AShowStyledTaskDialog: ITaskDialogLauncher);
+procedure RegisterCustomExecute(const AShowStyledTaskDialog: ITaskDialogLauncher;
+  const AButtonFamily: TStyledButtonFamily = '');
 begin
   TaskDialogExecute := AShowStyledTaskDialog;
 end;
@@ -453,7 +464,7 @@ begin
   //Use a custom interface if registered
   if Assigned(TaskDialogExecute) then
     Result := TaskDialogExecute.DoExecute(ParentWnd,
-      LTaskDlgType, Self)
+      LTaskDlgType, Self, DialogButtonsFamily)
   else
     Result := inherited DoExecute(ParentWnd);
 end;

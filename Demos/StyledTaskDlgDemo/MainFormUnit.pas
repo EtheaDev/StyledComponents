@@ -57,7 +57,6 @@ type
     edTitle: TEdit;
     TextMessageLabel: TLabel;
     edMessage: TMemo;
-    cbUseStyledDialog: TCheckBox;
     FontLabel: TLabel;
     FontComboBox: TComboBox;
     btCustomTaskDialog: TButton;
@@ -71,6 +70,8 @@ type
     rgDlgType: TRadioGroup;
     clbButtons: TCheckListBox;
     DefaultButtonComboBox: TComboBox;
+    FamilyComboBox: TComboBox;
+    Label2: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure ShowDlg(Sender: TObject);
     procedure RaiseError(Sender: TObject);
@@ -81,6 +82,7 @@ type
     procedure cbUseStyledDialogClick(Sender: TObject);
     procedure FontComboBoxSelect(Sender: TObject);
     procedure cbChangeStyleSelect(Sender: TObject);
+    procedure FamilyComboBoxSelect(Sender: TObject);
   private
     procedure ShowSelection(const AModalResult: TModalResult);
     procedure BuildStyleList;
@@ -100,6 +102,7 @@ uses
   , Vcl.Themes
   , Vcl.StyledCmpMessages
   , Vcl.StyledCmpStrUtils
+  , Vcl.ButtonStylesAttributes
   , Vcl.StyledTaskDialogFormUnit;
 
 procedure TMainForm.BuildStyleList;
@@ -132,12 +135,18 @@ end;
 
 procedure TMainForm.cbUseStyledDialogClick(Sender: TObject);
 begin
-  UseStyledDialogForm(cbUseStyledDialog.Checked);
+//  UseStyledDialogForm(cbUseStyledDialog.Checked)
+end;
+
+procedure TMainForm.FamilyComboBoxSelect(Sender: TObject);
+begin
+  InitializeStyledTaskDialogs(True, Screen.MessageFont, FamilyComboBox.Text);
 end;
 
 procedure TMainForm.FontComboBoxSelect(Sender: TObject);
 begin
   Screen.MessageFont.Name := FontComboBox.Text;
+  InitializeStyledTaskDialogs(True, Screen.MessageFont, FamilyComboBox.Text);
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -150,7 +159,6 @@ begin
   FontComboBox.Items.Assign(Screen.Fonts);
   FontComboBox.Text := Screen.IconFont.Name;
   BuildStyleList;
-  UnregisterCustomExecute;
   SetUseAlwaysTaskDialog(True);
   Font.Assign(Screen.IconFont);
   Screen.MessageFont.Assign(Font);
@@ -174,7 +182,7 @@ begin
         'You can visit site: '+StringToHRef('http://www.ethea.it','www.Ethea.it');
 
   edMessage.Text := Msg;
-  UseStyledDialogForm(cbUseStyledDialog.Checked);
+  //UseStyledDialogForm(cbUseStyledDialog.Checked);
 end;
 
 procedure TMainForm.ShowSelection(const AModalResult: TModalResult);
@@ -211,10 +219,13 @@ begin
   Buttons := [];
   LUseDefault := False;
   LDefaultButton := mbOK;
+  HelpContext := 0;
   for db := Low(TMsgDlgBtn) to High(TMsgDlgBtn) do
     if clbButtons.Checked[Ord(db)] then
     begin
       Buttons := Buttons + [db];
+      if db = TMsgDlgBtn.mbHelp then
+        HelpContext := 200;
       if SameText(DefaultButtonComboBox.Text, clbButtons.Items[Ord(db)]) then
       begin
         LDefaultButton := db;

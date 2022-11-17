@@ -29,14 +29,15 @@ unit Vcl.StandardButtonStyles;
 interface
 
 uses
-  Vcl.Graphics,
-  Vcl.ButtonStylesAttributes;
+  Vcl.Graphics
+  , System.UITypes
+  , Vcl.ButtonStylesAttributes;
 
 const
   DEFAULT_CLASSIC_FAMILY = 'Classic';
   DEFAULT_WINDOWS_CLASS = 'Windows';
   DEFAULT_APPEARANCE = 'Normal';
-  OUTLINE_APPEREANCE = 'Outline';
+  OUTLINE_APPEARANCE = 'Outline';
   STD_BORDER_WIDTH = 2;
 
 Type
@@ -51,6 +52,10 @@ Type
     function ButtonFamilyName: string;
     function GetButtonClasses: TButtonClasses;
     function GetButtonAppearances: TButtonAppearances;
+    procedure GetStyleByModalResult(
+      const AModalResult: System.UITypes.TModalResult;
+      var AStyleClass: TStyledButtonClass;
+      var AStyleAppearance: TStyledButtonAppearance);
   end;
 
 implementation
@@ -61,7 +66,6 @@ uses
   , Vcl.StdCtrls
   , Vcl.Themes
   , System.SysUtils
-  , System.UITypes
   , System.Math;
 
 var
@@ -69,34 +73,6 @@ var
   ButtonAppearances: TButtonAppearances;
 
 { TStyledButtonStdStyle }
-
-procedure StandardClassToColors(const AClass: TStyledButtonClass;
-  const AAppearance: TStyledButtonAppearance;
-  var AFontColor, AButtonColor, ABorderColor: TColor; out AOutLine: Boolean);
-var
-  LStyle: TCustomStyleServices;
-  Details:  TThemedElementDetails;
-begin
-  if SameText(AClass, DEFAULT_WINDOWS_CLASS) then
-  begin
-    AButtonColor := clBtnFace;
-    ABorderColor := clBtnShadow;
-    AFontColor := clWindowText;
-    AOutLine := SameText(AAppearance, OUTLINE_APPEREANCE);
-  end
-  else
-  begin
-    LStyle := TStyleManager.Style[AClass];
-    if (LStyle = nil) or not LStyle.Enabled then
-      LStyle := StyleServices;
-    Details := LStyle.GetElementDetails(tbPushButtonNormal);
-
-    //TODO: mapping VCL Styles colors
-    AButtonColor := LStyle.GetSystemColor(clBtnFace);
-    ABorderColor := LStyle.GetSystemColor(clBtnShadow);
-    LStyle.GetElementColor(Details, ecTextColor, AFontColor);
-  end;
-end;
 
 function TButtonStandardStyles.ButtonFamilyName: string;
 begin
@@ -122,15 +98,83 @@ begin
   Result := ButtonClasses;
 end;
 
+procedure TButtonStandardStyles.GetStyleByModalResult(
+  const AModalResult: System.UITypes.TModalResult;
+  var AStyleClass: TStyledButtonClass;
+  var AStyleAppearance: TStyledButtonAppearance);
+begin
+  //if AModalResult is mrNone, define the defaults of Family
+  case AModalResult of
+    mrNone     : begin AStyleClass := DEFAULT_WINDOWS_CLASS; AStyleAppearance := DEFAULT_APPEARANCE; end;
+    mrYes      : begin AStyleClass := DEFAULT_WINDOWS_CLASS; AStyleAppearance := DEFAULT_APPEARANCE; end;
+    mrNo       : begin AStyleClass := DEFAULT_WINDOWS_CLASS; AStyleAppearance := DEFAULT_APPEARANCE; end;
+    mrOk       : begin AStyleClass := DEFAULT_WINDOWS_CLASS; AStyleAppearance := DEFAULT_APPEARANCE; end;
+    mrCancel   : begin AStyleClass := DEFAULT_WINDOWS_CLASS; AStyleAppearance := DEFAULT_APPEARANCE; end;
+    mrAbort    : begin AStyleClass := DEFAULT_WINDOWS_CLASS; AStyleAppearance := DEFAULT_APPEARANCE; end;
+    mrRetry    : begin AStyleClass := DEFAULT_WINDOWS_CLASS; AStyleAppearance := DEFAULT_APPEARANCE; end;
+    mrIgnore   : begin AStyleClass := DEFAULT_WINDOWS_CLASS; AStyleAppearance := DEFAULT_APPEARANCE; end;
+    mrAll      : begin AStyleClass := DEFAULT_WINDOWS_CLASS; AStyleAppearance := OUTLINE_APPEARANCE; end;
+    mrNoToAll  : begin AStyleClass := DEFAULT_WINDOWS_CLASS; AStyleAppearance := OUTLINE_APPEARANCE; end;
+    mrYesToAll : begin AStyleClass := DEFAULT_WINDOWS_CLASS; AStyleAppearance := OUTLINE_APPEARANCE; end;
+    mrClose    : begin AStyleClass := DEFAULT_WINDOWS_CLASS; AStyleAppearance := OUTLINE_APPEARANCE; end;
+    mrTryAgain : begin AStyleClass := DEFAULT_WINDOWS_CLASS; AStyleAppearance := DEFAULT_APPEARANCE; end;
+    mrContinue : begin AStyleClass := DEFAULT_WINDOWS_CLASS; AStyleAppearance := DEFAULT_APPEARANCE; end;
+    mrHelp     : begin AStyleClass := DEFAULT_WINDOWS_CLASS; AStyleAppearance := OUTLINE_APPEARANCE; end;
+  end;
+end;
+
 function TButtonStandardStyles.GetButtonAppearances: TButtonAppearances;
 begin
   if length(ButtonAppearances) = 0 then
   begin
     SetLength(ButtonAppearances, 2);
     ButtonAppearances[0] := DEFAULT_APPEARANCE;
-    ButtonAppearances[1] := OUTLINE_APPEREANCE;
+    ButtonAppearances[1] := OUTLINE_APPEARANCE;
   end;
   Result := ButtonAppearances;
+end;
+
+procedure StandardClassToColors(const AClass: TStyledButtonClass;
+  const AAppearance: TStyledButtonAppearance;
+  var AFontColor, AButtonColor, ABorderColor: TColor; out AOutLine, ADarkStyle: Boolean);
+var
+  LStyle: TCustomStyleServices;
+  Details:  TThemedElementDetails;
+begin
+  if SameText(AClass, DEFAULT_WINDOWS_CLASS) then
+  begin
+    if StyleServices.Enabled and not StyleServices.IsSystemStyle then
+    begin
+      //TODO: mapping VCL Button Styles colors and Dark/Light Style
+      LStyle := StyleServices;
+      AButtonColor := LStyle.GetSystemColor(clBtnFace);
+      ABorderColor := LStyle.GetSystemColor(clBtnShadow);
+      Details := LStyle.GetElementDetails(tbPushButtonNormal);
+      LStyle.GetElementColor(Details, ecTextColor, AFontColor);
+      ADarkStyle := (Pos('Dark', LStyle.Name) > 0) or (Pos('Gray', LStyle.Name) > 0);
+    end
+    else
+    begin
+      ADarkStyle := False;
+      AButtonColor := clBtnFace;
+      ABorderColor := clBtnShadow;
+      AFontColor := clWindowText;
+    end;
+  end
+  else
+  begin
+    LStyle := TStyleManager.Style[AClass];
+    if (LStyle = nil) or not LStyle.Enabled then
+      LStyle := StyleServices;
+    Details := LStyle.GetElementDetails(tbPushButtonNormal);
+
+    //TODO: mapping VCL Button Styles colors and Dark/Light Style
+    AButtonColor := LStyle.GetSystemColor(clBtnFace);
+    ABorderColor := LStyle.GetSystemColor(clBtnShadow);
+    LStyle.GetElementColor(Details, ecTextColor, AFontColor);
+    ADarkStyle := (Pos('Dark', LStyle.Name) > 0) or (Pos('Gray', LStyle.Name) > 0);
+  end;
+  AOutLine := SameText(AAppearance, OUTLINE_APPEARANCE);
 end;
 
 procedure TButtonStandardStyles.UpdateAttributes(
@@ -140,16 +184,28 @@ procedure TButtonStandardStyles.UpdateAttributes(
   var ANormalStyle, APressedStyle, ASelectedStyle, AHotStyle,
   ADisabledStyle: TStyledButtonAttributes);
 var
-  LFontColor, LButtonColor, LBorderColor: TColor;
+  LDummyColor, LFontColor, LButtonColor, LBorderColor: TColor;
   LOutLine: Boolean;
+  LDarkStyle: Boolean;
 begin
-  StandardClassToColors(AClass, AAppearance, LFontColor, LButtonColor, LBorderColor, LOutLine);
-  //Default Style Attributes
+  StandardClassToColors(AClass, AAppearance, LFontColor, LButtonColor, LBorderColor, LOutLine, LDarkStyle);
+  //Outline: Invert Border Color and Button Color
+  if LOutline then
+  begin
+    LDummyColor := LBorderColor;
+    LBorderColor := LButtonColor;
+    LButtonColor := LDummyColor;
+  end;
+
+  //Default Style Attributes for Standard Buttons
+  ANormalStyle.DrawType := btRounded;
+  ANormalStyle.FontStyle := [fsBold];
+  ANormalStyle.FontColor := LFontColor;
+  ANormalStyle.ButtonDrawStyle := btnSolid;
+  ANormalStyle.ButtonColor := LButtonColor;
+  ANormalStyle.BorderDrawStyle := brdSolid;
   ANormalStyle.BorderWidth := STD_BORDER_WIDTH;
   ANormalStyle.BorderColor := LBorderColor;
-  ANormalStyle.BorderDrawStyle := brdSolid;
-  ANormalStyle.FontColor := LFontColor;
-  ANormalStyle.ButtonColor := LButtonColor;
 
   //Clone Normal Style to Other Styles
   CloneButtonStyle(ANormalStyle, APressedStyle);
@@ -157,68 +213,41 @@ begin
   CloneButtonStyle(ANormalStyle, AHotStyle);
   CloneButtonStyle(ANormalStyle, ADisabledStyle);
 
-  if LOutline then
+  //Pressed Button
+  if LDarkStyle then
   begin
-    //Button Down: color as Button Color
-    with APressedStyle do
-    begin
-      ButtonColor := LButtonColor;
-      BorderColor := LightenColor(LButtonColor, 50);
-      BorderDrawStyle := brdSolid;
-      BorderWidth := STD_BORDER_WIDTH;
-      FontColor   := LFontColor;
-      ButtonDrawStyle  := btnSolid;
-    end;
-
-    //Button Hot: color as Button Color
-    with AHotStyle do
-    begin
-      ButtonColor := LButtonColor;
-      BorderColor := LightenColor(LButtonColor, 50);
-      BorderDrawStyle := brdClear;
-      BorderWidth := STD_BORDER_WIDTH;
-      FontColor := LFontColor;
-      ButtonDrawStyle  := btnSolid;
-    end;
-
-    //Button Selected
-    with ASelectedStyle do
-    begin
-      if Pos('dark', AClass) > 0 then
-        ButtonColor := LightenColor(LButtonColor, 20)
-      else
-        ButtonColor := DarkenColor(LButtonColor, 20);
-      BorderDrawStyle := brdSolid;
-      BorderWidth := STD_BORDER_WIDTH;
-      FontColor := LFontColor;
-      ButtonDrawStyle  := btnSolid;
-    end;
-
-    //Button Disabled
-    with ADisabledStyle do
-    begin
-      ButtonColor := LightenColor(ANormalStyle.ButtonColor, 70); //ColortoGrayscale(LButtonColor);
-      FontColor := LightenColor(LFontColor, 70);
-    end;
+    APressedStyle.ButtonColor := LightenColor(LButtonColor, 20);
+    APressedStyle.BorderColor := DarkenColor(LBorderColor, 50);
   end
   else
   begin
-    //Button Down
     APressedStyle.ButtonColor := DarkenColor(LButtonColor, 20);
     APressedStyle.BorderColor := LightenColor(LBorderColor, 50);
-    APressedStyle.BorderDrawStyle := brdSolid;
-    APressedStyle.BorderWidth := STD_BORDER_WIDTH;
+  end;
 
-    //Button Hot: color as Down but no Border
-    AHotStyle.ButtonColor := APressedStyle.ButtonColor;
-
-    //Button Focused
+  //Selected Button (focused)
+  if LDarkStyle then
+    ASelectedStyle.ButtonColor := LightenColor(LButtonColor, 20)
+  else
     ASelectedStyle.ButtonColor := DarkenColor(LButtonColor, 20);
-    ASelectedStyle.BorderDrawStyle := brdSolid;
-    ASelectedStyle.BorderWidth := STD_BORDER_WIDTH;
+  ASelectedStyle.BorderDrawStyle := brdSolid;
+  ASelectedStyle.BorderWidth := STD_BORDER_WIDTH;
 
-    //Button Disabled
-    ADisabledStyle.ButtonColor := LightenColor(ANormalStyle.ButtonColor, 70);//ColortoGrayscale(LButtonColor);
+  //Hot Button
+  if LDarkStyle then
+    AHotStyle.ButtonColor := LightenColor(ASelectedStyle.ButtonColor, 50)
+  else
+    AHotStyle.ButtonColor := DarkenColor(ASelectedStyle.ButtonColor, 50);
+
+  //Button Disabled
+  if LDarkStyle then
+  begin
+    ADisabledStyle.ButtonColor := DarkenColor(ANormalStyle.ButtonColor, 70);
+    ADisabledStyle.FontColor := DarkenColor(LFontColor, 70);
+  end
+  else
+  begin
+    ADisabledStyle.ButtonColor := LightenColor(ANormalStyle.ButtonColor, 70);
     ADisabledStyle.FontColor := LightenColor(LFontColor, 70);
   end;
 end;

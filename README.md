@@ -1,8 +1,8 @@
 ﻿# Delphi StyledComponents [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 
-## Delphi VCL Button with Custom Graphic Styles (eg.Bootstrap, Angular) and advanced, full-customizable TaskDialog, also with animations!
+## Delphi VCL Button with Custom Graphic Styles (eg.Bootstrap, AngularUI) and advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official "beta" version: 0.9.9
+### Actual official version: 1.0.0
 
 | Component | Description |
 | - | - |
@@ -14,30 +14,29 @@
 
 ## Installation of Packages ##
 
-Open the package group Vcl.StyledComponents.groupproj from the correct Folder of your Delphi version (eg. \StyledComponents\Packages\D11), then build the run-time package: StyledComponentsDXX and install the design-time package: dclStyledComponentsDXX.
+Open the package group Vcl.StyledComponents.groupproj from the correct folder of your Delphi version (eg. \StyledComponents\Packages\D11), then build the run-time package: StyledComponentsDXX and install the design-time package: dclStyledComponentsDXX.
 
 ## Description of Styled Buttons ##
 
 **TStyledGraphicButton**, **TStyledButton** and **TStyledTaskDialog** are designed to expand Button functionalities.
 
-The Button Styles defined are not affected by VCLStyles and are also visibile on a "non styled" Windows application.
+The Button Styles defined are not affected by VCLStyles and are also visibile on a "non styled" Windows application, so you can have more than a single Button styled also using VCLStyles.
 
 **Component editor for TStyledGraphicButton and StyledButton:**
 
 To simplify use of the Styled Buttons, there is a useful "Component Editor" to select three values that defines Button Style:
 
-- StyleFamily (the pages "Classic", "Bootstrap", "Angular-Light" and "Angular-Dark")
+- **StyleFamily** (the pages "Classic", "Bootstrap", "Angular-Light" and "Angular-Dark")
 
-- StyleClass (the buttons)
+- **StyleClass** (the buttons)
 
-- Style Appearance (eg.Normal or Outline).
+- **Style Appearance** (eg.Normal or Outline).
 
 *In this picture, the Component Editor to select "Boostrap" styles: Style Appearance are Normal and Outline*
 
 ![StyledButtonComponentEditor.jpg](./Images/StyledButtonComponentEditor.jpg)
 
-
-*In this picture, the Component Editor to select "Angular" styles: Style Appearance are Flat, Raised, Basic, Stroked*
+*In this picture, the Component Editor to select "AngularUI" styles: Style Appearance are Flat, Raised, Basic, Stroked*
 
 ![StyledButtonComponentEditorAngular.jpg](./Images/StyledButtonComponentEditorAngular.jpg)
 
@@ -100,6 +99,20 @@ A simple demo to show how to use StyledGraphicButton into a ControlList (only fo
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+
+17 Nov 2022: version 1.0.0
+- First official version
+StyledButton:
+- Removed FontName from Specific Style
+- Added PopUpMenu
+- Automatic Style changing ModalResult
+- Fixed Button Border size changing DPI of screen
+- Fixed Outlined Appearance of "Classic" buttons
+- Demo updated to show Buttons with ModalResult
+StyledDialog:
+- Fixed width of Dialog changing DPI of screen
+- Styles of buttons selectable by "Family"
+- Fixed tabstop and focus of buttons
 
 15 Nov 2022: version 0.9.9
 StyledButton:

@@ -8,16 +8,15 @@ object StyledButtonEditor: TStyledButtonEditor
   Color = clWindow
   Constraints.MinHeight = 300
   Constraints.MinWidth = 400
+  DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = True
   ShowHint = True
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object SplitterTop: TSplitter
     Left = 0
@@ -37,13 +36,11 @@ object StyledButtonEditor: TStyledButtonEditor
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitTop = 505
-    ExplicitWidth = 876
     DesignSize = (
       872
       38)
     object OKButton: TButton
-      Left = 495
+      Left = 483
       Top = 6
       Width = 85
       Height = 25
@@ -53,10 +50,9 @@ object StyledButtonEditor: TStyledButtonEditor
       ModalResult = 1
       TabOrder = 0
       OnClick = OKButtonClick
-      ExplicitLeft = 503
     end
     object ApplyButton: TButton
-      Left = 678
+      Left = 666
       Top = 6
       Width = 85
       Height = 25
@@ -64,10 +60,9 @@ object StyledButtonEditor: TStyledButtonEditor
       Caption = '&Apply'
       TabOrder = 2
       OnClick = ApplyButtonClick
-      ExplicitLeft = 686
     end
     object CancelButton: TButton
-      Left = 587
+      Left = 575
       Top = 6
       Width = 85
       Height = 25
@@ -76,10 +71,9 @@ object StyledButtonEditor: TStyledButtonEditor
       Caption = 'Cancel'
       ModalResult = 2
       TabOrder = 1
-      ExplicitLeft = 595
     end
     object HelpButton: TButton
-      Left = 770
+      Left = 758
       Top = 6
       Width = 85
       Height = 25
@@ -87,7 +81,6 @@ object StyledButtonEditor: TStyledButtonEditor
       Caption = '&Help'
       TabOrder = 3
       OnClick = HelpButtonClick
-      ExplicitLeft = 778
     end
   end
   object paTop: TPanel
@@ -98,7 +91,6 @@ object StyledButtonEditor: TStyledButtonEditor
     Align = alTop
     TabOrder = 1
     OnResize = paTopResize
-    ExplicitWidth = 876
     object ActualGroupBox: TGroupBox
       Left = 1
       Top = 1
@@ -110,8 +102,8 @@ object StyledButtonEditor: TStyledButtonEditor
       object SourceButton: TStyledGraphicButton
         Tag = 0
         AlignWithMargins = True
-        Left = 8
-        Top = 24
+        Left = 11
+        Top = 28
         Width = 120
         Height = 34
         Caption = 'Source Button'
@@ -120,7 +112,7 @@ object StyledButtonEditor: TStyledButtonEditor
     object NewGroupBox: TGroupBox
       Left = 176
       Top = 1
-      Width = 699
+      Width = 695
       Height = 99
       Align = alClient
       Caption = 'New appearance'
@@ -129,7 +121,7 @@ object StyledButtonEditor: TStyledButtonEditor
         Tag = 0
         AlignWithMargins = True
         Left = 12
-        Top = 24
+        Top = 28
         Width = 120
         Height = 34
         OnClick = DestButtonClick
@@ -150,21 +142,20 @@ object StyledButtonEditor: TStyledButtonEditor
     TabIndex = 0
     OnChange = TabControlChange
     object ClassesGroupBox: TGroupBox
-      Left = 4
-      Top = 38
-      Width = 864
-      Height = 297
+      AlignWithMargins = True
+      Left = 7
+      Top = 41
+      Width = 858
+      Height = 291
       Align = alClient
       Caption = 'Classes'
       TabOrder = 0
-      ExplicitWidth = 868
-      ExplicitHeight = 298
       object ScrollBox: TScrollBox
         AlignWithMargins = True
         Left = 5
         Top = 18
-        Width = 858
-        Height = 275
+        Width = 848
+        Height = 268
         Align = alClient
         BevelOuter = bvNone
         BorderStyle = bsNone
@@ -181,7 +172,6 @@ object StyledButtonEditor: TStyledButtonEditor
     Align = alTop
     Caption = 'Button Attributes'
     TabOrder = 3
-    ExplicitWidth = 876
     object StyleDrawTypeLabel: TLabel
       Left = 19
       Top = 26
@@ -192,7 +182,7 @@ object StyledButtonEditor: TStyledButtonEditor
     end
     object StyleRadiusLabel: TLabel
       Left = 386
-      Top = 27
+      Top = 26
       Width = 69
       Height = 13
       Alignment = taRightJustify

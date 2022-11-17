@@ -2,7 +2,7 @@ object MainForm: TMainForm
   Left = 0
   Top = 0
   Caption = 'Styled Buttons (c) Copyright Ethea S.r.l.'
-  ClientHeight = 691
+  ClientHeight = 676
   ClientWidth = 874
   Color = clWindow
   Font.Charset = DEFAULT_CHARSET
@@ -10,10 +10,8 @@ object MainForm: TMainForm
   Font.Height = -11
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = True
   ShowHint = True
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
@@ -21,8 +19,10 @@ object MainForm: TMainForm
     Width = 874
     Height = 70
     Align = alTop
+    ParentColor = True
     TabOrder = 0
-    object StyledButton: TStyledButton
+    ExplicitWidth = 870
+    object ShowEditButton: TStyledButton
       Tag = 0
       Left = 10
       Top = 14
@@ -34,6 +34,7 @@ object MainForm: TMainForm
       Font.Height = -12
       Font.Name = 'Segoe UI'
       Font.Style = []
+      PopUpMenu = PopupMenu
       ParentFont = False
       TabOrder = 0
     end
@@ -97,6 +98,8 @@ object MainForm: TMainForm
       Height = 37
       Caption = 'Vcl Button'
       ImageName = 'approval'
+      Images = VirtualImageList32
+      ModalResult = 1
       PopupMenu = PopupMenu
       TabOrder = 3
     end
@@ -110,14 +113,16 @@ object MainForm: TMainForm
       OnSelect = cbChangeStyleSelect
     end
   end
-  object PageControl1: TPageControl
+  object PageControl: TPageControl
     Left = 0
     Top = 70
     Width = 874
-    Height = 621
+    Height = 606
     ActivePage = tsBootstrap
     Align = alClient
     TabOrder = 1
+    ExplicitWidth = 870
+    ExplicitHeight = 620
     object tsBootstrap: TTabSheet
       Caption = 'Bootstrap Buttons'
       object BootStrapLinkLabel: TLinkLabel
@@ -144,6 +149,7 @@ object MainForm: TMainForm
         Align = alTop
         Caption = 'Normal Buttons'
         TabOrder = 1
+        ExplicitWidth = 856
         object btn_Primary: TStyledButton
           Tag = 0
           AlignWithMargins = True
@@ -154,11 +160,8 @@ object MainForm: TMainForm
           Align = alLeft
           Caption = 'Primary'
           StyleFamily = 'Bootstrap'
-          StyleClass = 'Primary'
           TabOrder = 1
-          ExplicitLeft = 13
-          ExplicitTop = 27
-          ExplicitHeight = 34
+          ExplicitTop = 20
         end
         object btn_Secondary: TStyledButton
           Tag = 0
@@ -238,7 +241,6 @@ object MainForm: TMainForm
           StyleFamily = 'Bootstrap'
           StyleClass = 'Light'
           TabOrder = 7
-          ExplicitLeft = 557
           ExplicitTop = 20
         end
         object btn_Dark: TStyledButton
@@ -253,7 +255,6 @@ object MainForm: TMainForm
           StyleFamily = 'Bootstrap'
           StyleClass = 'Dark'
           TabOrder = 0
-          ExplicitLeft = 628
           ExplicitTop = 20
         end
       end
@@ -266,6 +267,7 @@ object MainForm: TMainForm
         Align = alTop
         Caption = 'Outlined Buttons'
         TabOrder = 2
+        ExplicitWidth = 856
         object btn_OutlinePrimary: TStyledButton
           Tag = 0
           AlignWithMargins = True
@@ -276,7 +278,6 @@ object MainForm: TMainForm
           Align = alLeft
           Caption = 'Primary'
           StyleFamily = 'Bootstrap'
-          StyleClass = 'Primary'
           StyleAppearance = 'Outline'
           TabOrder = 1
           ExplicitLeft = 13
@@ -396,6 +397,7 @@ object MainForm: TMainForm
         Align = alTop
         Caption = 'Disabled Buttons'
         TabOrder = 3
+        ExplicitWidth = 856
         object btn_DisabledPrimary: TStyledButton
           Tag = 0
           AlignWithMargins = True
@@ -407,7 +409,6 @@ object MainForm: TMainForm
           Enabled = False
           Caption = 'Primary'
           StyleFamily = 'Bootstrap'
-          StyleClass = 'Primary'
           TabOrder = 1
           ExplicitLeft = 13
           ExplicitTop = 27
@@ -517,6 +518,171 @@ object MainForm: TMainForm
           ExplicitTop = 20
         end
       end
+      object gbBootstrapModalResult: TGroupBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 221
+        Width = 860
+        Height = 59
+        Align = alTop
+        Caption = 'Buttons with ModalResult'
+        TabOrder = 4
+        ExplicitWidth = 856
+        object btn_BootstrapOK: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 5
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = 'Ok'
+          ModalResult = 1
+          StyleFamily = 'Bootstrap'
+          TabOrder = 0
+          ExplicitTop = 20
+        end
+        object btn_BootstrapCancel: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 85
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Caption = 'Cancel'
+          ModalResult = 2
+          StyleFamily = 'Bootstrap'
+          TabOrder = 1
+          ExplicitLeft = 91
+        end
+        object btn_BootstrapAbort: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 165
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          Caption = 'Abort'
+          ModalResult = 3
+          StyleFamily = 'Bootstrap'
+          TabOrder = 2
+          ExplicitTop = 20
+        end
+        object btn_BootstrapRetry: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 245
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          Caption = 'Retry'
+          ModalResult = 4
+          StyleFamily = 'Bootstrap'
+          TabOrder = 3
+          ExplicitLeft = 263
+        end
+        object btn_BootstrapIgnore: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 325
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          Caption = 'Ignore'
+          ModalResult = 5
+          StyleFamily = 'Bootstrap'
+          TabOrder = 5
+          ExplicitTop = 20
+        end
+        object btn_BootstrapYes: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 405
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          Caption = 'Yes'
+          ModalResult = 6
+          StyleFamily = 'Bootstrap'
+          TabOrder = 6
+          ExplicitTop = 20
+        end
+        object btn_BootstrapNo: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 485
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          Caption = 'No'
+          ModalResult = 7
+          StyleFamily = 'Bootstrap'
+          TabOrder = 7
+          ExplicitLeft = 557
+          ExplicitTop = 27
+        end
+        object btn_BootstrapClose: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 565
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          Caption = 'Close'
+          ModalResult = 8
+          StyleFamily = 'Bootstrap'
+          TabOrder = 8
+          ExplicitTop = 20
+        end
+        object btn_BootstrapHelp: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 645
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          Caption = 'Help'
+          ModalResult = 9
+          StyleFamily = 'Bootstrap'
+          TabOrder = 9
+          ExplicitTop = 20
+        end
+        object btn_BootstrapAll: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 725
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          Caption = 'All'
+          ModalResult = 12
+          StyleFamily = 'Bootstrap'
+          TabOrder = 4
+          ExplicitLeft = 763
+          ExplicitTop = 20
+        end
+      end
     end
     object tsAngular: TTabSheet
       Caption = 'Angular Buttons'
@@ -544,7 +710,6 @@ object MainForm: TMainForm
         Align = alTop
         Caption = 'Basic Buttons'
         TabOrder = 2
-        ExplicitWidth = 856
         object btn_BasicBasic: TStyledButton
           Tag = 0
           AlignWithMargins = True
@@ -553,15 +718,8 @@ object MainForm: TMainForm
           Width = 72
           Height = 36
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = 'Basic'
           StyleFamily = 'Angular-Light'
-          StyleClass = 'Basic'
           StyleAppearance = 'Basic'
           TabOrder = 0
           ExplicitLeft = 13
@@ -576,12 +734,6 @@ object MainForm: TMainForm
           Width = 102
           Height = 36
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = 'Primary'
           StyleFamily = 'Angular-Light'
           StyleClass = 'DeepPurple'
@@ -596,12 +748,6 @@ object MainForm: TMainForm
           Width = 92
           Height = 36
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = 'Accent'
           StyleFamily = 'Angular-Light'
           StyleClass = 'Amber'
@@ -618,12 +764,6 @@ object MainForm: TMainForm
           Width = 59
           Height = 36
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = 'Warn'
           StyleFamily = 'Angular-Light'
           StyleClass = 'Warn'
@@ -640,15 +780,8 @@ object MainForm: TMainForm
           Height = 36
           Align = alLeft
           Enabled = False
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = 'Disabled'
           StyleFamily = 'Angular-Light'
-          StyleClass = 'Basic'
           StyleAppearance = 'Basic'
           TabOrder = 4
           ExplicitLeft = 512
@@ -663,7 +796,6 @@ object MainForm: TMainForm
         Align = alTop
         Caption = 'Raised Buttons'
         TabOrder = 3
-        ExplicitWidth = 856
         object btn_RaisedBasic: TStyledButton
           Tag = 0
           AlignWithMargins = True
@@ -672,15 +804,8 @@ object MainForm: TMainForm
           Width = 72
           Height = 36
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = 'Basic'
           StyleFamily = 'Angular-Light'
-          StyleClass = 'Basic'
           StyleAppearance = 'Raised'
           TabOrder = 0
           ExplicitLeft = 13
@@ -695,12 +820,6 @@ object MainForm: TMainForm
           Width = 102
           Height = 36
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = 'Primary'
           StyleFamily = 'Angular-Light'
           StyleClass = 'DeepPurple'
@@ -715,12 +834,6 @@ object MainForm: TMainForm
           Width = 92
           Height = 36
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = 'Accent'
           StyleFamily = 'Angular-Light'
           StyleClass = 'Amber'
@@ -737,12 +850,6 @@ object MainForm: TMainForm
           Width = 59
           Height = 36
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = 'Warn'
           StyleFamily = 'Angular-Light'
           StyleClass = 'Warn'
@@ -759,15 +866,8 @@ object MainForm: TMainForm
           Height = 36
           Align = alLeft
           Enabled = False
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = 'Disabled'
           StyleFamily = 'Angular-Light'
-          StyleClass = 'Basic'
           StyleAppearance = 'Raised'
           TabOrder = 4
           ExplicitLeft = 512
@@ -782,7 +882,6 @@ object MainForm: TMainForm
         BevelOuter = bvNone
         TabOrder = 1
         OnResize = AngularThemesPanelResize
-        ExplicitWidth = 862
         object rgAngularLightThemes: TRadioGroup
           AlignWithMargins = True
           Left = 3
@@ -813,7 +912,6 @@ object MainForm: TMainForm
             'Purple && Green')
           TabOrder = 1
           OnClick = rgAngularDarkThemesClick
-          ExplicitWidth = 443
         end
       end
       object gpAngularStroked: TGroupBox
@@ -825,7 +923,6 @@ object MainForm: TMainForm
         Align = alTop
         Caption = 'Stroked Buttons'
         TabOrder = 4
-        ExplicitWidth = 856
         object btn_StrokedBasic: TStyledButton
           Tag = 0
           AlignWithMargins = True
@@ -834,20 +931,11 @@ object MainForm: TMainForm
           Width = 72
           Height = 36
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = 'Basic'
           StyleFamily = 'Angular-Light'
-          StyleClass = 'Basic'
           StyleAppearance = 'Stroked'
           TabOrder = 0
-          ExplicitLeft = 13
-          ExplicitTop = 27
-          ExplicitHeight = 34
+          ExplicitTop = 20
         end
         object btn_StrokedPrimary: TStyledButton
           Tag = 0
@@ -857,12 +945,6 @@ object MainForm: TMainForm
           Width = 102
           Height = 36
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = 'Primary'
           StyleFamily = 'Angular-Light'
           StyleClass = 'DeepPurple'
@@ -877,12 +959,6 @@ object MainForm: TMainForm
           Width = 59
           Height = 36
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = 'Warn'
           StyleFamily = 'Angular-Light'
           StyleClass = 'Warn'
@@ -899,15 +975,8 @@ object MainForm: TMainForm
           Height = 36
           Align = alLeft
           Enabled = False
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = 'Disabled'
           StyleFamily = 'Angular-Light'
-          StyleClass = 'Basic'
           StyleAppearance = 'Stroked'
           TabOrder = 4
           ExplicitLeft = 512
@@ -920,18 +989,11 @@ object MainForm: TMainForm
           Width = 92
           Height = 36
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = 'Accent'
           StyleFamily = 'Angular-Light'
           StyleClass = 'Amber'
           StyleAppearance = 'Stroked'
           TabOrder = 2
-          ExplicitLeft = 239
           ExplicitTop = 20
         end
       end
@@ -944,7 +1006,6 @@ object MainForm: TMainForm
         Align = alTop
         Caption = 'Flat Buttons'
         TabOrder = 5
-        ExplicitWidth = 856
         object btn_FlatBasic: TStyledButton
           Tag = 0
           AlignWithMargins = True
@@ -953,16 +1014,8 @@ object MainForm: TMainForm
           Width = 72
           Height = 36
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = 'Basic'
           StyleFamily = 'Angular-Light'
-          StyleClass = 'Basic'
-          StyleAppearance = 'Flat'
           TabOrder = 0
           ExplicitLeft = 13
           ExplicitTop = 27
@@ -976,16 +1029,9 @@ object MainForm: TMainForm
           Width = 102
           Height = 36
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = 'Primary'
           StyleFamily = 'Angular-Light'
           StyleClass = 'DeepPurple'
-          StyleAppearance = 'Flat'
           TabOrder = 1
         end
         object btn_FlatWarn: TStyledButton
@@ -996,16 +1042,9 @@ object MainForm: TMainForm
           Width = 59
           Height = 36
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = 'Warn'
           StyleFamily = 'Angular-Light'
           StyleClass = 'Warn'
-          StyleAppearance = 'Flat'
           TabOrder = 3
           ExplicitLeft = 447
         end
@@ -1017,16 +1056,8 @@ object MainForm: TMainForm
           Width = 80
           Height = 36
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = 'Disabled'
           StyleFamily = 'Angular-Light'
-          StyleClass = 'Basic'
-          StyleAppearance = 'Flat'
           TabOrder = 4
           ExplicitLeft = 512
         end
@@ -1038,16 +1069,9 @@ object MainForm: TMainForm
           Width = 92
           Height = 36
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = 'Accent'
           StyleFamily = 'Angular-Light'
           StyleClass = 'Amber'
-          StyleAppearance = 'Flat'
           TabOrder = 2
           ExplicitLeft = 239
           ExplicitTop = 20
@@ -1072,12 +1096,6 @@ object MainForm: TMainForm
           Margins.Left = 20
           Margins.Right = 20
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = ''
           ImageAlignment = iaCenter
           Images = VirtualImageList32
@@ -1101,12 +1119,6 @@ object MainForm: TMainForm
           Margins.Left = 20
           Margins.Right = 20
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = ''
           ImageAlignment = iaCenter
           Images = VirtualImageList32
@@ -1130,12 +1142,6 @@ object MainForm: TMainForm
           Margins.Left = 20
           Margins.Right = 20
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = ''
           ImageAlignment = iaCenter
           Images = VirtualImageList32
@@ -1159,12 +1165,6 @@ object MainForm: TMainForm
           Margins.Left = 20
           Margins.Right = 20
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = ''
           ImageAlignment = iaCenter
           Images = VirtualImageList32
@@ -1189,12 +1189,6 @@ object MainForm: TMainForm
           Margins.Right = 20
           Align = alLeft
           Enabled = False
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = ''
           ImageAlignment = iaCenter
           Images = VirtualImageList32
@@ -1202,7 +1196,6 @@ object MainForm: TMainForm
           ImageName = 'launch-black'
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
-          StyleClass = 'Basic'
           StyleAppearance = 'Basic'
           TabOrder = 4
           ExplicitLeft = 285
@@ -1213,15 +1206,11 @@ object MainForm: TMainForm
         AlignWithMargins = True
         Left = 3
         Top = 416
-        Width = 843
+        Width = 860
         Height = 87
-        Margins.Right = 20
         Align = alTop
         Caption = 'FAB'
         TabOrder = 7
-        ExplicitLeft = -14
-        ExplicitTop = 453
-        ExplicitWidth = 860
         object btn_FABTrash: TStyledButton
           Tag = 0
           AlignWithMargins = True
@@ -1232,12 +1221,6 @@ object MainForm: TMainForm
           Margins.Left = 20
           Margins.Right = 20
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = ''
           ImageAlignment = iaCenter
           Images = VirtualImageList32
@@ -1246,8 +1229,7 @@ object MainForm: TMainForm
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
           StyleClass = 'DeepPurple'
-          StyleAppearance = 'Flat'
-          TabOrder = 3
+          TabOrder = 1
           ExplicitLeft = 13
           ExplicitTop = 23
         end
@@ -1261,12 +1243,6 @@ object MainForm: TMainForm
           Margins.Left = 20
           Margins.Right = 20
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = ''
           ImageAlignment = iaCenter
           Images = VirtualImageList32
@@ -1275,7 +1251,6 @@ object MainForm: TMainForm
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
           StyleClass = 'Amber'
-          StyleAppearance = 'Flat'
           TabOrder = 2
           ExplicitLeft = 162
           ExplicitTop = 20
@@ -1290,12 +1265,6 @@ object MainForm: TMainForm
           Margins.Left = 20
           Margins.Right = 20
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = ''
           ImageAlignment = iaCenter
           Images = VirtualImageList32
@@ -1304,8 +1273,7 @@ object MainForm: TMainForm
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
           StyleClass = 'Warn'
-          StyleAppearance = 'Flat'
-          TabOrder = 1
+          TabOrder = 3
           ExplicitLeft = 313
           ExplicitTop = 3
         end
@@ -1320,12 +1288,6 @@ object MainForm: TMainForm
           Margins.Right = 20
           Align = alLeft
           Enabled = False
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = ''
           ImageAlignment = iaCenter
           Images = VirtualImageList32
@@ -1333,10 +1295,160 @@ object MainForm: TMainForm
           ImageName = 'heart'
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
-          StyleClass = 'Basic'
-          StyleAppearance = 'Flat'
           TabOrder = 0
           ExplicitLeft = 413
+          ExplicitTop = 20
+        end
+      end
+      object gbAngularModalResult: TGroupBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 509
+        Width = 860
+        Height = 59
+        Align = alTop
+        Caption = 'Buttons with ModalResult'
+        TabOrder = 8
+        object btn_AngularOK: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 5
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          Caption = 'Ok'
+          ModalResult = 1
+          StyleFamily = 'Angular-Light'
+          TabOrder = 0
+        end
+        object btn_AngularCancel: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 85
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          Caption = 'Cancel'
+          ModalResult = 2
+          StyleFamily = 'Angular-Light'
+          TabOrder = 1
+          ExplicitLeft = 91
+        end
+        object btn_AngularAbort: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 165
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          Caption = 'Abort'
+          ModalResult = 3
+          StyleFamily = 'Angular-Light'
+          TabOrder = 2
+          ExplicitLeft = 177
+        end
+        object btn_AngularRetry: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 245
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          Caption = 'Retry'
+          ModalResult = 4
+          StyleFamily = 'Angular-Light'
+          TabOrder = 3
+          ExplicitLeft = 263
+        end
+        object btn_AngularIgnore: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 325
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          Caption = 'Ignore'
+          ModalResult = 5
+          StyleFamily = 'Angular-Light'
+          TabOrder = 5
+          ExplicitLeft = 349
+        end
+        object btn_AngularYes: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 405
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          Caption = 'Yes'
+          ModalResult = 6
+          StyleFamily = 'Angular-Light'
+          TabOrder = 6
+          ExplicitTop = 20
+        end
+        object btn_AngularNo: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 485
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          Caption = 'No'
+          ModalResult = 7
+          StyleFamily = 'Angular-Light'
+          TabOrder = 7
+          ExplicitLeft = 557
+          ExplicitTop = 27
+        end
+        object btn_AngularClose: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 565
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          Caption = 'Close'
+          ModalResult = 8
+          StyleFamily = 'Angular-Light'
+          TabOrder = 8
+          ExplicitTop = 20
+        end
+        object btn_AngularHelp: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 645
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          Caption = 'Help'
+          ModalResult = 9
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'DeepPurple'
+          TabOrder = 9
+          ExplicitTop = 20
+        end
+        object btn_AngularAll: TStyledButton
+          Tag = 0
+          AlignWithMargins = True
+          Left = 725
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          Caption = 'All'
+          ModalResult = 12
+          StyleFamily = 'Angular-Light'
+          TabOrder = 4
+          ExplicitLeft = 763
           ExplicitTop = 20
         end
       end

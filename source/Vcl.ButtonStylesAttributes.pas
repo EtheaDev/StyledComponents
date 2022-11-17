@@ -33,6 +33,7 @@ uses
   Vcl.Graphics
   , System.Classes
   , System.Contnrs
+  , System.UITypes
   , System.Types
   , Vcl.Controls;
 
@@ -81,7 +82,6 @@ Type
     procedure SetBorderWidth(const Value: Integer);
     procedure SetButtonColor(const Value: TColor);
     procedure SetFontColor(const Value: TColor);
-    procedure SetFontName(const Value: TFontName);
     procedure SetFontStyle(const Value: TFontStyles);
     procedure SetRadius(const Value: Integer);
   public
@@ -92,16 +92,15 @@ Type
     function PenStyle: TPenStyle;
     function BrushStyle: TBrushStyle;
   published
- property DrawType: TStyledButtonDrawType read FDrawType write SetDrawType;
- property BorderWidth: Integer read FBorderWidth write SetBorderWidth;
- property BorderDrawStyle: TBorderDrawStyle read FBorderDrawStyle write SetBorderDrawStyle default brdSolid;
- property ButtonDrawStyle: TButtonDrawStyle read FButtonDrawStyle write SetButtonDrawStyle default btnSolid;
- property BorderColor: TColor read FBorderColor write SetBorderColor;
- property FontColor: TColor read FFontColor write SetFontColor;
- property FontStyle: TFontStyles read FFontStyle write SetFontStyle;
- property FontName: TFontName read FFontName write SetFontName;
- property ButtonColor: TColor read FButtonColor write SetButtonColor;
- property Radius: Integer read FRadius write SetRadius;
+    property DrawType: TStyledButtonDrawType read FDrawType write SetDrawType;
+    property BorderWidth: Integer read FBorderWidth write SetBorderWidth;
+    property BorderDrawStyle: TBorderDrawStyle read FBorderDrawStyle write SetBorderDrawStyle default brdSolid;
+    property ButtonDrawStyle: TButtonDrawStyle read FButtonDrawStyle write SetButtonDrawStyle default btnSolid;
+    property BorderColor: TColor read FBorderColor write SetBorderColor;
+    property FontColor: TColor read FFontColor write SetFontColor;
+    property FontStyle: TFontStyles read FFontStyle write SetFontStyle;
+    property ButtonColor: TColor read FButtonColor write SetButtonColor;
+    property Radius: Integer read FRadius write SetRadius;
   end;
 
   //  Abstraction of Graphic Button Attributes
@@ -116,6 +115,10 @@ Type
     function ButtonFamilyName: string;
     function GetButtonClasses: TButtonClasses;
     function GetButtonAppearances: TButtonAppearances;
+    procedure GetStyleByModalResult(
+      const AModalResult: System.UITypes.TModalResult;
+      var AStyleClass: TStyledButtonClass;
+      var AStyleAppearance: TStyledButtonAppearance);
   end;
 
   TButtonFamily = class(TObject)
@@ -134,7 +137,7 @@ function SameStyledButtonStyle(Style1, Style2: TStyledButtonAttributes): Boolean
 procedure CloneButtonStyle(const ASource: TStyledButtonAttributes;
   var ADest: TStyledButtonAttributes);
 
-//drawing Button: using GPI or not
+//drawing Button
 procedure CanvasDrawShape(const ACanvas: TCanvas; ARect: TRect;
   const ADrawType: TStyledButtonDrawType; const ACornerRadius: Integer);
 
@@ -153,10 +156,16 @@ function StyleFamilyCheckAttributes(
 
 procedure StyleFamilyUpdateAttributes(
   const AFamily: TStyledButtonFamily;
-  const AClass: TStyledButtonClass;
-  const AAppearance: TStyledButtonAppearance;
+  var AClass: TStyledButtonClass;
+  var AAppearance: TStyledButtonAppearance;
   var ANormalStyle, APressedStyle,
   ASelectedStyle, AHotStyle, ADisabledStyle: TStyledButtonAttributes);
+
+procedure StyleFamilyUpdateAttributesByModalResult(
+  const AModalResult: TModalResult;
+  const AFamily: TStyledButtonFamily;
+  var AClass: TStyledButtonClass;
+  var AAppearance: TStyledButtonAppearance);
 
 implementation
 
@@ -167,7 +176,6 @@ uses
   , Winapi.GDIPOBJ
 {$endif}
   , System.SysUtils
-  , System.UITypes
   , System.Math;
 
 function SameStyledButtonStyle(Style1, Style2: TStyledButtonAttributes): Boolean;
@@ -180,7 +188,6 @@ begin
     (Style1.BorderColor = Style2.BorderColor) and
     (Style1.FontColor = Style2.FontColor) and
     (Style1.FontStyle = Style2.FontStyle) and
-    (Style1.FontName = Style2.FontName) and
     (Style1.ButtonColor = Style2.ButtonColor) and
     (Style1.Radius = Style2.Radius);
 end;
@@ -248,7 +255,6 @@ begin
   ADest.BorderColor := ASource.BorderColor;
   ADest.FontStyle := ASource.FontStyle;
   ADest.FontColor := ASource.FontColor;
-  ADest.FontName := ASource.FontName;
   ADest.ButtonColor := ASource.ButtonColor;
   ADest.Radius := ASource.Radius;
 end;
@@ -293,7 +299,8 @@ begin
   if GetButtonFamily(AFamily, LButtonFamily) then
   begin
     LClasses := LButtonFamily.FStyledAttributes.GetButtonClasses;
-    LDefaultClass := LClasses[0];
+    LButtonFamily.FStyledAttributes.GetStyleByModalResult(mrNone,
+       LDefaultClass, LDefaultAppearance);
     LClassFound := False;
     //Check AClass
     for I := 0 to Length(LClasses)-1 do
@@ -312,7 +319,6 @@ begin
     end;
 
     LAppearances := LButtonFamily.FStyledAttributes.GetButtonAppearances;
-    LDefaultAppearance := LAppearances[0];
     LAppearanceFound := False;
     //Check AAppearance
     for I := 0 to Length(LAppearances)-1 do
@@ -334,8 +340,8 @@ end;
 
 procedure StyleFamilyUpdateAttributes(
   const AFamily: TStyledButtonFamily;
-  const AClass: TStyledButtonClass;
-  const AAppearance: TStyledButtonAppearance;
+  var AClass: TStyledButtonClass;
+  var AAppearance: TStyledButtonAppearance;
   var ANormalStyle, APressedStyle,
   ASelectedStyle, AHotStyle, ADisabledStyle: TStyledButtonAttributes);
 var
@@ -354,6 +360,22 @@ begin
     ASelectedStyle.ResetChanged;
     AHotStyle.ResetChanged;
     ADisabledStyle.ResetChanged;
+  end;
+end;
+
+procedure StyleFamilyUpdateAttributesByModalResult(
+  const AModalResult: TModalResult;
+  const AFamily: TStyledButtonFamily;
+  var AClass: TStyledButtonClass;
+  var AAppearance: TStyledButtonAppearance);
+var
+  LButtonFamily: TButtonFamily;
+begin
+  if GetButtonFamily(AFamily, LButtonFamily) then
+  begin
+    LButtonFamily.FStyledAttributes.GetStyleByModalResult(
+      AModalResult,
+      AClass, AAppearance);
   end;
 end;
 
@@ -426,16 +448,16 @@ begin
   if ASource is TStyledButtonAttributes then
   begin
     LSource := TStyledButtonAttributes(ASource);
-    FDrawType   := LSource.FDrawType;
-    FBorderWidth  := LSource.FBorderWidth;
-    FBorderDrawStyle  := LSource.FBorderDrawStyle;
-    FButtonDrawStyle   := LSource.FButtonDrawStyle;
-    FBorderColor  := LSource.FBorderColor;
-    FFontColor    := LSource.FFontColor;
-    FFontStyle    := LSource.FFontStyle;
-    FFontName     := LSource.FFontName;
-    FButtonColor  := LSource.FButtonColor;
-    FRadius       := LSource.FRadius;
+    FDrawType := LSource.FDrawType;
+    FBorderWidth := LSource.FBorderWidth;
+    FBorderDrawStyle := LSource.FBorderDrawStyle;
+    FButtonDrawStyle := LSource.FButtonDrawStyle;
+    FBorderColor := LSource.FBorderColor;
+    FFontColor := LSource.FFontColor;
+    FFontStyle := LSource.FFontStyle;
+    FFontName := LSource.FFontName;
+    FButtonColor := LSource.FButtonColor;
+    FRadius := LSource.FRadius;
   end
   else
     inherited Assign(ASource);
@@ -533,15 +555,6 @@ begin
   if FFontColor <> Value then
   begin
     FFontColor := Value;
-    InvalidateControl;
-  end;
-end;
-
-procedure TStyledButtonAttributes.SetFontName(const Value: TFontName);
-begin
-  if FFontName <> Value then
-  begin
-    FFontName := Value;
     InvalidateControl;
   end;
 end;

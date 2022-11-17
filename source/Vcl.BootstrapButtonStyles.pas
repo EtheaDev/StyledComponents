@@ -29,10 +29,14 @@ unit Vcl.BootstrapButtonStyles;
 interface
 
 uses
-  Vcl.Graphics,
-  Vcl.ButtonStylesAttributes;
+  Vcl.Graphics
+  , System.UITypes
+  , Vcl.ButtonStylesAttributes;
 
 const
+  BOOTSTRAP_FAMILY = 'Bootstrap';
+  BOOTSTRAP_NORMAL = 'Normal';
+  BOOTSTRAP_OUTLINE = 'Outline';
   BOOTSTRAP_BORDER_WIDTH = 2;
 
   btn_primary = 'Primary';
@@ -51,11 +55,15 @@ Type
       const AFamily:  TStyledButtonFamily;
       const AClass: TStyledButtonClass;
       const AAppearance: TStyledButtonAppearance;
-      var ANormalStyle, ADownStyle, ASelectedStyle,
+      var ANormalStyle, APressedStyle, ASelectedStyle,
       AHotStyle, ADisabledStyle: TStyledButtonAttributes);
     function ButtonFamilyName: string;
     function GetButtonClasses: TButtonClasses;
     function GetButtonAppearances: TButtonAppearances;
+    procedure GetStyleByModalResult(
+      const AModalResult: System.UITypes.TModalResult;
+      var AStyleClass: TStyledButtonClass;
+      var AStyleAppearance: TStyledButtonAppearance);
   end;
 
 implementation
@@ -72,7 +80,7 @@ var
 
 procedure BootstrapClassToColors(const AClass: TStyledButtonClass;
   const AAppearance: TStyledButtonAppearance;
-  var AFontColor, AButtonColor: TColor; out OutLine: Boolean);
+  var AFontColor, AButtonColor: TColor; out AOutLine: Boolean);
 
 const
   //from bootstrap css
@@ -99,7 +107,7 @@ const
   bs_dark = '#212529';
 
 begin
-  OutLine := SameText(AAppearance, 'Outline');
+  AOutLine := SameText(AAppearance, BOOTSTRAP_OUTLINE);
 
 
   if SameText(AClass, btn_primary) then
@@ -144,7 +152,7 @@ begin
   end
   else
   begin
-    OutLine := False;
+    AOutLine := False;
     AButtonColor := clBtnFace;
     AFontColor := clBtnText;
   end;
@@ -152,7 +160,7 @@ end;
 
 function TBoostrapButtonStyles.ButtonFamilyName: string;
 begin
-  Result := 'Bootstrap';
+  Result := BOOTSTRAP_FAMILY;
 end;
 
 function TBoostrapButtonStyles.GetButtonAppearances: TButtonAppearances;
@@ -165,11 +173,36 @@ begin
   Result := ButtonClasses;
 end;
 
+procedure TBoostrapButtonStyles.GetStyleByModalResult(
+  const AModalResult: System.UITypes.TModalResult;
+  var AStyleClass: TStyledButtonClass;
+  var AStyleAppearance: TStyledButtonAppearance);
+begin
+  //if AModalResult is mrNone, define the defaults of Family
+  case AModalResult of
+    mrNone     : begin AStyleClass := btn_primary; AStyleAppearance := BOOTSTRAP_NORMAL; end;
+    mrYes      : begin AStyleClass := btn_primary; AStyleAppearance := BOOTSTRAP_NORMAL; end;
+    mrNo       : begin AStyleClass := btn_secondary; AStyleAppearance := BOOTSTRAP_NORMAL; end;
+    mrOk       : begin AStyleClass := btn_success; AStyleAppearance := BOOTSTRAP_NORMAL; end;
+    mrCancel   : begin AStyleClass := btn_danger; AStyleAppearance := BOOTSTRAP_NORMAL; end;
+    mrAbort    : begin AStyleClass := btn_danger; AStyleAppearance := BOOTSTRAP_NORMAL; end;
+    mrRetry    : begin AStyleClass := btn_warning; AStyleAppearance := BOOTSTRAP_NORMAL; end;
+    mrIgnore   : begin AStyleClass := btn_secondary; AStyleAppearance := BOOTSTRAP_NORMAL; end;
+    mrAll      : begin AStyleClass := btn_primary; AStyleAppearance := BOOTSTRAP_OUTLINE; end;
+    mrNoToAll  : begin AStyleClass := btn_danger; AStyleAppearance := BOOTSTRAP_OUTLINE; end;
+    mrYesToAll : begin AStyleClass := btn_success; AStyleAppearance := BOOTSTRAP_OUTLINE; end;
+    mrClose    : begin AStyleClass := btn_secondary; AStyleAppearance := BOOTSTRAP_NORMAL; end;
+    mrTryAgain : begin AStyleClass := btn_warning; AStyleAppearance := BOOTSTRAP_NORMAL; end;
+    mrContinue : begin AStyleClass := btn_secondary; AStyleAppearance := BOOTSTRAP_NORMAL; end;
+    mrHelp     : begin AStyleClass := btn_warning; AStyleAppearance := BOOTSTRAP_NORMAL; end;
+  end;
+end;
+
 procedure TBoostrapButtonStyles.UpdateAttributes(
   const AFamily:  TStyledButtonFamily;
   const AClass: TStyledButtonClass;
   const AAppearance: TStyledButtonAppearance;
-  var ANormalStyle, ADownStyle, ASelectedStyle, AHotStyle,
+  var ANormalStyle, APressedStyle, ASelectedStyle, AHotStyle,
   ADisabledStyle: TStyledButtonAttributes);
 var
   LFontColor, LButtonColor: TColor;
@@ -180,7 +213,7 @@ begin
   //Default Style Attributes for Bootstrap Buttons
   ANormalStyle.DrawType := btRounded;
   ANormalStyle.FontStyle := [fsBold];
-  ANormalStyle.FontName := 'Tahoma';
+  ANormalStyle.BorderWidth := BOOTSTRAP_BORDER_WIDTH;
 
   //Style for Normal Style of Bootstrap Button
   if LOutLine then
@@ -188,20 +221,20 @@ begin
     //Outline: Border and FontColor same as Button Color
     ANormalStyle.ButtonDrawStyle := btnClear;
     ANormalStyle.BorderDrawStyle := brdSolid;
-    ANormalStyle.BorderWidth := BOOTSTRAP_BORDER_WIDTH;
     ANormalStyle.FontColor := LButtonColor;
     ANormalStyle.BorderColor := LButtonColor;
   end
   else
   begin
+    ANormalStyle.ButtonDrawStyle := btnSolid;
     ANormalStyle.BorderDrawStyle := brdClear;
     ANormalStyle.FontColor := LFontColor;
     ANormalStyle.ButtonColor := LButtonColor;
-    ANormalStyle.BorderColor := ANormalStyle.ButtonColor;
+    ANormalStyle.BorderColor := LButtonColor;
   end;
 
   //Clone Normal Style to Other Styles
-  CloneButtonStyle(ANormalStyle, ADownStyle);
+  CloneButtonStyle(ANormalStyle, APressedStyle);
   CloneButtonStyle(ANormalStyle, ASelectedStyle);
   CloneButtonStyle(ANormalStyle, AHotStyle);
   CloneButtonStyle(ANormalStyle, ADisabledStyle);
@@ -209,12 +242,12 @@ begin
   if LOutline then
   begin
     //Button Down: color as Button Color
-    with ADownStyle do
+    with APressedStyle do
     begin
       ButtonColor := LButtonColor;
       BorderColor := LightenColor(LButtonColor, 50);
       BorderDrawStyle := brdSolid;
-      BorderWidth := BOOTSTRAP_BORDER_WIDTH;
+      BorderWidth := BOOTSTRAP_BORDER_WIDTH+2;
       FontColor   := LFontColor;
       ButtonDrawStyle  := btnSolid;
     end;
@@ -237,7 +270,7 @@ begin
       else
         ButtonColor := DarkenColor(LButtonColor, 20);
       BorderDrawStyle := brdSolid;
-      BorderWidth := BOOTSTRAP_BORDER_WIDTH;
+      BorderWidth := BOOTSTRAP_BORDER_WIDTH+2;
       FontColor := LFontColor;
       ButtonDrawStyle  := btnSolid;
     end;
@@ -252,13 +285,13 @@ begin
   else
   begin
     //Button Down
-    ADownStyle.ButtonColor := DarkenColor(LButtonColor, 20);
-    ADownStyle.BorderColor := LightenColor(LButtonColor, 50);
-    ADownStyle.BorderDrawStyle := brdSolid;
-    ADownStyle.BorderWidth := BOOTSTRAP_BORDER_WIDTH;
+    APressedStyle.ButtonColor := DarkenColor(LButtonColor, 20);
+    APressedStyle.BorderColor := LightenColor(LButtonColor, 50);
+    APressedStyle.BorderDrawStyle := brdSolid;
+    APressedStyle.BorderWidth := BOOTSTRAP_BORDER_WIDTH;
 
     //Button Hot: color as Down but no Border
-    AHotStyle.ButtonColor := ADownStyle.ButtonColor;
+    AHotStyle.ButtonColor := APressedStyle.ButtonColor;
 
     //Button Focused
     ASelectedStyle.ButtonColor := DarkenColor(LButtonColor, 20);
@@ -283,8 +316,8 @@ initialization
   ButtonClasses[7] := btn_dark;
 
   SetLength(ButtonAppearances, 2);
-  ButtonAppearances[0] := 'Normal';
-  ButtonAppearances[1] := 'Outline';
+  ButtonAppearances[0] := BOOTSTRAP_NORMAL;
+  ButtonAppearances[1] := BOOTSTRAP_OUTLINE;
 
   RegisterButtonFamily(TBoostrapButtonStyles.Create);
 
