@@ -40,6 +40,7 @@ uses
 
 begin
   Application.Initialize;
+  Application.Title := 'Animated TaskDialog Demo - Copyright (c) 2022 - Ethea S.r.l.';
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TMainForm, MainForm);
   Application.OnException := MainForm.showError;

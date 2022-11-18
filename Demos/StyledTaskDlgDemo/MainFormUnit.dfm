@@ -214,7 +214,7 @@ object MainForm: TMainForm
       object edTitle: TEdit
         Left = 7
         Top = 24
-        Width = 503
+        Width = 396
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 0
@@ -316,6 +316,27 @@ object MainForm: TMainForm
           'Angular-Light'
           'Angular-Dark')
       end
+      object gbResult: TGroupBox
+        Left = 418
+        Top = 4
+        Width = 92
+        Height = 60
+        Anchors = [akTop, akRight]
+        Caption = 'ModalResult'
+        TabOrder = 10
+        object MRLabel: TLabel
+          AlignWithMargins = True
+          Left = 5
+          Top = 25
+          Width = 82
+          Height = 30
+          Margins.Top = 10
+          Align = alClient
+          Alignment = taCenter
+          ExplicitWidth = 3
+          ExplicitHeight = 13
+        end
+      end
     end
     object RightPanel: TPanel
       Left = 530
@@ -338,7 +359,7 @@ object MainForm: TMainForm
         ExplicitTop = 317
       end
       object rgDlgType: TRadioGroup
-        Left = 9
+        Left = 6
         Top = 4
         Width = 196
         Height = 102

@@ -72,6 +72,8 @@ type
     DefaultButtonComboBox: TComboBox;
     FamilyComboBox: TComboBox;
     Label2: TLabel;
+    gbResult: TGroupBox;
+    MRLabel: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure ShowDlg(Sender: TObject);
     procedure RaiseError(Sender: TObject);
@@ -86,6 +88,8 @@ type
   private
     procedure ShowSelection(const AModalResult: TModalResult);
     procedure BuildStyleList;
+  protected
+    procedure Loaded; override;
   public
     procedure ShowError(Sender: TObject; E: Exception);
   end;
@@ -156,12 +160,12 @@ var
   Msg: string;
   LButtonName: string;
 begin
+  Caption := Application.Title;
+  MRLabel.Font.Style := [TFontStyle.fsBold];
   FontComboBox.Items.Assign(Screen.Fonts);
   FontComboBox.Text := Screen.IconFont.Name;
   BuildStyleList;
   SetUseAlwaysTaskDialog(True);
-  Font.Assign(Screen.IconFont);
-  Screen.MessageFont.Assign(Font);
 
   for dt := Low(TMsgDlgType) to High(TMsgDlgType)  do
     rgDlgType.Items.Add(GetEnumName(TypeInfo(TMsgDlgType), Ord(dt)));
@@ -205,7 +209,7 @@ begin
     LResultMsg := '';
   end;
   if LResultMsg <> '' then
-    ShowMessageFmt('Selected "%s"', [LResultMsg]);
+    MRLabel.Caption :=  Format('"%s"', [LResultMsg]);
 end;
 
 procedure TMainForm.ShowDlg(Sender: TObject);
@@ -266,6 +270,15 @@ procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   ;
 end;
+
+procedure TMainForm.Loaded;
+begin
+  Font.Assign(Screen.IconFont);
+  Screen.MessageFont.Assign(Font);
+  inherited;
+end;
+
+
 
 procedure TMainForm.RaiseError(Sender: TObject);
 var
