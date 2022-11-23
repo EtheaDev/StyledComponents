@@ -85,6 +85,7 @@ type
     procedure FontComboBoxSelect(Sender: TObject);
     procedure cbChangeStyleSelect(Sender: TObject);
     procedure FamilyComboBoxSelect(Sender: TObject);
+    procedure RaiseDatabaseError(Sender: TObject);
   private
     procedure ShowSelection(const AModalResult: TModalResult);
     procedure BuildStyleList;
@@ -280,19 +281,19 @@ end;
 
 
 
-procedure TMainForm.RaiseError(Sender: TObject);
-var
-  LHelpContext: Integer;
+procedure TMainForm.RaiseDatabaseError(Sender: TObject);
 begin
-  if Sender = btRaiseErrorTaskDialog then
-    LHelpContext := -100
-  else
-    LHelpContext := 200;
+  DatabaseError('Unexpected Error!'+sLineBreak+
+    'Please read the error file: '+
+    StringToHRef('C:\Windows\System32\license.rtf','license.rtf'));
+end;
 
+procedure TMainForm.RaiseError(Sender: TObject);
+begin
   raise Exception.CreateHelp('Unexpected Error!'+sLineBreak+
     'Please read the error file: '+
     StringToHRef('C:\Windows\System32\license.rtf','license.rtf'),
-    LHelpContext);
+      200);
 end;
 
 procedure TMainForm.ShowError(Sender: TObject; E: Exception);

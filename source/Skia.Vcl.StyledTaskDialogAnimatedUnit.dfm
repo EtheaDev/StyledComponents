@@ -1,10 +1,5 @@
 inherited StyledTaskDialogAnimated: TStyledTaskDialogAnimated
   Caption = 'StyledTaskDialogAnimated'
-  TextHeight = 13
-  inherited BottomBevel: TBevel
-    Top = 132
-    ExplicitTop = 144
-  end
   inherited CenterPanel: TPanel
     inherited ImagePanel: TPanel
       object SkAnimatedImage: TSkAnimatedImage
@@ -12,12 +7,10 @@ inherited StyledTaskDialogAnimated: TStyledTaskDialogAnimated
         Top = 0
         Width = 128
         Height = 128
-        Align = alClient
+        Align = alTop
+        ExplicitLeft = 1
+        ExplicitTop = 2
       end
     end
-  end
-  inherited ButtonsPanel: TPanel
-    Top = 135
-    ExplicitTop = 147
   end
 end

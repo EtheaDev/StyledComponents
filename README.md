@@ -2,7 +2,7 @@
 
 ## Delphi VCL Button with Custom Graphic Styles (eg.Bootstrap, AngularUI) and advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 1.0.0
+### Actual official version: 1.1.0
 
 | Component | Description |
 | - | - |
@@ -58,19 +58,23 @@ In the demo you can test many different ways to obtain Styled Button, Icon, FAB.
 
 **TStyledTaskDialog** is designed to expand message/task dialog functionalities, fully customizable and also animation.
 
+You can test Styled Dialogs with different "StyledButton set" (Classic, Angular, Bootstrap).
+
+Also, you can use a custom form (inherited from "TStyledTaskDialogForm") to show your complete custom Dialog.
+
 **Demos\StyledTaskDlgDemo and Demos\AnimatedTaskDialogDemo**
 
-A simple demo to show how to use StyledTaskDialog with custom icons, caption for buttons, etc.
+A simple demo to show how to use StyledTaskDialog with custom icons using ImageList.
 
-If you have Skia4Delphi, you can also try the AnimatedTaskDialogDemo, with nice animations.
-
-Activating "Use Styled Dialog" you can use a special form to show complete custom Dialog, like in those pictures:
+The main form is useful to test every format / buttons and type of dialogs.
 
 *Confirmation Dialog with custom font and English buttons*
 
 ![ConfirmationDialog.jpg](./Images/ConfirmationDialog.jpg)
 
 *Warning Dialog with italians Buttons*
+
+A simple way to activate button captions is to change StyledComponents.inc file and activate {$Define ItaMessages}
 
 ![StyledButtonDemo.jpg](./Images/WarningDialog.jpg)
 
@@ -86,6 +90,12 @@ Activating "Use Styled Dialog" you can use a special form to show complete custo
 
 ![ShieldButtonDemo.jpg](./Images/ShieldDialog.jpg)
 
+## Description of AnimatedStyledTaskDialog ##
+
+If you have Skia4Delphi, you can also try the AnimatedTaskDialogDemo, with nice animations:
+
+![AnimatedStyledDialog.gif](./Images/AnimatedStyledDialog.gif)
+
 **Demos\Delphi10_4+\StyledButtonInControlList**
 
 A simple demo to show how to use StyledGraphicButton into a ControlList (only for D10.4+)
@@ -99,6 +109,10 @@ A simple demo to show how to use StyledGraphicButton into a ControlList (only fo
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+
+23 Nov 2023: version 1.1.0
+- Fixed AnimatedStyledDialog Demo
+- Added gif to show AnimatedStyledDialog Demo
 
 17 Nov 2022: version 1.0.0
 - First official version

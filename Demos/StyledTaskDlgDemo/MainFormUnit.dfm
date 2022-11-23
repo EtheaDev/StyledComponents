@@ -13,10 +13,12 @@ object MainForm: TMainForm
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  OldCreateOrder = True
   Position = poScreenCenter
   ShowHint = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  PixelsPerInch = 96
   TextHeight = 13
   object ExtraGroupBox: TGroupBox
     Left = 0
@@ -226,8 +228,8 @@ object MainForm: TMainForm
         Width = 503
         Height = 162
         Anchors = [akLeft, akTop, akRight, akBottom]
+        ScrollBars = ssVertical
         TabOrder = 1
-        WordWrap = False
       end
       object FontComboBox: TComboBox
         Left = 337
@@ -265,9 +267,9 @@ object MainForm: TMainForm
         Width = 160
         Height = 25
         Anchors = [akLeft, akBottom]
-        Caption = 'Raise Error with Task Dialog'
+        Caption = 'Raise Database Error'
         TabOrder = 5
-        OnClick = RaiseError
+        OnClick = RaiseDatabaseError
       end
       object btCustomMsgDialog: TButton
         Left = 6
@@ -295,7 +297,7 @@ object MainForm: TMainForm
         Width = 160
         Height = 25
         Anchors = [akLeft, akBottom]
-        Caption = 'Raise Error with Msg Dialog'
+        Caption = 'Raise Generic Error'
         TabOrder = 8
         OnClick = RaiseError
       end

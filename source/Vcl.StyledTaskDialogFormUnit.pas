@@ -209,6 +209,7 @@ implementation
 
 uses
   System.Math
+  , Vcl.Themes
   , System.HelpIntfs
   , Winapi.ShellAPI
   , Vcl.StyledCmpMessages
@@ -558,6 +559,11 @@ procedure TStyledTaskDialogForm.FormCreate(Sender: TObject);
 //var
 //  LRegion: hrgn;
 begin
+  if not StyleServices.Enabled or StyleServices.IsSystemStyle then
+    TitleLabel.Font.Color := clHighlight
+  else
+    TextLabel.Font.Color := StyleServices.GetSystemColor(clHighlight);
+
   FooterPanel.Visible := False;
 
 //  LRegion := CreateRoundRectRgn(0, 0, Self.width, Self.height, 20, 20);
@@ -683,10 +689,8 @@ end;
 procedure TStyledTaskDialogForm.Loaded;
 begin
   TextLabel.Align := alTop;
-
   TitleLabel.Font.Style := [TFontStyle.fsBold];
   TitleLabel.Font.Height := Round(TitleLabel.Font.Height * 1.4);
-  TitleLabel.Font.Color := clHighlight;
   TextLabel.Font.Height := Round(TextLabel.Font.Height * 1.2);
   inherited;
 end;

@@ -3,7 +3,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
   Top = 0
   BorderIcons = []
   BorderStyle = bsSizeToolWin
-  ClientHeight = 220
+  ClientHeight = 244
   ClientWidth = 1004
   Color = clWindow
   Constraints.MinHeight = 200
@@ -22,17 +22,15 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
   TextHeight = 13
   object BottomBevel: TBevel
     Left = 0
-    Top = 160
+    Top = 184
     Width = 1004
     Height = 3
     Align = alBottom
     Shape = bsBottomLine
-    ExplicitTop = 172
-    ExplicitWidth = 1012
   end
   object FooterPanel: TPanel
     Left = 0
-    Top = 163
+    Top = 187
     Width = 1004
     Height = 57
     Align = alBottom
@@ -41,13 +39,11 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     BevelOuter = bvNone
     ParentBackground = False
     TabOrder = 0
-    ExplicitTop = 151
-    ExplicitWidth = 996
     object FooterTextLabel: TLabel
       AlignWithMargins = True
       Left = 4
       Top = 4
-      Width = 81
+      Width = 996
       Height = 13
       Margins.Left = 4
       Margins.Top = 4
@@ -63,7 +59,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     Left = 4
     Top = 4
     Width = 996
-    Height = 112
+    Height = 136
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
@@ -73,14 +69,12 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     Color = clWindow
     ParentBackground = False
     TabOrder = 1
-    ExplicitWidth = 988
-    ExplicitHeight = 100
     object ImagePanel: TPanel
       AlignWithMargins = True
       Left = 4
       Top = 4
       Width = 128
-      Height = 104
+      Height = 128
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -88,25 +82,22 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
-      ExplicitHeight = 92
     end
     object MessageScrollBox: TScrollBox
       Left = 136
       Top = 0
       Width = 860
-      Height = 112
+      Height = 136
       Align = alClient
       BevelInner = bvNone
       BevelOuter = bvNone
       BorderStyle = bsNone
       TabOrder = 1
-      ExplicitWidth = 852
-      ExplicitHeight = 100
       object TitleLabel: TLabel
         AlignWithMargins = True
         Left = 4
         Top = 4
-        Width = 45
+        Width = 852
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
@@ -120,7 +111,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
         AlignWithMargins = True
         Left = 4
         Top = 25
-        Width = 72
+        Width = 852
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
@@ -151,7 +142,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
   end
   object ButtonsPanel: TPanel
     Left = 0
-    Top = 120
+    Top = 144
     Width = 1004
     Height = 40
     Margins.Left = 4
@@ -164,8 +155,6 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     ParentBackground = False
     ParentDoubleBuffered = False
     TabOrder = 2
-    ExplicitTop = 108
-    ExplicitWidth = 996
     object YesButton: TStyledButton
       Tag = 0
       AlignWithMargins = True
@@ -180,7 +169,6 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Caption = 'Yes'
       ModalResult = 6
       TabOrder = 0
-      ExplicitLeft = 55
     end
     object NoButton: TStyledButton
       Tag = 0
@@ -196,7 +184,6 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Caption = 'No'
       ModalResult = 7
       TabOrder = 1
-      ExplicitLeft = 135
     end
     object OKButton: TStyledButton
       Tag = 0
@@ -212,7 +199,6 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Caption = 'OK'
       ModalResult = 1
       TabOrder = 2
-      ExplicitLeft = 215
     end
     object CancelButton: TStyledButton
       Tag = 0
@@ -228,7 +214,6 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Caption = 'Cancel'
       ModalResult = 2
       TabOrder = 3
-      ExplicitLeft = 295
     end
     object AbortButton: TStyledButton
       Tag = 0
@@ -244,7 +229,6 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Caption = 'Abort'
       ModalResult = 3
       TabOrder = 4
-      ExplicitLeft = 375
     end
     object RetryButton: TStyledButton
       Tag = 0
@@ -260,7 +244,6 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Caption = 'Retry'
       ModalResult = 4
       TabOrder = 5
-      ExplicitLeft = 455
     end
     object IgnoreButton: TStyledButton
       Tag = 0
@@ -276,7 +259,6 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Caption = 'Ignore'
       ModalResult = 5
       TabOrder = 6
-      ExplicitLeft = 535
     end
     object AllButton: TStyledButton
       Tag = 0
@@ -292,7 +274,6 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Caption = 'All'
       ModalResult = 12
       TabOrder = 7
-      ExplicitTop = 3
     end
     object NoToAllButton: TStyledButton
       Tag = 0
@@ -308,7 +289,6 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Caption = 'No to All'
       ModalResult = 13
       TabOrder = 8
-      ExplicitLeft = 695
     end
     object YesToAllButton: TStyledButton
       Tag = 0
@@ -324,7 +304,6 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Caption = 'Yes to All'
       ModalResult = 14
       TabOrder = 9
-      ExplicitLeft = 775
     end
     object HelpButton: TStyledButton
       Tag = 0
@@ -340,7 +319,6 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Caption = 'Help'
       ModalResult = 9
       TabOrder = 10
-      ExplicitLeft = 855
     end
     object CloseButton: TStyledButton
       Tag = 0
@@ -356,7 +334,6 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Caption = 'Close'
       ModalResult = 8
       TabOrder = 11
-      ExplicitLeft = 935
     end
   end
 end

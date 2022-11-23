@@ -50,6 +50,7 @@ uses
   , System.UITypes
   , Skia
   , Skia.Vcl
+  , Vcl.ButtonStylesAttributes
   ;
 
 type
