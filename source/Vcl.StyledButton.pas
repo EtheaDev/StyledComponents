@@ -124,6 +124,7 @@ type
 
     FImageAlignment: TImageAlignment;
     FTag: Integer;
+    FWordWrap: Boolean;
 
     procedure SetImageMargins(const AValue: TImageMargins);
     function IsCustomRadius: Boolean;
@@ -189,6 +190,7 @@ type
     procedure UpdateControlStyle;
     procedure CMStyleChanged(var Message: TMessage); message CM_STYLECHANGED;
     procedure SetModalResult(const Value: TModalResult);
+    procedure SetWordWrap(const AValue: Boolean);
   protected
     function IsPressed: Boolean; virtual;
     function IsDefault: Boolean; virtual;
@@ -318,6 +320,7 @@ type
 
     property Tag: Integer read FTag write FTag;
     property Width default DEFAULT_BTN_WIDTH;
+    property WordWrap: Boolean read FWordWrap write SetWordWrap default False;
 
     property ButtonStyleNormal: TStyledButtonAttributes read FButtonStyleNormal write SetButtonStyleNormal stored IsStyleNormalStored;
     property ButtonStylePressed: TStyledButtonAttributes read FButtonStylePressed write SetButtonStylePressed stored IsStylePressedStored;
@@ -1004,6 +1007,9 @@ begin
   try
     GetDrawingStyle;
     LTextFlags := 0;
+    if FWordWrap then
+      LTextFlags := LTextFlags or DT_WORDBREAK or DT_CENTER;
+
     DrawBackgroundAndBorder;
 
     LTextRect := ClientRect;
@@ -1446,8 +1452,20 @@ end;
 
 procedure TStyledGraphicButton.SetText(const AValue: TCaption);
 begin
-  inherited Caption := AValue;
-  Invalidate;
+  if inherited Caption <> AValue then
+  begin
+    inherited Caption := AValue;
+    Invalidate;
+  end;
+end;
+
+procedure TStyledGraphicButton.SetWordWrap(const AValue: Boolean);
+begin
+  if FWordWrap <> AValue then
+  begin
+    FWordWrap := AValue;
+    Invalidate;
+  end;
 end;
 
 procedure TStyledGraphicButton.Loaded;
