@@ -1,8 +1,9 @@
 {******************************************************************************}
 {                                                                              }
-{       StyledTaskDialogDemo: a Demo for Task Dialog Components                }
+{       AnimatedTaskDialogDemo: a Demo for Task Dialog Components              }
+{       with animations using Skia4Delphi                                      }
 {                                                                              }
-{       Copyright (c) 2022 (Ethea S.r.l.)                                      }
+{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -40,7 +41,7 @@ uses
 
 begin
   Application.Initialize;
-  Application.Title := 'Animated TaskDialog Demo - Copyright (c) 2022 - Ethea S.r.l.';
+  Application.Title := 'Animated TaskDialog Demo - Copyright (c) - Ethea S.r.l.';
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TMainForm, MainForm);
   Application.OnException := MainForm.showError;

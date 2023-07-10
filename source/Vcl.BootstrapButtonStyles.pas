@@ -3,7 +3,7 @@
 {       BootstrapButtonStyles: Button Styles inspired to Bootstrap             }
 {       https://getbootstrap.com/docs/4.0/components/buttons/                  }
 {                                                                              }
-{       Copyright (c) 2022 (Ethea S.r.l.)                                      }
+{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -35,9 +35,6 @@ uses
 
 const
   BOOTSTRAP_FAMILY = 'Bootstrap';
-  BOOTSTRAP_NORMAL = 'Normal';
-  BOOTSTRAP_OUTLINE = 'Outline';
-  BOOTSTRAP_BORDER_WIDTH = 2;
 
   btn_primary = 'Primary';
   btn_secondary = 'Secondary';
@@ -47,6 +44,10 @@ const
   btn_info =  'Info';
   btn_light = 'Light';
   btn_dark = 'Dark';
+
+  BOOTSTRAP_NORMAL = 'Normal';
+  BOOTSTRAP_OUTLINE = 'Outline';
+  BOOTSTRAP_BORDER_WIDTH = 2;
 
 Type
   TBoostrapButtonStyles = class(TInterfacedObject, IStyledButtonAttributes)
@@ -221,8 +222,9 @@ begin
     //Outline: Border and FontColor same as Button Color
     ANormalStyle.ButtonDrawStyle := btnClear;
     ANormalStyle.BorderDrawStyle := brdSolid;
+    ANormalStyle.BorderWidth := BOOTSTRAP_BORDER_WIDTH div 2;
     ANormalStyle.FontColor := LButtonColor;
-    ANormalStyle.BorderColor := LButtonColor;
+    ANormalStyle.BorderColor := LightenColor(LButtonColor, 50);
   end
   else
   begin
@@ -265,14 +267,18 @@ begin
     //Button Focused
     with ASelectedStyle do
     begin
+(*
       if SameText(AClass, btn_dark) then
         ButtonColor := LightenColor(LButtonColor, 20)
       else
         ButtonColor := DarkenColor(LButtonColor, 20);
+*)
       BorderDrawStyle := brdSolid;
       BorderWidth := BOOTSTRAP_BORDER_WIDTH+2;
-      FontColor := LFontColor;
-      ButtonDrawStyle  := btnSolid;
+      BorderColor := LightenColor(LButtonColor, 50);
+      //FontColor := LFontColor;
+      //ButtonDrawStyle  := btnSolid;
+      ButtonDrawStyle  := btnClear;
     end;
 
     //Button Disabled

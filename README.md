@@ -1,44 +1,65 @@
 ﻿# Delphi StyledComponents [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 
-## Delphi VCL Button with Custom Graphic Styles (eg.Bootstrap, AngularUI) and advanced, full-customizable TaskDialog, also with animations!
+## Delphi VCL Buttons and Toolbar with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 1.1.0
+### Actual official version: 2.0.0
 
 | Component | Description |
 | - | - |
-| ![OK_BUTTON_GRAPH_128.png](./Images/OK_GRAPH_BUTTON_128.png) | **TStyledGraphicButton** is a "pure" Graphic Button with Styles (eg. Bootstrap) with support of ImageList, Action and full configuration of five states: Normal, Hot, Focused, Down and Disabled. You can use it also into a TVirtualList component.|
-| ![OK_BUTTON_128.png](./Images/OK_BUTTON_128.png) | **TStyledButton** inherits from TStyledGraphicButton and add support for focus and Tabstop to the button.|
-| ![StyledTaskDialog_128.png](./Images/StyledTaskDialog_128.png) | **TStyledTaskDialog** is a special "TaskDialog" component with custom Button Captions and Icons. Using a special Form you can show a full customizable Dialog. Using Skia4Delphi you can also use animated images into dialog!|
+| ![OK_BUTTON_GRAPH_128.png](./Images/OK_GRAPH_BUTTON_128.png) | **TStyledGraphicButton** is a "pure" Graphic Button with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) with support of ImageList, Action and full configuration of five states: Normal, Hot, Focused, Down and Disabled. You can use it also into a TVirtualList component.|
+| ![OK_BUTTON_128.png](./Images/OK_BUTTON_128.png) | **TStyledButton** inherits from TStyledGraphicButton and add support for focus and TabStop to the button.|
+| ![TOOL_BAR_128.png](./Images/TOOL_BAR_128.png) | **TStyledToolbar** is a Toolbar that uses StyledToolButton, with full customizable of every button style and full control over the size of the buttons, also when Captions are visible.|
+| ![StyledTaskDialog_128.png](./Images/StyledTaskDialog_128.png) | **TStyledTaskDialog** is a special "TaskDialog" component with custom Button Captions and Icons. Using a special Form you can show a full customizable Dialog. Using Skia4Delpghi you can show animated dialogs!|
 
 ---
 
-## Installation of Packages ##
+## Installation of Packages for Delphi (from XE6 to 11) ##
 
-Open the package group Vcl.StyledComponents.groupproj from the correct folder of your Delphi version (eg. \StyledComponents\Packages\D11), then build the run-time package: StyledComponentsDXX and install the design-time package: dclStyledComponentsDXX.
+Open the package group Vcl.StyledComponents.groupproj from the correct folder of your Delphi version (eg. \StyledComponents\Packages\D11), then build the run-time package: StyledComponentsDXX and install the design-time package: dclStyledComponentsDXX. Add the "StyledComponents\source" path to use the components in your application.
+
+*if you need package for other Delphi version not included (newer than XE6) please add a new [Issue](https://github.com/EtheaDev/StyledComponents/issues)*
 
 ## Description of Styled Buttons ##
 
-**TStyledGraphicButton**, **TStyledButton** and **TStyledTaskDialog** are designed to expand Button functionalities.
+**TStyledGraphicButton**, **TStyledButton** are designed to expand Button UI styles to break the limits of classic TButton and TBitBtn provided in Delphi.
 
-The Button Styles defined are not affected by VCLStyles and are also visibile on a "non styled" Windows application, so you can have more than a single Button styled also using VCLStyles.
+The Button Styles defined are not affected by VCLStyles and are also visibile on a "non styled" Windows application, so you can have more than a single Button styled also using VCLStyles. You can build rectangular or rounded or ellipsis/circle button as you prefer.
+
+using only three elements you can setup your Button in a very simple way:
+
+
 
 **Component editor for TStyledGraphicButton and StyledButton:**
 
 To simplify use of the Styled Buttons, there is a useful "Component Editor" to select three values that defines Button Style:
 
-- **StyleFamily** (the pages "Classic", "Bootstrap", "Angular-Light" and "Angular-Dark")
+- **StyleFamily**: the main attribute for Styled Button
+- **StyleClass**: a collection of predefined button style
+- **Style Appearance**: eg.Normal or Outline
 
-- **StyleClass** (the buttons)
+***List of available StyleFamily***
+- **Classic**: a collection of Styles similar to [VCLStyled TButton](https://docwiki.embarcadero.com/RADStudio/Alexandria/en/Tutorial:_Using_TControl.StyleElements_in_VCL_Applications)
+- **Bootstrap**: a collection of Styles similar to [Bootstrap buttons](https://getbootstrap.com/docs/4.0/components/buttons/)
+- **Angular-Light**: a collection of styles similar to [Angular buttons](https://material.angular.io/components/button/overview)
+- **Angular-Dark**: a collection of styles similar to [Angular buttons](https://material.angular.io/components/button/overview)
+- **Basic-Color**: a collection of styles based to Delphi "normal" and "System" [Color collection](https://docwiki.embarcadero.com/RADStudio/Alexandria/en/Color_Constants)
+- **SVG-Color**: a collection of styles based to Delphi "AlphaColors" [Color collection](https://johndecember.com/html/spec/colorsvghex.html)
 
-- **Style Appearance** (eg.Normal or Outline).
+*In this picture the Component Editor to select "Boostrap" styles: Style Appearance are Normal and Outline*
 
-*In this picture, the Component Editor to select "Boostrap" styles: Style Appearance are Normal and Outline*
-
-![StyledButtonComponentEditor.jpg](./Images/StyledButtonComponentEditor.jpg)
+![StyledButtonComponentEditorBootstrap.jpg](./Images/StyledButtonComponentEditorBootstrap.jpg)
 
 *In this picture, the Component Editor to select "AngularUI" styles: Style Appearance are Flat, Raised, Basic, Stroked*
 
 ![StyledButtonComponentEditorAngular.jpg](./Images/StyledButtonComponentEditorAngular.jpg)
+
+*In this picture, the Component Editor to select "Classic" styles: Style Appearance are Normal and Outline*
+
+![StyledButtonComponentEditor.jpg](./Images/StyledButtonComponentEditor.jpg)
+
+*In this picture, the Component Editor to select "SVG-Color" styles: Style Appearance are Normal and Outline*
+
+![StyledButtonComponentEditorSVG.jpg](./Images/StyledButtonComponentEditorSVG.jpg)
 
 **Look at the Demo Folder:**
 
@@ -51,6 +72,20 @@ A simple demo to show the use of Buttons in many different ways...
 In the demo you can test many different ways to obtain Styled Button, Icon, FAB...
 
 ![StyledButtonDemoAngular.jpg](./Images/StyledButtonDemoAngular.jpg)
+
+---
+## Description of StyledToolBar ##
+
+TStyledToolbar is designed to use TStyledToolButtons inside, to show a Toolbar like a classic TToolbar but with the same Style attributes that can be assigned to Styled Graphic Buttons.
+
+In the StyledToolbar demo, you can see how to use this component, compared to the classic Delphi TToolBar.
+
+*In this picture, the Toolbar Demo compares the StyledToolbar and the classic Toolbar*
+
+![StyledToolbarDemo.jpg](./Images/StyledToolbarDemo.jpg)
+
+The major differece is based on the control of the "size" of buttons when "ShowCaptions" is True: in standard Toolbar, the dimension is defined by the larger caption.
+In the StyledToolbar the dimension is always defined by "ButtonWidth" property.
 
 ---
 
@@ -109,6 +144,14 @@ A simple demo to show how to use StyledGraphicButton into a ControlList (only fo
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+
+10 Jul 2023: version 2.0.0
+- Added two StyleFamily options: "Basic-Color" and "SVG-Color"
+- Added new component: TStyledToolbar with Component-Editor
+- Updated "Classic" family with full support of every VCL-Styles
+- Updated "Component-Editor" and "Property-Editors"
+- Added "WordWrap" property
+- Added more Demos, like StyledToolbarDemo and StyledButtonsVCLStyled
 
 23 Nov 2023: version 1.1.0
 - Fixed AnimatedStyledDialog Demo

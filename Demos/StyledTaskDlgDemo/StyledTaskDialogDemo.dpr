@@ -2,7 +2,7 @@
 {                                                                              }
 {       StyledTaskDialogDemo: a Demo for Task Dialog Components                }
 {                                                                              }
-{       Copyright (c) 2022 (Ethea S.r.l.)                                      }
+{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -40,7 +40,7 @@ uses
 
 begin
   Application.Initialize;
-  Application.Title := 'TaskDialog Demo - Copyright (c) 2022 - Ethea S.r.l.';
+  Application.Title := 'TaskDialog Demo - Copyright (c) Ethea S.r.l.';
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TMainForm, MainForm);
   Application.OnException := MainForm.showError;

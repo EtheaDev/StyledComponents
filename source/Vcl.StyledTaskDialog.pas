@@ -2,7 +2,7 @@
 {                                                                              }
 {       StyledTaskDialog: a Task Dialog Component with StyleButtons            }
 {                                                                              }
-{       Copyright (c) 2022 (Ethea S.r.l.)                                      }
+{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }

@@ -1,8 +1,9 @@
 {******************************************************************************}
 {                                                                              }
-{       StyledTaskDialogDemo: a Demo for Task Dialog Components                }
+{       Main form used by two examples:                                        }
+{       StyledTaskDialogDemo and AnimatedTaskDialogDemo                        }
 {                                                                              }
-{       Copyright (c) 2022 (Ethea S.r.l.)                                      }
+{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }

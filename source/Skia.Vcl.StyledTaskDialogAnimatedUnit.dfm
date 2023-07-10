@@ -1,5 +1,6 @@
 inherited StyledTaskDialogAnimated: TStyledTaskDialogAnimated
   Caption = 'StyledTaskDialogAnimated'
+  TextHeight = 13
   inherited CenterPanel: TPanel
     inherited ImagePanel: TPanel
       object SkAnimatedImage: TSkAnimatedImage

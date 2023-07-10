@@ -2,7 +2,7 @@
 {                                                                              }
 {       StyledCmpMessages: Messages for Styled Component                       }
 {                                                                              }
-{       Copyright (c) 2022 (Ethea S.r.l.)                                      }
+{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -57,6 +57,32 @@ resourcestring
                           'Si consiglia di uscire dal programma e riavviarlo (i dati già registrati non andranno perduti)'+sLineBreak+
                           'Se l''errore dovesse persistere contattare il supporto tecnico';
 
+{$ELSEIF Defined(FraMessages)}
+    STR_YES = 'Oui';
+    STR_NO = 'Non';
+    STR_OK = 'Ok';
+    STR_CANCEL = 'Annuler';
+    STR_ABORT = 'Abandonner';
+    STR_RETRY = 'Réessayer';
+    STR_IGNORE = 'Ignorer';
+    STR_UNDO = 'Défaire';
+    STR_ALL = 'Tous';
+    STR_NOTOALL = 'Non à tout';
+    STR_YESTOALL = 'Oui à tout';
+    STR_HELP = 'Help';
+    STR_ABOUT = 'A propos';
+    STR_WARNING = 'Attention';
+    STR_ERROR = 'Erreur';
+    STR_INFORMATION = 'Information';
+    STR_CONFIRM = 'Confirmer';
+    STR_CLOSE = 'Fermer';
+    EINSTANTERRORDESC = 'Erreur de données';
+    EDATABASEERRORDESC = 'Erreur de données';
+    EGENERICERROR = 'Erreur';
+    EACCESSVIOLDESC = 'Violation d''accès';
+    ERR_ACCES_VIOL_DESC = 'Une erreur non gérée a été detectée.'+sLineBreak+sLineBreak+'%s'+sLineBreak+sLineBreak+
+                          'Il est recommandé de fermer et de relancer l''application.'+sLineBreak+
+                          'Si le programme persiste, contactez le support technique.';
 {$ELSE}
     STR_YES = 'Yes';
     STR_NO = 'No';

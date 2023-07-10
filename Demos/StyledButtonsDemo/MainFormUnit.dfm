@@ -1,61 +1,55 @@
 object MainForm: TMainForm
   Left = 0
   Top = 0
-  Caption = 'Styled Buttons (c) Copyright Ethea S.r.l.'
-  ClientHeight = 676
-  ClientWidth = 874
+  ActiveControl = cbChangeStyle
+  Caption = 'Styled Buttons Demo'
+  ClientHeight = 691
+  ClientWidth = 895
   Color = clWindow
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OldCreateOrder = False
   ShowHint = True
+  OnAfterMonitorDpiChanged = FormAfterMonitorDpiChanged
+  OnBeforeMonitorDpiChanged = FormBeforeMonitorDpiChanged
   OnCreate = FormCreate
+  PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 874
+    Width = 895
     Height = 70
     Align = alTop
     ParentColor = True
     TabOrder = 0
-    ExplicitWidth = 870
     object ShowEditButton: TStyledButton
-      Tag = 0
       Left = 10
-      Top = 14
+      Top = 8
       Width = 172
-      Height = 40
+      Height = 50
       Action = TestAction
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -12
-      Font.Name = 'Segoe UI'
+      Font.Height = -16
+      Font.Name = 'Arial'
       Font.Style = []
       PopUpMenu = PopupMenu
       ParentFont = False
       TabOrder = 0
     end
     object StyledButton2: TStyledButton
-      Tag = 0
-      Left = 279
-      Top = 9
+      Left = 276
+      Top = 8
       Width = 50
       Height = 50
-      Hint = 'Hint of Action'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -12
-      Font.Name = 'Segoe UI'
-      Font.Style = []
-      ParentFont = False
       Caption = ''
       ImageAlignment = iaCenter
       Images = VirtualImageList32
       ImageIndex = 18
-      ImageName = 'home-black'
       StyleDrawType = btEllipse
       StyleFamily = 'Bootstrap'
       StyleClass = 'Warning'
@@ -63,95 +57,93 @@ object MainForm: TMainForm
       TabOrder = 2
     end
     object StyleLabel: TLabel
-      Left = 564
-      Top = 14
+      Left = 348
+      Top = 8
       Width = 130
       Height = 13
       Caption = 'Change application style:'
     end
     object StyledButton1: TStyledButton
-      Tag = 0
       Left = 203
-      Top = 9
+      Top = 8
       Width = 54
       Height = 50
-      Hint = 'Hint of Action'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -12
-      Font.Name = 'Segoe UI'
-      Font.Style = []
-      ParentFont = False
       Caption = ''
       ImageAlignment = iaCenter
       Images = VirtualImageList32
       ImageIndex = 11
-      ImageName = 'launch-white'
       StyleFamily = 'Bootstrap'
       StyleClass = 'Danger'
       TabOrder = 1
     end
-    object Button1: TButton
-      Left = 379
-      Top = 17
-      Width = 134
-      Height = 37
-      Caption = 'Vcl Button'
-      ImageName = 'approval'
-      Images = VirtualImageList32
-      ModalResult = 1
-      PopupMenu = PopupMenu
-      TabOrder = 3
+    object DefaultStyledButton: TStyledButton
+      Left = 599
+      Top = 8
+      Width = 94
+      Height = 50
+      OnClick = ButtonClick
+      PopUpMenu = PopupMenu
+      Caption = 'Default'
+      Default = True
+      TabOrder = 4
+    end
+    object CancelStyledButton: TStyledButton
+      Left = 712
+      Top = 8
+      Width = 94
+      Height = 50
+      OnClick = ButtonClick
+      PopUpMenu = PopupMenu
+      Caption = 'Cancel'
+      Cancel = True
+      TabOrder = 5
     end
     object cbChangeStyle: TComboBox
-      Left = 564
-      Top = 33
+      Left = 348
+      Top = 27
       Width = 190
       Height = 21
       Style = csDropDownList
-      TabOrder = 4
+      DropDownCount = 12
+      TabOrder = 3
       OnSelect = cbChangeStyleSelect
     end
   end
   object PageControl: TPageControl
     Left = 0
     Top = 70
-    Width = 874
-    Height = 606
+    Width = 895
+    Height = 621
     ActivePage = tsBootstrap
     Align = alClient
+    Images = VirtualImageList32
     TabOrder = 1
-    ExplicitWidth = 870
-    ExplicitHeight = 620
     object tsBootstrap: TTabSheet
       Caption = 'Bootstrap Buttons'
+      ImageIndex = 20
       object BootStrapLinkLabel: TLinkLabel
         AlignWithMargins = True
         Left = 3
         Top = 3
-        Width = 860
+        Width = 352
         Height = 17
-        Align = alTop
         Caption = 
           'Similar to: <A HREF="https://getbootstrap.com/docs/4.0/component' +
           's/buttons/">https://getbootstrap.com/docs/4.0/components/buttons' +
           '/</A>'
         TabOrder = 0
         OnLinkClick = LinkLabelLinkClick
-        ExplicitWidth = 352
       end
       object gbBootstrapNormal: TGroupBox
         AlignWithMargins = True
         Left = 3
-        Top = 26
-        Width = 860
+        Top = 3
+        Width = 881
         Height = 59
         Align = alTop
         Caption = 'Normal Buttons'
         TabOrder = 1
-        ExplicitWidth = 856
         object btn_Primary: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 5
           Top = 18
@@ -160,11 +152,9 @@ object MainForm: TMainForm
           Align = alLeft
           Caption = 'Primary'
           StyleFamily = 'Bootstrap'
-          TabOrder = 1
-          ExplicitTop = 20
+          TabOrder = 0
         end
         object btn_Secondary: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 83
           Top = 18
@@ -174,10 +164,9 @@ object MainForm: TMainForm
           Caption = 'Secondary'
           StyleFamily = 'Bootstrap'
           StyleClass = 'Secondary'
-          TabOrder = 2
+          TabOrder = 1
         end
         object btn_Success: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 181
           Top = 18
@@ -187,12 +176,9 @@ object MainForm: TMainForm
           Caption = 'Success'
           StyleFamily = 'Bootstrap'
           StyleClass = 'Success'
-          TabOrder = 3
-          ExplicitLeft = 239
-          ExplicitTop = 20
+          TabOrder = 2
         end
         object btn_Danger: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 279
           Top = 18
@@ -201,10 +187,9 @@ object MainForm: TMainForm
           Caption = 'Danger'
           StyleFamily = 'Bootstrap'
           StyleClass = 'Danger'
-          TabOrder = 4
+          TabOrder = 3
         end
         object btn_Warning: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 360
           Top = 18
@@ -214,10 +199,9 @@ object MainForm: TMainForm
           Caption = 'Warning'
           StyleFamily = 'Bootstrap'
           StyleClass = 'Warning'
-          TabOrder = 5
+          TabOrder = 4
         end
         object btn_Info: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 447
           Top = 18
@@ -227,10 +211,9 @@ object MainForm: TMainForm
           Caption = 'Info'
           StyleFamily = 'Bootstrap'
           StyleClass = 'Info'
-          TabOrder = 6
+          TabOrder = 5
         end
         object btn_Light: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 512
           Top = 18
@@ -240,11 +223,9 @@ object MainForm: TMainForm
           Caption = 'Light'
           StyleFamily = 'Bootstrap'
           StyleClass = 'Light'
-          TabOrder = 7
-          ExplicitTop = 20
+          TabOrder = 6
         end
         object btn_Dark: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 577
           Top = 18
@@ -254,22 +235,19 @@ object MainForm: TMainForm
           Caption = 'Dark'
           StyleFamily = 'Bootstrap'
           StyleClass = 'Dark'
-          TabOrder = 0
-          ExplicitTop = 20
+          TabOrder = 7
         end
       end
       object gbBootstrapOutlined: TGroupBox
         AlignWithMargins = True
         Left = 3
-        Top = 91
-        Width = 860
+        Top = 68
+        Width = 881
         Height = 59
         Align = alTop
         Caption = 'Outlined Buttons'
         TabOrder = 2
-        ExplicitWidth = 856
         object btn_OutlinePrimary: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 5
           Top = 18
@@ -279,13 +257,9 @@ object MainForm: TMainForm
           Caption = 'Primary'
           StyleFamily = 'Bootstrap'
           StyleAppearance = 'Outline'
-          TabOrder = 1
-          ExplicitLeft = 13
-          ExplicitTop = 27
-          ExplicitHeight = 34
+          TabOrder = 0
         end
         object btn_OutlineSecondary: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 83
           Top = 18
@@ -296,10 +270,9 @@ object MainForm: TMainForm
           StyleFamily = 'Bootstrap'
           StyleClass = 'Secondary'
           StyleAppearance = 'Outline'
-          TabOrder = 2
+          TabOrder = 1
         end
         object btn_OutlineSuccess: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 181
           Top = 18
@@ -310,12 +283,9 @@ object MainForm: TMainForm
           StyleFamily = 'Bootstrap'
           StyleClass = 'Success'
           StyleAppearance = 'Outline'
-          TabOrder = 3
-          ExplicitLeft = 239
-          ExplicitTop = 20
+          TabOrder = 2
         end
         object btn_OutlineDanger: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 279
           Top = 18
@@ -325,10 +295,9 @@ object MainForm: TMainForm
           StyleFamily = 'Bootstrap'
           StyleClass = 'Danger'
           StyleAppearance = 'Outline'
-          TabOrder = 4
+          TabOrder = 3
         end
         object btn_OutlineWarning: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 360
           Top = 18
@@ -339,10 +308,9 @@ object MainForm: TMainForm
           StyleFamily = 'Bootstrap'
           StyleClass = 'Warning'
           StyleAppearance = 'Outline'
-          TabOrder = 5
+          TabOrder = 4
         end
         object btn_OutlineInfo: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 447
           Top = 18
@@ -353,10 +321,9 @@ object MainForm: TMainForm
           StyleFamily = 'Bootstrap'
           StyleClass = 'Info'
           StyleAppearance = 'Outline'
-          TabOrder = 6
+          TabOrder = 5
         end
         object btn_OutlineLight: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 512
           Top = 18
@@ -367,12 +334,9 @@ object MainForm: TMainForm
           StyleFamily = 'Bootstrap'
           StyleClass = 'Light'
           StyleAppearance = 'Outline'
-          TabOrder = 7
-          ExplicitLeft = 557
-          ExplicitTop = 20
+          TabOrder = 6
         end
         object btn_OutlineDark: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 577
           Top = 18
@@ -383,23 +347,19 @@ object MainForm: TMainForm
           StyleFamily = 'Bootstrap'
           StyleClass = 'Dark'
           StyleAppearance = 'Outline'
-          TabOrder = 0
-          ExplicitLeft = 628
-          ExplicitTop = 20
+          TabOrder = 7
         end
       end
       object gbBuutstrapDisabled: TGroupBox
         AlignWithMargins = True
         Left = 3
-        Top = 156
-        Width = 860
+        Top = 133
+        Width = 881
         Height = 59
         Align = alTop
         Caption = 'Disabled Buttons'
         TabOrder = 3
-        ExplicitWidth = 856
         object btn_DisabledPrimary: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 5
           Top = 18
@@ -410,12 +370,8 @@ object MainForm: TMainForm
           Caption = 'Primary'
           StyleFamily = 'Bootstrap'
           TabOrder = 1
-          ExplicitLeft = 13
-          ExplicitTop = 27
-          ExplicitHeight = 34
         end
         object btn_DisabledSecondary: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 83
           Top = 18
@@ -429,7 +385,6 @@ object MainForm: TMainForm
           TabOrder = 2
         end
         object btn_DisabledSuccess: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 181
           Top = 18
@@ -441,11 +396,8 @@ object MainForm: TMainForm
           StyleFamily = 'Bootstrap'
           StyleClass = 'Success'
           TabOrder = 3
-          ExplicitLeft = 239
-          ExplicitTop = 20
         end
         object btn_DisabledDanger: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 279
           Top = 18
@@ -458,7 +410,6 @@ object MainForm: TMainForm
           TabOrder = 4
         end
         object btn_DisabledWarning: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 360
           Top = 18
@@ -472,7 +423,6 @@ object MainForm: TMainForm
           TabOrder = 5
         end
         object btn_DisabledInfo: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 447
           Top = 18
@@ -486,7 +436,6 @@ object MainForm: TMainForm
           TabOrder = 6
         end
         object btn_DisabledLight: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 512
           Top = 18
@@ -498,11 +447,8 @@ object MainForm: TMainForm
           StyleFamily = 'Bootstrap'
           StyleClass = 'Light'
           TabOrder = 7
-          ExplicitLeft = 557
-          ExplicitTop = 20
         end
         object btn_DisabledDark: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 577
           Top = 18
@@ -514,62 +460,44 @@ object MainForm: TMainForm
           StyleFamily = 'Bootstrap'
           StyleClass = 'Dark'
           TabOrder = 0
-          ExplicitLeft = 628
-          ExplicitTop = 20
         end
       end
       object gbBootstrapModalResult: TGroupBox
         AlignWithMargins = True
         Left = 3
-        Top = 221
-        Width = 860
+        Top = 198
+        Width = 881
         Height = 59
         Align = alTop
         Caption = 'Buttons with ModalResult'
         TabOrder = 4
-        ExplicitWidth = 856
         object btn_BootstrapOK: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 5
           Top = 18
           Width = 74
           Height = 36
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = 'Ok'
           ModalResult = 1
           StyleFamily = 'Bootstrap'
+          StyleClass = 'Success'
           TabOrder = 0
-          ExplicitTop = 20
         end
         object btn_BootstrapCancel: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 85
           Top = 18
           Width = 74
           Height = 36
           Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
           Caption = 'Cancel'
           ModalResult = 2
           StyleFamily = 'Bootstrap'
+          StyleClass = 'Danger'
           TabOrder = 1
-          ExplicitLeft = 91
         end
         object btn_BootstrapAbort: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 165
           Top = 18
@@ -579,11 +507,10 @@ object MainForm: TMainForm
           Caption = 'Abort'
           ModalResult = 3
           StyleFamily = 'Bootstrap'
+          StyleClass = 'Danger'
           TabOrder = 2
-          ExplicitTop = 20
         end
         object btn_BootstrapRetry: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 245
           Top = 18
@@ -593,11 +520,10 @@ object MainForm: TMainForm
           Caption = 'Retry'
           ModalResult = 4
           StyleFamily = 'Bootstrap'
+          StyleClass = 'Warning'
           TabOrder = 3
-          ExplicitLeft = 263
         end
         object btn_BootstrapIgnore: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 325
           Top = 18
@@ -607,11 +533,10 @@ object MainForm: TMainForm
           Caption = 'Ignore'
           ModalResult = 5
           StyleFamily = 'Bootstrap'
-          TabOrder = 5
-          ExplicitTop = 20
+          StyleClass = 'Secondary'
+          TabOrder = 4
         end
         object btn_BootstrapYes: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 405
           Top = 18
@@ -621,11 +546,9 @@ object MainForm: TMainForm
           Caption = 'Yes'
           ModalResult = 6
           StyleFamily = 'Bootstrap'
-          TabOrder = 6
-          ExplicitTop = 20
+          TabOrder = 5
         end
         object btn_BootstrapNo: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 485
           Top = 18
@@ -635,12 +558,10 @@ object MainForm: TMainForm
           Caption = 'No'
           ModalResult = 7
           StyleFamily = 'Bootstrap'
-          TabOrder = 7
-          ExplicitLeft = 557
-          ExplicitTop = 27
+          StyleClass = 'Secondary'
+          TabOrder = 6
         end
         object btn_BootstrapClose: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 565
           Top = 18
@@ -650,11 +571,11 @@ object MainForm: TMainForm
           Caption = 'Close'
           ModalResult = 8
           StyleFamily = 'Bootstrap'
-          TabOrder = 8
-          ExplicitTop = 20
+          StyleClass = 'Secondary'
+          StyleAppearance = 'Outline'
+          TabOrder = 7
         end
         object btn_BootstrapHelp: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 645
           Top = 18
@@ -664,11 +585,11 @@ object MainForm: TMainForm
           Caption = 'Help'
           ModalResult = 9
           StyleFamily = 'Bootstrap'
-          TabOrder = 9
-          ExplicitTop = 20
+          StyleClass = 'Warning'
+          StyleAppearance = 'Outline'
+          TabOrder = 8
         end
         object btn_BootstrapAll: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 725
           Top = 18
@@ -678,40 +599,37 @@ object MainForm: TMainForm
           Caption = 'All'
           ModalResult = 12
           StyleFamily = 'Bootstrap'
-          TabOrder = 4
-          ExplicitLeft = 763
-          ExplicitTop = 20
+          StyleAppearance = 'Outline'
+          TabOrder = 9
         end
       end
     end
     object tsAngular: TTabSheet
       Caption = 'Angular Buttons'
+      ImageIndex = 19
       object AngularLinkLabel: TLinkLabel
         AlignWithMargins = True
         Left = 3
         Top = 3
-        Width = 860
+        Width = 350
         Height = 17
-        Align = alTop
         Caption = 
           'Similar to: <A HREF="https://material.angular.io/components/butt' +
           'on/overview">https://material.angular.io/components/button/overv' +
           'iew</A>'
         TabOrder = 0
         OnLinkClick = LinkLabelLinkClick
-        ExplicitWidth = 350
       end
       object gbAngularBasic: TGroupBox
         AlignWithMargins = True
         Left = 3
-        Top = 82
-        Width = 860
+        Top = 59
+        Width = 885
         Height = 59
         Align = alTop
         Caption = 'Basic Buttons'
         TabOrder = 2
         object btn_BasicBasic: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 5
           Top = 18
@@ -722,12 +640,8 @@ object MainForm: TMainForm
           StyleFamily = 'Angular-Light'
           StyleAppearance = 'Basic'
           TabOrder = 0
-          ExplicitLeft = 13
-          ExplicitTop = 27
-          ExplicitHeight = 34
         end
         object btn_BasicPrimary: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 83
           Top = 18
@@ -741,7 +655,6 @@ object MainForm: TMainForm
           TabOrder = 1
         end
         object btn_BasicAccent: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 191
           Top = 18
@@ -753,11 +666,8 @@ object MainForm: TMainForm
           StyleClass = 'Amber'
           StyleAppearance = 'Basic'
           TabOrder = 2
-          ExplicitLeft = 239
-          ExplicitTop = 20
         end
         object btn_BasicWarn: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 289
           Top = 18
@@ -769,10 +679,8 @@ object MainForm: TMainForm
           StyleClass = 'Warn'
           StyleAppearance = 'Basic'
           TabOrder = 3
-          ExplicitLeft = 447
         end
         object btn_BasicDisabled: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 354
           Top = 18
@@ -784,20 +692,18 @@ object MainForm: TMainForm
           StyleFamily = 'Angular-Light'
           StyleAppearance = 'Basic'
           TabOrder = 4
-          ExplicitLeft = 512
         end
       end
       object gbAngularRaised: TGroupBox
         AlignWithMargins = True
         Left = 3
-        Top = 147
-        Width = 860
+        Top = 124
+        Width = 885
         Height = 59
         Align = alTop
         Caption = 'Raised Buttons'
         TabOrder = 3
         object btn_RaisedBasic: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 5
           Top = 18
@@ -808,12 +714,8 @@ object MainForm: TMainForm
           StyleFamily = 'Angular-Light'
           StyleAppearance = 'Raised'
           TabOrder = 0
-          ExplicitLeft = 13
-          ExplicitTop = 27
-          ExplicitHeight = 34
         end
         object btn_RaisedPrimary: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 83
           Top = 18
@@ -827,7 +729,6 @@ object MainForm: TMainForm
           TabOrder = 1
         end
         object btn_RaisedAccent: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 191
           Top = 18
@@ -839,11 +740,8 @@ object MainForm: TMainForm
           StyleClass = 'Amber'
           StyleAppearance = 'Raised'
           TabOrder = 2
-          ExplicitLeft = 239
-          ExplicitTop = 20
         end
         object btn_RaisedWarn: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 289
           Top = 18
@@ -855,10 +753,8 @@ object MainForm: TMainForm
           StyleClass = 'Warn'
           StyleAppearance = 'Raised'
           TabOrder = 3
-          ExplicitLeft = 447
         end
         object btn_RaisedDisabled: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 354
           Top = 18
@@ -870,13 +766,12 @@ object MainForm: TMainForm
           StyleFamily = 'Angular-Light'
           StyleAppearance = 'Raised'
           TabOrder = 4
-          ExplicitLeft = 512
         end
       end
       object AngularThemesPanel: TPanel
         Left = 0
-        Top = 23
-        Width = 866
+        Top = 0
+        Width = 891
         Height = 56
         Align = alTop
         BevelOuter = bvNone
@@ -902,7 +797,7 @@ object MainForm: TMainForm
           AlignWithMargins = True
           Left = 416
           Top = 3
-          Width = 447
+          Width = 472
           Height = 50
           Align = alClient
           Caption = 'Angular Dark Themes'
@@ -917,14 +812,13 @@ object MainForm: TMainForm
       object gpAngularStroked: TGroupBox
         AlignWithMargins = True
         Left = 3
-        Top = 212
-        Width = 860
+        Top = 189
+        Width = 885
         Height = 59
         Align = alTop
         Caption = 'Stroked Buttons'
         TabOrder = 4
         object btn_StrokedBasic: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 5
           Top = 18
@@ -935,10 +829,8 @@ object MainForm: TMainForm
           StyleFamily = 'Angular-Light'
           StyleAppearance = 'Stroked'
           TabOrder = 0
-          ExplicitTop = 20
         end
         object btn_StrokedPrimary: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 83
           Top = 18
@@ -952,7 +844,6 @@ object MainForm: TMainForm
           TabOrder = 1
         end
         object btn_StrokedWarn: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 289
           Top = 18
@@ -964,10 +855,8 @@ object MainForm: TMainForm
           StyleClass = 'Warn'
           StyleAppearance = 'Stroked'
           TabOrder = 3
-          ExplicitLeft = 447
         end
         object btn_StrokedDisabled: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 354
           Top = 18
@@ -979,10 +868,8 @@ object MainForm: TMainForm
           StyleFamily = 'Angular-Light'
           StyleAppearance = 'Stroked'
           TabOrder = 4
-          ExplicitLeft = 512
         end
         object btn_StrokedAccent: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 191
           Top = 18
@@ -994,20 +881,18 @@ object MainForm: TMainForm
           StyleClass = 'Amber'
           StyleAppearance = 'Stroked'
           TabOrder = 2
-          ExplicitTop = 20
         end
       end
       object gbAngularFlat: TGroupBox
         AlignWithMargins = True
         Left = 3
-        Top = 277
-        Width = 860
+        Top = 254
+        Width = 885
         Height = 59
         Align = alTop
         Caption = 'Flat Buttons'
         TabOrder = 5
         object btn_FlatBasic: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 5
           Top = 18
@@ -1017,12 +902,8 @@ object MainForm: TMainForm
           Caption = 'Basic'
           StyleFamily = 'Angular-Light'
           TabOrder = 0
-          ExplicitLeft = 13
-          ExplicitTop = 27
-          ExplicitHeight = 34
         end
         object btn_FlatPrimary: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 83
           Top = 18
@@ -1035,7 +916,6 @@ object MainForm: TMainForm
           TabOrder = 1
         end
         object btn_FlatWarn: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 289
           Top = 18
@@ -1046,10 +926,8 @@ object MainForm: TMainForm
           StyleFamily = 'Angular-Light'
           StyleClass = 'Warn'
           TabOrder = 3
-          ExplicitLeft = 447
         end
         object btn_FlatDisabled: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 354
           Top = 18
@@ -1059,10 +937,8 @@ object MainForm: TMainForm
           Caption = 'Disabled'
           StyleFamily = 'Angular-Light'
           TabOrder = 4
-          ExplicitLeft = 512
         end
         object btn_FlatAccent: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 191
           Top = 18
@@ -1073,21 +949,18 @@ object MainForm: TMainForm
           StyleFamily = 'Angular-Light'
           StyleClass = 'Amber'
           TabOrder = 2
-          ExplicitLeft = 239
-          ExplicitTop = 20
         end
       end
       object GroupBox1: TGroupBox
         AlignWithMargins = True
         Left = 3
-        Top = 342
-        Width = 860
+        Top = 319
+        Width = 885
         Height = 68
         Align = alTop
         Caption = 'Icon Buttons'
         TabOrder = 6
         object btn_IconHome: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 110
           Top = 18
@@ -1100,17 +973,13 @@ object MainForm: TMainForm
           ImageAlignment = iaCenter
           Images = VirtualImageList32
           ImageIndex = 0
-          ImageName = 'home-deeppurple'
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
           StyleClass = 'DeepPurple'
           StyleAppearance = 'Basic'
           TabOrder = 0
-          ExplicitLeft = 75
-          ExplicitHeight = 36
         end
         object btn_IconDots: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 22
           Top = 18
@@ -1123,17 +992,13 @@ object MainForm: TMainForm
           ImageAlignment = iaCenter
           Images = VirtualImageList32
           ImageIndex = 10
-          ImageName = 'dots-vertical-black'
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
           StyleClass = 'DeepPurple'
           StyleAppearance = 'Basic'
           TabOrder = 1
-          ExplicitLeft = 5
-          ExplicitHeight = 36
         end
         object btn_IconMenu: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 198
           Top = 18
@@ -1146,17 +1011,13 @@ object MainForm: TMainForm
           ImageAlignment = iaCenter
           Images = VirtualImageList32
           ImageIndex = 4
-          ImageName = 'menu-amber'
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
           StyleClass = 'Amber'
           StyleAppearance = 'Basic'
           TabOrder = 2
-          ExplicitLeft = 145
-          ExplicitHeight = 36
         end
         object btn_IconHeart: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 286
           Top = 18
@@ -1169,17 +1030,13 @@ object MainForm: TMainForm
           ImageAlignment = iaCenter
           Images = VirtualImageList32
           ImageIndex = 8
-          ImageName = 'heart'
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
           StyleClass = 'Warn'
           StyleAppearance = 'Basic'
           TabOrder = 3
-          ExplicitLeft = 215
-          ExplicitHeight = 36
         end
         object btn_IconLaunchDisabled: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 374
           Top = 18
@@ -1193,26 +1050,22 @@ object MainForm: TMainForm
           ImageAlignment = iaCenter
           Images = VirtualImageList32
           ImageIndex = 12
-          ImageName = 'launch-black'
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
           StyleAppearance = 'Basic'
           TabOrder = 4
-          ExplicitLeft = 285
-          ExplicitHeight = 36
         end
       end
       object GroupBox2: TGroupBox
         AlignWithMargins = True
         Left = 3
-        Top = 416
-        Width = 860
+        Top = 393
+        Width = 885
         Height = 87
         Align = alTop
         Caption = 'FAB'
         TabOrder = 7
         object btn_FABTrash: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 22
           Top = 18
@@ -1225,16 +1078,12 @@ object MainForm: TMainForm
           ImageAlignment = iaCenter
           Images = VirtualImageList32
           ImageIndex = 13
-          ImageName = 'trash-white'
-          StyleDrawType = btEllipse
+          StyleRadius = 8
           StyleFamily = 'Angular-Light'
-          StyleClass = 'DeepPurple'
+          StyleClass = 'Amber'
           TabOrder = 1
-          ExplicitLeft = 13
-          ExplicitTop = 23
         end
         object btn_FABBookmark: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 126
           Top = 18
@@ -1247,16 +1096,12 @@ object MainForm: TMainForm
           ImageAlignment = iaCenter
           Images = VirtualImageList32
           ImageIndex = 16
-          ImageName = 'bookmark-black'
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
           StyleClass = 'Amber'
           TabOrder = 2
-          ExplicitLeft = 162
-          ExplicitTop = 20
         end
         object btn_FABHome: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 230
           Top = 18
@@ -1269,16 +1114,12 @@ object MainForm: TMainForm
           ImageAlignment = iaCenter
           Images = VirtualImageList32
           ImageIndex = 17
-          ImageName = 'home-white'
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
           StyleClass = 'Warn'
           TabOrder = 3
-          ExplicitLeft = 313
-          ExplicitTop = 3
         end
         object btn_FABHeartDisabled: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 334
           Top = 18
@@ -1292,25 +1133,21 @@ object MainForm: TMainForm
           ImageAlignment = iaCenter
           Images = VirtualImageList32
           ImageIndex = 8
-          ImageName = 'heart'
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
           TabOrder = 0
-          ExplicitLeft = 413
-          ExplicitTop = 20
         end
       end
       object gbAngularModalResult: TGroupBox
         AlignWithMargins = True
         Left = 3
-        Top = 509
-        Width = 860
+        Top = 486
+        Width = 885
         Height = 59
         Align = alTop
         Caption = 'Buttons with ModalResult'
         TabOrder = 8
         object btn_AngularOK: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 5
           Top = 18
@@ -1320,10 +1157,10 @@ object MainForm: TMainForm
           Caption = 'Ok'
           ModalResult = 1
           StyleFamily = 'Angular-Light'
+          StyleClass = 'DeepPurple'
           TabOrder = 0
         end
         object btn_AngularCancel: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 85
           Top = 18
@@ -1333,11 +1170,10 @@ object MainForm: TMainForm
           Caption = 'Cancel'
           ModalResult = 2
           StyleFamily = 'Angular-Light'
+          StyleClass = 'Warn'
           TabOrder = 1
-          ExplicitLeft = 91
         end
         object btn_AngularAbort: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 165
           Top = 18
@@ -1347,11 +1183,11 @@ object MainForm: TMainForm
           Caption = 'Abort'
           ModalResult = 3
           StyleFamily = 'Angular-Light'
+          StyleClass = 'Warn'
+          StyleAppearance = 'Raised'
           TabOrder = 2
-          ExplicitLeft = 177
         end
         object btn_AngularRetry: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 245
           Top = 18
@@ -1361,11 +1197,11 @@ object MainForm: TMainForm
           Caption = 'Retry'
           ModalResult = 4
           StyleFamily = 'Angular-Light'
+          StyleClass = 'DeepPurple'
+          StyleAppearance = 'Raised'
           TabOrder = 3
-          ExplicitLeft = 263
         end
         object btn_AngularIgnore: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 325
           Top = 18
@@ -1375,11 +1211,11 @@ object MainForm: TMainForm
           Caption = 'Ignore'
           ModalResult = 5
           StyleFamily = 'Angular-Light'
+          StyleClass = 'DeepPurple'
+          StyleAppearance = 'Raised'
           TabOrder = 5
-          ExplicitLeft = 349
         end
         object btn_AngularYes: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 405
           Top = 18
@@ -1389,11 +1225,10 @@ object MainForm: TMainForm
           Caption = 'Yes'
           ModalResult = 6
           StyleFamily = 'Angular-Light'
+          StyleClass = 'DeepPurple'
           TabOrder = 6
-          ExplicitTop = 20
         end
         object btn_AngularNo: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 485
           Top = 18
@@ -1403,12 +1238,10 @@ object MainForm: TMainForm
           Caption = 'No'
           ModalResult = 7
           StyleFamily = 'Angular-Light'
+          StyleClass = 'Warn'
           TabOrder = 7
-          ExplicitLeft = 557
-          ExplicitTop = 27
         end
         object btn_AngularClose: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 565
           Top = 18
@@ -1418,11 +1251,10 @@ object MainForm: TMainForm
           Caption = 'Close'
           ModalResult = 8
           StyleFamily = 'Angular-Light'
+          StyleClass = 'Warn'
           TabOrder = 8
-          ExplicitTop = 20
         end
         object btn_AngularHelp: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 645
           Top = 18
@@ -1434,10 +1266,8 @@ object MainForm: TMainForm
           StyleFamily = 'Angular-Light'
           StyleClass = 'DeepPurple'
           TabOrder = 9
-          ExplicitTop = 20
         end
         object btn_AngularAll: TStyledButton
-          Tag = 0
           AlignWithMargins = True
           Left = 725
           Top = 18
@@ -1447,15 +1277,393 @@ object MainForm: TMainForm
           Caption = 'All'
           ModalResult = 12
           StyleFamily = 'Angular-Light'
+          StyleClass = 'DeepPurple'
+          StyleAppearance = 'Raised'
           TabOrder = 4
-          ExplicitLeft = 763
-          ExplicitTop = 20
         end
       end
     end
     object tsClassic: TTabSheet
-      Caption = 'Classic'
-      ImageIndex = 2
+      Caption = 'Classic Buttons (VCL Styled)'
+      ImageIndex = 21
+      object GroupBox3: TGroupBox
+        Left = 0
+        Top = 0
+        Width = 891
+        Height = 161
+        Align = alTop
+        Caption = 'Standard Delphi Button compared to StyleButton'
+        TabOrder = 0
+        object StyledButton: TStyledButton
+          Left = 264
+          Top = 22
+          Width = 201
+          Height = 37
+          Hint = 
+            'Classic TStyledButton (VCL Styled) with StyleElements: [seFont,s' +
+            'eClient]'
+          OnClick = ButtonClick
+          PopUpMenu = PopupMenu
+          Caption = 'TStyledButton (Application Styled)'
+          TabOrder = 1
+        end
+        object StyledButtonDisable: TStyledButton
+          Left = 264
+          Top = 65
+          Width = 201
+          Height = 37
+          Hint = 'Disabled Classic TStyledButton (Application Styled)'
+          Enabled = False
+          PopUpMenu = PopupMenu
+          Caption = 'Disabled TStyledButton'
+          TabOrder = 3
+        end
+        object StyledButtonStyled: TStyledButton
+          Left = 264
+          Top = 108
+          Width = 201
+          Height = 37
+          Hint = 'Classic Button (Custom VCL Styled=Windows10 Blue)'
+          OnClick = ButtonClick
+          PopUpMenu = PopupMenu
+          StyleElements = [seFont, seBorder]
+          Caption = 'TStyledButton (Windows 10 Blue)'
+          StyleClass = 'Windows10 Blue'
+          TabOrder = 5
+        end
+        object VCLButton: TButton
+          Left = 24
+          Top = 22
+          Width = 201
+          Height = 37
+          Hint = 'VCL TButton (use Global application VCL Style)'
+          Caption = 'TButton (Application Styled)'
+          Images = VirtualImageList32
+          ModalResult = 1
+          PopupMenu = PopupMenu
+          TabOrder = 0
+          OnClick = ButtonClick
+        end
+        object VCLButtonDisabled: TButton
+          Left = 24
+          Top = 65
+          Width = 201
+          Height = 37
+          Caption = 'Disabled TButton'
+          Enabled = False
+          Images = VirtualImageList32
+          ModalResult = 1
+          PopupMenu = PopupMenu
+          TabOrder = 2
+        end
+        object VCLButtonStyled: TButton
+          Left = 24
+          Top = 108
+          Width = 201
+          Height = 37
+          Hint = 'VCL Button With StyleName=Windows10 Blue)'
+          Caption = 'VCL Button (Windows10 Blue)'
+          Images = VirtualImageList32
+          ModalResult = 1
+          PopupMenu = PopupMenu
+          TabOrder = 4
+          OnClick = ButtonClick
+        end
+      end
+      object gbClassicModalResult: TGroupBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 164
+        Width = 885
+        Height = 59
+        Align = alTop
+        Caption = 'Buttons with ModalResult'
+        TabOrder = 1
+        object btn_ClassicOK: TStyledButton
+          AlignWithMargins = True
+          Left = 5
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          OnClick = ButtonClick
+          Caption = 'Ok'
+          ModalResult = 1
+          TabOrder = 0
+        end
+        object btn_ClassicCancel: TStyledButton
+          AlignWithMargins = True
+          Left = 85
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          OnClick = ButtonClick
+          Caption = 'Cancel'
+          ModalResult = 2
+          TabOrder = 1
+        end
+        object btn_ClassicAbort: TStyledButton
+          AlignWithMargins = True
+          Left = 165
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          OnClick = ButtonClick
+          Caption = 'Abort'
+          ModalResult = 3
+          TabOrder = 2
+        end
+        object btn_ClassicRetry: TStyledButton
+          AlignWithMargins = True
+          Left = 245
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          OnClick = ButtonClick
+          Caption = 'Retry'
+          ModalResult = 4
+          TabOrder = 3
+        end
+        object btn_ClassicIgnore: TStyledButton
+          AlignWithMargins = True
+          Left = 325
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          OnClick = ButtonClick
+          Caption = 'Ignore'
+          ModalResult = 5
+          TabOrder = 5
+        end
+        object btn_ClassicYes: TStyledButton
+          AlignWithMargins = True
+          Left = 405
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          OnClick = ButtonClick
+          Caption = 'Yes'
+          ModalResult = 6
+          TabOrder = 6
+        end
+        object btn_ClassicNo: TStyledButton
+          AlignWithMargins = True
+          Left = 485
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          OnClick = ButtonClick
+          Caption = 'No'
+          ModalResult = 7
+          TabOrder = 7
+        end
+        object btn_ClassicClose: TStyledButton
+          AlignWithMargins = True
+          Left = 565
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          OnClick = ButtonClick
+          Caption = 'Close'
+          ModalResult = 8
+          StyleAppearance = 'Outline'
+          TabOrder = 8
+        end
+        object btn_ClassicHelp: TStyledButton
+          AlignWithMargins = True
+          Left = 645
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          OnClick = ButtonClick
+          Caption = 'Help'
+          ModalResult = 9
+          StyleAppearance = 'Outline'
+          TabOrder = 9
+        end
+        object btn_ClassicAll: TStyledButton
+          AlignWithMargins = True
+          Left = 725
+          Top = 18
+          Width = 74
+          Height = 36
+          Align = alLeft
+          OnClick = ButtonClick
+          Caption = 'All'
+          ModalResult = 12
+          StyleAppearance = 'Outline'
+          TabOrder = 4
+        end
+      end
+      object ClassicScrollBox: TScrollBox
+        Left = 0
+        Top = 226
+        Width = 891
+        Height = 351
+        Align = alClient
+        TabOrder = 2
+        object GroupBox4: TGroupBox
+          Left = 0
+          Top = 0
+          Width = 887
+          Height = 47
+          Align = alTop
+          Caption = 'Normal Classic Buttons (similar to VCL Styled Button)'
+          TabOrder = 0
+          object ClassicNormalFlowPanel: TFlowPanel
+            Left = 2
+            Top = 15
+            Width = 883
+            Height = 143
+            Align = alTop
+            AutoSize = True
+            BevelOuter = bvNone
+            TabOrder = 0
+            OnResize = FlowPanelResize
+          end
+        end
+        object GroupBox5: TGroupBox
+          Left = 0
+          Top = 47
+          Width = 887
+          Height = 56
+          Align = alTop
+          Caption = 'Outline Classic Buttons (inspired to VCL Styled Button)'
+          TabOrder = 1
+          object ClassicOutlineFlowPanel: TFlowPanel
+            Left = 2
+            Top = 15
+            Width = 883
+            Height = 143
+            Align = alTop
+            AutoSize = True
+            BevelOuter = bvNone
+            TabOrder = 0
+            OnResize = FlowPanelResize
+          end
+        end
+      end
+    end
+    object tsBasicColor: TTabSheet
+      Caption = 'Basic-Color Buttons'
+      ImageIndex = 22
+      object BasicColorScrollBox: TScrollBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 3
+        Width = 885
+        Height = 571
+        Align = alClient
+        BevelOuter = bvNone
+        BorderStyle = bsNone
+        ParentBackground = True
+        TabOrder = 0
+        OnMouseWheel = ScrollBoxMouseWheel
+        object GroupBoxNormal: TGroupBox
+          Left = 0
+          Top = 0
+          Width = 885
+          Height = 185
+          Align = alTop
+          Caption = 'Normal Buttons'
+          TabOrder = 0
+          object FlowPanelNormal: TFlowPanel
+            Left = 2
+            Top = 15
+            Width = 881
+            Height = 143
+            Align = alTop
+            AutoSize = True
+            BevelOuter = bvNone
+            TabOrder = 0
+            OnResize = FlowPanelResize
+          end
+        end
+        object GroupBoxOutline: TGroupBox
+          Left = 0
+          Top = 185
+          Width = 885
+          Height = 185
+          Align = alTop
+          Caption = 'Outline Buttons'
+          TabOrder = 1
+          object FlowPanelOutLine: TFlowPanel
+            Left = 2
+            Top = 15
+            Width = 881
+            Height = 143
+            Align = alTop
+            AutoSize = True
+            BevelOuter = bvNone
+            TabOrder = 0
+            OnResize = FlowPanelResize
+          end
+        end
+      end
+    end
+    object tsSVGColor: TTabSheet
+      Caption = 'SVG-Color Buttons'
+      ImageIndex = 23
+      object SvgColorScrollBox: TScrollBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 3
+        Width = 885
+        Height = 571
+        Align = alClient
+        BevelOuter = bvNone
+        BorderStyle = bsNone
+        ParentBackground = True
+        TabOrder = 0
+        object SvgColorNormalGroupBox: TGroupBox
+          Left = 0
+          Top = 0
+          Width = 885
+          Height = 185
+          Align = alTop
+          Caption = 'Normal Buttons'
+          TabOrder = 0
+          object SvgColorNormalFlowPanel: TFlowPanel
+            Left = 2
+            Top = 15
+            Width = 881
+            Height = 143
+            Align = alTop
+            AutoSize = True
+            BevelOuter = bvNone
+            TabOrder = 0
+            OnResize = FlowPanelResize
+          end
+        end
+        object SvgColorOutlineGroupBox: TGroupBox
+          Left = 0
+          Top = 185
+          Width = 885
+          Height = 185
+          Align = alTop
+          Caption = 'Outline Buttons'
+          TabOrder = 1
+          object SvgColorOutlineFlowPanel: TFlowPanel
+            Left = 2
+            Top = 15
+            Width = 881
+            Height = 143
+            Align = alTop
+            AutoSize = True
+            BevelOuter = bvNone
+            TabOrder = 0
+            OnResize = FlowPanelResize
+          end
+        end
+      end
     end
   end
   object ActionList: TActionList
@@ -1464,7 +1672,6 @@ object MainForm: TMainForm
     object TestAction: TAction
       Caption = 'Show Editor'
       Hint = 'Hint of Action'
-      ImageName = 'approval'
       OnExecute = TestActionExecute
     end
   end
@@ -1583,6 +1790,31 @@ object MainForm: TMainForm
         CollectionIndex = 18
         CollectionName = 'home-black'
         Name = 'home-black'
+      end
+      item
+        CollectionIndex = 19
+        CollectionName = 'Angular-logo'
+        Name = 'Angular-logo'
+      end
+      item
+        CollectionIndex = 20
+        CollectionName = 'Bootstrap-logo'
+        Name = 'Bootstrap-logo'
+      end
+      item
+        CollectionIndex = 21
+        CollectionName = 'Delphi-Logo'
+        Name = 'Delphi-Logo'
+      end
+      item
+        CollectionIndex = 22
+        CollectionName = 'Basic-Color'
+        Name = 'Basic-Color'
+      end
+      item
+        CollectionIndex = 23
+        CollectionName = 'SVG-Color'
+        Name = 'SVG-Color'
       end>
     ImageCollection = dmResources.ImageCollection
     PreserveItems = True

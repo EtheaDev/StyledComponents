@@ -3,7 +3,7 @@
 {       StyledTaskDialogStd: an example of Task Dialog Form                    }
 {       using an ImageList and a Image component                               }
 {                                                                              }
-{       Copyright (c) 2022 (Ethea S.r.l.)                                      }
+{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -41,15 +41,17 @@ uses
   , Vcl.Forms
   , Vcl.Dialogs
   , Vcl.StyledTaskDialogFormUnit
-  , Vcl.StandardButtonStyles
-  , Vcl.BootstrapButtonStyles
   , Vcl.ImgList
   , Vcl.StyledButton
   , Vcl.ExtCtrls
   , Vcl.StdCtrls
   , System.UITypes
   , Vcl.Imaging.pngimage
-  , Vcl.ButtonStylesAttributes, System.ImageList;
+  , Vcl.ButtonStylesAttributes
+  , Vcl.StandardButtonStyles
+  , Vcl.BootstrapButtonStyles
+  , Vcl.AngularButtonStyles
+  , Vcl.ColorButtonStyles;
 
 type
   TStyledTaskDialogStd = class(TStyledTaskDialogForm)

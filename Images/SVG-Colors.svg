@@ -1,0 +1,19 @@
+﻿<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="258" height="258">
+  <rect width="60" height="60" x="2" y="2"  fill= "aqua" style="stroke-width:4; stroke:white;" />
+  <rect width="60" height="60" x="2" y="66" fill= "gray" style="stroke-width:4; stroke:white;" />
+  <rect width="60" height="60" x="2" y="130"  fill= "navy" style="stroke-width:4; stroke:white;" />
+  <rect width="60" height="60" x="2" y="194"  fill= "silver" style="stroke-width:4; stroke:white;" />
+  <rect width="60" height="60" x="66" y="2"  fill= "black" style="stroke-width:4; stroke:white;" />
+  <rect width="60" height="60" x="66" y="66" fill= "teal" style="stroke-width:4; stroke:white;" />
+  <rect width="60" height="60" x="66" y="130"  fill= "olive" style="stroke-width:4; stroke:white;" />
+  <rect width="60" height="60" x="66" y="194"  fill= "teal" style="stroke-width:4; stroke:white;" />
+  <rect width="60" height="60" x="130" y="2"  fill= "blue" style="stroke-width:4; stroke:white;" />
+  <rect width="60" height="60" x="130" y="66" fill= "lime" style="stroke-width:4; stroke:white;" />
+  <rect width="60" height="60" x="130" y="130"  fill= "purple" style="stroke-width:4; stroke:white;" />
+  <rect width="60" height="60" x="130" y="194"  fill= "lime" style="stroke-width:4; stroke:white;" />
+  <rect width="60" height="60" x="194" y="2"  fill= "fuchsia" style="stroke-width:4; stroke:white;" />
+  <rect width="60" height="60" x="194" y="66" fill= "maroon" style="stroke-width:4; stroke:white;" />
+  <rect width="60" height="60" x="194" y="130"  fill= "red" style="stroke-width:4; stroke:white;" />
+  <rect width="60" height="60" x="194" y="194"  fill= "yellow" style="stroke-width:4; stroke:white;" />
+</svg>

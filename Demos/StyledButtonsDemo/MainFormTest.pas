@@ -2,7 +2,7 @@
 {                                                                              }
 {       StyledButton: a Button Component based on TGraphicControl              }
 {                                                                              }
-{       Copyright (c) 2022 (Ethea S.r.l.)                                      }
+{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -68,16 +68,29 @@ type
     Save1: TMenuItem;
     SaveAs1: TMenuItem;
     Exit1: TMenuItem;
-    Panel1: TPanel;
-    ShowEditButton: TStyledButton;
+    TopPanel: TPanel;
     StyleLabel: TLabel;
     cbChangeStyle: TComboBox;
-    Button1: TButton;
+    ShowEditButton: TStyledButton;
+    VCLButton: TButton;
+    LeftPanel: TPanel;
+    LeftScrollBox: TScrollBox;
+    RightPanel: TPanel;
+    RightScrollBox: TScrollBox;
+    Panel1: TPanel;
+    TopRightPanel: TPanel;
     procedure TestActionExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure cbChangeStyleSelect(Sender: TObject);
+    procedure FormResize(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure ScrollBoxMouseWheel(Sender: TObject; Shift: TShiftState;
+      WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
   private
+    FStyleNames: TStringList;
     procedure BuildStyleList;
+    procedure CreateStyledButtons;
+    procedure ButtonClick(Sender: TObject);
   protected
   end;
 
@@ -98,19 +111,120 @@ uses
 
 procedure TTestMainForm.cbChangeStyleSelect(Sender: TObject);
 begin
-  Screen.Cursor := crHourGlass;
-  try
-    TStyleManager.TrySetStyle(cbChangeStyle.Text);
-  finally
-    Screen.Cursor := crDefault;
+  TStyleManager.TrySetStyle(cbChangeStyle.Text);
+end;
+
+procedure TTestMainForm.CreateStyledButtons;
+const
+  BUTTON_HEIGHT = 28;
+  BUTTON_WIDTH = 140;
+  BUTTON_MARGIN = 4;
+  BUTTON_COL_COUNT = 24;
+var
+  I, X: integer;
+  LStyleName: string;
+  LColumn: Integer;
+
+  procedure CreateVCLButton(AColumn, ATop: Integer;
+    AStyleName: string);
+  begin
+    With TButton.Create(Self) do
+    begin
+      SetBounds((AColumn * BUTTON_WIDTH) + (BUTTON_MARGIN*AColumn),
+        ATop,
+        BUTTON_WIDTH, BUTTON_HEIGHT);
+      StyleName := AStyleName;
+      Caption := AStyleName;
+      Parent := LeftScrollBox;
+      PopupMenu := Self.PopupMenu;
+      OnClick := ButtonClick;
+    end;
+  end;
+
+  procedure CreateStyledButton(AColumn, ATop: Integer;
+    AStyleName: string);
+  begin
+    With TStyledButton.Create(Self) do
+    begin
+      SetBounds((AColumn * BUTTON_WIDTH) + (BUTTON_MARGIN*AColumn),
+        ATop,
+        BUTTON_WIDTH, BUTTON_HEIGHT);
+      StyleName := AStyleName;
+      Caption := AStyleName;
+      Parent := RightScrollBox;
+      PopupMenu := Self.PopupMenu;
+      OnClick := ButtonClick;
+    end;
+  end;
+
+begin
+  X := 0;
+  LColumn := 0;
+  for I := 0 to FStyleNames.Count -1 do
+  begin
+    LStyleName := FStyleNames.Strings[I];
+    if (I div BUTTON_COL_COUNT) <> LColumn then
+    begin
+      LColumn := (I div BUTTON_COL_COUNT);
+      X := 0;
+    end;
+    CreateVCLButton(LColumn, X*(BUTTON_HEIGHT+BUTTON_MARGIN), LStyleName);
+    CreateStyledButton(LColumn, X*(BUTTON_HEIGHT+BUTTON_MARGIN), LStyleName);
+    Inc(X);
   end;
 end;
 
 procedure TTestMainForm.FormCreate(Sender: TObject);
+var
+  I: Integer;
 begin
+  Caption := Application.Title + ' - ' + Caption;
+  FStyleNames := TStringList.Create;
+  for I := 0 to High(TStyleManager.StyleNames) do
+    FStyleNames.Add(TStyleManager.StyleNames[i]);
+  FStyleNames.Sorted := True;
+
   BuildStyleList;
-//  ShowEditButton.StyleFamily := 'Angular-light';
-//  ShowEditButton.ModalResult := 9;
+  CreateStyledButtons;
+end;
+
+procedure TTestMainForm.FormDestroy(Sender: TObject);
+begin
+  FStyleNames.Free;
+end;
+
+procedure TTestMainForm.FormResize(Sender: TObject);
+begin
+  LeftPanel.Width := ClientWidth div 2;
+end;
+
+procedure TTestMainForm.ScrollBoxMouseWheel(Sender: TObject;
+  Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint;
+  var Handled: Boolean);
+Var
+  msg: Cardinal;
+  code: Cardinal;
+  i, n: Integer;
+begin
+  Handled := true;
+  If ssShift In Shift Then
+    msg := WM_HSCROLL
+  Else
+    msg := WM_VSCROLL;
+
+  If WheelDelta > 0 Then
+    code := SB_LINEUP
+  Else
+    code := SB_LINEDOWN;
+
+  n := Mouse.WheelScrollLines * 4; //Speed Up scrolling
+  For i:= 1 to n Do
+  begin
+    LeftScrollBox.Perform( msg, code, 0 );
+    RightScrollBox.Perform( msg, code, 0 );
+  end;
+  LeftScrollBox.Perform( msg, SB_ENDSCROLL, 0 );
+  RightScrollBox.Perform( msg, SB_ENDSCROLL, 0 );
 end;
 
 procedure TTestMainForm.TestActionExecute(Sender: TObject);
@@ -120,20 +234,28 @@ end;
 
 procedure TTestMainForm.BuildStyleList;
 var
-  i, SelectedIndex: integer;
+  I, SelectedIndex: integer;
   LStyleName, LActiveStyleName: string;
 begin
   SelectedIndex := -1;
   cbChangeStyle.Items.Clear;
   LActiveStyleName := TStyleManager.ActiveStyle.Name;
-  for i := 0 to High(TStyleManager.StyleNames) do
+  for i := 0 to FStyleNames.Count -1 do
   begin
-    LStyleName := TStyleManager.StyleNames[i];
+    LStyleName := FStyleNames.Strings[I];
     cbChangeStyle.Items.Add(LStyleName);
     if SameText(LStyleName, LActiveStyleName)  then
       SelectedIndex := i;
   end;
   cbChangeStyle.ItemIndex := SelectedIndex;
+end;
+
+procedure TTestMainForm.ButtonClick(Sender: TObject);
+begin
+  if Sender is TButton then
+    ShowMessage(TButton(Sender).Caption)
+  else if Sender is TStyledButton then
+    ShowMessage(TStyledButton(Sender).Caption);
 end;
 
 initialization

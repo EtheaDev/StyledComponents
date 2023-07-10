@@ -2,7 +2,7 @@
 {                                                                              }
 {       StyledTaskDialogForm: a Task Dialog Form with StyleButtons             }
 {                                                                              }
-{       Copyright (c) 2022 (Ethea S.r.l.)                                      }
+{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -48,7 +48,8 @@ uses
   Vcl.StandardButtonStyles,
   Vcl.BootstrapButtonStyles,
   Vcl.AngularButtonStyles,
-  Vcl.ButtonStylesAttributes;
+  Vcl.ButtonStylesAttributes,
+  Vcl.ColorButtonStyles;
 
 type
   TTaskDialogLauncherHandler = class(TInterfacedObject, ITaskDialogLauncher)
@@ -684,6 +685,12 @@ begin
   CancelButton.Caption := STR_CANCEL;
   HelpButton.Caption := STR_HELP;
   RetryButton.Caption := STR_RETRY;
+  AbortButton.Caption := STR_ABORT;
+  IgnoreButton.Caption := STR_IGNORE;
+  AllButton.Caption := STR_ALL;
+  NoToAllButton.Caption := STR_NOTOALL;
+  YesToAllButton.Caption := STR_YESTOALL;
+  CloseButton.Caption := STR_CLOSE;
 end;
 
 procedure TStyledTaskDialogForm.Loaded;

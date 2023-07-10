@@ -1,8 +1,9 @@
 {******************************************************************************}
 {                                                                              }
-{       StyledButton: a Button Component based on TGraphicControl              }
+{       StyledButtonsDemo: a Demo to show StyledButtons                        }
+{       with different Familes (Classic, Bootstrap and Angular                 }
 {                                                                              }
-{       Copyright (c) 2022 (Ethea S.r.l.)                                      }
+{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -49,6 +50,7 @@ uses
   Vcl.BootstrapButtonStyles,
   Vcl.AngularButtonStyles,
   Vcl.StandardButtonStyles,
+  Vcl.ColorButtonStyles,
   System.Actions,
   Vcl.ActnList,
   Vcl.ButtonStylesAttributes,
@@ -71,7 +73,6 @@ type
     Panel1: TPanel;
     ShowEditButton: TStyledButton;
     StyledButton2: TStyledButton;
-    Button1: TButton;
     StyleLabel: TLabel;
     cbChangeStyle: TComboBox;
     PageControl: TPageControl;
@@ -167,6 +168,43 @@ type
     btn_BootstrapClose: TStyledButton;
     btn_BootstrapHelp: TStyledButton;
     btn_BootstrapAll: TStyledButton;
+    GroupBox3: TGroupBox;
+    VCLButton: TButton;
+    VCLButtonDisabled: TButton;
+    StyledButton: TStyledButton;
+    StyledButtonDisable: TStyledButton;
+    StyledButtonStyled: TStyledButton;
+    VCLButtonStyled: TButton;
+    gbClassicModalResult: TGroupBox;
+    btn_ClassicOK: TStyledButton;
+    btn_ClassicCancel: TStyledButton;
+    btn_ClassicAbort: TStyledButton;
+    btn_ClassicRetry: TStyledButton;
+    btn_ClassicIgnore: TStyledButton;
+    btn_ClassicYes: TStyledButton;
+    btn_ClassicNo: TStyledButton;
+    btn_ClassicClose: TStyledButton;
+    btn_ClassicHelp: TStyledButton;
+    btn_ClassicAll: TStyledButton;
+    DefaultStyledButton: TStyledButton;
+    CancelStyledButton: TStyledButton;
+    tsBasicColor: TTabSheet;
+    tsSVGColor: TTabSheet;
+    BasicColorScrollBox: TScrollBox;
+    GroupBoxNormal: TGroupBox;
+    FlowPanelNormal: TFlowPanel;
+    GroupBoxOutline: TGroupBox;
+    FlowPanelOutLine: TFlowPanel;
+    SvgColorScrollBox: TScrollBox;
+    SvgColorNormalGroupBox: TGroupBox;
+    SvgColorNormalFlowPanel: TFlowPanel;
+    SvgColorOutlineGroupBox: TGroupBox;
+    SvgColorOutlineFlowPanel: TFlowPanel;
+    ClassicScrollBox: TScrollBox;
+    GroupBox4: TGroupBox;
+    ClassicNormalFlowPanel: TFlowPanel;
+    GroupBox5: TGroupBox;
+    ClassicOutlineFlowPanel: TFlowPanel;
     procedure TestActionExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure cbChangeStyleSelect(Sender: TObject);
@@ -175,9 +213,21 @@ type
     procedure rgAngularLightThemesClick(Sender: TObject);
     procedure AngularThemesPanelResize(Sender: TObject);
     procedure rgAngularDarkThemesClick(Sender: TObject);
+    procedure ButtonClick(Sender: TObject);
+    procedure FlowPanelResize(Sender: TObject);
+    procedure FormAfterMonitorDpiChanged(Sender: TObject; OldDPI,
+      NewDPI: Integer);
+    procedure FormBeforeMonitorDpiChanged(Sender: TObject; OldDPI,
+      NewDPI: Integer);
+    procedure ScrollBoxMouseWheel(Sender: TObject; Shift: TShiftState;
+      WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
   private
     procedure RepaintAngularBtnWithMR(const AFamily: TStyledButtonFamily);
     procedure BuildStyleList;
+    function GetScaleFactor: Single;
+    procedure BuildFamilyPreview(const AFamily: TStyledButtonFamily;
+      const AAppearance: TStyledButtonAppearance;
+      const AFlowPanel: TFlowPanel);
   protected
   end;
 
@@ -190,6 +240,7 @@ implementation
 
 uses
   System.TypInfo
+  , System.Types
   , Vcl.Themes
   , WinApi.ShellAPI
   ;
@@ -206,9 +257,50 @@ begin
   end;
 end;
 
+procedure TMainForm.ButtonClick(Sender: TObject);
+begin
+  if Sender is TButton then
+    ShowMessage((Sender as TButton).Caption)
+  else
+    ShowMessage((Sender as TStyledButton).Caption);
+end;
+
+procedure TMainForm.FlowPanelResize(Sender: TObject);
+begin
+  TFlowPanel(Sender).Parent.Height := TFlowPanel(Sender).Height + 20;
+end;
+
+procedure TMainForm.FormAfterMonitorDpiChanged(Sender: TObject; OldDPI,
+  NewDPI: Integer);
+begin
+  LockWindowUpdate(0);
+end;
+
+procedure TMainForm.FormBeforeMonitorDpiChanged(Sender: TObject; OldDPI,
+  NewDPI: Integer);
+begin
+  LockWindowUpdate(Handle);
+end;
+
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
+  Caption := Application.Title;
   BuildStyleList;
+  {$IFDEF D10_4+}
+  VCLButtonStyled.StyleName := 'Windows10 Blue';
+  StyledButtonStyled.StyleName := 'Windows10 Blue';
+  {$ELSE}
+  VCLButtonStyled.Visible := False;
+  {$ENDIF}
+
+  BuildFamilyPreview(DEFAULT_CLASSIC_FAMILY, DEFAULT_APPEARANCE, ClassicNormalFlowPanel);
+  BuildFamilyPreview(DEFAULT_CLASSIC_FAMILY, OUTLINE_APPEARANCE, ClassicOutlineFlowPanel);
+  BuildFamilyPreview(BASIC_COLOR_FAMILY, COLOR_BTN_NORMAL, FlowPanelNormal);
+  BuildFamilyPreview(BASIC_COLOR_FAMILY, COLOR_BTN_OUTLINE, FlowPanelOutline);
+  BuildFamilyPreview(SVG_COLOR_FAMILY, COLOR_BTN_NORMAL, SvgColorNormalFlowPanel);
+  BuildFamilyPreview(SVG_COLOR_FAMILY, COLOR_BTN_OUTLINE, SvgColorOutlineFlowPanel);
+
+  PageControl.ActivePage := tsBootStrap;
 end;
 
 procedure TMainForm.TestActionExecute(Sender: TObject);
@@ -342,9 +434,88 @@ begin
   RepaintAngularBtnWithMR(ANGULAR_LIGHT_FAMILY);
 end;
 
+procedure TMainForm.ScrollBoxMouseWheel(Sender: TObject; Shift: TShiftState;
+  WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+var
+  LTopLeft, LTopRight, LBottomLeft, LBottomRight: SmallInt;
+  LPoint: TPoint;
+  ScrollBox: TScrollBox;
+begin
+  ScrollBox := TScrollBox(Sender);
+  LPoint := ScrollBox.ClientToScreen(Point(0,0));
+  LTopLeft := LPoint.X;
+  LTopRight := LTopLeft + ScrollBox.ClientWidth;
+  LBottomLeft := LPoint.Y;
+  LBottomRight := LBottomLeft + ScrollBox.ClientWidth;
+  if (MousePos.X >= LTopLeft) and
+    (MousePos.X <= LTopRight) and
+    (MousePos.Y >= LBottomLeft) and
+    (MousePos.Y <= LBottomRight) then
+  begin
+    ScrollBox.VertScrollBar.Position := ScrollBox.VertScrollBar.Position - WheelDelta;
+    Handled := True;
+  end;
+end;
+
 procedure TMainForm.AngularThemesPanelResize(Sender: TObject);
 begin
   rgAngularLightThemes.Width := AngularThemesPanel.Width div 2;
+end;
+
+function TMainForm.GetScaleFactor: Single;
+begin
+  //ScaleFactor is available only from Delphi 10.3, FScaleFactor is calculated
+  {$IFDEF D10_3+}
+    Result := ScaleFactor * PixelsPerInch / 96;
+  {$ELSE}
+    Result := FScaleFactor * PixelsPerInch / 96;
+  {$ENDIF}
+end;
+
+procedure TMainForm.BuildFamilyPreview(const AFamily: TStyledButtonFamily;
+  const AAppearance: TStyledButtonAppearance;
+  const AFlowPanel: TFlowPanel);
+var
+  J: Integer;
+  LClasses: TButtonClasses;
+  LDefaultClass: TStyledButtonClass;
+
+  procedure CreateButton(
+    const AParent: TFlowPanel;
+    const AClass: TStyledButtonClass);
+  var
+    LStyledButton: TStyledButton;
+  begin
+    LStyledButton := TStyledButton.CreateStyled(Self,
+      AFamily, AClass, AAppearance);
+    LStyledButton.Width := Round(BUTTON_WIDTH * GetScaleFactor);
+    LStyledButton.Height := Round(BUTTON_HEIGHT * GetScaleFactor);
+    LStyledButton.AlignWithMargins := True;
+    LStyledButton.Caption := AClass;
+    LStyledButton.Hint := AClass;
+    LStyledButton.OnClick := ButtonClick;
+    LStyledButton.Parent := AParent;
+  end;
+
+begin
+  if AFlowPanel.ControlCount > 0 then
+    Exit;
+
+  Screen.Cursor := crHourGlass;
+  Try
+    AFlowPanel.OnResize := nil;
+    AFlowPanel.DisableAlign;
+    LClasses := GetButtonFamilyClasses(AFamily);
+    LDefaultClass := LClasses[0];
+
+    //Build Buttons for Family/Class/Appearance
+    for J := 0 to Length(LClasses)-1 do
+      CreateButton(AFlowPanel, LClasses[J]);
+  Finally
+    AFlowPanel.OnResize := FlowPanelResize;
+    AFlowPanel.EnableAlign;
+    Screen.Cursor := crDefault;
+  End;
 end;
 
 procedure TMainForm.BuildStyleList;

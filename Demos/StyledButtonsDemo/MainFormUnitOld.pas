@@ -1,8 +1,9 @@
 {******************************************************************************}
 {                                                                              }
-{       StyledButton: a Button Component based on TGraphicControl              }
+{       StyledButtonsDemo: a Demo to show StyledButtons                        }
+{       with different Familes (Classic, Bootstrap and Angular                 }
 {                                                                              }
-{       Copyright (c) 2022 (Ethea S.r.l.)                                      }
+{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -46,6 +47,7 @@ uses
   Vcl.BootstrapButtonStyles,
   Vcl.AngularButtonStyles,
   Vcl.StandardButtonStyles,
+  Vcl.ColorButtonStyles,
   System.Actions,
   Vcl.ActnList,
   Vcl.ButtonStylesAttributes,
@@ -64,12 +66,11 @@ type
     SaveAs1: TMenuItem;
     Exit1: TMenuItem;
     Panel1: TPanel;
-    StyledButton: TStyledButton;
+    ShowEditButton: TStyledButton;
     StyledButton2: TStyledButton;
-    Button1: TButton;
     StyleLabel: TLabel;
     cbChangeStyle: TComboBox;
-    PageControl1: TPageControl;
+    PageControl: TPageControl;
     tsBootstrap: TTabSheet;
     tsAngular: TTabSheet;
     tsClassic: TTabSheet;
@@ -140,6 +141,65 @@ type
     btn_FABHome: TStyledButton;
     btn_FABHeartDisabled: TStyledButton;
     StyledButton1: TStyledButton;
+    gbAngularModalResult: TGroupBox;
+    btn_AngularOK: TStyledButton;
+    btn_AngularCancel: TStyledButton;
+    btn_AngularAbort: TStyledButton;
+    btn_AngularRetry: TStyledButton;
+    btn_AngularIgnore: TStyledButton;
+    btn_AngularYes: TStyledButton;
+    btn_AngularNo: TStyledButton;
+    btn_AngularClose: TStyledButton;
+    btn_AngularHelp: TStyledButton;
+    btn_AngularAll: TStyledButton;
+    gbBootstrapModalResult: TGroupBox;
+    btn_BootstrapOK: TStyledButton;
+    btn_BootstrapCancel: TStyledButton;
+    btn_BootstrapAbort: TStyledButton;
+    btn_BootstrapRetry: TStyledButton;
+    btn_BootstrapIgnore: TStyledButton;
+    btn_BootstrapYes: TStyledButton;
+    btn_BootstrapNo: TStyledButton;
+    btn_BootstrapClose: TStyledButton;
+    btn_BootstrapHelp: TStyledButton;
+    btn_BootstrapAll: TStyledButton;
+    GroupBox3: TGroupBox;
+    VCLButton: TButton;
+    VCLButtonDisabled: TButton;
+    StyledButton: TStyledButton;
+    StyledButtonDisable: TStyledButton;
+    StyledButtonStyled: TStyledButton;
+    VCLButtonStyled: TButton;
+    gbClassicModalResult: TGroupBox;
+    btn_ClassicOK: TStyledButton;
+    btn_ClassicCancel: TStyledButton;
+    btn_ClassicAbort: TStyledButton;
+    btn_ClassicRetry: TStyledButton;
+    btn_ClassicIgnore: TStyledButton;
+    btn_ClassicYes: TStyledButton;
+    btn_ClassicNo: TStyledButton;
+    btn_ClassicClose: TStyledButton;
+    btn_ClassicHelp: TStyledButton;
+    btn_ClassicAll: TStyledButton;
+    DefaultStyledButton: TStyledButton;
+    CancelStyledButton: TStyledButton;
+    tsBasicColor: TTabSheet;
+    tsSVGColor: TTabSheet;
+    BasicColorScrollBox: TScrollBox;
+    GroupBoxNormal: TGroupBox;
+    FlowPanelNormal: TFlowPanel;
+    GroupBoxOutline: TGroupBox;
+    FlowPanelOutLine: TFlowPanel;
+    SvgColorScrollBox: TScrollBox;
+    SvgColorNormalGroupBox: TGroupBox;
+    SvgColorNormalFlowPanel: TFlowPanel;
+    SvgColorOutlineGroupBox: TGroupBox;
+    SvgColorOutlineFlowPanel: TFlowPanel;
+    ClassicScrollBox: TScrollBox;
+    GroupBox4: TGroupBox;
+    ClassicNormalFlowPanel: TFlowPanel;
+    GroupBox5: TGroupBox;
+    ClassicOutlineFlowPanel: TFlowPanel;
     procedure TestActionExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure cbChangeStyleSelect(Sender: TObject);
@@ -148,8 +208,17 @@ type
     procedure rgAngularLightThemesClick(Sender: TObject);
     procedure AngularThemesPanelResize(Sender: TObject);
     procedure rgAngularDarkThemesClick(Sender: TObject);
+    procedure ButtonClick(Sender: TObject);
+    procedure FlowPanelResize(Sender: TObject);
+    procedure ScrollBoxMouseWheel(Sender: TObject; Shift: TShiftState;
+      WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
   private
+    procedure RepaintAngularBtnWithMR(const AFamily: TStyledButtonFamily);
     procedure BuildStyleList;
+    function GetScaleFactor: Single;
+    procedure BuildFamilyPreview(const AFamily: TStyledButtonFamily;
+      const AAppearance: TStyledButtonAppearance;
+      const AFlowPanel: TFlowPanel);
   protected
   end;
 
@@ -178,14 +247,41 @@ begin
   end;
 end;
 
+procedure TMainForm.ButtonClick(Sender: TObject);
+begin
+  if Sender is TButton then
+    ShowMessage((Sender as TButton).Caption)
+  else
+    ShowMessage((Sender as TStyledButton).Caption);
+end;
+
+procedure TMainForm.FlowPanelResize(Sender: TObject);
+begin
+  TFlowPanel(Sender).Parent.Height := TFlowPanel(Sender).Height + 20;
+end;
+
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
+  Caption := Application.Title;
   BuildStyleList;
+  {$IFDEF D10_4+}
+  VCLButtonStyled.StyleName := 'Windows10 Blue';
+  StyledButtonStyled.StyleName := 'Windows10 Blue';
+  {$ENDIF}
+
+  BuildFamilyPreview(DEFAULT_CLASSIC_FAMILY, DEFAULT_APPEARANCE, ClassicNormalFlowPanel);
+  BuildFamilyPreview(DEFAULT_CLASSIC_FAMILY, OUTLINE_APPEARANCE, ClassicOutlineFlowPanel);
+  BuildFamilyPreview(BASIC_COLOR_FAMILY, COLOR_BTN_NORMAL, FlowPanelNormal);
+  BuildFamilyPreview(BASIC_COLOR_FAMILY, COLOR_BTN_OUTLINE, FlowPanelOutline);
+  BuildFamilyPreview(SVG_COLOR_FAMILY, COLOR_BTN_NORMAL, SvgColorNormalFlowPanel);
+  BuildFamilyPreview(SVG_COLOR_FAMILY, COLOR_BTN_OUTLINE, SvgColorOutlineFlowPanel);
+
+  PageControl.ActivePage := tsBootStrap;
 end;
 
 procedure TMainForm.TestActionExecute(Sender: TObject);
 begin
-  EditStyledButton(StyledButton);
+  EditStyledButton(ShowEditButton);
 end;
 
 procedure TMainForm.LinkLabelLinkClick(Sender: TObject;
@@ -195,22 +291,36 @@ begin
     PChar(Link), nil, nil, SW_SHOWNORMAL);
 end;
 
+procedure TMainForm.RepaintAngularBtnWithMR(const AFamily: TStyledButtonFamily);
+begin
+  btn_AngularOK.StyleFamily := AFamily;
+  btn_AngularCancel.StyleFamily := AFamily;
+  btn_AngularAbort.StyleFamily := AFamily;
+  btn_AngularRetry.StyleFamily := AFamily;
+  btn_AngularIgnore.StyleFamily := AFamily;
+  btn_AngularYes.StyleFamily := AFamily;
+  btn_AngularNo.StyleFamily := AFamily;
+  btn_AngularClose.StyleFamily := AFamily;
+  btn_AngularHelp.StyleFamily := AFamily;
+  btn_AngularAll.StyleFamily := AFamily;
+end;
+
 procedure TMainForm.rgAngularDarkThemesClick(Sender: TObject);
 begin
-  TStyleManager.TrySetStyle('TabletDark');
+  TStyleManager.TrySetStyle('Windows10 SlateGray');
   rgAngularLightThemes.ItemIndex := -1;
   BuildStyleList;
   case rgAngularDarkThemes.ItemIndex of
     0: //Pink & Blue-grey
     begin
-      btn_BasicPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPink, BasicAttr);
-      btn_RaisedPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPink, RaisedAttr);
-      btn_StrokedPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPink, StrokedAttr);
-      btn_FlatPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPink, FlatAttr);
-      btn_BasicAccent.SetButtonStyle(AngularDarkTheme, btn_AccentBlueGray, BasicAttr);
-      btn_RaisedAccent.SetButtonStyle(AngularDarkTheme, btn_AccentBlueGray, RaisedAttr);
-      btn_StrokedAccent.SetButtonStyle(AngularDarkTheme, btn_AccentBlueGray, StrokedAttr);
-      btn_FlatAccent.SetButtonStyle(AngularDarkTheme, btn_AccentBlueGray, FlatAttr);
+      btn_BasicPrimary.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_PrimaryPink, BasicAttr);
+      btn_RaisedPrimary.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_PrimaryPink, RaisedAttr);
+      btn_StrokedPrimary.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_PrimaryPink, StrokedAttr);
+      btn_FlatPrimary.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_PrimaryPink, FlatAttr);
+      btn_BasicAccent.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_AccentBlueGray, BasicAttr);
+      btn_RaisedAccent.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_AccentBlueGray, RaisedAttr);
+      btn_StrokedAccent.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_AccentBlueGray, StrokedAttr);
+      btn_FlatAccent.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_AccentBlueGray, FlatAttr);
       {$IFDEF D10_4+}
         btn_IconHome.ImageName := 'home-pink';
         btn_IconMenu.ImageName := 'menu-blue-grey';
@@ -223,14 +333,14 @@ begin
     end;
     1: //Purple & Green
     begin
-      btn_BasicPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPurple, BasicAttr);
-      btn_RaisedPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPurple, RaisedAttr);
-      btn_StrokedPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPurple, StrokedAttr);
-      btn_FlatPrimary.SetButtonStyle(AngularDarkTheme, btn_PrimaryPurple, FlatAttr);
-      btn_BasicAccent.SetButtonStyle(AngularDarkTheme, btn_AccentGreen, BasicAttr);
-      btn_RaisedAccent.SetButtonStyle(AngularDarkTheme, btn_AccentGreen, RaisedAttr);
-      btn_StrokedAccent.SetButtonStyle(AngularDarkTheme, btn_AccentGreen, StrokedAttr);
-      btn_FlatAccent.SetButtonStyle(AngularDarkTheme, btn_AccentGreen, FlatAttr);
+      btn_BasicPrimary.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_PrimaryPurple, BasicAttr);
+      btn_RaisedPrimary.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_PrimaryPurple, RaisedAttr);
+      btn_StrokedPrimary.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_PrimaryPurple, StrokedAttr);
+      btn_FlatPrimary.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_PrimaryPurple, FlatAttr);
+      btn_BasicAccent.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_AccentGreen, BasicAttr);
+      btn_RaisedAccent.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_AccentGreen, RaisedAttr);
+      btn_StrokedAccent.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_AccentGreen, StrokedAttr);
+      btn_FlatAccent.SetButtonStyle(ANGULAR_DARK_FAMILY, btn_AccentGreen, FlatAttr);
       {$IFDEF D10_4+}
         btn_IconHome.ImageName := 'home-purple';
         btn_IconMenu.ImageName := 'menu-green';
@@ -244,6 +354,7 @@ begin
   end;
   btn_FlatPrimary.AssignStyleTo(btn_FABTrash);
   btn_FlatAccent.AssignStyleTo(btn_FABBookmark);
+  RepaintAngularBtnWithMR(ANGULAR_DARK_FAMILY);
 end;
 
 procedure TMainForm.rgAngularLightThemesClick(Sender: TObject);
@@ -254,14 +365,14 @@ begin
   case rgAngularLightThemes.ItemIndex of
     0: //Deep Purple & Amber
     begin
-      btn_BasicPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryDeepPurple, BasicAttr);
-      btn_RaisedPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryDeepPurple, RaisedAttr);
-      btn_StrokedPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryDeepPurple, StrokedAttr);
-      btn_FlatPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryDeepPurple, FlatAttr);
-      btn_BasicAccent.SetButtonStyle(AngularLightTheme, btn_AccentAmber, BasicAttr);
-      btn_RaisedAccent.SetButtonStyle(AngularLightTheme, btn_AccentAmber, RaisedAttr);
-      btn_StrokedAccent.SetButtonStyle(AngularLightTheme, btn_AccentAmber, StrokedAttr);
-      btn_FlatAccent.SetButtonStyle(AngularLightTheme, btn_AccentAmber, FlatAttr);
+      btn_BasicPrimary.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_PrimaryDeepPurple, BasicAttr);
+      btn_RaisedPrimary.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_PrimaryDeepPurple, RaisedAttr);
+      btn_StrokedPrimary.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_PrimaryDeepPurple, StrokedAttr);
+      btn_FlatPrimary.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_PrimaryDeepPurple, FlatAttr);
+      btn_BasicAccent.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_AccentAmber, BasicAttr);
+      btn_RaisedAccent.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_AccentAmber, RaisedAttr);
+      btn_StrokedAccent.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_AccentAmber, StrokedAttr);
+      btn_FlatAccent.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_AccentAmber, FlatAttr);
       {$IFDEF D10_4+}
         btn_IconHome.ImageName := 'home-deeppurple';
         btn_IconMenu.ImageName := 'menu-amber';
@@ -274,14 +385,14 @@ begin
     end;
     1: //Indigo & Pink
     begin
-      btn_BasicPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryIndigo, BasicAttr);
-      btn_RaisedPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryIndigo, RaisedAttr);
-      btn_StrokedPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryIndigo, StrokedAttr);
-      btn_FlatPrimary.SetButtonStyle(AngularLightTheme, btn_PrimaryIndigo, FlatAttr);
-      btn_BasicAccent.SetButtonStyle(AngularLightTheme, btn_AccentPink, BasicAttr);
-      btn_RaisedAccent.SetButtonStyle(AngularLightTheme, btn_AccentPink, RaisedAttr);
-      btn_StrokedAccent.SetButtonStyle(AngularLightTheme, btn_AccentPink, StrokedAttr);
-      btn_FlatAccent.SetButtonStyle(AngularLightTheme, btn_AccentPink, FlatAttr);
+      btn_BasicPrimary.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_PrimaryIndigo, BasicAttr);
+      btn_RaisedPrimary.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_PrimaryIndigo, RaisedAttr);
+      btn_StrokedPrimary.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_PrimaryIndigo, StrokedAttr);
+      btn_FlatPrimary.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_PrimaryIndigo, FlatAttr);
+      btn_BasicAccent.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_AccentPink, BasicAttr);
+      btn_RaisedAccent.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_AccentPink, RaisedAttr);
+      btn_StrokedAccent.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_AccentPink, StrokedAttr);
+      btn_FlatAccent.SetButtonStyle(ANGULAR_LIGHT_FAMILY, btn_AccentPink, FlatAttr);
       btn_IconHome.ImageIndex := 1;
       {$IFDEF D10_4+}
         btn_IconHome.ImageName := 'home-indigo';
@@ -296,11 +407,88 @@ begin
   end;
   btn_FlatPrimary.AssignStyleTo(btn_FABTrash);
   btn_FlatAccent.AssignStyleTo(btn_FABBookmark);
+  RepaintAngularBtnWithMR(ANGULAR_LIGHT_FAMILY);
+end;
+
+procedure TMainForm.ScrollBoxMouseWheel(Sender: TObject; Shift: TShiftState;
+  WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+var
+  LTopLeft, LTopRight, LBottomLeft, LBottomRight: SmallInt;
+  LPoint: TPoint;
+  ScrollBox: TScrollBox;
+begin
+  ScrollBox := TScrollBox(Sender);
+  LPoint := ScrollBox.ClientToScreen(Point(0,0));
+  LTopLeft := LPoint.X;
+  LTopRight := LTopLeft + ScrollBox.ClientWidth;
+  LBottomLeft := LPoint.Y;
+  LBottomRight := LBottomLeft + ScrollBox.ClientWidth;
+  if (MousePos.X >= LTopLeft) and
+    (MousePos.X <= LTopRight) and
+    (MousePos.Y >= LBottomLeft) and
+    (MousePos.Y <= LBottomRight) then
+  begin
+    ScrollBox.VertScrollBar.Position := ScrollBox.VertScrollBar.Position - WheelDelta;
+    Handled := True;
+  end;
 end;
 
 procedure TMainForm.AngularThemesPanelResize(Sender: TObject);
 begin
   rgAngularLightThemes.Width := AngularThemesPanel.Width div 2;
+end;
+
+function TMainForm.GetScaleFactor: Single;
+begin
+  Result := 1;
+end;
+
+procedure TMainForm.BuildFamilyPreview(const AFamily: TStyledButtonFamily;
+  const AAppearance: TStyledButtonAppearance;
+  const AFlowPanel: TFlowPanel);
+var
+  J: Integer;
+  LClasses: TButtonClasses;
+  LDefaultClass: TStyledButtonClass;
+
+  procedure CreateButton(
+    const AParent: TFlowPanel;
+    const AClass: TStyledButtonClass);
+  var
+    LStyledButton: TStyledButton;
+  begin
+    LStyledButton := TStyledButton.Create(Self);
+    LStyledButton.Width := Round(BUTTON_WIDTH * GetScaleFactor);
+    LStyledButton.Height := Round(BUTTON_HEIGHT * GetScaleFactor);
+    LStyledButton.AlignWithMargins := True;
+    LStyledButton.Caption := AClass;
+    LStyledButton.Hint := AClass;
+    LStyledButton.StyleFamily := AFamily;
+    LStyledButton.StyleClass := AClass;
+    LStyledButton.StyleAppearance := AAppearance;
+    LStyledButton.OnClick := ButtonClick;
+    LStyledButton.Parent := AParent;
+  end;
+
+begin
+  if AFlowPanel.ControlCount > 0 then
+    Exit;
+
+  Screen.Cursor := crHourGlass;
+  Try
+    AFlowPanel.OnResize := nil;
+    AFlowPanel.DisableAlign;
+    LClasses := GetButtonFamilyClasses(AFamily);
+    LDefaultClass := LClasses[0];
+
+    //Build Buttons for Family/Class/Appearance
+    for J := 0 to Length(LClasses)-1 do
+      CreateButton(AFlowPanel, LClasses[J]);
+  Finally
+    AFlowPanel.OnResize := FlowPanelResize;
+    AFlowPanel.EnableAlign;
+    Screen.Cursor := crDefault;
+  End;
 end;
 
 procedure TMainForm.BuildStyleList;

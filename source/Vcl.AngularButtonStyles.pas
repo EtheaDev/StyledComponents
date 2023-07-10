@@ -3,7 +3,7 @@
 {       AngulaButtonStyles: Button Styles inspired to Material/angular         }
 {       https://material.angular.io/components/button/overview                 }
 {                                                                              }
-{       Copyright (c) 2022 (Ethea S.r.l.)                                      }
+{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }

@@ -1,4 +1,5 @@
 {.$Define ItaMessages}
+{.$Define FraMessages}
 
 // Delphi XE3
 {$IFDEF VER240}

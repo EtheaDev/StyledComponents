@@ -1,8 +1,13 @@
 inherited StyledTaskDialogStd: TStyledTaskDialogStd
   Caption = 'StyledTaskDialogStd'
+  ExplicitWidth = 1004
+  ExplicitHeight = 259
+  PixelsPerInch = 96
   TextHeight = 13
   inherited CenterPanel: TPanel
     inherited ImagePanel: TPanel
+      Height = 116
+      ExplicitHeight = 116
       object Image: TImage
         Left = 0
         Top = 0
@@ -12,6 +17,62 @@ inherited StyledTaskDialogStd: TStyledTaskDialogStd
         Stretch = True
         Transparent = True
       end
+    end
+    inherited MessageScrollBox: TScrollBox
+      Width = 852
+      Height = 124
+      ExplicitWidth = 852
+      ExplicitHeight = 124
+    end
+  end
+  inherited ButtonsPanel: TPanel
+    inherited YesButton: TStyledButton
+      Left = 39
+      ExplicitLeft = 39
+    end
+    inherited NoButton: TStyledButton
+      Left = 119
+      ExplicitLeft = 119
+    end
+    inherited OKButton: TStyledButton
+      Left = 199
+      ExplicitLeft = 199
+    end
+    inherited CancelButton: TStyledButton
+      Left = 279
+      ExplicitLeft = 279
+    end
+    inherited AbortButton: TStyledButton
+      Left = 359
+      ExplicitLeft = 359
+    end
+    inherited RetryButton: TStyledButton
+      Left = 439
+      ExplicitLeft = 439
+    end
+    inherited IgnoreButton: TStyledButton
+      Left = 519
+      ExplicitLeft = 519
+    end
+    inherited AllButton: TStyledButton
+      Left = 599
+      ExplicitLeft = 599
+    end
+    inherited NoToAllButton: TStyledButton
+      Left = 679
+      ExplicitLeft = 679
+    end
+    inherited YesToAllButton: TStyledButton
+      Left = 759
+      ExplicitLeft = 759
+    end
+    inherited HelpButton: TStyledButton
+      Left = 839
+      ExplicitLeft = 839
+    end
+    inherited CloseButton: TStyledButton
+      Left = 919
+      ExplicitLeft = 919
     end
   end
   object ImageList: TImageList
@@ -23,7 +84,7 @@ inherited StyledTaskDialogStd: TStyledTaskDialogStd
     Left = 56
     Top = 56
     Bitmap = {
-      494C010106000800040080008000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010106000800080080008000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000000200000001000001002000000000000000
       0800000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

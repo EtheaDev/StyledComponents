@@ -55,7 +55,7 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=Ethea S.r.l.;FileDescription=Styled Components;FileVersion=1.0.0.0;InternalName=;LegalCopyright=Copyright (c) Ethea S.r.l.;LegalTrademarks=;OriginalFilename=;ProgramID=;ProductName=Styled Components;ProductVersion=1.0;Comments=</VerInfo_Keys>
-        <DCC_Description>Ethea - Styled Components</DCC_Description>
+        <DCC_Description>Ethea Styled Components</DCC_Description>
         <RuntimeOnlyPackage>true</RuntimeOnlyPackage>
         <DllSuffix>$(Auto)</DllSuffix>
     </PropertyGroup>
@@ -79,7 +79,6 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
-        <DCC_Description>Ethea Styled Components (button, TaskDialog)</DCC_Description>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -93,16 +92,19 @@
         </DelphiCompile>
         <DCCReference Include="..\StyledButton.dcr"/>
         <DCCReference Include="..\StyledTaskDialog.dcr"/>
+        <DCCReference Include="..\StyledToolbar.dcr"/>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="..\..\source\Vcl.StyledButton.pas"/>
         <DCCReference Include="..\..\source\Vcl.ButtonStylesAttributes.pas"/>
         <DCCReference Include="..\..\source\Vcl.StandardButtonStyles.pas"/>
+        <DCCReference Include="..\..\source\Vcl.ColorButtonStyles.pas"/>
         <DCCReference Include="..\..\source\Vcl.BootstrapButtonStyles.pas"/>
         <DCCReference Include="..\..\source\Vcl.AngularButtonStyles.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledTaskDialog.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledCmpMessages.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledCmpStrUtils.pas"/>
+        <DCCReference Include="..\..\source\Vcl.StyledToolbar.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -126,13 +128,6 @@
                 <Excluded_Packages/>
             </Delphi.Personality>
             <Platforms>
-                <Platform value="Android">False</Platform>
-                <Platform value="Android64">False</Platform>
-                <Platform value="iOSDevice64">False</Platform>
-                <Platform value="iOSSimARM64">False</Platform>
-                <Platform value="Linux64">False</Platform>
-                <Platform value="OSX64">False</Platform>
-                <Platform value="OSXARM64">False</Platform>
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">True</Platform>
             </Platforms>

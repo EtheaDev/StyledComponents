@@ -2,7 +2,7 @@
 {                                                                              }
 {       StyledComponents: a set of Styled VCL Component                        }
 {                                                                              }
-{       Copyright (c) 2022 (Ethea S.r.l.)                                      }
+{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -28,6 +28,7 @@ package StyledComponents;
 {$R *.res}
 {$R '..\StyledButton.dcr'}
 {$R '..\StyledTaskDialog.dcr'}
+{$R '..\StyledToolbar.dcr'}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -52,7 +53,7 @@ package StyledComponents;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Ethea Styled Components (button, TaskDialog)'}
+{$DESCRIPTION 'Ethea Styled Components'}
 {$LIBSUFFIX 'D10_1'}
 {$RUNONLY}
 {$IMPLICITBUILD ON}
@@ -65,11 +66,13 @@ contains
   Vcl.StyledButton in '..\..\source\Vcl.StyledButton.pas',
   Vcl.ButtonStylesAttributes in '..\..\source\Vcl.ButtonStylesAttributes.pas',
   Vcl.StandardButtonStyles in '..\..\source\Vcl.StandardButtonStyles.pas',
+  Vcl.ColorButtonStyles in '..\..\source\Vcl.ColorButtonStyles.pas',
   Vcl.BootstrapButtonStyles in '..\..\source\Vcl.BootstrapButtonStyles.pas',
   Vcl.AngularButtonStyles in '..\..\source\Vcl.AngularButtonStyles.pas',
   Vcl.StyledTaskDialog in '..\..\source\Vcl.StyledTaskDialog.pas',
   Vcl.StyledCmpMessages in '..\..\source\Vcl.StyledCmpMessages.pas',
-  Vcl.StyledCmpStrUtils in '..\..\source\Vcl.StyledCmpStrUtils.pas';
+  Vcl.StyledCmpStrUtils in '..\..\source\Vcl.StyledCmpStrUtils.pas',
+  Vcl.StyledToolbar in '..\..\source\Vcl.StyledToolbar.pas';
 
 end.
 

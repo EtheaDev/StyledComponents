@@ -2,7 +2,7 @@
 {                                                                              }
 {       StyledButton: a Button Component based on TGraphicControl              }
 {                                                                              }
-{       Copyright (c) 2022 (Ethea S.r.l.)                                      }
+{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -44,6 +44,10 @@ resourcestring
   ERROR_FAMILY_NOT_FOUND = 'Styled Button Family "%s" not found';
 
 Type
+  //Windows Version
+  TWindowsVersion = (wvUndefined, wvWindowsXP, wvWindowsVista, wvWindows7,
+    wvWindows8, wvWindows8_1, wvWindows10, wvWindows11);
+
   //string typed attributes
   TStyledButtonFamily = string;
   TStyledButtonClass = string;
@@ -136,6 +140,7 @@ function ColorIsLight(Color: TColor): Boolean;
 function SameStyledButtonStyle(Style1, Style2: TStyledButtonAttributes): Boolean;
 procedure CloneButtonStyle(const ASource: TStyledButtonAttributes;
   var ADest: TStyledButtonAttributes);
+function GetWindowsVersion: TWindowsVersion;
 
 //drawing Button
 procedure CanvasDrawShape(const ACanvas: TCanvas; ARect: TRect;
@@ -145,7 +150,10 @@ procedure CanvasDrawShape(const ACanvas: TCanvas; ARect: TRect;
 procedure RegisterButtonFamily(
   const AStyledButtonAttributes: IStyledButtonAttributes);
 function GetButtonFamilies: TObjectList;
+function GetButtonFamilyClass(const AFamilyName: TStyledButtonFamily): TButtonFamily;
 function GetButtonFamilyName(const Index: Integer): TStyledButtonFamily;
+function GetButtonClasses(const AFamily: TButtonFamily): TButtonClasses;
+function GetButtonAppearances(const AFamily: TButtonFamily): TButtonAppearances;
 function GetButtonFamilyClasses(const AFamily: TStyledButtonFamily): TButtonClasses;
 function GetButtonFamilyAppearances(const AFamily: TStyledButtonFamily): TButtonAppearances;
 
@@ -175,8 +183,12 @@ uses
   , Winapi.GDIPAPI
   , Winapi.GDIPOBJ
 {$endif}
+  , System.Win.Registry
   , System.SysUtils
   , System.Math;
+
+var
+  _WindowsVersion: TWindowsVersion;
 
 function SameStyledButtonStyle(Style1, Style2: TStyledButtonAttributes): Boolean;
 begin
@@ -257,6 +269,47 @@ begin
   ADest.FontColor := ASource.FontColor;
   ADest.ButtonColor := ASource.ButtonColor;
   ADest.Radius := ASource.Radius;
+end;
+
+function GetWindowsVersion: TWindowsVersion;
+var
+  Reg: TRegistry;
+  VersionInfo: TOSVersionInfo;
+  LBuildNumber: Integer;
+begin
+  if _WindowsVersion = wvUndefined then
+  begin
+    VersionInfo.dwOSVersionInfoSize := sizeOf(TOSVersionInfo);
+    Reg := TRegistry.Create;
+    Try
+      Reg.RootKey := HKEY_LOCAL_MACHINE;
+      case VersionInfo.dwPlatformID of
+        VER_PLATFORM_WIN32_WINDOWS:
+          Reg.OpenKeyReadOnly('\Software\Microsoft\Windows\CurrentVersion');
+      else
+        Reg.OpenKeyReadOnly('\Software\Microsoft\Windows NT\CurrentVersion');
+      end;
+      LBuildNumber := StrToIntDef(Reg.ReadString('CurrentBuild'), 0);
+      if LBuildNumber >= 22000 then
+        _WindowsVersion := wvWindows11
+      else if LBuildNumber >= 10240 then
+        _WindowsVersion := wvWindows10
+      else if LBuildNumber >= 9600 then
+        _WindowsVersion := wvWindows8_1
+      else if LBuildNumber >= 9200 then
+        _WindowsVersion := wvWindows8
+      else if LBuildNumber >= 7600 then
+        _WindowsVersion := wvWindows7
+      else if LBuildNumber >= 6000 then
+        _WindowsVersion := wvWindowsVista
+      else if LBuildNumber >= 2600 then
+        _WindowsVersion := wvWindowsXP;
+      Reg.CloseKey;
+    Finally
+      Reg.Free;
+    End;
+  end;
+  Result := _WindowsVersion;
 end;
 
 var
@@ -393,6 +446,22 @@ end;
 function GetButtonFamilies: TObjectList;
 begin
   Result := FFamilies;
+end;
+
+function GetButtonFamilyClass(const AFamilyName: TStyledButtonFamily): TButtonFamily;
+begin
+  if not GetButtonFamily(AFamilyName, Result) then
+    raise Exception.CreateFmt(ERROR_FAMILY_NOT_FOUND,[AFamilyName]);
+end;
+
+function GetButtonClasses(const AFamily: TButtonFamily): TButtonClasses;
+begin
+  Result := AFamily.FStyledAttributes.GetButtonClasses;
+end;
+
+function GetButtonAppearances(const AFamily: TButtonFamily): TButtonAppearances;
+begin
+  Result := AFamily.FStyledAttributes.GetButtonAppearances;
 end;
 
 function GetButtonFamilyName(const Index: Integer): TStyledButtonFamily;
@@ -748,6 +817,7 @@ end;
 {$endif}
 
 initialization
+  _WindowsVersion := wvUndefined;
   FFamilies := TObjectList.Create(True);
 
 finalization

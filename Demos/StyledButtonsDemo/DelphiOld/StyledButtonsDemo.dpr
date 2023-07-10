@@ -16,6 +16,7 @@ uses
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  Application.Title := 'Styled Buttons Demo - (c) Copyright Ethea S.r.l.';
   Application.CreateForm(TMainForm, MainForm);
   Application.Run;
 end.
