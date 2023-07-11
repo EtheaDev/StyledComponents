@@ -85,8 +85,6 @@ type
     procedure SetGrouped(AValue: Boolean);
     procedure SetMarked(AValue: Boolean);
     procedure SetStyle(AValue: TStyledToolButtonStyle);
-    procedure SetWrap(AValue: Boolean);
-    function GetWrap: Boolean;
     procedure SetCaption(const AValue: TCaption);
     procedure UpdateButtonContent;
     procedure SetImageAlignment(const AValue: TImageAlignment);
@@ -132,7 +130,6 @@ type
     property ImageAlignment: TImageAlignment read FImageAlignment write SetImageAlignment Stored IsImageAlignmentStored;
     property Index: Integer read GetIndex;
     property Marked: Boolean read FMarked write SetMarked default False;
-    property Wrap: Boolean read GetWrap write SetWrap default False;
     property Style: TStyledToolButtonStyle read FStyle write SetStyle default tbsStyledButton;
     property Visible;
     property Width: Integer read GetWidth write SetWidth stored IsWidthStored;
@@ -373,11 +370,6 @@ end;
 function TStyledToolButton.GetWidth: Integer;
 begin
   Result := inherited Width;
-end;
-
-function TStyledToolButton.GetWrap: Boolean;
-begin
-  Result := inherited WordWrap;
 end;
 
 function TStyledToolButton.IsCheckedStored: Boolean;
@@ -636,11 +628,6 @@ begin
     if AToolBar <> nil then
       AToolBar.InsertButton(Self);
   end;
-end;
-
-procedure TStyledToolButton.SetWrap(AValue: Boolean);
-begin
-  inherited WordWrap := AValue;
 end;
 
 procedure TStyledToolButton.ValidateContainer(AComponent: TComponent);
