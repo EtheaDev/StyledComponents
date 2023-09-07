@@ -1,7 +1,6 @@
 {******************************************************************************}
 {                                                                              }
-{       StyledButtonsDemo: a Demo to show StyledButtons                        }
-{       with different Familes (Classic, Bootstrap and Angular                 }
+{       StyledComponents Library                                               }
 {                                                                              }
 {       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
@@ -24,27 +23,83 @@
 {  limitations under the License.                                              }
 {                                                                              }
 {******************************************************************************}
-program StyledButtonsDemo;
+unit FAboutForm;
+
+interface
 
 uses
-  Vcl.Forms,
-  MainFormUnit in '..\MainFormUnit.pas' {MainForm},
-  Vcl.Themes,
-  Vcl.Styles,
-  Vcl.StyledButton in '..\..\..\source\Vcl.StyledButton.pas',
-  Vcl.BootstrapButtonStyles in '..\..\..\source\Vcl.BootstrapButtonStyles.pas',
-  Vcl.AngularButtonStyles in '..\..\..\source\Vcl.AngularButtonStyles.pas',
-  Vcl.StandardButtonStyles in '..\..\..\source\Vcl.StandardButtonStyles.pas',
-  Vcl.StyledButtonEditorUnit in '..\..\..\packages\Vcl.StyledButtonEditorUnit.pas' {StyledButtonEditor},
-  DResources in '..\DResources.pas' {dmResources: TDataModule};
+  Vcl.StyledButton, Vcl.Imaging.pngimage, Vcl.ExtCtrls, Vcl.Controls,
+  System.Classes, Vcl.StdCtrls, Vcl.Forms;
 
-{$R *.res}
+type
+  TfmAbout = class(TForm)
+    OKButton: TStyledButton;
+    lbCopyright: TLabel;
+    lbAppName: TLabel;
+    lbVersion: TLabel;
+    paImage: TPanel;
+    Image: TImage;
+    procedure FormCreate(Sender: TObject);
+  private
+  protected
+  end;
 
+procedure ShowAboutForm;
+
+implementation
+
+{$R *.dfm}
+
+uses
+  System.SysUtils,
+  Winapi.Windows,
+  System.Win.ComObj,
+  System.UITypes,
+  Winapi.ShellAPI;
+
+function GetFileVersion(const FileName: string): string;
+var
+  FSO: OleVariant;
 begin
-  Application.Initialize;
-  Application.MainFormOnTaskbar := True;
-  Application.Title := 'Styled Buttons Demo - (c) Copyright Ethea S.r.l.';
-  Application.CreateForm(TdmResources, dmResources);
-  Application.CreateForm(TMainForm, MainForm);
-  Application.Run;
+  FSO := CreateOleObject('Scripting.FileSystemObject');
+  Result := FSO.GetFileVersion(FileName);
+end;
+
+function GetModuleLocation: string;
+begin
+  SetLength(Result, 260);
+  GetModuleFileName(HInstance, PChar(Result), 260);
+  Result:=PChar(Result);
+end;
+
+procedure ShowAboutForm;
+var
+  FAboutForm : TfmAbout;
+  AMajorVersion, AMinorVersion, ARelease, ABuild: Integer;
+begin
+  FAboutForm := TfmAbout.Create(nil);
+  Try
+    with FAboutForm do
+    begin
+      lbVersion.Caption := GetFileVersion(GetModuleLocation());
+      //lbAppName.Font.Size := 10;
+      lbAppName.Font.Style := lbAppName.Font.Style + [TFontStyle.fsBold];
+      lbAppName.Caption := Application.Title;
+    end;
+    FAboutForm.ShowModal;
+  Finally
+    FAboutForm.Free;
+  End;  
+end;
+
+procedure TfmAbout.FormCreate(Sender: TObject);
+begin
+  ParentFont := False;
+
+  lbAppName.Font.Style := lbAppName.Font.Style + [TFontStyle.fsBold];
+  lbVersion.Font.Style := lbVersion.Font.Style + [TFontStyle.fsBold];
+  lbCopyright.Font.Style := lbCopyright.Font.Style + [TFontStyle.fsBold];
+end;
+
 end.
+

@@ -47,10 +47,6 @@ uses
   Vcl.VirtualImageList,
   Vcl.BaseImageCollection,
   Vcl.StyledButton,
-  Vcl.BootstrapButtonStyles,
-  Vcl.AngularButtonStyles,
-  Vcl.StandardButtonStyles,
-  Vcl.ColorButtonStyles,
   System.Actions,
   Vcl.ActnList,
   Vcl.ButtonStylesAttributes,
@@ -205,6 +201,8 @@ type
     ClassicNormalFlowPanel: TFlowPanel;
     GroupBox5: TGroupBox;
     ClassicOutlineFlowPanel: TFlowPanel;
+    ButtonSplit: TButton;
+    StyledButtonSplit: TStyledButton;
     procedure TestActionExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure cbChangeStyleSelect(Sender: TObject);
@@ -221,6 +219,7 @@ type
       NewDPI: Integer);
     procedure ScrollBoxMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+    procedure PopupMenuClick(Sender: TObject);
   private
     procedure RepaintAngularBtnWithMR(const AFamily: TStyledButtonFamily);
     procedure BuildStyleList;
@@ -243,6 +242,10 @@ uses
   , System.Types
   , Vcl.Themes
   , WinApi.ShellAPI
+  , Vcl.StandardButtonStyles
+  , Vcl.AngularButtonStyles
+  , Vcl.BootstrapButtonStyles
+  , Vcl.ColorButtonStyles
   ;
 
 { TMainForm }
@@ -313,6 +316,11 @@ procedure TMainForm.LinkLabelLinkClick(Sender: TObject;
 begin
   ShellExecute(handle, 'open',
     PChar(Link), nil, nil, SW_SHOWNORMAL);
+end;
+
+procedure TMainForm.PopupMenuClick(Sender: TObject);
+begin
+  ShowMessage((Sender as TMenuItem).Caption);
 end;
 
 procedure TMainForm.RepaintAngularBtnWithMR(const AFamily: TStyledButtonFamily);

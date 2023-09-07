@@ -19,6 +19,7 @@ uses
   , Designer
   , DesignEditors
   , VCLEditors
+  , Vcl.ComCtrls
   , Vcl.StyledButton
   , Vcl.StyledToolbar
   ;
@@ -269,14 +270,7 @@ end;
 procedure TStyledButtonsSelection.RequiresUnits(Proc: TGetStrProc);
 begin
   inherited RequiresUnits(Proc);
-  //Units added to source to manage styles of buttons
-  proc('Vcl.ButtonStylesAttributes');
-  proc('Vcl.StandardButtonStyles');
-  proc('Vcl.AngularButtonStyles');
-  proc('Vcl.BootstrapButtonStyles');
-  proc('Vcl.ColorButtonStyles');
 end;
-
 
 { TStyledToolbarComponentEditor }
 
@@ -304,6 +298,8 @@ begin
       begin
         LToolbar.SetToolbarStyle(LNewButton.StyleFamily,
           LNewButton.StyleClass, LNewButton.StyleAppearance);
+        LToolbar.StyleRadius := LNewButton.StyleRadius;
+        LToolbar.StyleDrawType := LNewButton.StyleDrawType;
         Designer.Modified;
       end;
     finally
@@ -312,11 +308,13 @@ begin
   end
   else if Index = 1 then //Add Button
   begin
-    if GetToolbar.NewButton(LNewButton, tbsStyledButton) then
+    LToolbar := GetToolbar;
+    if LToolbar.NewButton(LNewButton, tbsButton) then
     begin
       //Set unique Name to the Button created
       LNewButton.Name := Designer.UniqueName('StyledToolButton');
       LNewButton.Caption := LNewButton.Name;
+
       //Select the button into Designer
       Designer.SelectComponent(LNewButton);
       Designer.Modified;
@@ -324,7 +322,7 @@ begin
   end
   else if Index = 2 then //Add Separator
   begin
-    if GetToolbar.NewButton(LNewButton, tbsStyledSeparator) then
+    if GetToolbar.NewButton(LNewButton, tbsSeparator) then
     begin
       //Set unique Name to the Button created
       LNewButton.Name := Designer.UniqueName('StyledToolButton');

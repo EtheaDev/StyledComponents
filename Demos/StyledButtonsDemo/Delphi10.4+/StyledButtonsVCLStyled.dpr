@@ -11,7 +11,8 @@ uses
   Vcl.AngularButtonStyles in '..\..\..\source\Vcl.AngularButtonStyles.pas',
   Vcl.StandardButtonStyles in '..\..\..\source\Vcl.StandardButtonStyles.pas',
   Vcl.StyledButtonEditorUnit in '..\..\..\packages\Vcl.StyledButtonEditorUnit.pas' {StyledButtonEditor},
-  DResources in '..\DResources.pas' {dmResources: TDataModule};
+  DResources in '..\DResources.pas' {dmResources: TDataModule},
+  FAboutForm in '..\..\FAboutForm.pas' {fmAbout};
 
 {$R *.res}
 

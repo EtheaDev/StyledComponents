@@ -280,54 +280,35 @@ begin
   if LStroked or LBasic then
   begin
     //Button Hot: Button Color 50% ligthen of Font Color
-    with AHotStyle do
-    begin
-      ButtonDrawStyle := btnSolid;
-      ButtonColor := LightenColor(AHotStyle.FontColor, 50);
-    end;
+    AHotStyle.ButtonDrawStyle := btnSolid;
+    AHotStyle.ButtonColor := LightenColor(AHotStyle.FontColor, 50);
 
     //Button Pressed: Button Color 40% ligthen of Font Color
-    with APressedStyle do
-    begin
-      ButtonDrawStyle := btnSolid;
-      ButtonColor := LightenColor(ASelectedStyle.FontColor, 40);
-    end;
+    APressedStyle.ButtonDrawStyle := btnSolid;
+    APressedStyle.ButtonColor := LightenColor(ASelectedStyle.FontColor, 40);
 
     //Button Selected: Button Color 60% ligthen of Font Color
-    with ASelectedStyle do
-    begin
-      ButtonDrawStyle := btnSolid;
-      ButtonColor := LightenColor(ASelectedStyle.FontColor, 60);
-    end;
+    ASelectedStyle.ButtonDrawStyle := btnSolid;
+    ASelectedStyle.ButtonColor := LightenColor(ASelectedStyle.FontColor, 60);
+
     //Button Disabled
-    with ADisabledStyle do
-    begin
-      FontColor := htmlToColor('#A3A3A3');
-    end;
+    ADisabledStyle.FontColor := htmlToColor('#A3A3A3');
   end
   else
   begin
     //Flat and Raised Appearance
+    AHotStyle.ButtonColor := DarkenColor(AHotStyle.ButtonColor, 10);
 
     //Button Focused: botton color Darken
-    with ASelectedStyle do
-    begin
-      ButtonColor :=  DarkenColor(ButtonColor, 10);
-    end;
+    ASelectedStyle.ButtonColor :=  DarkenColor(ASelectedStyle.ButtonColor, 10);
 
     //Button Down: botton color Darken then Focused
-    with APressedStyle do
-    begin
-      ButtonColor :=  DarkenColor(ButtonColor, 20);
-    end;
+    APressedStyle.ButtonColor :=  DarkenColor(APressedStyle.ButtonColor, 20);
 
     //Button Disabled: Gray Button and Font
-    with ADisabledStyle do
-    begin
-      BorderWidth := 0;
-      ButtonColor := htmlToColor('#DCDCDC');
-      FontColor := htmlToColor('#A3A3A3');
-    end;
+    ADisabledStyle.BorderWidth := 0;
+    ADisabledStyle.ButtonColor := htmlToColor('#DCDCDC');
+    ADisabledStyle.FontColor := htmlToColor('#A3A3A3');
   end;
 end;
 
@@ -488,54 +469,35 @@ begin
   if LStroked or LBasic then
   begin
     //Button Hot: Button Color 50% darken of Font
-    with AHotStyle do
-    begin
-      ButtonDrawStyle := btnSolid;
-      ButtonColor := DarkenColor(AHotStyle.FontColor, 50);
-    end;
+    AHotStyle.ButtonDrawStyle := btnSolid;
+    AHotStyle.ButtonColor := DarkenColor(AHotStyle.FontColor, 50);
 
     //Button Pressed: Button Color 40% darken of Font
-    with APressedStyle do
-    begin
-      ButtonDrawStyle := btnSolid;
-      ButtonColor := DarkenColor(APressedStyle.FontColor, 40);
-    end;
+    APressedStyle.ButtonDrawStyle := btnSolid;
+    APressedStyle.ButtonColor := DarkenColor(APressedStyle.FontColor, 40);
 
     //Button Selected: Button Color 60% darken of Font
-    with ASelectedStyle do
-    begin
-      ButtonDrawStyle := btnSolid;
-      ButtonColor := DarkenColor(ASelectedStyle.FontColor, 60);
-    end;
+    ASelectedStyle.ButtonDrawStyle := btnSolid;
+    ASelectedStyle.ButtonColor := DarkenColor(ASelectedStyle.FontColor, 60);
+
     //Button Disabled
-    with ADisabledStyle do
-    begin
-      FontColor := htmlToColor('#6F6F6F');
-    end;
+    ADisabledStyle.FontColor := htmlToColor('#6F6F6F');
   end
   else
   begin
     //Flat and Raised Appearance
+    AHotStyle.ButtonColor := DarkenColor(AHotStyle.ButtonColor, 10);
 
     //Button Focused: botton color Lighten
-    with ASelectedStyle do
-    begin
-      ButtonColor :=  LightenColor(ButtonColor, 10);
-    end;
+    ASelectedStyle.ButtonColor :=  LightenColor(ASelectedStyle.ButtonColor, 10);
 
     //Button Down: botton color Lighten then Focused
-    with APressedStyle do
-    begin
-      ButtonColor :=  LightenColor(ButtonColor, 20);
-    end;
+    APressedStyle.ButtonColor :=  LightenColor(APressedStyle.ButtonColor, 20);
 
     //Button Disabled: Gray Button and Font
-    with ADisabledStyle do
-    begin
-      BorderWidth := 0;
-      ButtonColor := htmlToColor('#424242');
-      FontColor := htmlToColor('#6F6F6F');
-    end;
+    ADisabledStyle.BorderWidth := 0;
+    ADisabledStyle.ButtonColor := htmlToColor('#424242');
+    ADisabledStyle.FontColor := htmlToColor('#6F6F6F');
   end;
 end;
 

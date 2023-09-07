@@ -46,7 +46,6 @@ object ControlListMainForm: TControlListMainForm
         'raphicControl on it and adjust properties.'
       Transparent = True
       WordWrap = True
-      ExplicitWidth = 368
     end
     object VirtualImage1: TVirtualImage
       AlignWithMargins = True
@@ -94,7 +93,6 @@ object ControlListMainForm: TControlListMainForm
       ImageName = 'about'
       LinkHotColor = clHighlight
       Style = clbkToolButton
-      ExplicitTop = 6
     end
     object ControlListButton2: TControlListButton
       AlignWithMargins = True
@@ -112,7 +110,6 @@ object ControlListMainForm: TControlListMainForm
       ImageName = 'ok'
       LinkHotColor = clHighlight
       Style = clbkToolButton
-      ExplicitLeft = 651
     end
     object StyledGraphicButton2: TStyledGraphicButton
       Left = 470

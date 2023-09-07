@@ -29,6 +29,9 @@ interface
 
 {$INCLUDE StyledComponents.inc}
 
+uses
+  Vcl.Dialogs;
+
 resourcestring
 {$IFDEF ItaMessages}
     STR_YES = 'Sì';
@@ -111,6 +114,19 @@ resourcestring
                           'If this error persists, please contact our technical support.';
 {$ENDIF}
 
+function GetMsgDlgTitle(const AMsgDlgType: TMsgDlgType): string;
+
 implementation
+
+function GetMsgDlgTitle(const AMsgDlgType: TMsgDlgType): string;
+begin
+  case AMsgDlgType of
+    mtWarning: Result := STR_WARNING;
+    mtError: Result := STR_ERROR;
+    mtConfirmation: Result := STR_CONFIRM;
+  else
+    Result := STR_INFORMATION;
+  end;
+end;
 
 end.

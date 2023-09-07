@@ -33,7 +33,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ButtonStylesAttributes,
   Vcl.StandardButtonStyles, Vcl.AngularButtonStyles, Vcl.BootstrapButtonStyles, Vcl.ColorButtonStyles,
   Vcl.StyledButton, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnMan,
-  Vcl.ActnCtrls, Vcl.ImgList, Vcl.StdCtrls, Vcl.StyledToolbar;
+  Vcl.ActnCtrls, Vcl.ImgList, Vcl.StdCtrls, Vcl.StyledToolbar, Vcl.Menus;
 
 const
   //Params to check
@@ -70,11 +70,20 @@ type
     tbHeight: TTrackBar;
     ShowCaptionCheckBox: TCheckBox;
     ListCheckBox: TCheckBox;
+    PopupMenu: TPopupMenu;
+    New1: TMenuItem;
+    Open1: TMenuItem;
+    Save1: TMenuItem;
+    SaveAs1: TMenuItem;
+    Exit1: TMenuItem;
+    StyledToolButton4: TStyledToolButton;
+    ToolButton7: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure ToolBarClick(Sender: TObject);
     procedure ToolButtonclick(Sender: TObject);
     procedure CreateButtonClick(Sender: TObject);
     procedure UpdateToolbars(Sender: TObject);
+    procedure PopUpMenuClick(Sender: TObject);
   private
     FToolBar: TToolBar;
     FStyledToolBar: TStyledToolBar;
@@ -82,7 +91,7 @@ type
     procedure CreateToolbars;
     procedure CreateToolBar;
     function AddStyledButtonToToolbar(var bar: TStyledToolBar;
-      const Caption: string; const Style: TStyledToolButtonStyle;
+      const Caption: string; const Style: TToolButtonStyle;
       ImageIndex: Integer = 0;
       const AFamily: TStyledButtonFamily = '';
       const AClass: TStyledButtonClass = '';
@@ -101,7 +110,7 @@ implementation
 
 function TfmMain.AddStyledButtonToToolbar(var bar: TStyledToolBar;
   const Caption: string;
-  const Style: TStyledToolButtonStyle;
+  const Style: TToolButtonStyle;
   ImageIndex: Integer = 0;
   const AFamily: TStyledButtonFamily = '';
   const AClass: TStyledButtonClass = '';
@@ -195,27 +204,27 @@ begin
   AddButtonToToolbar(FToolBar, 'Caption1', tbsButton, 0);
   AddButtonToToolbar(FToolBar, 'Caption2', tbsButton, 5);
   AddButtonToToolbar(FToolBar, '', tbsSeparator, -1);
-  AddButtonToToolbar(FToolBar, 'Caption3', tbsButton, 10);
+  AddButtonToToolbar(FToolBar, 'Caption3', tbsButton, 8);
   AddButtonToToolbar(FToolBar, '', tbsSeparator, -1);
-  AddButtonToToolbar(FToolBar, 'Caption4', tbsButton, 15);
+  AddButtonToToolbar(FToolBar, 'Caption4', tbsButton, 10);
 
   //Create Styled Toolbar
   CreateStyledToolBar;
   //Add StyledButtons, Separators and Dividers with Styles
-  AddStyledButtonToToolbar(FStyledToolBar, 'Caption1', tbsStyledButton, 0,
+  AddStyledButtonToToolbar(FStyledToolBar, 'Caption1', tbsButton, 0,
     BOOTSTRAP_FAMILY, btn_primary, BOOTSTRAP_OUTLINE);
 
-  AddStyledButtonToToolbar(FStyledToolBar, 'Caption2', tbsStyledButton, 5,
+  AddStyledButtonToToolbar(FStyledToolBar, 'Caption2', tbsButton, 5,
     BOOTSTRAP_FAMILY, btn_secondary, BOOTSTRAP_OUTLINE);
 
-  AddStyledButtonToToolbar(FStyledToolBar, '', tbsStyledDivider);
+  AddStyledButtonToToolbar(FStyledToolBar, '', tbsDivider);
 
-  AddStyledButtonToToolbar(FStyledToolBar, 'Caption3', tbsStyledButton, 10,
+  AddStyledButtonToToolbar(FStyledToolBar, 'Caption3', tbsButton, 8,
     BOOTSTRAP_FAMILY, btn_success, BOOTSTRAP_OUTLINE);
 
-  AddStyledButtonToToolbar(FStyledToolBar, '', tbsStyledSeparator);
+  AddStyledButtonToToolbar(FStyledToolBar, '', tbsSeparator);
 
-  LButton := AddStyledButtonToToolbar(FStyledToolBar, 'Caption4', tbsStyledButton, 15,
+  LButton := AddStyledButtonToToolbar(FStyledToolBar, 'Caption4', tbsButton, 10,
     BOOTSTRAP_FAMILY, btn_danger, BOOTSTRAP_OUTLINE);
 
   tbWidth.Position := BUTTON_WIDTH;
@@ -228,13 +237,24 @@ end;
 
 procedure TfmMain.FormCreate(Sender: TObject);
 begin
+//  ToolBar1.EdgeBorders := [ebTop];
+//  StyledToolBar1.EdgeBorders := [ebTop];
+
   Caption := Application.Title;
   ShowCaptionCheckBox.Checked := SHOW_CAPTIONS;
 end;
 
+procedure TfmMain.PopUpMenuClick(Sender: TObject);
+begin
+  ShowMessage((Sender as TMenuItem).Caption);
+end;
+
 procedure TfmMain.ToolBarClick(Sender: TObject);
 begin
-  ;
+  if Sender is TToolbar then
+    ShowMessage(TToolbar(Sender).Caption)
+  else if Sender is TStyledToolbar then
+    ShowMessage(TStyledToolbar(Sender).Caption);
 end;
 
 procedure TfmMain.ToolButtonclick(Sender: TObject);

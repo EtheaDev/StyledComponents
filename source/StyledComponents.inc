@@ -1,6 +1,10 @@
 {.$Define ItaMessages}
 {.$Define FraMessages}
 
+{$DEFINE INCLUDE_AngularButtonStyles}
+{$DEFINE INCLUDE_BootstrapButtonStyles}
+{$DEFINE INCLUDE_ColorButtonStyles}
+
 // Delphi XE3
 {$IFDEF VER240}
   {$DEFINE D2010+}
@@ -144,6 +148,26 @@
   {$DEFINE D11+}
 {$ENDIF}
 
+// Delphi 12
+{$IFDEF VER360}
+  {$DEFINE D2010+}
+  {$DEFINE DXE+}
+  {$DEFINE DXE2+}
+  {$DEFINE DXE3+}
+  {$DEFINE DXE4+}
+  {$DEFINE DXE5+}
+  {$DEFINE DXE6+}
+  {$DEFINE DXE7+}
+  {$DEFINE DXE8+}
+  {$DEFINE D10_0+}
+  {$DEFINE D10_1+}
+  {$DEFINE D10_2+}
+  {$DEFINE D10_3+}
+  {$DEFINE D10_4+}
+  {$DEFINE D11+}
+  {$DEFINE D12+}
+{$ENDIF}
+
 {$IFDEF DXE6+}
   {$Define GDIPlusSupport}
 {$ENDIF}
@@ -151,34 +175,4 @@
 {$IFDEF D10_3+}
   {$Define HiDPISupport}
 {$ENDIF}
-
-//Prefer Engine Direct2D by Kiriakos Vlahos
-//if supported by Windows Platform (from Windows Creators update)
-{.$DEFINE PreferNativeSvgSupport}
-{.$DEFINE GPUSupport}
-{$IFDEF PreferNativeSvgSupport}
-  // Throw an exception if the SVG contains text elements or class attributes
-  // which are not supported by Windows SVG. Since it costs some performance,
-  // you should only turn it on during debugging or if it's absolutely necessary.
-  {.$DEFINE CheckForUnsupportedSvg}
-{$ENDIF}
-
-//if PreferNativeSvgSupport not active or not available:
-//use Delphi Engine TSVG by Martin Walter (included into SVG folder)
-{.$DEFINE Delphi_SVGEngine}
-//or use Delphi Engine from Image32 library by Angus Johnson (included into Image32 folder)
-{$DEFINE Image32_SVGEngine}
-//or use Engine Skia with skia4delphi wrapper by Vinícius Felipe Botelho Barbosa (included into skia4delphi folder)
-{.$DEFINE Skia_SVGEngine}
-//or use Engine Cairo wrapper (included by Lübbe Onken in Cairo folder)
-{.$DEFINE Cairo_SVGEngine}
-
-
-// When IgnoreAntiAliasedColor is set it svgs paints well but not perfect on
-// all backgrounds.  Works best with Delphi_SVGEngine
-{.$DEFINE IgnoreAntiAliasedColor}
-{$IF defined(Delphi_SVGEngine) and not defined(PreferNativeSvgSupport)}
-  {$DEFINE IgnoreAntiAliasedColor}
-{$IFEND}
-
 

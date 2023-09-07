@@ -2,9 +2,9 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
   Left = 0
   Top = 0
   BorderIcons = []
-  BorderStyle = bsSizeToolWin
-  ClientHeight = 232
-  ClientWidth = 996
+  BorderStyle = bsDialog
+  ClientHeight = 244
+  ClientWidth = 992
   Color = clWindow
   Constraints.MinHeight = 200
   Constraints.MinWidth = 400
@@ -22,18 +22,16 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
   TextHeight = 13
   object BottomBevel: TBevel
     Left = 0
-    Top = 172
-    Width = 996
+    Top = 184
+    Width = 992
     Height = 3
     Align = alBottom
     Shape = bsBottomLine
-    ExplicitTop = 184
-    ExplicitWidth = 1004
   end
   object FooterPanel: TPanel
     Left = 0
-    Top = 175
-    Width = 996
+    Top = 187
+    Width = 992
     Height = 57
     Align = alBottom
     BevelEdges = [beTop]
@@ -41,13 +39,11 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     BevelOuter = bvNone
     ParentBackground = False
     TabOrder = 0
-    ExplicitTop = 187
-    ExplicitWidth = 1004
     object FooterTextLabel: TLabel
       AlignWithMargins = True
       Left = 4
       Top = 4
-      Width = 81
+      Width = 984
       Height = 13
       Margins.Left = 4
       Margins.Top = 4
@@ -62,8 +58,8 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     AlignWithMargins = True
     Left = 4
     Top = 4
-    Width = 988
-    Height = 124
+    Width = 984
+    Height = 136
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
@@ -73,8 +69,6 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     Color = clWindow
     ParentBackground = False
     TabOrder = 1
-    ExplicitWidth = 996
-    ExplicitHeight = 136
     object ImagePanel: TPanel
       AlignWithMargins = True
       Left = 4
@@ -92,8 +86,9 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     object MessageScrollBox: TScrollBox
       Left = 136
       Top = 0
-      Width = 860
+      Width = 848
       Height = 136
+      VertScrollBar.Visible = False
       Align = alClient
       BevelInner = bvNone
       BevelOuter = bvNone
@@ -103,7 +98,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
         AlignWithMargins = True
         Left = 4
         Top = 4
-        Width = 45
+        Width = 840
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
@@ -117,13 +112,14 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
         AlignWithMargins = True
         Left = 4
         Top = 25
-        Width = 72
+        Width = 840
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
         Align = alTop
+        AutoSize = False
         Caption = 'AutoSizeLabel'
         WordWrap = True
       end
@@ -131,7 +127,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
         AlignWithMargins = True
         Left = 4
         Top = 46
-        Width = 830
+        Width = 840
         Height = 15
         Margins.Left = 4
         Margins.Top = 4
@@ -148,8 +144,8 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
   end
   object ButtonsPanel: TPanel
     Left = 0
-    Top = 132
-    Width = 996
+    Top = 144
+    Width = 992
     Height = 40
     Margins.Left = 4
     Margins.Top = 4
@@ -161,11 +157,9 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     ParentBackground = False
     ParentDoubleBuffered = False
     TabOrder = 2
-    ExplicitTop = 144
-    ExplicitWidth = 1004
     object YesButton: TStyledButton
       AlignWithMargins = True
-      Left = 47
+      Left = 35
       Top = 4
       Width = 74
       Height = 32
@@ -179,7 +173,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     end
     object NoButton: TStyledButton
       AlignWithMargins = True
-      Left = 127
+      Left = 115
       Top = 4
       Width = 74
       Height = 32
@@ -193,7 +187,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     end
     object OKButton: TStyledButton
       AlignWithMargins = True
-      Left = 207
+      Left = 195
       Top = 4
       Width = 74
       Height = 32
@@ -207,7 +201,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     end
     object CancelButton: TStyledButton
       AlignWithMargins = True
-      Left = 287
+      Left = 275
       Top = 4
       Width = 74
       Height = 32
@@ -221,7 +215,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     end
     object AbortButton: TStyledButton
       AlignWithMargins = True
-      Left = 367
+      Left = 355
       Top = 4
       Width = 74
       Height = 32
@@ -235,7 +229,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     end
     object RetryButton: TStyledButton
       AlignWithMargins = True
-      Left = 447
+      Left = 435
       Top = 4
       Width = 74
       Height = 32
@@ -249,7 +243,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     end
     object IgnoreButton: TStyledButton
       AlignWithMargins = True
-      Left = 527
+      Left = 515
       Top = 4
       Width = 74
       Height = 32
@@ -263,7 +257,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     end
     object AllButton: TStyledButton
       AlignWithMargins = True
-      Left = 607
+      Left = 595
       Top = 4
       Width = 74
       Height = 32
@@ -277,7 +271,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     end
     object NoToAllButton: TStyledButton
       AlignWithMargins = True
-      Left = 687
+      Left = 675
       Top = 4
       Width = 74
       Height = 32
@@ -291,7 +285,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     end
     object YesToAllButton: TStyledButton
       AlignWithMargins = True
-      Left = 767
+      Left = 755
       Top = 4
       Width = 74
       Height = 32
@@ -305,7 +299,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     end
     object HelpButton: TStyledButton
       AlignWithMargins = True
-      Left = 847
+      Left = 835
       Top = 4
       Width = 74
       Height = 32
@@ -319,7 +313,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     end
     object CloseButton: TStyledButton
       AlignWithMargins = True
-      Left = 927
+      Left = 915
       Top = 4
       Width = 74
       Height = 32

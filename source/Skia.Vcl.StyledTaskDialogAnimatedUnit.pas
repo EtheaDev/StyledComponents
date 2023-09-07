@@ -41,16 +41,17 @@ uses
   , Vcl.Controls
   , Vcl.Forms
   , Vcl.Dialogs
-  , Vcl.StyledTaskDialogFormUnit
+  , Vcl.StyledButton
   , Vcl.StandardButtonStyles
   , Vcl.BootstrapButtonStyles
-  , Vcl.StyledButton
+  , Vcl.ButtonStylesAttributes
+  , Vcl.AngularButtonStyles
+  , Vcl.ColorButtonStyles
+  , Vcl.StyledTaskDialogFormUnit
   , Vcl.ExtCtrls
   , Vcl.StdCtrls
   , System.UITypes
-  , Skia
-  , Vcl.ButtonStylesAttributes
-  , Vcl.AngularButtonStyles
+  , Vcl.Skia
   ;
 
 type

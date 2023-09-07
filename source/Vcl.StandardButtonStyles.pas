@@ -158,12 +158,6 @@ procedure TButtonStandardStyles.GetStyleByModalResult(
   var AStyleClass: TStyledButtonClass;
   var AStyleAppearance: TStyledButtonAppearance);
 begin
-(*
-  if StyleServices.Enabled then
-    AStyleClass := TStyleManager.ActiveStyle.Name
-  else
-    AStyleClass := DEFAULT_WINDOWS_CLASS;
-*)
   AStyleClass := DEFAULT_WINDOWS_CLASS;
 
   //define Appearance based on AModalResult
@@ -176,13 +170,13 @@ begin
     mrAbort    : begin AStyleAppearance := DEFAULT_APPEARANCE; end;
     mrRetry    : begin AStyleAppearance := DEFAULT_APPEARANCE; end;
     mrIgnore   : begin AStyleAppearance := DEFAULT_APPEARANCE; end;
-    mrAll      : begin AStyleAppearance := OUTLINE_APPEARANCE; end;
-    mrNoToAll  : begin AStyleAppearance := OUTLINE_APPEARANCE; end;
-    mrYesToAll : begin AStyleAppearance := OUTLINE_APPEARANCE; end;
-    mrClose    : begin AStyleAppearance := OUTLINE_APPEARANCE; end;
+    mrAll      : begin AStyleAppearance := DEFAULT_APPEARANCE; end;
+    mrNoToAll  : begin AStyleAppearance := DEFAULT_APPEARANCE; end;
+    mrYesToAll : begin AStyleAppearance := DEFAULT_APPEARANCE; end;
+    mrClose    : begin AStyleAppearance := DEFAULT_APPEARANCE; end;
     mrTryAgain : begin AStyleAppearance := DEFAULT_APPEARANCE; end;
     mrContinue : begin AStyleAppearance := DEFAULT_APPEARANCE; end;
-    mrHelp     : begin AStyleAppearance := OUTLINE_APPEARANCE; end;
+    mrHelp     : begin AStyleAppearance := DEFAULT_APPEARANCE; end;
   end;
 end;
 
@@ -274,18 +268,6 @@ begin
   CloneButtonStyle(ANormalStyle, AHotStyle);
   CloneButtonStyle(ANormalStyle, ADisabledStyle);
 
-  //Pressed Button
-  if LDarkStyle then
-  begin
-    APressedStyle.ButtonColor := LightenColor(LButtonColor, 20);
-    APressedStyle.BorderColor := DarkenColor(LBorderColor, 20);
-  end
-  else
-  begin
-    APressedStyle.ButtonColor := DarkenColor(LHotColor, 20);
-    APressedStyle.BorderColor := LightenColor(LHotColor, 20);
-  end;
-
   //Hot Button
   AHotStyle.ButtonColor := LHotColor;
   AHotStyle.BorderColor := LBorderHotColor;
@@ -298,6 +280,21 @@ begin
     ASelectedStyle.ButtonColor := LightenColor(LHotColor, 20)
   else
     ASelectedStyle.ButtonColor := DarkenColor(LHotColor, 20);
+
+  //Pressed Button, , similar to Hot
+  //with lighter or darker button and border color
+  CloneButtonStyle(AHotStyle, APressedStyle);
+  if LDarkStyle then
+  begin
+    APressedStyle.ButtonColor := LightenColor(LButtonColor, 20);
+    APressedStyle.BorderColor := DarkenColor(LBorderColor, 20);
+  end
+  else
+  begin
+    APressedStyle.ButtonColor := DarkenColor(LHotColor, 20);
+    APressedStyle.BorderColor := LightenColor(LHotColor, 20);
+  end;
+
 
   //Button Disabled
   if LDarkStyle then
@@ -474,7 +471,7 @@ begin
     RegisterThemeAttributes('Material Patterns Blue',ttLight,clBlack,clBlack,
       htmlToColor('#e6ecf2'),htmlToColor('#e6ecf2'),
       htmlToColor('#c4d3df'),htmlToColor('#18a1e9'),btRounded);
-    { TODO: Gestire stili di versioni precedenti di Delphi
+    { TODO: Old Delphi Styles
     RegisterThemeAttributes('Metropolis UI Black',ttDark,clWhite,
       clWebLightYellow,clWebLightYellow,clDkGray,btRounded);
     RegisterThemeAttributes('Metropolis UI Blue',ttDark,clWhite,
@@ -599,85 +596,6 @@ begin
       htmlToColor('#e5e8e9'),htmlToColor('#a0d4de'),
       htmlToColor('#e5e8e9'),htmlToColor('#a0d4de'),btRounded);
   end;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 end;
 
 procedure FreeThemesAttributes;

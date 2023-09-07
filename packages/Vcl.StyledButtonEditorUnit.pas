@@ -38,12 +38,12 @@ uses
   System.Actions,
   Vcl.ActnList,
   Vcl.StyledButton,
-  Vcl.ButtonStylesAttributes,
   Vcl.ComCtrls,
   Vcl.ExtCtrls,
   Vcl.Controls,
   Vcl.Forms,
   Vcl.StdCtrls,
+  Vcl.ButtonStylesAttributes,
   Vcl.StandardButtonStyles,
   Vcl.BootstrapButtonStyles,
   Vcl.AngularButtonStyles,
@@ -150,7 +150,7 @@ begin
   begin
     try
       FStyledButton := AButton;
-      paTop.Height := SourceButton.Top + AButton.Height + 10;
+      paTop.Height := SourceButton.Top + AButton.Height + 14;
       AButton.AssignStyleTo(SourceButton);
       SourceButton.Enabled := AButton.Enabled;
       SourceButton.Caption := AButton.Caption;

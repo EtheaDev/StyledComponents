@@ -56,11 +56,12 @@ package StyledComponents;
 {$DESCRIPTION 'Ethea Styled Components'}
 {$LIBSUFFIX 'D10_1'}
 {$RUNONLY}
-{$IMPLICITBUILD ON}
+{$IMPLICITBUILD OFF}
 
 requires
   rtl,
-  vcl;
+  vcl,
+  vclimg;
 
 contains
   Vcl.StyledButton in '..\..\source\Vcl.StyledButton.pas',
@@ -72,7 +73,9 @@ contains
   Vcl.StyledTaskDialog in '..\..\source\Vcl.StyledTaskDialog.pas',
   Vcl.StyledCmpMessages in '..\..\source\Vcl.StyledCmpMessages.pas',
   Vcl.StyledCmpStrUtils in '..\..\source\Vcl.StyledCmpStrUtils.pas',
-  Vcl.StyledToolbar in '..\..\source\Vcl.StyledToolbar.pas';
+  Vcl.StyledTaskDialogStdUnit in '..\..\source\Vcl.StyledTaskDialogStdUnit.pas',
+  Vcl.StyledToolbar in '..\..\source\Vcl.StyledToolbar.pas',
+  Vcl.StyledTaskDialogFormUnit in '..\..\source\Vcl.StyledTaskDialogFormUnit.pas' {StyledTaskDialogForm};
 
 end.
 

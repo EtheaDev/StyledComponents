@@ -29,13 +29,16 @@ program StyledToolBarDemo;
 uses
   Vcl.Forms,
   MainForm in 'MainForm.pas' {fmMain},
-  DResources in 'DResources.pas' {dmResources: TDataModule};
+  DResources in 'DResources.pas' {dmResources: TDataModule},
+  Vcl.Themes,
+  Vcl.Styles;
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  TStyleManager.TrySetStyle('Windows10');
   Application.Title := 'Styled Toolbar Demo - (c) Ethea S.r.l.';
   Application.CreateForm(TfmMain, fmMain);
   Application.CreateForm(TdmResources, dmResources);

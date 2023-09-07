@@ -31,7 +31,11 @@ interface
 
 uses
   Vcl.ImgList
+  , System.Math
   , System.UITypes
+  , Winapi.Windows
+  , Winapi.CommCtrl
+  , Winapi.Messages
   , Vcl.Graphics
   , Vcl.buttons
   , System.SysUtils
@@ -40,16 +44,12 @@ uses
   , Vcl.Themes
   , Vcl.Controls
   , Vcl.ActnList
-  , Winapi.CommCtrl
-  , Winapi.Messages
-  , Winapi.Windows
-  , System.Math
-  , Vcl.ButtonStylesAttributes
   , Vcl.Menus
+  , Vcl.ButtonStylesAttributes
   ;
 
 const
-  StyledButtonsVersion = '2.0.0';
+  StyledButtonsVersion = '2.1.0';
   DEFAULT_BTN_WIDTH = 75;
   DEFAULT_BTN_HEIGHT = 25;
 
@@ -64,13 +64,14 @@ type
   TStyledGraphicButton = class;
   TStyledButton = class;
 
-  TButtonFocusControl = class(TWinControl)
+  TStyledButtonFocusControl = class(TWinControl)
   private
     FButton: TStyledButton;
   protected
     procedure WMKeyUp(var Message: TWMKeyDown); message WM_KEYUP;
     procedure WndProc(var Message: TMessage); override;
     procedure WMKeyDown(var Message: TWMKeyDown); message WM_KEYDOWN;
+    procedure CNKeyDown(var Message: TWMKeyDown); message CN_KEYDOWN;
     procedure CMFocusChanged(var Message: TCMFocusChanged); message CM_FOCUSCHANGED;
     procedure CMDialogKey(var Message: TCMDialogKey); message CM_DIALOGKEY;
   public
@@ -82,19 +83,24 @@ type
   TGraphicButtonActionLink = class(TControlActionLink)
   protected
     FClient: TStyledGraphicButton;
+    function IsEnabledLinked: Boolean; override;
     function IsImageIndexLinked: Boolean; override;
     {$IFDEF D10_4+}
     function IsImageNameLinked: Boolean; override;
     {$ENDIF}
+    procedure SetEnabled(Value: Boolean); override;
     procedure SetImageIndex(Value: Integer); override;
     procedure AssignClient(AClient: TObject); override;
-    procedure SetChecked(Value: Boolean); override;
   public
     function IsCheckedLinked: Boolean; override;
   end;
 
   TStyledGraphicButton = class(TGraphicControl)
+  public type
+    TStyledButtonStyle = (bsPushButton, bsSplitButton);
   private
+    FUpdateCount: Integer;
+    FRescaling: Boolean;
     FButtonStyleNormal: TStyledButtonAttributes;
     FButtonStylePressed: TStyledButtonAttributes;
     FButtonStyleSelected: TStyledButtonAttributes;
@@ -131,19 +137,24 @@ type
     FSelectedImageName: TImageName;
     {$ENDIF}
 
+    //FActiveStyleName: string;
     FImageAlignment: TImageAlignment;
     FTag: Integer;
     FWordWrap: Boolean;
     FActive: Boolean;
     FDefault: Boolean;
     FCancel: Boolean;
+    FKind: TBitBtnKind;
+
+    FStyle: TStyledButtonStyle;
+    FDropDownMenu: TPopupMenu;
+    FDropDownRect: TRect;
+    FOnDropDownClick: TNotifyEvent;
+    FMouseOverDropDown: Boolean;
 
     procedure SetImageMargins(const AValue: TImageMargins);
     function IsCustomRadius: Boolean;
     procedure SetStyleRadius(const AValue: Integer);
-    function GetImage(out AImageList: TCustomImageList;
-      out AImageIndex: Integer): Boolean;
-    function IsStoredStyleClass: Boolean;
     function IsStoredStyleFamily: Boolean;
     function IsStoredStyleAppearance: Boolean;
     function IsStoredStyleElements: Boolean;
@@ -155,7 +166,6 @@ type
     procedure SetDisabledImages(const AValue: TCustomImageList);
     procedure SetImages(const AValue: TCustomImageList);
 
-    function IsImageIndexStored: Boolean;
     procedure SetDisabledImageIndex(const AValue: TImageIndex);
     procedure SetHotImageIndex(const AValue: TImageIndex);
     procedure SetImageIndex(const AValue: TImageIndex);
@@ -165,7 +175,6 @@ type
     {$IFDEF D10_4+}
     procedure UpdateImageIndex(Name: TImageName; var Index: TImageIndex);
     procedure UpdateImageName(Index: TImageIndex; var Name: TImageName);
-    function IsImageNameStored: Boolean;
     procedure SetDisabledImageName(const AValue: TImageName);
     procedure SetHotImageName(const AValue: TImageName);
     procedure SetImageName(const AValue: TImageName);
@@ -177,13 +186,12 @@ type
     procedure ImageMarginsChange(Sender: TObject);
     procedure SetImageAlignment(const AValue: TImageAlignment);
     procedure DrawButton;
-    procedure DrawBackgroundAndBorder;
+    procedure DrawBackgroundAndBorder(const AStyleAttribute: TStyledButtonAttributes);
     procedure DrawText(const AText: string; var ARect: TRect; AFlags: Cardinal);
     function GetDrawingStyle: TStyledButtonAttributes;
     function IsCustomDrawType: Boolean;
     procedure SetStyleDrawType(const AValue: TStyledButtonDrawType);
     procedure ImageListChange(Sender: TObject);
-    function GetText: TCaption;
     procedure SetText(const AValue: TCaption);
 
     procedure SetButtonStylePressed(const AValue: TStyledButtonAttributes);
@@ -192,20 +200,48 @@ type
     procedure SetButtonStyleNormal(const AValue: TStyledButtonAttributes);
     procedure SetButtonStyleDisabled(const AValue: TStyledButtonAttributes);
 
-    function IsCaptionStored: Boolean;
     function IsStyleSelectedStored: Boolean;
     function IsStyleHotStored: Boolean;
     function IsStyleNormalStored: Boolean;
     function IsStyleDisabledStored: Boolean;
     function IsStylePressedStored: Boolean;
+    function IsImageIndexStored: Boolean;
+    {$IFDEF D10_4+}
+    function IsImageNameStored: Boolean;
+    {$ENDIF}
 
     procedure UpdateControlStyle;
-    procedure CMStyleChanged(var Message: TMessage); message CM_STYLECHANGED;
-    procedure SetModalResult(const AValue: TModalResult);
     procedure SetWordWrap(const AValue: Boolean);
     procedure SetStyleApplied(const AValue: Boolean);
     procedure SetDefault(const AValue: Boolean);
+    function GetKind: TBitBtnKind;
+    procedure SetKind(const Value: TBitBtnKind);
+    function BitBtnCaptions(Kind: TBitBtnKind): string;
+    function UpdateStyleUsingModalResult: boolean;
+    procedure SetDropDownMenu(const Value: TPopupMenu);
+    procedure SetStyle(const Value: TStyledButtonStyle);
+
+    procedure CMStyleChanged(var Message: TMessage); message CM_STYLECHANGED;
+    procedure CMEnter(var Message: TCMEnter); message CM_ENTER;
+    procedure CMMouseEnter(var Message: TNotifyEvent); message CM_MOUSEENTER;
+    procedure CMMouseLeave(var Message: TNotifyEvent); message CM_MOUSELEAVE;
+    function CanDropDownMenu: boolean;
+    function GetActiveStyleName: string;
+    function AsVCLStyle: Boolean;
   protected
+    function RescalingButton: Boolean;
+    function UpdateCount: Integer;
+    procedure BeginUpdate; virtual;
+    procedure EndUpdate; virtual;
+    function IsStoredStyleClass: Boolean; virtual;
+    function IsEnabledStored: Boolean; virtual;
+    function IsCaptionStored: Boolean; virtual;
+    function GetText: TCaption; virtual;
+    function GetImage(out AImageList: TCustomImageList;
+      out AImageIndex: Integer): Boolean; virtual;
+    function GetSplitButtonWidth: Integer;
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
+    procedure SetModalResult(const AValue: TModalResult); virtual;
     function GetButtonState: TStyledButtonState; virtual;
     function IsPressed: Boolean; virtual;
     function IsDefault: Boolean; virtual;
@@ -226,9 +262,6 @@ type
     {$IFDEF HiDPISupport}
     procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
     {$ENDIF}
-    procedure CMEnter(var Message: TCMEnter); message CM_ENTER;
-    procedure CMMouseEnter(var Message: TNotifyEvent); message CM_MOUSEENTER;
-    procedure CMMouseLeave(var Message: TNotifyEvent); message CM_MOUSELEAVE;
     procedure Notification(AComponent: TComponent; AOperation: TOperation); override;
     function CalcImageRect(var ATextRect: TRect;
       const AImageWidth, AImageHeight: Integer): TRect;
@@ -238,6 +271,7 @@ type
       X, Y: Integer); override;
     procedure UpdateStyleElements; override;
   public
+    procedure ShowDropDownMenu;
     procedure SetButtonStyle(const AStyleFamily: TStyledButtonFamily;
       const AStyleClass: TStyledButtonClass;
       const AStyleAppearance: TStyledButtonAppearance); overload;
@@ -258,6 +292,7 @@ type
       const AName: string = ''): TStyledGraphicButton;
 
     procedure Click; override;
+    procedure DoDropDownMenu; virtual;
     procedure SetButtonStyles(
       const AFamily: TStyledButtonFamily;
       const AClass: TStyledButtonClass;
@@ -269,10 +304,12 @@ type
       const AAppearance: TStyledButtonAppearance); virtual;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    function IsDefaultAppearance: Boolean;
     property Focused: Boolean read GetFocused;
     property ButtonState: TStyledButtonState read GetButtonState;
     property StyleApplied: Boolean read FStyleApplied write SetStyleApplied;
   published
+    //property ActiveStyleName: string read GetActiveStyleName write FActiveStyleName stored false;
     property Action;
     property Align;
     property Anchors;
@@ -280,7 +317,7 @@ type
     property DragCursor;
     property DragKind;
     property DragMode;
-    property Enabled;
+    property Enabled stored IsEnabledStored;
     property Font;
     property OnContextPopup;
     property OnDragDrop;
@@ -314,13 +351,15 @@ type
     property Default: Boolean read FDefault write SetDefault default False;
     property Cancel: Boolean read FCancel write FCancel default False;
 
-    property Height default DEFAULT_BTN_HEIGHT;
     property ImageAlignment: TImageAlignment read FImageAlignment write SetImageAlignment default iaLeft;
     property DisabledImageIndex: TImageIndex read FDisabledImageIndex write SetDisabledImageIndex default -1;
     property DisabledImages: TCustomImageList read FDisabledImages write SetDisabledImages;
+    property DropDownMenu: TPopupMenu read FDropDownMenu write SetDropDownMenu;
+    property SplitButtonWidth: Integer read GetSplitButtonWidth;
     property HotImageIndex: TImageIndex read FHotImageIndex write SetHotImageIndex default -1;
     property Images: TCustomImageList read FImages write SetImages;
     property ImageIndex: TImageIndex read FImageIndex write SetImageIndex stored IsImageIndexStored default -1;
+    property Kind: TBitBtnKind read GetKind write SetKind default bkCustom;
     property PressedImageIndex: TImageIndex read FPressedImageIndex write SetPressedImageIndex default -1;
     property SelectedImageIndex: TImageIndex read FSelectedImageIndex write SetSelectedImageIndex default -1;
 
@@ -334,15 +373,18 @@ type
     property ImageMargins: TImageMargins read FImageMargins write SetImageMargins;
     property ModalResult: TModalResult read FModalResult write SetModalResult default mrNone;
 
+    //Style as TButton
+    property Style: TStyledButtonStyle read FStyle write SetStyle default bsPushButton;
+
     //StyledComponents Attributes
     property StyleRadius: Integer read FStyleRadius write SetStyleRadius stored IsCustomRadius default DEFAULT_RADIUS;
-    property StyleDrawType: TStyledButtonDrawType read FStyleDrawType write SetStyleDrawType stored IsCustomDrawType default btRounded;
+    property StyleDrawType: TStyledButtonDrawType read FStyleDrawType write SetStyleDrawType stored IsCustomDrawType;
+    //property CustomDrawType: boolean read FCustomDrawType write FCustomDrawType stored false;
     property StyleFamily: TStyledButtonFamily read FStyleFamily write SetStyleFamily stored IsStoredStyleFamily;
     property StyleClass: TStyledButtonClass read FStyleClass write SetStyleClass stored IsStoredStyleClass;
     property StyleAppearance: TStyledButtonAppearance read FStyleAppearance write SetStyleAppearance stored IsStoredStyleAppearance;
 
     property Tag: Integer read FTag write FTag default 0;
-    property Width default DEFAULT_BTN_WIDTH;
     property WordWrap: Boolean read FWordWrap write SetWordWrap default False;
 
     property ButtonStyleNormal: TStyledButtonAttributes read FButtonStyleNormal write SetButtonStyleNormal stored IsStyleNormalStored;
@@ -350,12 +392,14 @@ type
     property ButtonStyleSelected: TStyledButtonAttributes read FButtonStyleSelected write SetButtonStyleSelected stored IsStyleSelectedStored;
     property ButtonStyleHot: TStyledButtonAttributes read FButtonStyleHot write SetButtonStyleHot stored IsStyleHotStored;
     property ButtonStyleDisabled: TStyledButtonAttributes read FButtonStyleDisabled write SetButtonStyleDisabled stored IsStyleDisabledStored;
+
+    property OnDropDownClick: TNotifyEvent read FOnDropDownClick write FOnDropDownClick;
   end;
 
   TStyledButton = class(TStyledGraphicButton)
   private
     FTabStop: Boolean;
-    FFocusControl: TButtonFocusControl;
+    FFocusControl: TStyledButtonFocusControl;
     function GetTabOrder: Integer;
     procedure SetTabStop(const AValue: Boolean);
     function GetTabStop: Boolean;
@@ -375,6 +419,7 @@ type
     procedure VisibleChanging; override;
     procedure SetName(const AValue: TComponentName); override;
     procedure SetParent(AParent: TWinControl); override;
+    procedure Notification(AComponent: TComponent; AOperation: TOperation); override;
   public
     procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
     procedure SetFocus; override;
@@ -387,7 +432,7 @@ type
     destructor Destroy; override;
     property CanFocus: Boolean read GetCanFocus;
   published
-    //property Enabled: Boolean read GetEnabled write SetEnabled;
+    property Enabled: Boolean read GetEnabled write SetEnabled stored IsEnabledStored;
     property TabOrder: Integer read GetTabOrder write SetTabOrder;
     property TabStop: Boolean read GetTabStop write SetTabStop default True;
     property OnKeyDown: TKeyEvent read GetOnKeyDown write SetOnKeyDown;
@@ -407,9 +452,26 @@ implementation
 
 uses
   System.Types
+  , System.RTLConsts
   , Vcl.Forms
   , Vcl.StandardButtonStyles
+  {$IFDEF INCLUDE_BootstrapButtonStyles}
+  , Vcl.BootstrapButtonStyles
+  {$ENDIF}
+  {$IFDEF INCLUDE_AngularButtonStyles}
+  , Vcl.AngularButtonStyles
+  {$ENDIF}
+  {$IFDEF INCLUDE_ColorButtonStyles}
+  , Vcl.ColorButtonStyles
+  {$ENDIF}
+  , Vcl.StyledCmpMessages
   ;
+
+const
+  DefaultBitBtnGlyphSize = 18;
+  BitBtnModalResults: array[TBitBtnKind] of TModalResult = (
+    0, mrOk, mrCancel, 0, mrYes, mrNo, 0, mrAbort, mrRetry, mrIgnore,
+    mrAll);
 
 function CreateAndPosStyledButton(const AOwner: TComponent;
   const AParent: TWinControl;
@@ -425,9 +487,9 @@ begin
   Result.SetBounds(ARectPosition.Left, ARectPosition.Top, ARectPosition.Right, ARectPosition.Bottom);
 end;
 
-{ TButtonFocusControl }
+{ TStyledButtonFocusControl }
 
-procedure TButtonFocusControl.CMDialogKey(var Message: TCMDialogKey);
+procedure TStyledButtonFocusControl.CMDialogKey(var Message: TCMDialogKey);
 begin
   with Message do
     if  (((CharCode = VK_RETURN) and FButton.FActive) or
@@ -441,11 +503,11 @@ begin
       inherited;
 end;
 
-procedure TButtonFocusControl.CMFocusChanged(var Message: TCMFocusChanged);
+procedure TStyledButtonFocusControl.CMFocusChanged(var Message: TCMFocusChanged);
 begin
   with Message do
   begin
-    if Sender is TButtonFocusControl then
+    if Sender is TStyledButtonFocusControl then
       FButton.FActive := Sender = Self
     else
       FButton.FActive := FButton.FDefault;
@@ -453,14 +515,33 @@ begin
   inherited;
 end;
 
-constructor TButtonFocusControl.Create(AOwner: TComponent; AStyledButton: TStyledButton);
+constructor TStyledButtonFocusControl.Create(AOwner: TComponent; AStyledButton: TStyledButton);
 begin
   inherited Create(AOwner);
   FButton := AStyledButton;
   Self.TabStop := false;
 end;
 
-procedure TButtonFocusControl.WMKeyDown(var Message: TWMKeyDown);
+procedure TStyledButtonFocusControl.CNKeyDown(var Message: TWMKeyDown);
+begin
+  if Assigned(FButton) then
+  begin
+    with Message do
+    begin
+      Result := 1;
+      if not (csDesigning in ComponentState) then
+      begin
+        if (CharCode = VK_DOWN) and (FButton.CanDropDownMenu) then
+          FButton.DoDropDownMenu
+        else
+          inherited;
+      end;
+      Result := 0;
+    end;
+  end;
+end;
+
+procedure TStyledButtonFocusControl.WMKeyDown(var Message: TWMKeyDown);
 var
   Shift: TShiftState;
 begin
@@ -472,7 +553,7 @@ begin
   inherited;
 end;
 
-procedure TButtonFocusControl.WndProc(var Message: TMessage);
+procedure TStyledButtonFocusControl.WndProc(var Message: TMessage);
 begin
   inherited;
   if Assigned(FButton) then
@@ -484,7 +565,7 @@ begin
   end;
 end;
 
-procedure TButtonFocusControl.WMKeyUp(var Message: TWMKeyDown);
+procedure TStyledButtonFocusControl.WMKeyUp(var Message: TWMKeyDown);
 begin
   if Assigned(FButton) then
     FButton.DoKeyUp;
@@ -584,14 +665,47 @@ begin
   end;
 end;
 
+procedure TStyledGraphicButton.BeginUpdate;
+begin
+  Inc(FUpdateCount);
+end;
+
+procedure TStyledGraphicButton.EndUpdate;
+begin
+  Dec(FUpdateCount);
+end;
+
+function TStyledGraphicButton.BitBtnCaptions(Kind: TBitBtnKind): string;
+begin
+  case Kind of
+    bkOK: Result := STR_OK;
+    bkCancel: Result := STR_CANCEL;
+    bkHelp: Result := STR_HELP;
+    bkYes: Result := STR_YES;
+    bkNo: Result := STR_NO;
+    bkClose: Result := STR_CLOSE;
+    bkAbort: Result := STR_ABORT;
+    bkRetry: Result := STR_RETRY;
+    bkIgnore: Result := STR_IGNORE;
+    bkAll: Result := STR_ALL;
+  else
+    Result := '';
+  end;
+end;
+
 {$IFDEF HiDPISupport}
 procedure TStyledGraphicButton.ChangeScale(M, D: Integer; isDpiChange: Boolean);
 begin
-  FImageMargins.Left := MulDiv(FImageMargins.Left, M, D);
-  FImageMargins.Top := MulDiv(FImageMargins.Top, M, D);
-  FImageMargins.Right := MulDiv(FImageMargins.Right, M, D);
-  FImageMargins.Bottom := MulDiv(FImageMargins.Bottom, M, D);
-  inherited;
+  FRescaling := True;
+  try
+    FImageMargins.Left := MulDiv(FImageMargins.Left, M, D);
+    FImageMargins.Top := MulDiv(FImageMargins.Top, M, D);
+    FImageMargins.Right := MulDiv(FImageMargins.Right, M, D);
+    FImageMargins.Bottom := MulDiv(FImageMargins.Bottom, M, D);
+    inherited;
+  finally
+    FRescaling := True;
+  end;
 end;
 {$ENDIF}
 
@@ -601,11 +715,11 @@ begin
     Exit;
 
   FMouseInControl := false;
-//  Invalidate;
 end;
 
 procedure TStyledGraphicButton.CMMouseEnter(var Message: TNotifyEvent);
 begin
+  inherited;
   if not(Enabled) or (csDesigning in ComponentState) then
     Exit;
 
@@ -615,6 +729,7 @@ end;
 
 procedure TStyledGraphicButton.CMMouseLeave(var Message: TNotifyEvent);
 begin
+  inherited;
   if not(Enabled) or (csDesigning in ComponentState) then
     Exit;
 
@@ -633,21 +748,31 @@ begin
   UpdateStyleElements;
 end;
 
+function TStyledGraphicButton.UpdateCount: Integer;
+begin
+  Result := FUpdateCount;
+end;
+
 procedure TStyledGraphicButton.CMStyleChanged(var Message: TMessage);
 begin
+  inherited;
   UpdateControlStyle;
   Invalidate;
 end;
 
 procedure TStyledGraphicButton.Click;
+var
+  Form: TCustomForm;
 begin
-  FState := bsDown;
-  try
-    Invalidate;
-    inherited;
-  finally
-    FState := bsUp;
-    Invalidate;
+  if FMouseOverDropDown then
+  begin
+    DoDropDownMenu;
+  end
+  else
+  begin
+    Form := GetParentForm(Self);
+    if Form <> nil then Form.ModalResult := ModalResult;
+    inherited Click;
   end;
 end;
 
@@ -668,6 +793,7 @@ constructor TStyledGraphicButton.CreateStyled(AOwner: TComponent;
   const AAppearance: TStyledButtonAppearance);
 begin
   inherited Create(AOwner);
+  FStyle := bsPushButton;
   FButtonStyleNormal := TStyledButtonAttributes.Create(Self);
   FButtonStyleNormal.Name := 'Normal';
   FButtonStylePressed := TStyledButtonAttributes.Create(Self);
@@ -730,9 +856,11 @@ begin
 end;
 
 function TStyledGraphicButton.ApplyButtonStyle: Boolean;
+var
+  LButtonFamily: TButtonFamily;
 begin
   Result := StyleFamilyCheckAttributes(FStyleFamily,
-    FStyleClass, FStyleAppearance);
+    FStyleClass, FStyleAppearance, LButtonFamily);
   if Result or (csDesigning in ComponentState) then
   begin
     StyleFamilyUpdateAttributes(
@@ -764,6 +892,34 @@ begin
   FreeAndNil(FButtonStyleDisabled);
 
   inherited Destroy;
+end;
+
+function TStyledGraphicButton.CanDropDownMenu: boolean;
+begin
+  Result := (FStyle = bsSplitButton) and
+    (Assigned(DropDownMenu) or Assigned(FOnDropDownClick));
+end;
+
+procedure TStyledGraphicButton.ShowDropDownMenu;
+var
+  Pt: TPoint;
+  LRect: TRect;
+begin
+  if Assigned(FDropDownMenu) then
+  begin
+    LRect := ClientRect;
+    Pt := ClientToScreen(Point(LRect.Left, LRect.Bottom));
+    FDropDownMenu.PopupComponent := Self;
+    FDropDownMenu.Popup(Pt.X, Pt.Y);
+  end;
+end;
+
+procedure TStyledGraphicButton.DoDropDownMenu;
+begin
+  if Assigned(FOnDropDownClick) then
+    FOnDropDownClick(Self)
+  else if Assigned(FDropDownMenu) then
+    ShowDropDownMenu;
 end;
 
 procedure TStyledGraphicButton.DoKeyDown(var AKey: Word; AShift: TShiftState);
@@ -833,16 +989,38 @@ begin
   Result := Assigned(AImageList) and (AImageIndex <> -1);
 end;
 
+function TStyledGraphicButton.GetKind: TBitBtnKind;
+begin
+  if FKind <> bkCustom then
+    if ((FKind in [bkOK, bkYes]) xor Default) or
+      ((FKind in [bkCancel, bkNo]) xor Cancel) or
+      (ModalResult <> BitBtnModalResults[FKind]) then
+      FKind := bkCustom;
+  Result := FKind;
+end;
+
 function TStyledGraphicButton.IsCaptionStored: Boolean;
 begin
-  Result := (ActionLink = nil) or
-    not TGraphicButtonActionLink(ActionLink).IsCaptionLinked;
+  if (ActionLink = nil) then
+    Result := Caption <> ''
+  else
+    Result := not TGraphicButtonActionLink(ActionLink).IsCaptionLinked;
+end;
+
+function TStyledGraphicButton.IsEnabledStored: Boolean;
+begin
+  if (ActionLink = nil) then
+    Result := not Enabled
+  else
+    Result := not TGraphicButtonActionLink(ActionLink).IsEnabledLinked;
 end;
 
 function TStyledGraphicButton.IsImageIndexStored: Boolean;
 begin
-  Result := (ActionLink = nil) or
-    not TGraphicButtonActionLink(ActionLink).IsImageIndexLinked;
+  if (ActionLink = nil) then
+    Result := ImageIndex <> -1
+  else
+    Result := not TGraphicButtonActionLink(ActionLink).IsImageIndexLinked;
 end;
 
 function TStyledGraphicButton.IsCustomDrawType: Boolean;
@@ -853,6 +1031,13 @@ end;
 function TStyledGraphicButton.IsDefault: Boolean;
 begin
   Result := False;
+end;
+
+function TStyledGraphicButton.IsDefaultAppearance: Boolean;
+begin
+  Result := (FStyleFamily = DEFAULT_CLASSIC_FAMILY) and
+    (FStyleClass = DEFAULT_WINDOWS_CLASS) and
+    (FStyleAppearance = DEFAULT_APPEARANCE);
 end;
 
 function TStyledGraphicButton.IsPressed: Boolean;
@@ -870,13 +1055,55 @@ begin
   Result := FStyleFamily <> DEFAULT_CLASSIC_FAMILY;
 end;
 
+function TStyledGraphicButton.AsVCLStyle: Boolean;
+begin
+  Result := (FStyleFamily = DEFAULT_CLASSIC_FAMILY) and
+    (seClient in StyleElements);
+end;
+
 function TStyledGraphicButton.IsStoredStyleClass: Boolean;
 var
   LClass: TStyledButtonClass;
   LAppearance: TStyledButtonAppearance;
+  LButtonFamily: TButtonFamily;
+  LModalResultClass: TStyledButtonClass;
 begin
-  StyleFamilyCheckAttributes(FStyleFamily, LClass, LAppearance);
-  Result := FStyleClass <> LClass;
+  StyleFamilyCheckAttributes(FStyleFamily, LClass, LAppearance, LButtonFamily);
+
+  if AsVCLStyle then
+  begin
+    Result := (FStyleClass <> GetActiveStyleName)
+      and not SameText(FStyleClass, 'Windows');
+  end
+  else
+  begin
+    if FModalResult <> mrNone then
+    begin
+      LButtonFamily.StyledAttributes.GetStyleByModalResult(FModalResult,
+        LModalResultClass, LAppearance);
+      Result := FStyleClass <> LModalResultClass;
+    end
+    else
+      Result := FStyleClass <> LClass;
+  end;
+end;
+
+function TStyledGraphicButton.IsStoredStyleAppearance: Boolean;
+var
+  LClass: TStyledButtonClass;
+  LAppearance: TStyledButtonAppearance;
+  LButtonFamily: TButtonFamily;
+  LModalResultAppearance: TStyledButtonAppearance;
+begin
+  StyleFamilyCheckAttributes(FStyleFamily, LClass, LAppearance, LButtonFamily);
+  if FModalResult <> mrNone then
+  begin
+    LButtonFamily.StyledAttributes.GetStyleByModalResult(FModalResult,
+      LClass, LModalResultAppearance);
+    Result := FStyleAppearance <> LModalResultAppearance;
+  end
+  else
+    Result := FStyleAppearance <> LAppearance;
 end;
 
 function TStyledGraphicButton.IsStoredStyleElements: Boolean;
@@ -885,15 +1112,6 @@ begin
     Result := StyleElements <> [seFont, seClient, seBorder]
   else
     Result := False;
-end;
-
-function TStyledGraphicButton.IsStoredStyleAppearance: Boolean;
-var
-  LClass: TStyledButtonClass;
-  LAppearance: TStyledButtonAppearance;
-begin
-  StyleFamilyCheckAttributes(FStyleFamily, LClass, LAppearance);
-  Result := FStyleAppearance <> LAppearance;
 end;
 
 function TStyledGraphicButton.IsStyleDisabledStored: Boolean;
@@ -951,7 +1169,8 @@ var
   function CanvasDrawText(ACanvas: TCanvas; const AText: string; var Bounds: TRect; Flag: Cardinal): Integer;
   begin
     SetBkMode(ACanvas.Handle, TRANSPARENT);
-    Result := Winapi.Windows.DrawText(ACanvas.Handle, PChar(AText), Length(AText), Bounds, Flag)
+    Result := Winapi.Windows.DrawText(ACanvas.Handle, PChar(AText),
+      Length(AText), Bounds, Flag)
   end;
 
 begin
@@ -963,14 +1182,23 @@ begin
   CanvasDrawText(Canvas, AText, R, AFlags);
 end;
 
-procedure TStyledGraphicButton.DrawBackgroundAndBorder;
+procedure TStyledGraphicButton.DrawBackgroundAndBorder(
+  const AStyleAttribute: TStyledButtonAttributes);
 var
-  DrawRect: TRect;
+  DrawRect, SplitButtonRect: TRect;
 begin
   DrawRect := ClientRect;
 
   //Draw Button Shape
   CanvasDrawshape(Canvas, DrawRect, FStyleDrawType, FStyleRadius);
+
+  if FDropDownRect.Width > 0 then
+  begin
+    SplitButtonRect.Left := DrawRect.Width - FDropDownRect.Width;
+    //Draw Bar and Triangle
+    CanvasDrawBarAndTriangle(Canvas, FDropDownRect,{$IFDEF D10_3+}ScaleFactor{$ELSE}1{$ENDIF},
+      Canvas.Pen.Color, AStyleAttribute.FontColor);
+  end;
 end;
 
 function TStyledGraphicButton.CalcImageRect(var ATextRect: TRect;
@@ -1081,27 +1309,54 @@ var
   LOldFontColor: TColor;
   LOldFontStyle: TFontStyles;
   LOldParentFont: boolean;
+  {$IFDEF D10_4+}
+  LImage: TWicImage;
+  LImageSize: Integer;
+  {$ENDIF}
+  LStyleAttribute: TStyledButtonAttributes;
 begin
+  if not Visible or (FUpdateCount > 0) then
+    Exit;
+
   LOldParentFont := ParentFont;
   LOldFontName := Font.Name;
   LOldFontColor := Font.Color;
   LOldFontStyle := Font.Style;
+
   try
-    GetDrawingStyle;
+    LStyleAttribute := GetDrawingStyle;
     LTextFlags := 0;
     if FWordWrap then
       LTextFlags := LTextFlags or DT_WORDBREAK or DT_CENTER;
 
-    DrawBackgroundAndBorder;
+    DrawBackgroundAndBorder(LStyleAttribute);
 
     LTextRect := ClientRect;
+    Dec(LTextRect.Right, FDropDownRect.Width);
+
     if GetImage(LImageList, LImageIndex) then
     begin
       LImageRect := CalcImageRect(LTextRect, LImageList.Width, LImageList.Height);
       LImageList.Draw(Canvas, LImageRect.Left, LImageRect.Top, LImageIndex, Enabled);
+    end
+    else if FKind <> bkCustom then
+    begin
+      {$IFDEF D10_4+}
+      LImageSize := ScaleValue(DefaultBitBtnGlyphSize);
+      LImageRect := CalcImageRect(LTextRect,LImageSize,LImageSize);
+      LImage := GetBitBtnGlyph(FKind{$IFDEF D10_4+}, Enabled{$ENDIF});
+      try
+        Canvas.StretchDraw(LImageRect, LImage);
+      finally
+        LImage.Free;
+      end;
+      {$ENDIF}
     end;
+
     if LTextRect.IsEmpty then
       LTextRect := ClientRect;
+    if AlignWithMargins then
+      InflateRect(LTextRect, -Margins.Left-Margins.Right, -Margins.Top-Margins.Bottom);
     DrawText(Caption, LTextRect, DrawTextBiDiModeFlags(LTextFlags));
   finally
     if LOldParentFont then
@@ -1144,6 +1399,14 @@ begin
   Canvas.Font.Color := Result.FontColor;
   if ParentFont then
     Canvas.Font.Style := Result.FontStyle;
+
+  if FStyle = bsSplitButton then
+  begin
+    FDropDownRect := ClientRect;
+    FDropDownRect.Left := FDropDownRect.Right - GetSplitButtonWidth - Canvas.Pen.Width -2;
+  end
+  else
+    FDropDownRect.Width := 0;
 end;
 
 function TStyledGraphicButton.GetFocused: Boolean;
@@ -1156,12 +1419,15 @@ begin
   DrawButton;
 end;
 
+function TStyledGraphicButton.RescalingButton: Boolean;
+begin
+  Result := FRescaling;
+end;
+
 procedure TStyledGraphicButton.SetStyleDrawType(const AValue: TStyledButtonDrawType);
 begin
-  if FStyleDrawType <> AValue then
-  begin
-    FStyleDrawType := AValue;
-    FCustomDrawType := True;
+  FStyleDrawType := AValue;
+  FCustomDrawType := True;
 (* do not assign DrawType to any Style
     FButtonStyleNormal.DrawType := FDrawType;
     FButtonStylePressed.DrawType := FDrawType;
@@ -1169,8 +1435,7 @@ begin
     FButtonStyleHot.DrawType := FDrawType;
     FButtonStyleDisabled.DrawType := FDrawType;
 *)
-    Invalidate;
-  end;
+  Invalidate;
 end;
 
 procedure TStyledGraphicButton.SetImageAlignment(const AValue: TImageAlignment);
@@ -1326,39 +1591,41 @@ begin
 {$ENDIF}
 end;
 
+function TStyledGraphicButton.GetActiveStyleName: string;
+begin
+  {$IFDEF D10_4+}
+  Result := GetStyleName;
+  if Result = '' then
+  begin
+    {$IFDEF D11+}
+    if (csDesigning in ComponentState) then
+      Result := TStyleManager.ActiveDesigningStyle.Name
+    else
+      Result := TStyleManager.ActiveStyle.Name;
+    {$ELSE}
+      Result := TStyleManager.ActiveStyle.Name;
+    {$ENDIF}
+  end;
+  {$ELSE}
+  Result := TStyleManager.ActiveStyle.Name;
+  {$ENDIF}
+end;
+
 procedure TStyledGraphicButton.UpdateStyleElements;
 var
   LStyleClass: TStyledButtonClass;
 begin
-  if (StyleFamily = DEFAULT_CLASSIC_FAMILY) then
+  if AsVCLStyle then
   begin
     //if StyleElements contains seClient then Update style
     //as VCL Style assigned to Button or Global VCL Style
-    if (seClient in StyleElements) then
+    if seBorder in StyleElements then
+      StyleAppearance := DEFAULT_APPEARANCE;
+    LStyleClass := GetActiveStyleName;
+    if LStyleClass <> FStyleClass then
     begin
-      if seBorder in StyleElements then
-        StyleAppearance := DEFAULT_APPEARANCE;
-      {$IFDEF D10_4+}
-      LStyleClass := GetStyleName;
-      if LStyleClass = '' then
-      begin
-        {$IFDEF D11+}
-        if (csDesigning in ComponentState) then
-          LStyleClass := TStyleManager.ActiveDesigningStyle.Name
-        else
-          LStyleClass := TStyleManager.ActiveStyle.Name;
-        {$ELSE}
-          LStyleClass := TStyleManager.ActiveStyle.Name;
-        {$ENDIF}
-      end;
-      {$ELSE}
-      LStyleClass := TStyleManager.ActiveStyle.Name;
-      {$ENDIF}
-      if LStyleClass <> FStyleClass then
-      begin
-        FStyleClass := LStyleClass;
-        StyleApplied := ApplyButtonStyle;
-      end;
+      FStyleClass := LStyleClass;
+      StyleApplied := ApplyButtonStyle;
     end;
   end;
   inherited;
@@ -1381,6 +1648,18 @@ begin
     end;
     UpdateImageIndexAndName;
     Invalidate;
+  end;
+end;
+
+procedure TStyledGraphicButton.SetDropDownMenu(const Value: TPopupMenu);
+begin
+  if Value <> FDropDownMenu then
+  begin
+    if DropDownMenu <> nil then
+      DropDownMenu.RemoveFreeNotification(Self);
+    FDropDownMenu := Value;
+    if DropDownMenu <> nil then
+      DropDownMenu.FreeNotification(Self);
   end;
 end;
 
@@ -1420,18 +1699,50 @@ begin
   end;
 end;
 
+procedure TStyledGraphicButton.SetKind(const Value: TBitBtnKind);
+begin
+  if Value <> FKind then
+  begin
+    if Value <> bkCustom then
+    begin
+      Default := Value in [bkOK, bkYes];
+      Cancel := Value in [bkCancel, bkNo];
+
+      if ((csLoading in ComponentState) and (Caption = '')) or
+        (not (csLoading in ComponentState)) then
+      begin
+        if Value <> bkCustom then
+          Caption := BitBtnCaptions(Value);
+      end;
+
+      ModalResult := BitBtnModalResults[Value];
+    end;
+    FKind := Value;
+    Invalidate;
+  end;
+end;
+
+function TStyledGraphicButton.UpdateStyleUsingModalResult: boolean;
+begin
+  if (FModalResult <> mrNone) then
+  begin
+    Result := True;
+    //Force style of the button as defined into Family
+    StyleFamilyUpdateAttributesByModalResult(FModalResult,
+      FStyleFamily, FStyleClass, FStyleAppearance);
+    UpdateStyleElements;
+    StyleApplied := ApplyButtonStyle;
+  end
+  else
+    Result := False;
+end;
+
 procedure TStyledGraphicButton.SetModalResult(const AValue: TModalResult);
 begin
   if FModalResult <> AValue then
   begin
     FModalResult := AValue;
-    //At design time force style of the button as defined into Family
-    if csDesigning in ComponentState then
-    begin
-      StyleFamilyUpdateAttributesByModalResult(FModalResult,
-        FStyleFamily, FStyleClass, FStyleAppearance);
-      StyleApplied := ApplyButtonStyle;
-    end;
+    UpdateStyleUsingModalResult;
   end;
 end;
 
@@ -1531,6 +1842,8 @@ procedure TStyledGraphicButton.SetStyleRadius(const AValue: Integer);
 begin
   if FStyleRadius <> AValue then
   begin
+    if AValue <= 0 then
+      raise EReadError.create(SInvalidProperty);
     FStyleRadius := AValue;
     Invalidate;
   end;
@@ -1544,6 +1857,17 @@ begin
     {$IFDEF D10_4+}
     UpdateImageName(AValue, FSelectedImageName);
     {$ENDIF}
+  end;
+end;
+
+procedure TStyledGraphicButton.SetStyle(const Value: TStyledButtonStyle);
+begin
+  if Value <> FStyle then
+  begin
+    FStyle := Value;
+    FMouseOverDropDown := False;
+    if not (csLoading in ComponentState) then
+      Invalidate;
   end;
 end;
 
@@ -1573,15 +1897,20 @@ var
   LValue: TStyledButtonClass;
 begin
   LValue := AValue;
+  //Using a specific Class in Classic Family force
+  //StyleElements without seClient
+  if (FStyleFamily = DEFAULT_CLASSIC_FAMILY) then
+  begin
+    if (LValue <> DEFAULT_WINDOWS_CLASS) then
+      StyleElements := StyleElements - [seClient]
+    else
+      LValue := GetActiveStyleName;
+  end;
   if LValue = '' then
     LValue := DEFAULT_WINDOWS_CLASS;
   if (LValue <> Self.FStyleClass) or not FStyleApplied then
   begin
     Self.FStyleClass := LValue;
-    //Using a specific Class in Classic Family force
-    //StyleElements without seClient
-    if (FStyleFamily = DEFAULT_CLASSIC_FAMILY) and (LValue <> DEFAULT_WINDOWS_CLASS) then
-      StyleElements := StyleElements - [seClient];
     StyleApplied := ApplyButtonStyle;
   end;
 end;
@@ -1597,7 +1926,8 @@ begin
   if (LValue <> Self.FStyleFamily) or not FStyleApplied then
   begin
     FStyleFamily := LValue;
-    StyleApplied := ApplyButtonStyle;
+    StyleApplied := ApplyButtonStyle or
+      UpdateStyleUsingModalResult;
   end;
   if FStyleFamily = DEFAULT_CLASSIC_FAMILY then
     StyleElements := [seFont, seClient, seBorder];
@@ -1645,6 +1975,17 @@ begin
   end;
 end;
 
+function TStyledGraphicButton.GetSplitButtonWidth: Integer;
+begin
+  Result := Round(12{$IFDEF D10_3+}* ScaleFactor{$ENDIF});
+end;
+
+procedure TStyledGraphicButton.MouseMove(Shift: TShiftState; X, Y: Integer);
+begin
+  inherited;
+  FMouseOverDropDown := (FStyle = bsSplitButton) and (X >= FDropDownRect.Left);
+end;
+
 procedure TStyledGraphicButton.MouseUp(Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
@@ -1662,6 +2003,8 @@ begin
   inherited Notification(AComponent, AOperation);
   if AOperation = opRemove then
   begin
+    if AComponent = DropDownMenu then
+      DropDownMenu := nil;
     if AComponent = Images then
       Images := nil;
     if AComponent = DisabledImages then
@@ -1683,10 +2026,18 @@ begin
    (*and (FClient.Checked = TCustomAction(Action).Checked);*)
 end;
 
+function TGraphicButtonActionLink.IsEnabledLinked: Boolean;
+begin
+  Result := inherited IsEnabledLinked and
+    (TStyledGraphicButton(FClient).Enabled =
+      TCustomAction(Action).Enabled);
+end;
+
 function TGraphicButtonActionLink.IsImageIndexLinked: Boolean;
 begin
   Result := inherited IsImageIndexLinked and
-    (TStyledGraphicButton(FClient).ImageIndex = TStyledGraphicButton(Action).ImageIndex);
+    (TStyledGraphicButton(FClient).ImageIndex =
+      TCustomAction(Action).ImageIndex);
 end;
 
 {$IFDEF D10_4+}
@@ -1698,15 +2049,14 @@ begin
 end;
 {$ENDIF}
 
-procedure TGraphicButtonActionLink.SetChecked(Value: Boolean);
+procedure TGraphicButtonActionLink.SetEnabled(Value: Boolean);
 begin
-  inherited;
-  ;
+  if IsEnabledLinked then
+    TStyledGraphicButton(FClient).Enabled := Value;
 end;
 
 procedure TGraphicButtonActionLink.SetImageIndex(Value: Integer);
 begin
-  inherited;
   if IsImageIndexLinked then
     TStyledGraphicButton(FClient).ImageIndex := Value;
 end;
@@ -1738,7 +2088,8 @@ end;
 procedure TStyledButton.Click;
 begin
   inherited;
-  SetFocus;
+  if not (csFreeNotification in ComponentState) and Visible and CanFocus then
+    SetFocus;
 end;
 
 constructor TStyledButton.CreateStyled(AOwner: TComponent;
@@ -1763,7 +2114,7 @@ procedure TStyledButton.CreateFocusControl(const AParent: TWinControl);
 begin
   if not Assigned(FFocusControl) then
   begin
-    FFocusControl := TButtonFocusControl.Create(nil, Self);
+    FFocusControl := TStyledButtonFocusControl.Create(nil, Self);
     try
       FFocusControl.TabStop := true;
       AdjustFocusControlPos;
@@ -1895,6 +2246,17 @@ begin
     Result := FFocusControl.TabStop
   else
     Result := false;
+end;
+
+procedure TStyledButton.Notification(AComponent: TComponent;
+  AOperation: TOperation);
+begin
+  inherited Notification(AComponent, AOperation);
+  if AOperation = opRemove then
+  begin
+    if AComponent = FFocusControl then
+      FFocusControl := nil;
+  end;
 end;
 
 end.

@@ -18,14 +18,14 @@ object fmMain: TfmMain
   TextHeight = 15
   object ToolBar1: TToolBar
     AlignWithMargins = True
-    Left = 10
-    Top = 70
-    Width = 721
-    Height = 54
+    Left = 3
+    Top = 69
+    Width = 735
+    Height = 62
     AutoSize = True
-    ButtonHeight = 58
-    ButtonWidth = 49
-    Caption = 'ToolBar1'
+    ButtonHeight = 62
+    ButtonWidth = 55
+    Caption = 'ToolBar Caption'
     Images = ImageList32
     ShowCaptions = True
     TabOrder = 1
@@ -41,18 +41,20 @@ object fmMain: TfmMain
       Grouped = True
       ImageIndex = 12
       Style = tbsCheck
+      OnClick = ToolButtonclick
     end
     object ToolButton1: TToolButton
-      Left = 49
+      Left = 55
       Top = 0
       Hint = 'Menu button'
-      Caption = 'Menu'
+      Caption = 'Home'
       Grouped = True
-      ImageIndex = 4
+      ImageIndex = 2
       Style = tbsCheck
+      OnClick = ToolButtonclick
     end
     object ToolButton5: TToolButton
-      Left = 98
+      Left = 110
       Top = 0
       Width = 10
       Hint = 'Hint of Sep'
@@ -61,7 +63,7 @@ object fmMain: TfmMain
       Style = tbsSeparator
     end
     object ToolButton3: TToolButton
-      Left = 108
+      Left = 120
       Top = 0
       Hint = 'Like Button'
       Caption = 'Like'
@@ -69,23 +71,33 @@ object fmMain: TfmMain
       Grouped = True
       ImageIndex = 8
       Style = tbsCheck
+      OnClick = ToolButtonclick
     end
     object ToolButton4: TToolButton
-      Left = 157
+      Left = 175
       Top = 0
       Hint = 'Options button'
       Caption = 'Options'
       Grouped = True
       ImageIndex = 10
       Style = tbsCheck
+      OnClick = ToolButtonclick
     end
     object ToolButton6: TToolButton
-      Left = 206
+      Left = 230
       Top = 0
       Width = 10
       Caption = 'ToolButton6'
       ImageIndex = 9
       Style = tbsDivider
+    end
+    object ToolButton7: TToolButton
+      Left = 240
+      Top = 0
+      Caption = 'Menu'
+      DropdownMenu = PopupMenu
+      ImageIndex = 4
+      Style = tbsDropDown
     end
   end
   object StyledToolbar1: TStyledToolbar
@@ -95,95 +107,84 @@ object fmMain: TfmMain
     Width = 735
     Height = 60
     AutoSize = True
-    Caption = 'Control: Open - Top:-3 - Left:336 - Width: 61 - Height: 60'
-    DragMode = dmAutomatic
-    ParentColor = True
-    TabOrder = 0
     ButtonHeight = 60
     ButtonWidth = 60
+    Caption = 'StyledToolBar Caption'
     Images = ImageList32
     Indent = 3
     ShowCaptions = True
-    StyleFamily = 'Bootstrap'
-    StyleAppearance = 'Outline'
+    TabOrder = 0
+    OnClick = ToolBarClick
+    StyleRadius = 30
+    StyleDrawType = btRounded
     object StyledToolButton1: TStyledToolButton
       Left = 0
       Top = 0
-      Hint = ''
-      DragMode = dmAutomatic
+      OnClick = ToolButtonclick
       Caption = 'Open'
-      Images = ImageList32
       ImageIndex = 12
+      Style = tbsCheck
       StyleFamily = 'Bootstrap'
       StyleClass = 'Success'
-      StyleAppearance = 'Outline'
       AllowAllUp = True
       Down = True
       Grouped = True
-      Style = tbsStyledCheck
     end
     object StyledToolButton2: TStyledToolButton
       Left = 60
       Top = 0
-      Hint = ''
-      DragMode = dmAutomatic
-      Caption = 'Menu'
-      Images = ImageList32
-      ImageIndex = 4
-      StyleFamily = 'Bootstrap'
-      StyleAppearance = 'Outline'
+      OnClick = ToolButtonclick
+      Caption = 'Home'
+      ImageIndex = 2
+      Style = tbsCheck
+      StyleFamily = 'Angular-Light'
+      StyleClass = 'Amber'
+      StyleAppearance = 'Flat'
       Grouped = True
-      Style = tbsStyledCheck
     end
     object SSep1: TStyledToolButton
       Left = 120
       Top = 0
-      Width = 10
-      Hint = ''
-      DragMode = dmAutomatic
+      Width = 8
       Enabled = False
       Caption = ''
-      StyleFamily = 'Bootstrap'
-      StyleAppearance = 'Outline'
-      Style = tbsStyledSeparator
+      Style = tbsSeparator
     end
     object StyledToolButton3: TStyledToolButton
-      Left = 138
+      Left = 128
       Top = 0
-      Hint = ''
-      DragMode = dmAutomatic
+      OnClick = ToolButtonclick
       Caption = 'Like'
-      Images = ImageList32
       ImageIndex = 8
-      StyleFamily = 'Bootstrap'
-      StyleAppearance = 'Outline'
+      Style = tbsCheck
       Down = True
       Grouped = True
-      Style = tbsStyledCheck
     end
     object StyledToolButton5: TStyledToolButton
-      Left = 202
+      Left = 188
       Top = 0
-      Hint = ''
-      DragMode = dmAutomatic
+      OnClick = ToolButtonclick
       Caption = 'Options'
-      Images = ImageList32
       ImageIndex = 10
-      StyleFamily = 'Bootstrap'
-      StyleAppearance = 'Outline'
+      Style = tbsCheck
       Grouped = True
-      Style = tbsStyledCheck
     end
     object StyledToolButton6: TStyledToolButton
-      Left = 250
+      Left = 248
       Top = 0
-      Width = 10
-      Hint = ''
+      Width = 8
       Enabled = False
-      Caption = 'StyledToolButton6'
-      StyleFamily = 'Bootstrap'
-      StyleAppearance = 'Outline'
-      Style = tbsStyledSeparator
+      Caption = ''
+      Style = tbsSeparator
+    end
+    object StyledToolButton4: TStyledToolButton
+      Left = 256
+      Top = 0
+      Width = 75
+      Caption = 'Menu'
+      DropDownMenu = PopupMenu
+      ImageIndex = 4
+      Style = tbsDropDown
     end
   end
   object BottomPanel: TPanel
@@ -283,11 +284,35 @@ object fmMain: TfmMain
   end
   object ClientPanel: TPanel
     Left = 0
-    Top = 130
+    Top = 134
     Width = 741
-    Height = 326
+    Height = 322
     Align = alClient
     TabOrder = 3
+  end
+  object PopupMenu: TPopupMenu
+    Left = 525
+    Top = 275
+    object New1: TMenuItem
+      Caption = '&New'
+      OnClick = PopUpMenuClick
+    end
+    object Open1: TMenuItem
+      Caption = '&Open...'
+      OnClick = PopUpMenuClick
+    end
+    object Save1: TMenuItem
+      Caption = '&Save'
+      OnClick = PopUpMenuClick
+    end
+    object SaveAs1: TMenuItem
+      Caption = 'Save &As...'
+      OnClick = PopUpMenuClick
+    end
+    object Exit1: TMenuItem
+      Caption = 'E&xit'
+      OnClick = PopUpMenuClick
+    end
   end
   object ImageList32: TImageList
     ColorDepth = cd32Bit
@@ -297,7 +322,7 @@ object fmMain: TfmMain
     Left = 476
     Top = 274
     Bitmap = {
-      494C01011800B000700020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01011800B000880020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000080000000E0000000010020000000000000C0
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

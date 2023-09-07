@@ -182,7 +182,6 @@
             <Form>MainForm</Form>
         </DCCReference>
         <DCCReference Include="..\..\..\source\Vcl.StyledButton.pas"/>
-        <DCCReference Include="..\..\..\source\Vcl.ButtonStylesAttributes.pas"/>
         <DCCReference Include="..\..\..\source\Vcl.BootstrapButtonStyles.pas"/>
         <DCCReference Include="..\..\..\source\Vcl.AngularButtonStyles.pas"/>
         <DCCReference Include="..\..\..\source\Vcl.StandardButtonStyles.pas"/>

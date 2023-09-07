@@ -42,7 +42,7 @@ uses
 type
   TStyledDialogIcons = array[TMsgDlgType] of TIcon;
 
-  //  Abstraction of an SVG document
+  //  Abstraction of a Dialog Launcher
   ITaskDialogLauncher = interface
     ['{B2F16F98-C163-4706-A803-E624126D8DF6}']
     function DoExecute(ParentWnd: HWND;

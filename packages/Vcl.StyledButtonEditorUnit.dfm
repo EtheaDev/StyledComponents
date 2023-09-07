@@ -27,7 +27,6 @@ object StyledButtonEditor: TStyledButtonEditor
     Height = 3
     Cursor = crVSplit
     Align = alTop
-    ExplicitWidth = 883
   end
   object BottomPanel: TPanel
     Left = 0
@@ -37,13 +36,11 @@ object StyledButtonEditor: TStyledButtonEditor
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitTop = 504
-    ExplicitWidth = 931
     DesignSize = (
       935
       38)
     object OKButton: TButton
-      Left = 546
+      Left = 538
       Top = 6
       Width = 85
       Height = 25
@@ -53,10 +50,9 @@ object StyledButtonEditor: TStyledButtonEditor
       ModalResult = 1
       TabOrder = 0
       OnClick = OKButtonClick
-      ExplicitLeft = 542
     end
     object ApplyButton: TButton
-      Left = 729
+      Left = 721
       Top = 6
       Width = 85
       Height = 25
@@ -64,10 +60,9 @@ object StyledButtonEditor: TStyledButtonEditor
       Caption = '&Apply'
       TabOrder = 2
       OnClick = ApplyButtonClick
-      ExplicitLeft = 725
     end
     object CancelButton: TButton
-      Left = 638
+      Left = 630
       Top = 6
       Width = 85
       Height = 25
@@ -76,10 +71,9 @@ object StyledButtonEditor: TStyledButtonEditor
       Caption = 'Cancel'
       ModalResult = 2
       TabOrder = 1
-      ExplicitLeft = 634
     end
     object HelpButton: TButton
-      Left = 821
+      Left = 813
       Top = 6
       Width = 85
       Height = 25
@@ -87,7 +81,6 @@ object StyledButtonEditor: TStyledButtonEditor
       Caption = '&Help'
       TabOrder = 3
       OnClick = HelpButtonClick
-      ExplicitLeft = 817
     end
   end
   object paTop: TPanel
@@ -98,7 +91,6 @@ object StyledButtonEditor: TStyledButtonEditor
     Align = alTop
     TabOrder = 1
     OnResize = paTopResize
-    ExplicitWidth = 931
     object ActualGroupBox: TGroupBox
       AlignWithMargins = True
       Left = 4
@@ -128,7 +120,6 @@ object StyledButtonEditor: TStyledButtonEditor
       Align = alClient
       Caption = 'NEW'
       TabOrder = 1
-      ExplicitWidth = 504
       object DestButton: TStyledGraphicButton
         AlignWithMargins = True
         Left = 12
@@ -166,8 +157,6 @@ object StyledButtonEditor: TStyledButtonEditor
       BorderStyle = bsNone
       ParentBackground = True
       TabOrder = 0
-      ExplicitWidth = 917
-      ExplicitHeight = 287
     end
   end
   object AttributesPanel: TPanel
@@ -179,7 +168,6 @@ object StyledButtonEditor: TStyledButtonEditor
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 3
-    ExplicitWidth = 925
     object AttributesGroupBox: TGroupBox
       Left = 0
       Top = 0
@@ -188,7 +176,6 @@ object StyledButtonEditor: TStyledButtonEditor
       Align = alClient
       Caption = 'Button Attributes'
       TabOrder = 0
-      ExplicitWidth = 925
       object StyleDrawTypeLabel: TLabel
         Left = 19
         Top = 26

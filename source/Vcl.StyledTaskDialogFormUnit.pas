@@ -320,7 +320,9 @@ procedure TStyledTaskDialogForm.SetDialogFont(const AFont: TFont);
 begin
   Self.Font.Assign(AFont);
   TitleLabel.Font.Name := Font.Name;
+  TitleLabel.Font.Size := AFont.Size;
   TextLabel.Font.Name := Font.Name;
+  TextLabel.Font.Size := AFont.Size;
 end;
 
 procedure TStyledTaskDialogForm.SetHelpContext(const AValue: Integer);
@@ -362,8 +364,13 @@ begin
   TextLabel.Height := AutoSizeLabel.Height;
   AutoSizeLabel.Visible := False;
 
-  MessageScrollBox.VertScrollBar.Visible :=
-    LCalcHeight > Constraints.MinHeight;
+  if LCalcHeight > LHeight then
+  begin
+    MessageScrollBox.VertScrollBar.Visible := True;
+    MessageScrollBox.VertScrollBar.Range := LCalcHeight;
+  end
+  else
+    MessageScrollBox.VertScrollBar.Visible := False;
 end;
 
 procedure TStyledTaskDialogForm.AdjustWidth;
@@ -623,12 +630,18 @@ end;
 
 procedure TStyledTaskDialogForm.FormShow(Sender: TObject);
 begin
-  ShowDialogForm;
-  AdjustButtonsCaption;
-  AdjustHeight;
-  AdjustWidth;
-  PlayMessageDlgSound;
-  FocusDefaultButton;
+  Screen.Cursor := crHourGlass;
+  try
+    ShowDialogForm;
+    AdjustButtonsCaption;
+    AdjustWidth;
+    AutoSizeLabel.AutoSize := True;
+    AdjustHeight;
+    PlayMessageDlgSound;
+    FocusDefaultButton;
+  finally
+    Screen.Cursor := crDefault;
+  end;
 end;
 
 function TStyledTaskDialogForm.GetFooterText: string;

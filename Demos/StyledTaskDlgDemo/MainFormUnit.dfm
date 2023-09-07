@@ -26,8 +26,6 @@ object MainForm: TMainForm
     Align = alBottom
     Caption = 'Use Style Dialog Component with extra feature'
     TabOrder = 0
-    ExplicitTop = 342
-    ExplicitWidth = 741
     DesignSize = (
       745
       230)
@@ -64,18 +62,17 @@ object MainForm: TMainForm
       Caption = 'Dialog Caption:'
     end
     object StyleLabel: TLabel
-      Left = 531
+      Left = 527
       Top = 186
       Width = 121
       Height = 13
       Anchors = [akRight, akBottom]
       Caption = 'Change application style:'
-      ExplicitLeft = 543
     end
     object ExpandedTextMemo: TMemo
       Left = 112
       Top = 44
-      Width = 413
+      Width = 409
       Height = 56
       Anchors = [akLeft, akTop, akRight]
       Lines.Strings = (
@@ -83,10 +80,9 @@ object MainForm: TMainForm
         'second expanded line')
       TabOrder = 1
       WordWrap = False
-      ExplicitWidth = 409
     end
     object btUseStyledDialogComp: TButton
-      Left = 531
+      Left = 527
       Top = 123
       Width = 195
       Height = 25
@@ -94,10 +90,9 @@ object MainForm: TMainForm
       Caption = 'Use StyledTaskDialog comp.'
       TabOrder = 5
       OnClick = UseStyleDialogCompClick
-      ExplicitLeft = 527
     end
     object btUseNativeDialogComp: TButton
-      Left = 531
+      Left = 527
       Top = 154
       Width = 195
       Height = 25
@@ -105,12 +100,11 @@ object MainForm: TMainForm
       Caption = 'Use native TaskDialog comp.'
       TabOrder = 6
       OnClick = UseStyleDialogCompClick
-      ExplicitLeft = 527
     end
     object FooterTextMemo: TMemo
       Left = 112
       Top = 106
-      Width = 413
+      Width = 409
       Height = 56
       Anchors = [akLeft, akTop, akRight]
       Lines.Strings = (
@@ -118,12 +112,11 @@ object MainForm: TMainForm
         'second footer line')
       TabOrder = 2
       WordWrap = False
-      ExplicitWidth = 409
     end
     object VerificationTextMemo: TMemo
       Left = 112
       Top = 168
-      Width = 413
+      Width = 409
       Height = 56
       Anchors = [akLeft, akTop, akRight]
       Lines.Strings = (
@@ -131,10 +124,9 @@ object MainForm: TMainForm
         'second Verification line')
       TabOrder = 3
       WordWrap = False
-      ExplicitWidth = 409
     end
     object rgMainIcon: TRadioGroup
-      Left = 531
+      Left = 527
       Top = 10
       Width = 195
       Height = 107
@@ -148,20 +140,18 @@ object MainForm: TMainForm
         'tdiInformation'
         'tdiShield')
       TabOrder = 4
-      ExplicitLeft = 527
     end
     object CaptionEdit: TEdit
       Left = 112
       Top = 17
-      Width = 413
+      Width = 409
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
       Text = 'Caption'
-      ExplicitWidth = 409
     end
     object cbChangeStyle: TComboBox
-      Left = 531
+      Left = 527
       Top = 203
       Width = 196
       Height = 21
@@ -169,7 +159,6 @@ object MainForm: TMainForm
       Anchors = [akRight, akBottom]
       TabOrder = 7
       OnSelect = cbChangeStyleSelect
-      ExplicitLeft = 527
     end
   end
   object ClientPanel: TPanel
@@ -179,8 +168,6 @@ object MainForm: TMainForm
     Height = 343
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 741
-    ExplicitHeight = 342
     object LeftPanelClient: TPanel
       Left = 1
       Top = 1
@@ -188,8 +175,6 @@ object MainForm: TMainForm
       Height = 341
       Align = alClient
       TabOrder = 0
-      ExplicitWidth = 525
-      ExplicitHeight = 340
       DesignSize = (
         529
         341)
@@ -228,23 +213,21 @@ object MainForm: TMainForm
       object edTitle: TEdit
         Left = 7
         Top = 24
-        Width = 396
+        Width = 392
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 0
         Text = 'Task dialog Tester'
-        ExplicitWidth = 392
       end
       object edMessage: TMemo
         Left = 7
         Top = 70
-        Width = 503
+        Width = 499
         Height = 162
         Anchors = [akLeft, akTop, akRight, akBottom]
-        ScrollBars = ssVertical
+        ScrollBars = ssBoth
         TabOrder = 1
-        ExplicitWidth = 499
-        ExplicitHeight = 161
+        WordWrap = False
       end
       object FontComboBox: TComboBox
         Left = 337
@@ -255,7 +238,6 @@ object MainForm: TMainForm
         TabOrder = 2
         Text = 'FontComboBox'
         OnSelect = FontComboBoxSelect
-        ExplicitTop = 236
       end
       object btCustomTaskDialog: TButton
         Left = 7
@@ -266,7 +248,6 @@ object MainForm: TMainForm
         Caption = 'Custom Task Dialog'
         TabOrder = 3
         OnClick = ShowDlg
-        ExplicitTop = 263
       end
       object btNativeTaskDialog: TButton
         Left = 171
@@ -277,7 +258,6 @@ object MainForm: TMainForm
         Caption = 'Native Task Dialog'
         TabOrder = 4
         OnClick = ShowDlg
-        ExplicitTop = 263
       end
       object btRaiseErrorTaskDialog: TButton
         Left = 337
@@ -288,7 +268,6 @@ object MainForm: TMainForm
         Caption = 'Raise Database Error'
         TabOrder = 5
         OnClick = RaiseDatabaseError
-        ExplicitTop = 263
       end
       object btCustomMsgDialog: TButton
         Left = 6
@@ -299,7 +278,6 @@ object MainForm: TMainForm
         Caption = 'Custom Message Dialog'
         TabOrder = 6
         OnClick = ShowDlg
-        ExplicitTop = 294
       end
       object btNativeMsgDialog: TButton
         Left = 171
@@ -310,7 +288,6 @@ object MainForm: TMainForm
         Caption = 'Native Message Dialog'
         TabOrder = 7
         OnClick = ShowDlg
-        ExplicitTop = 294
       end
       object btRaiseErrorMsgDialog: TButton
         Left = 337
@@ -321,7 +298,6 @@ object MainForm: TMainForm
         Caption = 'Raise Generic Error'
         TabOrder = 8
         OnClick = RaiseError
-        ExplicitTop = 294
       end
       object FamilyComboBox: TComboBox
         Left = 111
@@ -341,17 +317,15 @@ object MainForm: TMainForm
           'Angular-Dark'
           'Basic-Colors'
           'SVG-Colors')
-        ExplicitTop = 236
       end
       object gbResult: TGroupBox
-        Left = 418
+        Left = 414
         Top = 4
         Width = 92
         Height = 60
         Anchors = [akTop, akRight]
         Caption = 'ModalResult'
         TabOrder = 10
-        ExplicitLeft = 414
         object MRLabel: TLabel
           AlignWithMargins = True
           Left = 5
@@ -361,8 +335,6 @@ object MainForm: TMainForm
           Margins.Top = 10
           Align = alClient
           Alignment = taCenter
-          ExplicitWidth = 3
-          ExplicitHeight = 13
         end
       end
     end
@@ -373,8 +345,6 @@ object MainForm: TMainForm
       Height = 341
       Align = alRight
       TabOrder = 1
-      ExplicitLeft = 526
-      ExplicitHeight = 340
       DesignSize = (
         214
         341)
@@ -386,7 +356,6 @@ object MainForm: TMainForm
         Alignment = taRightJustify
         Anchors = [akLeft, akBottom]
         Caption = 'Default Button:'
-        ExplicitTop = 317
       end
       object rgDlgType: TRadioGroup
         Left = 6
@@ -402,9 +371,8 @@ object MainForm: TMainForm
         Width = 196
         Height = 195
         Anchors = [akLeft, akTop, akBottom]
-        ItemHeight = 13
+        ItemHeight = 17
         TabOrder = 1
-        ExplicitHeight = 194
       end
       object DefaultButtonComboBox: TComboBox
         Left = 90
@@ -415,7 +383,6 @@ object MainForm: TMainForm
         Anchors = [akLeft, akBottom]
         DropDownCount = 12
         TabOrder = 2
-        ExplicitTop = 312
       end
     end
   end

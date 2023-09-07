@@ -58,6 +58,7 @@
         <DCC_Description>Ethea Styled Components</DCC_Description>
         <RuntimeOnlyPackage>true</RuntimeOnlyPackage>
         <DllSuffix>D10_2</DllSuffix>
+        <DCC_OutputNeverBuildDcps>true</DCC_OutputNeverBuildDcps>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
@@ -95,6 +96,7 @@
         <DCCReference Include="..\StyledToolbar.dcr"/>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="vcl.dcp"/>
+        <DCCReference Include="vclimg.dcp"/>
         <DCCReference Include="..\..\source\Vcl.StyledButton.pas"/>
         <DCCReference Include="..\..\source\Vcl.ButtonStylesAttributes.pas"/>
         <DCCReference Include="..\..\source\Vcl.StandardButtonStyles.pas"/>
@@ -104,7 +106,12 @@
         <DCCReference Include="..\..\source\Vcl.StyledTaskDialog.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledCmpMessages.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledCmpStrUtils.pas"/>
+        <DCCReference Include="..\..\source\Vcl.StyledTaskDialogStdUnit.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledToolbar.pas"/>
+        <DCCReference Include="..\..\source\Vcl.StyledTaskDialogFormUnit.pas">
+            <Form>StyledTaskDialogForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -136,5 +143,4 @@
     </ProjectExtensions>
     <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
     <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"/>
-    <Import Project="$(MSBuildProjectName).deployproj" Condition="Exists('$(MSBuildProjectName).deployproj')"/>
 </Project>

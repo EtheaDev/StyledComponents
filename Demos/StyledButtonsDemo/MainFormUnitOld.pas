@@ -44,10 +44,6 @@ uses
   Vcl.StdCtrls,
   Vcl.ImgList,
   Vcl.StyledButton,
-  Vcl.BootstrapButtonStyles,
-  Vcl.AngularButtonStyles,
-  Vcl.StandardButtonStyles,
-  Vcl.ColorButtonStyles,
   System.Actions,
   Vcl.ActnList,
   Vcl.ButtonStylesAttributes,
@@ -200,6 +196,8 @@ type
     ClassicNormalFlowPanel: TFlowPanel;
     GroupBox5: TGroupBox;
     ClassicOutlineFlowPanel: TFlowPanel;
+    ButtonSplit: TButton;
+    StyledButtonSplit: TStyledButton;
     procedure TestActionExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure cbChangeStyleSelect(Sender: TObject);
@@ -212,6 +210,7 @@ type
     procedure FlowPanelResize(Sender: TObject);
     procedure ScrollBoxMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+    procedure PopupMenuClick(Sender: TObject);
   private
     procedure RepaintAngularBtnWithMR(const AFamily: TStyledButtonFamily);
     procedure BuildStyleList;
@@ -231,8 +230,13 @@ implementation
 
 uses
   System.TypInfo
+  , System.Types
   , Vcl.Themes
   , WinApi.ShellAPI
+  , Vcl.StandardButtonStyles
+  , Vcl.AngularButtonStyles
+  , Vcl.BootstrapButtonStyles
+  , Vcl.ColorButtonStyles
   ;
 
 { TMainForm }
@@ -264,10 +268,6 @@ procedure TMainForm.FormCreate(Sender: TObject);
 begin
   Caption := Application.Title;
   BuildStyleList;
-  {$IFDEF D10_4+}
-  VCLButtonStyled.StyleName := 'Windows10 Blue';
-  StyledButtonStyled.StyleName := 'Windows10 Blue';
-  {$ENDIF}
 
   BuildFamilyPreview(DEFAULT_CLASSIC_FAMILY, DEFAULT_APPEARANCE, ClassicNormalFlowPanel);
   BuildFamilyPreview(DEFAULT_CLASSIC_FAMILY, OUTLINE_APPEARANCE, ClassicOutlineFlowPanel);
@@ -289,6 +289,11 @@ procedure TMainForm.LinkLabelLinkClick(Sender: TObject;
 begin
   ShellExecute(handle, 'open',
     PChar(Link), nil, nil, SW_SHOWNORMAL);
+end;
+
+procedure TMainForm.PopupMenuClick(Sender: TObject);
+begin
+  ShowMessage((Sender as TMenuItem).Caption);
 end;
 
 procedure TMainForm.RepaintAngularBtnWithMR(const AFamily: TStyledButtonFamily);
@@ -457,15 +462,13 @@ var
   var
     LStyledButton: TStyledButton;
   begin
-    LStyledButton := TStyledButton.Create(Self);
+    LStyledButton := TStyledButton.CreateStyled(Self,
+      AFamily, AClass, AAppearance);
     LStyledButton.Width := Round(BUTTON_WIDTH * GetScaleFactor);
     LStyledButton.Height := Round(BUTTON_HEIGHT * GetScaleFactor);
     LStyledButton.AlignWithMargins := True;
     LStyledButton.Caption := AClass;
     LStyledButton.Hint := AClass;
-    LStyledButton.StyleFamily := AFamily;
-    LStyledButton.StyleClass := AClass;
-    LStyledButton.StyleAppearance := AAppearance;
     LStyledButton.OnClick := ButtonClick;
     LStyledButton.Parent := AParent;
   end;

@@ -1,7 +1,6 @@
 {******************************************************************************}
 {                                                                              }
-{       StyledButtonsDemo: a Demo to show StyledButtons                        }
-{       with different Familes (Classic, Bootstrap and Angular                 }
+{       StyledComponents: a set of Styled VCL Component                        }
 {                                                                              }
 {       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
@@ -24,27 +23,59 @@
 {  limitations under the License.                                              }
 {                                                                              }
 {******************************************************************************}
-program StyledButtonsDemo;
-
-uses
-  Vcl.Forms,
-  MainFormUnit in '..\MainFormUnit.pas' {MainForm},
-  Vcl.Themes,
-  Vcl.Styles,
-  Vcl.StyledButton in '..\..\..\source\Vcl.StyledButton.pas',
-  Vcl.BootstrapButtonStyles in '..\..\..\source\Vcl.BootstrapButtonStyles.pas',
-  Vcl.AngularButtonStyles in '..\..\..\source\Vcl.AngularButtonStyles.pas',
-  Vcl.StandardButtonStyles in '..\..\..\source\Vcl.StandardButtonStyles.pas',
-  Vcl.StyledButtonEditorUnit in '..\..\..\packages\Vcl.StyledButtonEditorUnit.pas' {StyledButtonEditor},
-  DResources in '..\DResources.pas' {dmResources: TDataModule};
+package StyledComponents;
 
 {$R *.res}
+{$R '..\StyledButton.dcr'}
+{$R '..\StyledTaskDialog.dcr'}
+{$R '..\StyledToolbar.dcr'}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS ON}
+{$RANGECHECKS ON}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'Ethea Styled Components'}
+{$LIBSUFFIX AUTO}
+{$RUNONLY}
+{$IMPLICITBUILD OFF}
 
-begin
-  Application.Initialize;
-  Application.MainFormOnTaskbar := True;
-  Application.Title := 'Styled Buttons Demo - (c) Copyright Ethea S.r.l.';
-  Application.CreateForm(TdmResources, dmResources);
-  Application.CreateForm(TMainForm, MainForm);
-  Application.Run;
+requires
+  rtl,
+  vcl,
+  vclimg;
+
+contains
+  Vcl.StyledButton in '..\..\source\Vcl.StyledButton.pas',
+  Vcl.ButtonStylesAttributes in '..\..\source\Vcl.ButtonStylesAttributes.pas',
+  Vcl.StandardButtonStyles in '..\..\source\Vcl.StandardButtonStyles.pas',
+  Vcl.ColorButtonStyles in '..\..\source\Vcl.ColorButtonStyles.pas',
+  Vcl.BootstrapButtonStyles in '..\..\source\Vcl.BootstrapButtonStyles.pas',
+  Vcl.AngularButtonStyles in '..\..\source\Vcl.AngularButtonStyles.pas',
+  Vcl.StyledTaskDialog in '..\..\source\Vcl.StyledTaskDialog.pas',
+  Vcl.StyledCmpMessages in '..\..\source\Vcl.StyledCmpMessages.pas',
+  Vcl.StyledCmpStrUtils in '..\..\source\Vcl.StyledCmpStrUtils.pas',
+  Vcl.StyledTaskDialogStdUnit in '..\..\source\Vcl.StyledTaskDialogStdUnit.pas',
+  Vcl.StyledToolbar in '..\..\source\Vcl.StyledToolbar.pas',
+  Vcl.StyledTaskDialogFormUnit in '..\..\source\Vcl.StyledTaskDialogFormUnit.pas' {StyledTaskDialogForm};
+
 end.
+

@@ -2,7 +2,7 @@
 
 ## Delphi VCL Buttons and Toolbar with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 2.0.0
+### Actual official version: 2.1.0
 
 | Component | Description |
 | - | - |
@@ -13,9 +13,9 @@
 
 ---
 
-## Installation of Packages for Delphi (from XE6 to 11) ##
+## Installation of Packages for Delphi (from XE6 to Delphi 12) ##
 
-Open the package group Vcl.StyledComponents.groupproj from the correct folder of your Delphi version (eg. \StyledComponents\Packages\D11), then build the run-time package: StyledComponentsDXX and install the design-time package: dclStyledComponentsDXX. Add the "StyledComponents\source" path to use the components in your application.
+Open the package group Vcl.StyledComponents.groupproj from the correct folder of your Delphi version (eg. \StyledComponents\Packages\D12), then build the run-time package: StyledComponentsDXX and install the design-time package: dclStyledComponentsDXX. Add the "StyledComponents\source" path to use the components in your application.
 
 *if you need package for other Delphi version not included (newer than XE6) please add a new [Issue](https://github.com/EtheaDev/StyledComponents/issues)*
 
@@ -137,13 +137,23 @@ A simple demo to show how to use StyledGraphicButton into a ControlList (only fo
 
 ![StyledButtonInControlListDemo.jpg](./Images/StyledButtonInControlListDemo.jpg)
 
-### Available from Delphi XE6 to Delphi 11 (32bit and 64bit platforms)
+### Available from Delphi XE6 to Delphi 12 (32bit and 64bit platforms)
 
-![Delphi 11 Alexandria Support](./Images/SupportingDelphi.jpg)
+![Delphi Support](./Images/SupportingDelphi.jpg)
 
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+07 Sep 2023: version 2.1.0
+- Added support for Delphi 12
+- new "SplitButton" Style for Buttons and Toolbar, as in VCL, with DropDownMenu:
+  - Added property Style to TStyledGraphicButton/TStyledButton as in VCL TButton
+  - Added DropDownMenu for Style "bsSplitButton"
+  - Changed type TStyledToolButtonStyle to TToolButtonStyle (now uses the VCL type)
+  - Removed type TStyledButtonStyle, now uses the VCL type: TButtonStyle
+- Renamed StyledToolbar.AutoWrap property to Wrapable (as in VCL Toolbar)
+- Update VCL Styled Button Demo with more rendering options
+- Fixed some problems with StyledToolbar and VCL-styled
 
 10 Jul 2023: version 2.0.0
 - Added two StyleFamily options: "Basic-Color" and "SVG-Color"

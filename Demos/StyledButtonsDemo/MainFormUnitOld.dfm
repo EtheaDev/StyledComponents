@@ -25,7 +25,7 @@ object MainForm: TMainForm
     ParentColor = True
     TabOrder = 0
     object ShowEditButton: TStyledButton
-      Left = 20
+      Left = 10
       Top = 8
       Width = 172
       Height = 50
@@ -44,7 +44,6 @@ object MainForm: TMainForm
       Top = 8
       Width = 50
       Height = 50
-      Caption = ''
       ImageAlignment = iaCenter
       Images = ImageList32
       ImageIndex = 18
@@ -66,7 +65,6 @@ object MainForm: TMainForm
       Top = 8
       Width = 54
       Height = 50
-      Caption = ''
       ImageAlignment = iaCenter
       Images = ImageList32
       ImageIndex = 11
@@ -112,7 +110,7 @@ object MainForm: TMainForm
     Top = 70
     Width = 892
     Height = 622
-    ActivePage = tsClassic
+    ActivePage = tsBootstrap
     Align = alClient
     Images = ImageList32
     TabOrder = 1
@@ -180,6 +178,7 @@ object MainForm: TMainForm
           AlignWithMargins = True
           Left = 279
           Top = 18
+          Width = 75
           Height = 36
           Align = alLeft
           Caption = 'Danger'
@@ -287,6 +286,7 @@ object MainForm: TMainForm
           AlignWithMargins = True
           Left = 279
           Top = 18
+          Width = 75
           Height = 36
           Align = alLeft
           Caption = 'Danger'
@@ -399,6 +399,7 @@ object MainForm: TMainForm
           AlignWithMargins = True
           Left = 279
           Top = 18
+          Width = 75
           Height = 36
           Align = alLeft
           Enabled = False
@@ -479,7 +480,6 @@ object MainForm: TMainForm
           Caption = 'Ok'
           ModalResult = 1
           StyleFamily = 'Bootstrap'
-          StyleClass = 'Success'
           TabOrder = 0
         end
         object btn_BootstrapCancel: TStyledButton
@@ -492,7 +492,6 @@ object MainForm: TMainForm
           Caption = 'Cancel'
           ModalResult = 2
           StyleFamily = 'Bootstrap'
-          StyleClass = 'Danger'
           TabOrder = 1
         end
         object btn_BootstrapAbort: TStyledButton
@@ -505,7 +504,6 @@ object MainForm: TMainForm
           Caption = 'Abort'
           ModalResult = 3
           StyleFamily = 'Bootstrap'
-          StyleClass = 'Danger'
           TabOrder = 2
         end
         object btn_BootstrapRetry: TStyledButton
@@ -518,7 +516,6 @@ object MainForm: TMainForm
           Caption = 'Retry'
           ModalResult = 4
           StyleFamily = 'Bootstrap'
-          StyleClass = 'Warning'
           TabOrder = 3
         end
         object btn_BootstrapIgnore: TStyledButton
@@ -531,7 +528,6 @@ object MainForm: TMainForm
           Caption = 'Ignore'
           ModalResult = 5
           StyleFamily = 'Bootstrap'
-          StyleClass = 'Secondary'
           TabOrder = 4
         end
         object btn_BootstrapYes: TStyledButton
@@ -556,7 +552,6 @@ object MainForm: TMainForm
           Caption = 'No'
           ModalResult = 7
           StyleFamily = 'Bootstrap'
-          StyleClass = 'Secondary'
           TabOrder = 6
         end
         object btn_BootstrapClose: TStyledButton
@@ -569,7 +564,6 @@ object MainForm: TMainForm
           Caption = 'Close'
           ModalResult = 8
           StyleFamily = 'Bootstrap'
-          StyleClass = 'Secondary'
           StyleAppearance = 'Outline'
           TabOrder = 7
         end
@@ -597,7 +591,6 @@ object MainForm: TMainForm
           Caption = 'All'
           ModalResult = 12
           StyleFamily = 'Bootstrap'
-          StyleAppearance = 'Outline'
           TabOrder = 9
         end
       end
@@ -605,6 +598,10 @@ object MainForm: TMainForm
     object tsAngular: TTabSheet
       Caption = 'Angular Buttons'
       ImageIndex = 19
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object AngularLinkLabel: TLinkLabel
         AlignWithMargins = True
         Left = 3
@@ -967,7 +964,6 @@ object MainForm: TMainForm
           Margins.Left = 20
           Margins.Right = 20
           Align = alLeft
-          Caption = ''
           ImageAlignment = iaCenter
           Images = ImageList32
           ImageIndex = 0
@@ -986,7 +982,6 @@ object MainForm: TMainForm
           Margins.Left = 20
           Margins.Right = 20
           Align = alLeft
-          Caption = ''
           ImageAlignment = iaCenter
           Images = ImageList32
           ImageIndex = 10
@@ -1005,7 +1000,6 @@ object MainForm: TMainForm
           Margins.Left = 20
           Margins.Right = 20
           Align = alLeft
-          Caption = ''
           ImageAlignment = iaCenter
           Images = ImageList32
           ImageIndex = 4
@@ -1024,7 +1018,6 @@ object MainForm: TMainForm
           Margins.Left = 20
           Margins.Right = 20
           Align = alLeft
-          Caption = ''
           ImageAlignment = iaCenter
           Images = ImageList32
           ImageIndex = 8
@@ -1044,7 +1037,6 @@ object MainForm: TMainForm
           Margins.Right = 20
           Align = alLeft
           Enabled = False
-          Caption = ''
           ImageAlignment = iaCenter
           Images = ImageList32
           ImageIndex = 12
@@ -1072,7 +1064,6 @@ object MainForm: TMainForm
           Margins.Left = 20
           Margins.Right = 20
           Align = alLeft
-          Caption = ''
           ImageAlignment = iaCenter
           Images = ImageList32
           ImageIndex = 13
@@ -1090,7 +1081,6 @@ object MainForm: TMainForm
           Margins.Left = 20
           Margins.Right = 20
           Align = alLeft
-          Caption = ''
           ImageAlignment = iaCenter
           Images = ImageList32
           ImageIndex = 16
@@ -1108,7 +1098,6 @@ object MainForm: TMainForm
           Margins.Left = 20
           Margins.Right = 20
           Align = alLeft
-          Caption = ''
           ImageAlignment = iaCenter
           Images = ImageList32
           ImageIndex = 17
@@ -1127,7 +1116,6 @@ object MainForm: TMainForm
           Margins.Right = 20
           Align = alLeft
           Enabled = False
-          Caption = ''
           ImageAlignment = iaCenter
           Images = ImageList32
           ImageIndex = 8
@@ -1155,7 +1143,6 @@ object MainForm: TMainForm
           Caption = 'Ok'
           ModalResult = 1
           StyleFamily = 'Angular-Light'
-          StyleClass = 'DeepPurple'
           TabOrder = 0
         end
         object btn_AngularCancel: TStyledButton
@@ -1168,7 +1155,6 @@ object MainForm: TMainForm
           Caption = 'Cancel'
           ModalResult = 2
           StyleFamily = 'Angular-Light'
-          StyleClass = 'Warn'
           TabOrder = 1
         end
         object btn_AngularAbort: TStyledButton
@@ -1181,8 +1167,6 @@ object MainForm: TMainForm
           Caption = 'Abort'
           ModalResult = 3
           StyleFamily = 'Angular-Light'
-          StyleClass = 'Warn'
-          StyleAppearance = 'Raised'
           TabOrder = 2
         end
         object btn_AngularRetry: TStyledButton
@@ -1195,8 +1179,6 @@ object MainForm: TMainForm
           Caption = 'Retry'
           ModalResult = 4
           StyleFamily = 'Angular-Light'
-          StyleClass = 'DeepPurple'
-          StyleAppearance = 'Raised'
           TabOrder = 3
         end
         object btn_AngularIgnore: TStyledButton
@@ -1209,8 +1191,6 @@ object MainForm: TMainForm
           Caption = 'Ignore'
           ModalResult = 5
           StyleFamily = 'Angular-Light'
-          StyleClass = 'DeepPurple'
-          StyleAppearance = 'Raised'
           TabOrder = 5
         end
         object btn_AngularYes: TStyledButton
@@ -1223,7 +1203,6 @@ object MainForm: TMainForm
           Caption = 'Yes'
           ModalResult = 6
           StyleFamily = 'Angular-Light'
-          StyleClass = 'DeepPurple'
           TabOrder = 6
         end
         object btn_AngularNo: TStyledButton
@@ -1236,7 +1215,6 @@ object MainForm: TMainForm
           Caption = 'No'
           ModalResult = 7
           StyleFamily = 'Angular-Light'
-          StyleClass = 'Warn'
           TabOrder = 7
         end
         object btn_AngularClose: TStyledButton
@@ -1249,7 +1227,6 @@ object MainForm: TMainForm
           Caption = 'Close'
           ModalResult = 8
           StyleFamily = 'Angular-Light'
-          StyleClass = 'Warn'
           TabOrder = 8
         end
         object btn_AngularHelp: TStyledButton
@@ -1275,8 +1252,6 @@ object MainForm: TMainForm
           Caption = 'All'
           ModalResult = 12
           StyleFamily = 'Angular-Light'
-          StyleClass = 'DeepPurple'
-          StyleAppearance = 'Raised'
           TabOrder = 4
         end
       end
@@ -1284,11 +1259,15 @@ object MainForm: TMainForm
     object tsClassic: TTabSheet
       Caption = 'Classic Buttons (VCL Styled)'
       ImageIndex = 21
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object GroupBox3: TGroupBox
         Left = 0
         Top = 0
         Width = 884
-        Height = 161
+        Height = 193
         Align = alTop
         Caption = 'Standard Delphi Button compared to StyleButton'
         TabOrder = 0
@@ -1327,7 +1306,22 @@ object MainForm: TMainForm
           StyleElements = [seFont, seBorder]
           Caption = 'TStyledButton (Windows 10 Blue)'
           StyleClass = 'Windows10 Blue'
-          TabOrder = 5
+          TabOrder = 6
+        end
+        object StyledButtonSplit: TStyledButton
+          Left = 264
+          Top = 151
+          Width = 201
+          Height = 37
+          Hint = 
+            'Classic TStyledButton (VCL Styled) with StyleElements: [seFont,s' +
+            'eClient]'
+          OnClick = ButtonClick
+          PopUpMenu = PopupMenu
+          Caption = 'Styled "SplitButton"'
+          DropDownMenu = PopupMenu
+          Style = bsSplitButton
+          TabOrder = 7
         end
         object VCLButton: TButton
           Left = 24
@@ -1369,11 +1363,25 @@ object MainForm: TMainForm
           TabOrder = 4
           OnClick = ButtonClick
         end
+        object ButtonSplit: TButton
+          Left = 24
+          Top = 151
+          Width = 201
+          Height = 37
+          Hint = 'VCL TButton (use Global application VCL Style)'
+          Caption = '"SplitButton"'
+          DropDownMenu = PopupMenu
+          ModalResult = 1
+          PopupMenu = PopupMenu
+          Style = bsSplitButton
+          TabOrder = 5
+          OnClick = ButtonClick
+        end
       end
       object gbClassicModalResult: TGroupBox
         AlignWithMargins = True
         Left = 3
-        Top = 164
+        Top = 196
         Width = 878
         Height = 59
         Align = alTop
@@ -1505,9 +1513,9 @@ object MainForm: TMainForm
       end
       object ClassicScrollBox: TScrollBox
         Left = 0
-        Top = 226
+        Top = 258
         Width = 884
-        Height = 351
+        Height = 319
         Align = alClient
         TabOrder = 2
         object GroupBox4: TGroupBox
@@ -1555,6 +1563,10 @@ object MainForm: TMainForm
     object tsBasicColor: TTabSheet
       Caption = 'Basic-Color Buttons'
       ImageIndex = 22
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object BasicColorScrollBox: TScrollBox
         AlignWithMargins = True
         Left = 3
@@ -1612,6 +1624,10 @@ object MainForm: TMainForm
     object tsSVGColor: TTabSheet
       Caption = 'SVG-Color Buttons'
       ImageIndex = 23
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object SvgColorScrollBox: TScrollBox
         AlignWithMargins = True
         Left = 3
@@ -1680,18 +1696,23 @@ object MainForm: TMainForm
     Top = 544
     object New1: TMenuItem
       Caption = '&New'
+      OnClick = PopupMenuClick
     end
     object Open1: TMenuItem
       Caption = '&Open...'
+      OnClick = PopupMenuClick
     end
     object Save1: TMenuItem
       Caption = '&Save'
+      OnClick = PopupMenuClick
     end
     object SaveAs1: TMenuItem
       Caption = 'Save &As...'
+      OnClick = PopupMenuClick
     end
     object Exit1: TMenuItem
       Caption = 'E&xit'
+      OnClick = PopupMenuClick
     end
   end
   object ImageList32: TImageList
@@ -1702,7 +1723,7 @@ object MainForm: TMainForm
     Left = 460
     Top = 542
     Bitmap = {
-      494C01011800B0006C0020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01011800B000840020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000080000000E0000000010020000000000000C0
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

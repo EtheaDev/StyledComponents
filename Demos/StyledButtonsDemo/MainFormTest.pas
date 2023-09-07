@@ -1,6 +1,6 @@
 {******************************************************************************}
 {                                                                              }
-{       StyledButton: a Button Component based on TGraphicControl              }
+{       StyledComponents Library                                               }
 {                                                                              }
 {       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
@@ -46,17 +46,25 @@ uses
   Vcl.VirtualImageList,
   Vcl.BaseImageCollection,
   Vcl.StyledButton,
-  Vcl.BootstrapButtonStyles,
-  Vcl.AngularButtonStyles,
-  Vcl.StandardButtonStyles,
+  Vcl.ButtonStylesAttributes,
   System.Actions,
   Vcl.ActnList,
-  Vcl.ButtonStylesAttributes,
   Vcl.StyledButtonEditorUnit,
   Vcl.ImageCollection,
   Vcl.Menus,
   Vcl.ComCtrls,
   DResources;
+
+const
+  BUTTON_HEIGHT = 28;
+  BUTTON_WIDTH = 140;
+  BUTTON_MARGIN = 4;
+  BUTTON_COL_COUNT = 24;
+
+  RENDER_SAME_AS_VCL = 0;
+  RENDER_ROUNDED = 1;
+  RENDER_RECTANGLE = 2;
+  RENDER_FAB = 3;
 
 type
   TTestMainForm = class(TForm)
@@ -72,13 +80,16 @@ type
     StyleLabel: TLabel;
     cbChangeStyle: TComboBox;
     ShowEditButton: TStyledButton;
-    VCLButton: TButton;
+    AboutButton: TButton;
     LeftPanel: TPanel;
     LeftScrollBox: TScrollBox;
     RightPanel: TPanel;
     RightScrollBox: TScrollBox;
     Panel1: TPanel;
     TopRightPanel: TPanel;
+    RenderRadioGroup: TRadioGroup;
+    VirtualImageList32: TVirtualImageList;
+    SplitButtonsCheckBox: TCheckBox;
     procedure TestActionExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure cbChangeStyleSelect(Sender: TObject);
@@ -86,10 +97,18 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure ScrollBoxMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+    procedure RenderRadioGroupClick(Sender: TObject);
+    procedure PopUpMenuClick(Sender: TObject);
+    procedure SplitButtonsCheckBoxClick(Sender: TObject);
+    procedure AboutButtonClick(Sender: TObject);
   private
     FStyleNames: TStringList;
+    FSplitButtons: Boolean;
+    procedure GetButtonSize(out AWidth, AHeight: Integer);
     procedure BuildStyleList;
+    procedure CreateVCLButtons;
     procedure CreateStyledButtons;
+    procedure ClearButtons(AScrollBox: TScrollBox);
     procedure ButtonClick(Sender: TObject);
   protected
   end;
@@ -105,7 +124,7 @@ uses
   System.TypInfo
   , Vcl.Themes
   , WinApi.ShellAPI
-  ;
+  , FAboutForm;
 
 { TMainForm }
 
@@ -114,43 +133,55 @@ begin
   TStyleManager.TrySetStyle(cbChangeStyle.Text);
 end;
 
+procedure TTestMainForm.ClearButtons(AScrollBox: TScrollBox);
+begin
+  //Clear previous Buttons
+  AScrollBox.Visible := False;
+  try
+    while AScrollBox.ControlCount > 0 do
+      AScrollBox.Controls[AScrollBox.ControlCount-1].Free;
+  finally
+    AScrollBox.Visible := True;
+  end;
+end;
+
 procedure TTestMainForm.CreateStyledButtons;
-const
-  BUTTON_HEIGHT = 28;
-  BUTTON_WIDTH = 140;
-  BUTTON_MARGIN = 4;
-  BUTTON_COL_COUNT = 24;
 var
   I, X: integer;
   LStyleName: string;
   LColumn: Integer;
-
-  procedure CreateVCLButton(AColumn, ATop: Integer;
-    AStyleName: string);
-  begin
-    With TButton.Create(Self) do
-    begin
-      SetBounds((AColumn * BUTTON_WIDTH) + (BUTTON_MARGIN*AColumn),
-        ATop,
-        BUTTON_WIDTH, BUTTON_HEIGHT);
-      StyleName := AStyleName;
-      Caption := AStyleName;
-      Parent := LeftScrollBox;
-      PopupMenu := Self.PopupMenu;
-      OnClick := ButtonClick;
-    end;
-  end;
+  LWidth, LHeight: Integer;
 
   procedure CreateStyledButton(AColumn, ATop: Integer;
     AStyleName: string);
   begin
     With TStyledButton.Create(Self) do
     begin
-      SetBounds((AColumn * BUTTON_WIDTH) + (BUTTON_MARGIN*AColumn),
-        ATop,
-        BUTTON_WIDTH, BUTTON_HEIGHT);
+      if RenderRadioGroup.ItemIndex <> RENDER_FAB then
+      begin
+        case RenderRadioGroup.ItemIndex of
+          RENDER_ROUNDED: StyleDrawType := btRounded; //All buttons Rounded
+          RENDER_RECTANGLE: StyleDrawType := btRect; //All buttons Rect
+        end;
+        Caption := AStyleName;
+        if FSplitButtons then
+        begin
+          Style := bsSplitButton;
+          DropDownMenu := Self.PopupMenu;
+        end;
+      end
+      else
+      begin
+        //Render FAB button
+        StyleDrawType := btEllipse;
+        Images := VirtualImageList32;
+        ImageAlignment := iaCenter;
+        ImageIndex := I mod VirtualImageList32.Count;
+      end;
+      Hint := AStyleName;
+      SetBounds((AColumn * LWidth) + (BUTTON_MARGIN*AColumn),
+        ATop, LWidth, LHeight);
       StyleName := AStyleName;
-      Caption := AStyleName;
       Parent := RightScrollBox;
       PopupMenu := Self.PopupMenu;
       OnClick := ButtonClick;
@@ -158,19 +189,80 @@ var
   end;
 
 begin
-  X := 0;
-  LColumn := 0;
-  for I := 0 to FStyleNames.Count -1 do
-  begin
-    LStyleName := FStyleNames.Strings[I];
-    if (I div BUTTON_COL_COUNT) <> LColumn then
+  GetButtonSize(LWidth, LHeight);
+  Screen.Cursor := crHourGlass;
+  try
+    //Clear previous Buttons
+    ClearButtons(RightScrollBox);
+    //Create Styled Buttons
+    X := 0;
+    LColumn := 0;
+    for I := 0 to FStyleNames.Count -1 do
     begin
-      LColumn := (I div BUTTON_COL_COUNT);
-      X := 0;
+      LStyleName := FStyleNames.Strings[I];
+      if (I div BUTTON_COL_COUNT) <> LColumn then
+      begin
+        LColumn := (I div BUTTON_COL_COUNT);
+        X := 0;
+      end;
+      CreateStyledButton(LColumn, X*(LHeight+BUTTON_MARGIN), LStyleName);
+      Inc(X);
     end;
-    CreateVCLButton(LColumn, X*(BUTTON_HEIGHT+BUTTON_MARGIN), LStyleName);
-    CreateStyledButton(LColumn, X*(BUTTON_HEIGHT+BUTTON_MARGIN), LStyleName);
-    Inc(X);
+  finally
+    Screen.Cursor := crDefault;
+  end;
+end;
+
+procedure TTestMainForm.CreateVCLButtons;
+var
+  I, X: integer;
+  LStyleName: string;
+  LColumn: Integer;
+  LWidth, LHeight: Integer;
+
+  procedure CreateVCLButton(AColumn, ATop: Integer;
+    AStyleName: string);
+  begin
+    With TButton.Create(Self) do
+    begin
+      SetBounds((AColumn * LWidth) + (BUTTON_MARGIN*AColumn),
+        ATop, LWidth, LHeight);
+      StyleName := AStyleName;
+      Caption := AStyleName;
+      Hint := AStyleName;
+      Parent := LeftScrollBox;
+      PopupMenu := Self.PopupMenu;
+      OnClick := ButtonClick;
+      if FSplitButtons then
+      begin
+        Style := TButtonStyle.bsSplitButton;
+        DropDownMenu := Self.PopupMenu;
+      end;
+    end;
+  end;
+
+begin
+  GetButtonSize(LWidth, LHeight);
+  Screen.Cursor := crHourGlass;
+  try
+    //Clear previous Buttons
+    ClearButtons(LeftScrollBox);
+    //Create VCL Buttons
+    X := 0;
+    LColumn := 0;
+    for I := 0 to FStyleNames.Count -1 do
+    begin
+      LStyleName := FStyleNames.Strings[I];
+      if (I div BUTTON_COL_COUNT) <> LColumn then
+      begin
+        LColumn := (I div BUTTON_COL_COUNT);
+        X := 0;
+      end;
+      CreateVCLButton(LColumn, X*(LHeight+BUTTON_MARGIN), LStyleName);
+      Inc(X);
+    end;
+  finally
+    Screen.Cursor := crDefault;
   end;
 end;
 
@@ -185,6 +277,7 @@ begin
   FStyleNames.Sorted := True;
 
   BuildStyleList;
+  CreateVCLButtons;
   CreateStyledButtons;
 end;
 
@@ -196,6 +289,31 @@ end;
 procedure TTestMainForm.FormResize(Sender: TObject);
 begin
   LeftPanel.Width := ClientWidth div 2;
+end;
+
+procedure TTestMainForm.GetButtonSize(out AWidth, AHeight: Integer);
+begin
+  if RenderRadioGroup.ItemIndex <> RENDER_FAB then
+  begin
+    AWidth := BUTTON_WIDTH;
+    AHeight := BUTTON_HEIGHT;
+  end
+  else
+  begin
+    AWidth := BUTTON_HEIGHT * 2;
+    AHeight := BUTTON_HEIGHT * 2;
+  end;
+end;
+
+procedure TTestMainForm.PopUpMenuClick(Sender: TObject);
+begin
+  ShowMessage((Sender as TMenuItem).Caption);
+end;
+
+procedure TTestMainForm.RenderRadioGroupClick(Sender: TObject);
+begin
+  CreateVCLButtons;
+  CreateStyledButtons;
 end;
 
 procedure TTestMainForm.ScrollBoxMouseWheel(Sender: TObject;
@@ -227,9 +345,21 @@ begin
   RightScrollBox.Perform( msg, SB_ENDSCROLL, 0 );
 end;
 
+procedure TTestMainForm.SplitButtonsCheckBoxClick(Sender: TObject);
+begin
+  FSplitButtons := SplitButtonsCheckBox.Checked;
+  CreateVCLButtons;
+  CreateStyledButtons;
+end;
+
 procedure TTestMainForm.TestActionExecute(Sender: TObject);
 begin
   EditStyledButton(ShowEditButton);
+end;
+
+procedure TTestMainForm.AboutButtonClick(Sender: TObject);
+begin
+  ShowAboutForm;
 end;
 
 procedure TTestMainForm.BuildStyleList;

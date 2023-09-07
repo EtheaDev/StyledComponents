@@ -30,12 +30,15 @@ interface
 {$INCLUDE StyledComponents.inc}
 
 uses
-  Vcl.Graphics
+  Winapi.Windows
+  , Vcl.Graphics
   , System.Classes
   , System.Contnrs
   , System.UITypes
   , System.Types
-  , Vcl.Controls;
+  , Vcl.Controls
+  , Vcl.Buttons
+  ;
 
 const
   DEFAULT_RADIUS = 6;
@@ -129,6 +132,8 @@ Type
   private
     FStyleFamily: TStyledButtonFamily;
     FStyledAttributes: IStyledButtonAttributes;
+  public
+    property StyledAttributes: IStyledButtonAttributes read FStyledAttributes;
   end;
 
 //utilities
@@ -142,9 +147,16 @@ procedure CloneButtonStyle(const ASource: TStyledButtonAttributes;
   var ADest: TStyledButtonAttributes);
 function GetWindowsVersion: TWindowsVersion;
 
+{$IFDEF D10_4+}
+function GetBitBtnGlyph(Kind: TBitBtnKind; AEnabled: Boolean): TWicImage;
+{$ENDIF+}
+
 //drawing Button
 procedure CanvasDrawShape(const ACanvas: TCanvas; ARect: TRect;
   const ADrawType: TStyledButtonDrawType; const ACornerRadius: Integer);
+//drawing bar and triangle for SplitButton
+procedure CanvasDrawBarAndTriangle(const ACanvas: TCanvas; const ARect: TRect;
+  const AScaleFactor: Single; ABarColor, ATriangleColor: TColor);
 
 //ButtonFamily Factory
 procedure RegisterButtonFamily(
@@ -160,7 +172,8 @@ function GetButtonFamilyAppearances(const AFamily: TStyledButtonFamily): TButton
 function StyleFamilyCheckAttributes(
   const AFamily: TStyledButtonFamily;
   var AClass: TStyledButtonClass;
-  var AAppearance: TStyledButtonAppearance): Boolean;
+  var AAppearance: TStyledButtonAppearance;
+  out AButtonFamily: TButtonFamily): Boolean;
 
 procedure StyleFamilyUpdateAttributes(
   const AFamily: TStyledButtonFamily;
@@ -178,14 +191,14 @@ procedure StyleFamilyUpdateAttributesByModalResult(
 implementation
 
 uses
-  Winapi.Windows
+  System.Win.Registry
 {$ifdef GDIPlusSupport}
   , Winapi.GDIPAPI
   , Winapi.GDIPOBJ
 {$endif}
-  , System.Win.Registry
   , System.SysUtils
-  , System.Math;
+  , System.Math
+  ;
 
 var
   _WindowsVersion: TWindowsVersion;
@@ -338,10 +351,10 @@ end;
 function StyleFamilyCheckAttributes(
   const AFamily: TStyledButtonFamily;
   var AClass: TStyledButtonClass;
-  var AAppearance: TStyledButtonAppearance): Boolean;
+  var AAppearance: TStyledButtonAppearance;
+  out AButtonFamily: TButtonFamily): Boolean;
 var
   I: Integer;
-  LButtonFamily: TButtonFamily;
   LClasses: TButtonClasses;
   LAppearances: TButtonAppearances;
   LDefaultClass: TStyledButtonClass;
@@ -349,13 +362,13 @@ var
   LClassFound, LAppearanceFound: Boolean;
 begin
   Result := True;
-  if GetButtonFamily(AFamily, LButtonFamily) then
+  if GetButtonFamily(AFamily, AButtonFamily) then
   begin
-    LClasses := LButtonFamily.FStyledAttributes.GetButtonClasses;
-    LButtonFamily.FStyledAttributes.GetStyleByModalResult(mrNone,
+    AButtonFamily.FStyledAttributes.GetStyleByModalResult(mrNone,
        LDefaultClass, LDefaultAppearance);
-    LClassFound := False;
     //Check AClass
+    LClassFound := False;
+    LClasses := AButtonFamily.FStyledAttributes.GetButtonClasses;
     for I := 0 to Length(LClasses)-1 do
     begin
       if SameText(LClasses[I], AClass) then
@@ -371,9 +384,9 @@ begin
       Result := False;
     end;
 
-    LAppearances := LButtonFamily.FStyledAttributes.GetButtonAppearances;
-    LAppearanceFound := False;
     //Check AAppearance
+    LAppearanceFound := False;
+    LAppearances := AButtonFamily.FStyledAttributes.GetButtonAppearances;
     for I := 0 to Length(LAppearances)-1 do
     begin
       if SameText(LAppearances[I], AAppearance) then
@@ -721,6 +734,65 @@ begin
   ColRef := ColorToRGB(AColor);
   Result := MakeColor(GetRValue(ColRef), GetGValue(ColRef),
   GetBValue(ColRef));
+end;
+
+const //Same as Vcl.Buttons
+  BitBtnResNames: array[TBitBtnKind] of PChar = (
+    nil, 'BBOK', 'BBCANCEL', 'BBHELP', 'BBYES', 'BBNO', 'BBCLOSE',
+    'BBABORT', 'BBRETRY', 'BBIGNORE', 'BBALL');
+
+{$IFDEF D10_4+}
+function GetBitBtnGlyph(Kind: Vcl.Buttons.TBitBtnKind; AEnabled: Boolean): TWicImage;
+var
+  LResName: String;
+begin
+  Result := nil;
+  if Kind = bkCustom then
+    Exit;
+
+  LResName := BitBtnResNames[Kind];
+  if not AEnabled then
+    LResName := LResName + '_Disabled';
+  Result := TWicImage.Create;
+  Result.InterpolationMode := wipmHighQualityCubic;
+  Result.LoadFromResourceName(HInstance, LResName);
+end;
+{$ENDIF}
+
+procedure CanvasDrawBarAndTriangle(const ACanvas: TCanvas; const ARect: TRect;
+  const AScaleFactor: Single; ABarColor, ATriangleColor: TColor);
+var
+  LWidth: Integer;
+  LHeight: Integer;
+  LMargin: Integer;
+  Points2: array [0..1] of TPoint;
+  Points3: array [0..2] of TPoint;
+  LRect: TRect;
+begin
+  LHeight := Round(4 * AScaleFactor);
+  LMargin := (ARect.Height - LHeight) div 2;
+
+  //Draw vertical bar
+  ACanvas.Pen.Color := ABarColor;
+  LRect := Rect(ARect.Left-2,ARect.Top+2,ARect.Right-2,ARect.Bottom-2);
+  Points2[0] := Point(ARect.Left -1, ARect.Top + ACanvas.Pen.Width);
+  Points2[1] := Point(ARect.Left -1, ARect.Bottom - ACanvas.Pen.Width);
+  ACanvas.Polyline(Points2);
+
+  //Draw triangle
+  ACanvas.Pen.Color := ATriangleColor;
+  LRect := ARect;
+  LWidth  := LRect.Width - 8;
+  LRect.Left := ARect.Left + 2;
+  LRect.Right := LRect.Left + LWidth - 2;
+  LRect.Top := LMargin;
+  LRect.Bottom := LRect.Top + LHeight;
+  Points3[0] := Point(LRect.Left + LWidth, LRect.Top);
+  Points3[1] := Point(LRect.Left, LRect.Top);
+  Points3[2] := Point(LRect.Left + LWidth div 2, LRect.Bottom);
+  ACanvas.Brush.Color := ACanvas.Pen.Color;
+  ACanvas.Pen.Width := 1;
+  ACanvas.Polygon(Points3);
 end;
 
 procedure CanvasDrawShape(const ACanvas: TCanvas; ARect: TRect;

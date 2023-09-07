@@ -9,8 +9,6 @@ inherited StyledTaskDialogAnimated: TStyledTaskDialogAnimated
         Width = 128
         Height = 128
         Align = alTop
-        ExplicitLeft = 1
-        ExplicitTop = 2
       end
     end
   end
