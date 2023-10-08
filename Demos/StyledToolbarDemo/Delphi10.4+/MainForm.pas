@@ -38,20 +38,20 @@ uses
 
 const
   //Params to check
-  SHOW_CAPTIONS = False;
+  SHOW_CAPTIONS = True;
   BUTTON_WIDTH = 60;
   BUTTON_HEIGHT = 60;
   TOOLBAR_AUTOSIZE = True;
 
 type
   TfmMain = class(TForm)
-    ToolBar1: TToolBar;
+    ToolBar: TToolBar;
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
     ToolButton3: TToolButton;
     VirtualImageList: TVirtualImageList;
     ToolButton4: TToolButton;
-    StyledToolbar1: TStyledToolbar;
+    StyledToolbar: TStyledToolbar;
     StyledToolButton1: TStyledToolButton;
     StyledToolButton2: TStyledToolButton;
     StyledToolButton3: TStyledToolButton;
@@ -85,6 +85,8 @@ type
     Edit1: TEdit;
     Edit2: TEdit;
     StyledToolButton7: TStyledToolButton;
+    ToolButton8: TToolButton;
+    FlatCheckBox: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure ToolBarClick(Sender: TObject);
     procedure ToolButtonclick(Sender: TObject);
@@ -92,8 +94,8 @@ type
     procedure UpdateToolbars(Sender: TObject);
     procedure PopUpMenuClick(Sender: TObject);
     procedure cbChangeStyleSelect(Sender: TObject);
-    procedure ToolBar1MouseEnter(Sender: TObject);
-    procedure StyledToolbar1MouseEnter(Sender: TObject);
+    procedure ToolBarMouseEnter(Sender: TObject);
+    procedure StyledToolbarMouseEnter(Sender: TObject);
   private
     FToolBar: TToolBar;
     FStyledToolBar: TStyledToolBar;
@@ -120,7 +122,8 @@ implementation
 {$R *.dfm}
 
 uses
-  Themes;
+  Themes,
+  Vcl.StyledButtonEditorUnit;
 
 function TfmMain.AddStyledButtonToToolbar(var bar: TStyledToolBar;
   const Caption: string;
@@ -252,10 +255,6 @@ end;
 procedure TfmMain.FormCreate(Sender: TObject);
 begin
   BuildStyleList;
-
-  //  ToolBar1.EdgeBorders := [ebTop];
-//  StyledToolBar1.EdgeBorders := [ebTop];
-
   Caption := Application.Title;
   ShowCaptionCheckBox.Checked := SHOW_CAPTIONS;
 end;
@@ -265,16 +264,16 @@ begin
   ShowMessage((Sender as TMenuItem).Caption);
 end;
 
-procedure TfmMain.StyledToolbar1MouseEnter(Sender: TObject);
+procedure TfmMain.StyledToolbarMouseEnter(Sender: TObject);
 begin
   Caption := Format('StyledToolbar - ButtonWidth: %d - ButtonHeight: %d',
-    [StyledToolBar1.ButtonWidth, StyledToolBar1.ButtonHeight]);
+    [StyledToolBar.ButtonWidth, StyledToolBar.ButtonHeight]);
 end;
 
-procedure TfmMain.ToolBar1MouseEnter(Sender: TObject);
+procedure TfmMain.ToolBarMouseEnter(Sender: TObject);
 begin
   Caption := Format('Toolbar - ButtonWidth: %d - ButtonHeight: %d',
-    [ToolBar1.ButtonWidth, ToolBar1.ButtonHeight]);
+    [ToolBar.ButtonWidth, ToolBar.ButtonHeight]);
 end;
 
 procedure TfmMain.ToolBarClick(Sender: TObject);
@@ -297,6 +296,7 @@ procedure TfmMain.UpdateToolbars(Sender: TObject);
 begin
   if Assigned(FStyledToolBar) then
   begin
+    FStyledToolBar.Flat := FlatCheckBox.Checked;
     FStyledToolBar.ShowCaptions := ShowCaptionCheckBox.Checked;
     FStyledToolBar.ButtonWidth := tbWidth.Position;
     FStyledToolBar.ButtonHeight := tbHeight.Position;
@@ -304,11 +304,20 @@ begin
   end;
   if Assigned(FToolBar) then
   begin
+    FToolBar.Flat := FlatCheckBox.Checked;
     FToolBar.ShowCaptions := ShowCaptionCheckBox.Checked;
     FToolBar.ButtonWidth := tbWidth.Position;
     FToolBar.ButtonHeight := tbHeight.Position;
     FToolBar.List := ListCheckBox.Checked;
   end;
+  ToolBar.List := ListCheckBox.Checked;
+  ToolBar.ShowCaptions := ShowCaptionCheckBox.Checked;
+  ToolBar.Flat := FlatCheckBox.Checked;
+
+  StyledToolBar.List := ListCheckBox.Checked;
+  StyledToolBar.ShowCaptions := ShowCaptionCheckBox.Checked;
+  StyledToolBar.Flat := FlatCheckBox.Checked;
+
 end;
 
 procedure TfmMain.BuildStyleList;

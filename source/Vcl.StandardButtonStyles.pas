@@ -295,18 +295,10 @@ begin
     APressedStyle.BorderColor := LightenColor(LHotColor, 20);
   end;
 
-
-  //Button Disabled
-  if LDarkStyle then
-  begin
-    ADisabledStyle.ButtonColor := DarkenColor(ANormalStyle.ButtonColor, 70);
-    ADisabledStyle.FontColor := DarkenColor(LFontColor, 70);
-  end
-  else
-  begin
-    ADisabledStyle.ButtonColor := LightenColor(ANormalStyle.ButtonColor, 70);
-    ADisabledStyle.FontColor := LightenColor(LFontColor, 70);
-  end;
+  //Disabled Button (lighten)
+  ADisabledStyle.BorderColor := LightenColor(ADisabledStyle.BorderColor, 50);
+  ADisabledStyle.ButtonColor := LightenColor(ADisabledStyle.ButtonColor, 50);
+  ADisabledStyle.FontColor := LightenColor(ADisabledStyle.FontColor, 50);
 end;
 
 procedure RegisterThemeAttributes(

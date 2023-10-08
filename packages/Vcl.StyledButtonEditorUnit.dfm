@@ -40,7 +40,7 @@ object StyledButtonEditor: TStyledButtonEditor
       935
       38)
     object OKButton: TButton
-      Left = 538
+      Left = 561
       Top = 6
       Width = 85
       Height = 25
@@ -52,7 +52,7 @@ object StyledButtonEditor: TStyledButtonEditor
       OnClick = OKButtonClick
     end
     object ApplyButton: TButton
-      Left = 721
+      Left = 744
       Top = 6
       Width = 85
       Height = 25
@@ -62,7 +62,7 @@ object StyledButtonEditor: TStyledButtonEditor
       OnClick = ApplyButtonClick
     end
     object CancelButton: TButton
-      Left = 630
+      Left = 653
       Top = 6
       Width = 85
       Height = 25
@@ -73,7 +73,7 @@ object StyledButtonEditor: TStyledButtonEditor
       TabOrder = 1
     end
     object HelpButton: TButton
-      Left = 813
+      Left = 836
       Top = 6
       Width = 85
       Height = 25
@@ -221,6 +221,15 @@ object StyledButtonEditor: TStyledButtonEditor
         TabOrder = 2
         OnChange = RadiusTrackBarChange
       end
+      object FlatButtonCheckBox: TCheckBox
+        Left = 695
+        Top = 25
+        Width = 106
+        Height = 17
+        Caption = 'Flat button'
+        TabOrder = 3
+        OnClick = FlatButtonCheckBoxClick
+      end
     end
   end
   object ImageList: TImageList
@@ -230,7 +239,7 @@ object StyledButtonEditor: TStyledButtonEditor
     Left = 432
     Top = 280
     Bitmap = {
-      494C010106000800080020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010106000800040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000004000000001002000000000000080
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000111010

@@ -71,16 +71,30 @@ type
     property Position: TPoint read FPosition write FPosition;
   end;
 
-function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
+function StyledMessageDlg(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer; overload;
 function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer; overload;
+
+function StyledMessageDlg(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn): Integer; overload;
+function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn): Integer; overload;
+
+function StyledMessageDlg(const Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn;
+  CustomButtonCaptions: array of string): Integer; overload;
+function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn;
+  CustomButtonCaptions: array of string): Integer; overload;
+
 function StyledMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint;
   X: Integer = -1; Y: Integer = -1): Integer; overload;
 function StyledMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; DefaultButton: TMsgDlgBtn; HelpCtx: Longint;
   X: Integer = -1; Y: Integer = -1): Integer; overload;
+
 function StyledTaskDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint;
   X: Integer = -1; Y: Integer = -1): Integer; overload;
@@ -97,6 +111,8 @@ procedure InitializeStyledTaskDialogs(AUseTaskDialog: Boolean; AFont: TFont;
 function GetTaskDlgType(const AIcon: TTaskDialogIcon): TMsgDlgType;
 function GetDialogFont: TFont;
 function GetDialogBtnFamily: TStyledButtonFamily;
+
+function GetDialogTypeTitle(const DlgType: TMsgDlgType): string;
 
 implementation
 
@@ -151,14 +167,44 @@ begin
 {$ENDIF}
 end;
 
+function StyledMessageDlg(const Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer; overload;
+begin
+  Result := StyledTaskDlgPos(GetDialogTypeTitle(DlgType),
+    Msg, DlgType, Buttons, HelpCtx, -1, -1);
+end;
+
 function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer;
 begin
   Result := StyledTaskDlgPos(Title, Msg, DlgType, Buttons, HelpCtx, -1, -1);
 end;
 
+function StyledMessageDlg(const Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn): Integer; overload;
+begin
+  Result := StyledTaskDlgPos(GetDialogTypeTitle(DlgType),
+    Msg, DlgType, Buttons, DefaultButton, HelpCtx, -1, -1);
+end;
+
 function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn): Integer; overload;
+begin
+  Result := StyledTaskDlgPos(Title, Msg, DlgType, Buttons, DefaultButton,
+    HelpCtx, -1, -1);
+end;
+
+function StyledMessageDlg(const Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn;
+  CustomButtonCaptions: array of string): Integer; overload;
+begin
+  Result := StyledTaskDlgPos(GetDialogTypeTitle(DlgType), Msg, DlgType,
+    Buttons, DefaultButton, HelpCtx, -1, -1);
+end;
+
+function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn;
+  CustomButtonCaptions: array of string): Integer; overload;
 begin
   Result := StyledTaskDlgPos(Title, Msg, DlgType, Buttons, DefaultButton,
     HelpCtx, -1, -1);
@@ -243,13 +289,8 @@ begin
       ChangeButtonCaption(mbHelp,'&'+STR_HELP);
       ChangeButtonCaption(mbClose,'&'+STR_CLOSE);
 
-      case DlgType of
-        mtWarning      : Dlg.Caption := STR_WARNING;
-        mtError        : Dlg.Caption := STR_ERROR;
-        mtInformation  : Dlg.Caption := STR_INFORMATION;
-        mtConfirmation : Dlg.Caption := STR_CONFIRM;
-        mtCustom       : Dlg.Caption := STR_INFORMATION;
-      end;
+      //Caption translated
+      Dlg.Caption := GetDialogTypeTitle(DlgType);
 
       Result := Dlg.ShowModal;
     finally
@@ -381,14 +422,9 @@ begin
       MainIcon :=  IconMap[DlgType];
       Position := Point(X, Y);
       Text := Msg;
+
       //Caption translated
-      case DlgType of
-        mtWarning      : LTaskDialog.Caption := STR_WARNING;
-        mtError        : LTaskDialog.Caption := STR_ERROR;
-        mtInformation  : LTaskDialog.Caption := STR_INFORMATION;
-        mtConfirmation : LTaskDialog.Caption := STR_CONFIRM;
-        mtCustom       : LTaskDialog.Caption := STR_INFORMATION;
-      end;
+      LTaskDialog.Caption := GetDialogTypeTitle(DlgType);
 
       if Instruction <> '' then
         Title := Instruction
@@ -553,6 +589,17 @@ function TStyledTaskDialog.Execute(ParentWnd: HWND): Boolean;
 begin
   FParentWnd := ParentWnd;
   Result := inherited Execute(ParentWnd);
+end;
+
+function GetDialogTypeTitle(const DlgType: TMsgDlgType): string;
+begin
+  case DlgType of
+    mtWarning      : Result := STR_WARNING;
+    mtError        : Result := STR_ERROR;
+    mtInformation  : Result := STR_INFORMATION;
+    mtConfirmation : Result := STR_CONFIRM;
+    mtCustom       : Result := STR_INFORMATION;
+  end;
 end;
 
 initialization

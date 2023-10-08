@@ -45,6 +45,7 @@ object TestMainForm: TTestMainForm
       Height = 30
       Hint = 'Show Styled Button Editor'
       Action = TestAction
+      ImageName = 'approval'
       ModalResult = 12
       TabOrder = 1
     end
@@ -86,12 +87,23 @@ object TestMainForm: TTestMainForm
     end
     object SplitButtonsCheckBox: TCheckBox
       Left = 408
-      Top = 17
+      Top = 4
       Width = 97
       Height = 17
       Caption = 'Split Buttons'
       TabOrder = 3
       OnClick = SplitButtonsCheckBoxClick
+    end
+    object EnabledCheckBox: TCheckBox
+      Left = 408
+      Top = 27
+      Width = 97
+      Height = 17
+      Caption = 'Enabled'
+      Checked = True
+      State = cbChecked
+      TabOrder = 5
+      OnClick = EnabledCheckBoxClick
     end
   end
   object LeftPanel: TPanel

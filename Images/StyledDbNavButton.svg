@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+ <!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) -->
+ <path d="m75.47 0c-41.81 0-75.47 33.882-75.47 75.969v360.06c0 42.087 33.66 75.969 75.47 75.969h361.06c41.81 0 75.47-33.882 75.47-75.969v-360.06c0-42.087-33.66-75.969-75.47-75.969zm38.132 54.073h284.8c32.979 0 59.526 26.723 59.526 59.92v284.01c0 33.197-26.547 59.92-59.526 59.92h-284.8c-32.979 0-59.526-26.723-59.526-59.92v-284.01c0-33.197 26.547-59.92 59.526-59.92z" fill="#ccc" stroke-width="0" style="paint-order:stroke fill markers"/>
+ <path d="m105.56 42.667c-34.842 0-62.892 28.235-62.892 63.308v300.05c0 35.072 28.05 63.308 62.892 63.308h300.88c34.842 0 62.892-28.235 62.892-63.308v-300.05c0-35.072-28.05-63.308-62.892-63.308z" fill="#e6e6e6" stroke-width="0" style="paint-order:stroke fill markers"/>
+ <path d="m375.65 107.9v296.19l-296.19-148.1z" fill="#008000"/>
+</svg>

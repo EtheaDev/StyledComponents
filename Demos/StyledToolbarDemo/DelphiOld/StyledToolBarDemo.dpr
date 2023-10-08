@@ -28,13 +28,16 @@ program StyledToolBarDemo;
 
 uses
   Vcl.Forms,
-  MainFormOld in 'MainFormOld.pas' {fmMain};
+  MainFormOld in 'MainFormOld.pas' {fmMain},
+  Vcl.Themes,
+  Vcl.Styles;
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  TStyleManager.TrySetStyle('Aqua Light Slate');
   Application.Title := 'Styled Toolbar Demo - (c) Ethea S.r.l.';
   Application.CreateForm(TfmMain, fmMain);
   Application.Run;

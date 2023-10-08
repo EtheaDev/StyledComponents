@@ -1,6 +1,6 @@
 {******************************************************************************}
 {                                                                              }
-{       StyledTaskDialogStd: an example of Task Dialog Form                    }
+{       StyledTaskDialogAnimated: an example of Task Dialog Form               }
 {       using a TSkAnimatedImage with Lottie Animations                        }
 {                                                                              }
 {       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
@@ -52,6 +52,7 @@ uses
   , Vcl.StdCtrls
   , System.UITypes
   , Vcl.Skia
+  , System.Skia
   ;
 
 type

@@ -90,6 +90,7 @@ type
     RenderRadioGroup: TRadioGroup;
     VirtualImageList32: TVirtualImageList;
     SplitButtonsCheckBox: TCheckBox;
+    EnabledCheckBox: TCheckBox;
     procedure TestActionExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure cbChangeStyleSelect(Sender: TObject);
@@ -101,6 +102,7 @@ type
     procedure PopUpMenuClick(Sender: TObject);
     procedure SplitButtonsCheckBoxClick(Sender: TObject);
     procedure AboutButtonClick(Sender: TObject);
+    procedure EnabledCheckBoxClick(Sender: TObject);
   private
     FStyleNames: TStringList;
     FSplitButtons: Boolean;
@@ -157,6 +159,7 @@ var
   begin
     With TStyledButton.Create(Self) do
     begin
+      Enabled := EnabledCheckBox.Checked;
       if RenderRadioGroup.ItemIndex <> RENDER_FAB then
       begin
         case RenderRadioGroup.ItemIndex of
@@ -225,6 +228,7 @@ var
   begin
     With TButton.Create(Self) do
     begin
+      Enabled := EnabledCheckBox.Checked;
       SetBounds((AColumn * LWidth) + (BUTTON_MARGIN*AColumn),
         ATop, LWidth, LHeight);
       StyleName := AStyleName;
@@ -264,6 +268,12 @@ begin
   finally
     Screen.Cursor := crDefault;
   end;
+end;
+
+procedure TTestMainForm.EnabledCheckBoxClick(Sender: TObject);
+begin
+  CreateVCLButtons;
+  CreateStyledButtons;
 end;
 
 procedure TTestMainForm.FormCreate(Sender: TObject);

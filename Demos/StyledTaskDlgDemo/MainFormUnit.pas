@@ -162,6 +162,9 @@ var
   Msg: string;
   LButtonName: string;
 begin
+  //Example to resize message font
+  //Screen.MessageFont.Size := Round(Screen.MessageFont.Size * 1.2);
+
   Caption := Application.Title;
   MRLabel.Font.Style := [TFontStyle.fsBold];
   FontComboBox.Items.Assign(Screen.Fonts);
@@ -409,7 +412,9 @@ begin
 end;
 
 initialization
+{$IFDEF DEBUG}
   ReportMemoryLeaksOnShutdown := True;
+{$ENDIF}
 
 end.
 

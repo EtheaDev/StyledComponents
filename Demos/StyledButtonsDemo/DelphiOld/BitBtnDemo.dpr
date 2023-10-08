@@ -2,7 +2,9 @@ program BitBtnDemo;
 
 uses
   Vcl.Forms,
-  MainFormBitBtn in '..\MainFormBitBtn.pas' {fmBitBtn};
+  MainFormBitBtn in '..\MainFormBitBtn.pas' {fmBitBtn},
+  Vcl.Themes,
+  Vcl.Styles;
 
 {$R *.res}
 

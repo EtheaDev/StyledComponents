@@ -19,29 +19,30 @@ uses
   , Designer
   , DesignEditors
   , VCLEditors
+  , Vcl.Controls
   , Vcl.ComCtrls
   , Vcl.StyledButton
   , Vcl.StyledToolbar
+  , Vcl.StyledDbNavigator
+  , Vcl.ButtonStylesAttributes
   ;
 
 Type
-  TButtonFamilyPropertyEditor = class(TStringProperty)
+  TStyledFamilyPropertyEditor = class(TStringProperty)
   public
     function GetAttributes: TPropertyAttributes; override;
     procedure GetValues(Proc: TGetStrProc); override;
   end;
 
-  TButtonClassPropertyEditor = class(TStringProperty)
+  TStyledClassPropertyEditor = class(TStringProperty)
   protected
-    function GetButton: TStyledGraphicButton;
   public
     function GetAttributes: TPropertyAttributes; override;
     procedure GetValues(Proc: TGetStrProc); override;
   end;
 
-  TButtonAppearancePropertyEditor = class(TStringProperty)
+  TStyledAppearancePropertyEditor = class(TStringProperty)
   protected
-    function GetButton: TStyledGraphicButton;
   public
     function GetAttributes: TPropertyAttributes; override;
     procedure GetValues(Proc: TGetStrProc); override;
@@ -56,9 +57,9 @@ Type
     function GetValue: string; override; abstract;
   end;
 
-  TStyledGraphicButtonComponentEditor = class (TComponentEditor)
+  TStyledButtonComponentEditor = class (TComponentEditor)
   private
-    function GetButton: TStyledGraphicButton;
+    function GetButton: TControl;
   public
     function GetVerbCount: Integer; override;
     function GetVerb(Index: Integer): string; override;
@@ -69,6 +70,15 @@ Type
   TStyledToolbarComponentEditor = class (TComponentEditor)
   private
     function GetToolbar: TStyledToolbar;
+  public
+    function GetVerbCount: Integer; override;
+    function GetVerb(Index: Integer): string; override;
+    procedure ExecuteVerb(Index: Integer); override;
+  end;
+
+  TStyledDbNavigatorComponentEditor = class (TComponentEditor)
+  private
+    function GetDbNavigator: TStyledDbNavigator;
   public
     function GetVerbCount: Integer; override;
     function GetVerb(Index: Integer): string; override;
@@ -86,25 +96,53 @@ implementation
 
 uses
   Vcl.StyledTaskDialog
-  , Vcl.ButtonStylesAttributes
   , Vcl.StandardButtonStyles
   , Vcl.BootstrapButtonStyles
   , Vcl.AngularButtonStyles
   , Vcl.StyledButtonEditorUnit
   , Vcl.StyledCmpStrUtils
+  , Vcl.DbCtrls
   , System.Contnrs
   , Winapi.ShellAPI
   , Winapi.Windows
   ;
 
-{ TButtonFamilyPropertyEditor }
 
-function TButtonFamilyPropertyEditor.GetAttributes: TPropertyAttributes;
+function GetComponentFamilyClass(const AComponent: TPersistent;
+  out AButtonFamily: TButtonFamily): boolean;
+var
+  LFamily: TStyledButtonFamily;
+begin
+  LFamily := '';
+  if AComponent is TStyledGraphicButton then
+    LFamily := TStyledGraphicButton(AComponent).StyleFamily
+  else if AComponent is TStyledButton then
+    LFamily := TStyledButton(AComponent).StyleFamily
+  else if AComponent is TStyledToolbar then
+    LFamily := TStyledToolbar(AComponent).StyleFamily
+  else if AComponent is TStyledDbNavigator then
+    LFamily := TStyledDbNavigator(AComponent).StyleFamily;
+  if LFamily <> '' then
+  begin
+    Result := True;
+    AButtonFamily := GetButtonFamilyClass(LFamily);
+  end
+  else
+  begin
+    AButtonFamily := nil;
+    Result := False;
+  end;
+
+end;
+
+{ TStyledFamilyPropertyEditor }
+
+function TStyledFamilyPropertyEditor.GetAttributes: TPropertyAttributes;
 begin
   Result := [paValueList, paMultiSelect];
 end;
 
-procedure TButtonFamilyPropertyEditor.GetValues(Proc: TGetStrProc);
+procedure TStyledFamilyPropertyEditor.GetValues(Proc: TGetStrProc);
 var
   LFamilies: TObjectList;
   I: Integer;
@@ -118,35 +156,22 @@ begin
 end;
 
 
-{ TButtonClassPropertyEditor }
+{ TStyledClassPropertyEditor }
 
-function TButtonClassPropertyEditor.GetAttributes: TPropertyAttributes;
+function TStyledClassPropertyEditor.GetAttributes: TPropertyAttributes;
 begin
   Result := [paValueList, paMultiSelect];
 end;
 
-function TButtonClassPropertyEditor.GetButton: TStyledGraphicButton;
-var
-  LComponent: TPersistent;
-begin
-  Result := nil;
-  LComponent := GetComponent(0);
-  if LComponent is TStyledGraphicButton then
-    Result := TStyledGraphicButton(LComponent);
-end;
-
-procedure TButtonClassPropertyEditor.GetValues(Proc: TGetStrProc);
+procedure TStyledClassPropertyEditor.GetValues(Proc: TGetStrProc);
 var
   LClasses: TButtonClasses;
   I: Integer;
-  LButton: TStyledGraphicButton;
-  LFamily: TButtonFamily;
+  LFamilyClass: TButtonFamily;
 begin
-  LButton := GetButton;
-  if Assigned(LButton) then
+  if GetComponentFamilyClass(GetComponent(0), LFamilyClass) then
   begin
-    LFamily := GetButtonFamilyClass(LButton.StyleFamily);
-    LClasses := GetButtonClasses(LFamily);
+    LClasses := GetButtonClasses(LFamilyClass);
     if Assigned(LClasses) then
     begin
       for I := Low(LClasses) to High(LClasses) do
@@ -155,35 +180,22 @@ begin
   end;
 end;
 
-{ TButtonAppearancePropertyEditor }
+{ TStyledAppearancePropertyEditor }
 
-function TButtonAppearancePropertyEditor.GetAttributes: TPropertyAttributes;
+function TStyledAppearancePropertyEditor.GetAttributes: TPropertyAttributes;
 begin
   Result := [paValueList, paMultiSelect];
 end;
 
-function TButtonAppearancePropertyEditor.GetButton: TStyledGraphicButton;
-var
-  LComponent: TPersistent;
-begin
-  Result := nil;
-  LComponent := GetComponent(0);
-  if LComponent is TStyledGraphicButton then
-    Result := TStyledGraphicButton(LComponent);
-end;
-
-procedure TButtonAppearancePropertyEditor.GetValues(Proc: TGetStrProc);
+procedure TStyledAppearancePropertyEditor.GetValues(Proc: TGetStrProc);
 var
   LAppearances: TButtonAppearances;
   I: Integer;
-  LButton: TStyledGraphicButton;
-  LFamily: TButtonFamily;
+  LFamilyClass: TButtonFamily;
 begin
-  LButton := GetButton;
-  if Assigned(LButton) then
+  if GetComponentFamilyClass(GetComponent(0), LFamilyClass) then
   begin
-    LFamily := GetButtonFamilyClass(LButton.StyleFamily);
-    LAppearances := GetButtonAppearances(LFamily);
+    LAppearances := GetButtonAppearances(LFamilyClass);
     if Assigned(LAppearances) then
     begin
       for I := Low(LAppearances) to High(LAppearances) do
@@ -192,25 +204,24 @@ begin
   end;
 end;
 
+{ TStyledButtonComponentEditor }
 
-{ TStyledGraphicButtonComponentEditor }
-
-function TStyledGraphicButtonComponentEditor.GetButton: TStyledGraphicButton;
+function TStyledButtonComponentEditor.GetButton: TControl;
 var
   LComponent: TPersistent;
 begin
   Result := nil;
   LComponent := GetComponent;
-  if LComponent is TStyledGraphicButton then
+  if LComponent is TControl then
     Result := TStyledGraphicButton(LComponent);
 end;
 
-procedure TStyledGraphicButtonComponentEditor.Edit;
+procedure TStyledButtonComponentEditor.Edit;
 begin
   inherited;
 end;
 
-procedure TStyledGraphicButtonComponentEditor.ExecuteVerb(Index: Integer);
+procedure TStyledButtonComponentEditor.ExecuteVerb(Index: Integer);
 begin
   inherited;
   if Index = 0 then
@@ -223,7 +234,7 @@ begin
     PChar(GetProjectURL), nil, nil, SW_SHOWNORMAL);
 end;
 
-function TStyledGraphicButtonComponentEditor.GetVerb(Index: Integer): string;
+function TStyledButtonComponentEditor.GetVerb(Index: Integer): string;
 begin
   if Index = 0 then
     Result := 'Styled Button Editor...'
@@ -231,7 +242,7 @@ begin
     Result := 'Project page on GitHub...';
 end;
 
-function TStyledGraphicButtonComponentEditor.GetVerbCount: Integer;
+function TStyledButtonComponentEditor.GetVerbCount: Integer;
 begin
   Result := 2;
 end;
@@ -364,6 +375,63 @@ begin
   Result := 4;
 end;
 
+{ TStyledDbNavigatorComponentEditor }
+
+procedure TStyledDbNavigatorComponentEditor.ExecuteVerb(Index: Integer);
+var
+  LDbNavigator: TStyledDbNavigator;
+  LNavButton: TStyledNavButton;
+begin
+  inherited;
+  if Index = 0 then
+  begin
+    LDbNavigator := GetDbNavigator;
+    LNavButton := LDbNavigator.Buttons[nbFirst];
+    LNavButton.StyleDrawType := LDbNavigator.StyleDrawType;
+    LNavButton.StyleRadius := LDbNavigator.StyleRadius;
+    LNavButton.SetBounds(0, 0, LDbNavigator.ButtonWidth, LDbNavigator.ButtonHeight);
+    if LDbNavigator.ShowCaptions then
+    begin
+      LNavButton.Name := Designer.UniqueName('Button');
+      LNavButton.Caption := 'Button';
+    end;
+    if EditStyledButton(LNavButton) then
+    begin
+      LDbNavigator.SetDbNavigatorStyle(LNavButton.StyleFamily,
+        LNavButton.StyleClass, LNavButton.StyleAppearance);
+      LDbNavigator.StyleRadius := LNavButton.StyleRadius;
+      LDbNavigator.StyleDrawType := LNavButton.StyleDrawType;
+      Designer.Modified;
+    end;
+  end
+  else if Index = 1 then
+  ShellExecute(0, 'open',
+    PChar(GetProjectURL), nil, nil, SW_SHOWNORMAL);
+end;
+
+function TStyledDbNavigatorComponentEditor.GetDbNavigator: TStyledDbNavigator;
+var
+  LComponent: TPersistent;
+begin
+  Result := nil;
+  LComponent := GetComponent;
+  if LComponent is TStyledDbNavigator then
+    Result := TStyledDbNavigator(LComponent);
+end;
+
+function TStyledDbNavigatorComponentEditor.GetVerb(Index: Integer): string;
+begin
+  if Index = 0 then
+    Result := 'Styled DbNavigator Editor...'
+  else if Index = 1 then
+    Result := 'Project page on GitHub...';
+end;
+
+function TStyledDbNavigatorComponentEditor.GetVerbCount: Integer;
+begin
+  Result := 2;
+end;
+
 procedure Register;
 begin
   Classes.RegisterClass(TStyledToolButton);
@@ -372,22 +440,41 @@ begin
     [TStyledGraphicButton,
      TStyledButton,
      TStyledToolbar,
-     TStyledTaskDialog]);
+     TStyledTaskDialog,
+     TStyledDbNavigator]);
 
   RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
-    TStyledGraphicButton, 'StyleFamily', TButtonFamilyPropertyEditor);
+    TStyledGraphicButton, 'StyleFamily', TStyledFamilyPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+    TStyledButton, 'StyleFamily', TStyledFamilyPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+    TStyledToolbar, 'StyleFamily', TStyledFamilyPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+    TStyledDbNavigator, 'StyleFamily', TStyledFamilyPropertyEditor);
 
   RegisterPropertyEditor(TypeInfo(TStyledButtonClass),
-    TStyledGraphicButton, 'StyleClass', TButtonClassPropertyEditor);
+    TStyledGraphicButton, 'StyleClass', TStyledClassPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+    TStyledButton, 'StyleClass', TStyledClassPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+    TStyledToolbar, 'StyleClass', TStyledClassPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+    TStyledDbNavigator, 'StyleClass', TStyledClassPropertyEditor);
 
   RegisterPropertyEditor(TypeInfo(TStyledButtonAppearance),
-    TStyledGraphicButton, 'StyleAppearance', TButtonAppearancePropertyEditor);
+    TStyledGraphicButton, 'StyleAppearance', TStyledAppearancePropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+    TStyledButton, 'StyleAppearance', TStyledAppearancePropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+    TStyledToolbar, 'StyleAppearance', TStyledAppearancePropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+    TStyledDbNavigator, 'StyleAppearance', TStyledAppearancePropertyEditor);
 
-  RegisterComponentEditor(TStyledGraphicButton,
-    TStyledGraphicButtonComponentEditor);
-
-  RegisterComponentEditor(TStyledToolbar,
-    TStyledToolbarComponentEditor);
+  RegisterComponentEditor(TStyledGraphicButton, TStyledButtonComponentEditor);
+  RegisterComponentEditor(TStyledButton, TStyledButtonComponentEditor);
+  RegisterComponentEditor(TStyledToolButton, TStyledButtonComponentEditor);
+  RegisterComponentEditor(TStyledToolbar, TStyledToolbarComponentEditor);
+  RegisterComponentEditor(TStyledDbNavigator, TStyledDbNavigatorComponentEditor);
 
   //To auto add units
   RegisterSelectionEditor(TStyledGraphicButton, TStyledButtonsSelection);

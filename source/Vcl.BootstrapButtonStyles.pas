@@ -222,7 +222,7 @@ begin
     //Outline: Border and FontColor same as Button Color
     ANormalStyle.ButtonDrawStyle := btnClear;
     ANormalStyle.BorderDrawStyle := brdSolid;
-    ANormalStyle.BorderWidth := BOOTSTRAP_BORDER_WIDTH div 2;
+    ANormalStyle.BorderWidth := BOOTSTRAP_BORDER_WIDTH;
     ANormalStyle.FontColor := LButtonColor;
     ANormalStyle.BorderColor := LightenColor(LButtonColor, 50);
   end

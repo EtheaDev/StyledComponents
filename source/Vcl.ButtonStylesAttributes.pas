@@ -38,6 +38,7 @@ uses
   , System.Types
   , Vcl.Controls
   , Vcl.Buttons
+  , Winapi.CommCtrl
   ;
 
 const
@@ -147,9 +148,10 @@ procedure CloneButtonStyle(const ASource: TStyledButtonAttributes;
   var ADest: TStyledButtonAttributes);
 function GetWindowsVersion: TWindowsVersion;
 
-{$IFDEF D10_4+}
-function GetBitBtnGlyph(Kind: TBitBtnKind; AEnabled: Boolean): TWicImage;
-{$ENDIF+}
+//drawing "old-style" with masked bitmap
+procedure DrawBitBtnGlyph(ACanvas: TCanvas; ARect: TRect; Kind: Vcl.Buttons.TBitBtnKind;
+  AState: TButtonState; AEnabled: Boolean;
+  AOriginal: TBitmap; ANumGlyphs: Integer; const ATransparentColor: TColor);
 
 //drawing Button
 procedure CanvasDrawShape(const ACanvas: TCanvas; ARect: TRect;
@@ -741,23 +743,181 @@ const //Same as Vcl.Buttons
     nil, 'BBOK', 'BBCANCEL', 'BBHELP', 'BBYES', 'BBNO', 'BBCLOSE',
     'BBABORT', 'BBRETRY', 'BBIGNORE', 'BBALL');
 
-{$IFDEF D10_4+}
-function GetBitBtnGlyph(Kind: Vcl.Buttons.TBitBtnKind; AEnabled: Boolean): TWicImage;
+procedure DrawBitBtnGlyph(ACanvas: TCanvas; ARect: TRect; Kind: Vcl.Buttons.TBitBtnKind;
+  AState: TButtonState; AEnabled: Boolean;
+  AOriginal: TBitmap; ANumGlyphs: Integer; const ATransparentColor: TColor);
+const
+  ROP_DSPDxax = $00E20746;
 var
+  IL: TImageList;
   LResName: String;
+  LOriginal, TmpImage, MonoBmp, DDB: TBitmap;
+  LNumGlyphs: Integer;
+  IWidth, IHeight: Integer;
+  IRect, ORect: TRect;
+  I: TButtonState;
+  DestDC: HDC;
+  LIndex: Integer;
+  {$IFDEF D10_4+}
+  LImage: TWicImage;
+  {$ENDIF}
 begin
-  Result := nil;
-  if Kind = bkCustom then
-    Exit;
-
-  LResName := BitBtnResNames[Kind];
   if not AEnabled then
-    LResName := LResName + '_Disabled';
-  Result := TWicImage.Create;
-  Result.InterpolationMode := wipmHighQualityCubic;
-  Result.LoadFromResourceName(HInstance, LResName);
+    AState := bsDisabled;
+  LIndex := -1;
+  IL := nil;
+  TmpImage := nil;
+  LOriginal := nil;
+  try
+    if Kind = bkCustom then
+    begin
+      if ANumGlyphs = 0 then
+        Exit;
+      LOriginal := AOriginal;
+      LNumGlyphs := ANumGlyphs;
+    end
+    else
+    begin
+      //Load image from resources by Kind
+      LResName := BitBtnResNames[Kind];
+      {$IFDEF D10_4+}
+      LImage := TWicImage.Create;
+      try
+        LImage.InterpolationMode := wipmHighQualityCubic;
+        LImage.LoadFromResourceName(HInstance, LResName);
+        ACanvas.StretchDraw(ARect, LImage);
+        Exit;
+      finally
+        LImage.Free;
+      end;
+      {$ELSE}
+        LOriginal := TBitmap.Create;
+        LNumGlyphs := 2;
+        LOriginal.PixelFormat := pf32bit;
+        LOriginal.LoadFromResourceName(HInstance, LResName);
+      {$ENDIF}
+    end;
+    if (LOriginal.Width = 0) or (LOriginal.Height = 0) then
+      Exit;
+    IWidth := LOriginal.Width div LNumGlyphs;
+    IHeight := LOriginal.Height;
+    TmpImage := TBitmap.Create;
+    TmpImage.Width := IWidth;
+    TmpImage.Height := IHeight;
+    IL := TImageList.CreateSize(TmpImage.Width, TmpImage.Height);
+    IRect := Rect(0, 0, IWidth, IHeight);
+    TmpImage.Canvas.Brush.Color := clBtnFace;
+    TmpImage.Palette := CopyPalette(LOriginal.Palette);
+    I := AState;
+    if Ord(I) >= LNumGlyphs then I := bsUp;
+    ORect := Rect(Ord(I) * IWidth, 0, (Ord(I) + 1) * IWidth, IHeight);
+    case AState of
+      bsUp, bsDown,
+      bsExclusive:
+        begin
+          TmpImage.Canvas.CopyRect(IRect, LOriginal.Canvas, ORect);
+          if LOriginal.TransparentMode = tmFixed then
+            LIndex := IL.AddMasked(TmpImage, ATransparentColor)
+          else
+            LIndex := IL.AddMasked(TmpImage, clDefault);
+          IL.Masked := True;
+        end;
+      bsDisabled:
+        begin
+          MonoBmp := nil;
+          DDB := nil;
+          try
+            MonoBmp := TBitmap.Create;
+            DDB := TBitmap.Create;
+            DDB.Assign(LOriginal);
+            DDB.HandleType := bmDDB;
+            if ANumGlyphs > 1 then
+            with TmpImage.Canvas do
+            begin    { Change white & gray to clBtnHighlight and clBtnShadow }
+              CopyRect(IRect, DDB.Canvas, ORect);
+              MonoBmp.Monochrome := True;
+              MonoBmp.Width := IWidth;
+              MonoBmp.Height := IHeight;
+
+              { Convert white to clBtnHighlight }
+              DDB.Canvas.Brush.Color := clWhite;
+              MonoBmp.Canvas.CopyRect(IRect, DDB.Canvas, ORect);
+              Brush.Color := clBtnHighlight;
+              DestDC := Handle;
+              SetTextColor(DestDC, clBlack);
+              SetBkColor(DestDC, clWhite);
+              BitBlt(DestDC, 0, 0, IWidth, IHeight,
+                     MonoBmp.Canvas.Handle, 0, 0, ROP_DSPDxax);
+
+              { Convert gray to clBtnShadow }
+              DDB.Canvas.Brush.Color := clGray;
+              MonoBmp.Canvas.CopyRect(IRect, DDB.Canvas, ORect);
+              Brush.Color := clBtnShadow;
+              DestDC := Handle;
+              SetTextColor(DestDC, clBlack);
+              SetBkColor(DestDC, clWhite);
+              BitBlt(DestDC, 0, 0, IWidth, IHeight,
+                     MonoBmp.Canvas.Handle, 0, 0, ROP_DSPDxax);
+
+              { Convert transparent color to clBtnFace }
+              DDB.Canvas.Brush.Color := ColorToRGB(ATransparentColor);
+              MonoBmp.Canvas.CopyRect(IRect, DDB.Canvas, ORect);
+              Brush.Color := clBtnFace;
+              DestDC := Handle;
+              SetTextColor(DestDC, clBlack);
+              SetBkColor(DestDC, clWhite);
+              BitBlt(DestDC, 0, 0, IWidth, IHeight,
+                     MonoBmp.Canvas.Handle, 0, 0, ROP_DSPDxax);
+            end
+            else
+            begin
+              { Create a disabled version }
+              with MonoBmp do
+              begin
+                Assign(LOriginal);
+                HandleType := bmDDB;
+                Canvas.Brush.Color := clBlack;
+                Width := IWidth;
+                if Monochrome then
+                begin
+                  Canvas.Font.Color := clWhite;
+                  Monochrome := False;
+                  Canvas.Brush.Color := clWhite;
+                end;
+                Monochrome := True;
+              end;
+              with TmpImage.Canvas do
+              begin
+                Brush.Color := clBtnFace;
+                FillRect(IRect);
+                Brush.Color := clBtnHighlight;
+                SetTextColor(Handle, clBlack);
+                SetBkColor(Handle, clWhite);
+                BitBlt(Handle, 1, 1, IWidth, IHeight,
+                  MonoBmp.Canvas.Handle, 0, 0, ROP_DSPDxax);
+                Brush.Color := clBtnShadow;
+                SetTextColor(Handle, clBlack);
+                SetBkColor(Handle, clWhite);
+                BitBlt(Handle, 0, 0, IWidth, IHeight,
+                  MonoBmp.Canvas.Handle, 0, 0, ROP_DSPDxax);
+              end;
+            end;
+          finally
+            DDB.Free;
+            MonoBmp.Free;
+          end;
+          LIndex := IL.AddMasked(TmpImage, clDefault);
+        end;
+    end;
+    ImageList_DrawEx(IL.Handle, LIndex, ACanvas.Handle, ARect.Left, ARect.Top, 0, 0,
+      clNone, clNone, ILD_Transparent);
+  finally
+    TmpImage.Free;
+    if Kind <> bkCustom then
+      LOriginal.Free;
+    IL.Free;
+  end;
 end;
-{$ENDIF}
 
 procedure CanvasDrawBarAndTriangle(const ACanvas: TCanvas; const ARect: TRect;
   const AScaleFactor: Single; ABarColor, ATriangleColor: TColor);
@@ -826,7 +986,15 @@ begin
     else
       LPen := TGPPen.Create(LPenColor, LBorderWidth);
 
-    if (ADrawType in [btRounded]) then
+    if (ADrawType in [btRect]) then
+    begin
+      //Drawing Rectangular button (no need to GDI+)
+      AdjustCanvasRect(ACanvas, ARect, True);
+      if ACanvas.Brush.Style = bsSolid then
+        ACanvas.FillRect(ARect);
+      ACanvas.Rectangle(ARect);
+    end
+    else if (ADrawType in [btRounded]) then
     begin
       //Reduce canvas to draw a rounded rectangle of Pen Width
       GPInflateRectF(LRect, LBorderWidth);
@@ -838,14 +1006,6 @@ begin
         LGraphics.FillPath(LBrush, LPath);
       end;
       LGraphics.DrawPath(LPen, LPath);
-    end
-    else if (ADrawType in [btRect]) then
-    begin
-      //Drawing Rectangular button (no need to GDI+)
-      AdjustCanvasRect(ACanvas, ARect, True);
-      if ACanvas.Brush.Style = bsSolid then
-        ACanvas.FillRect(ARect);
-      ACanvas.Rectangle(ARect);
     end
     else
     begin

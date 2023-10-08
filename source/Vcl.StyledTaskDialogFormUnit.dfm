@@ -10,7 +10,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
   Constraints.MinWidth = 400
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -11
+  Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
   KeyPreview = True
@@ -19,7 +19,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  TextHeight = 13
+  TextHeight = 15
   object BottomBevel: TBevel
     Left = 0
     Top = 184
@@ -43,8 +43,8 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       AlignWithMargins = True
       Left = 4
       Top = 4
-      Width = 984
-      Height = 13
+      Width = 83
+      Height = 15
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -98,8 +98,8 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
         AlignWithMargins = True
         Left = 4
         Top = 4
-        Width = 840
-        Height = 13
+        Width = 46
+        Height = 15
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -111,7 +111,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       object AutoSizeLabel: TLabel
         AlignWithMargins = True
         Left = 4
-        Top = 25
+        Top = 27
         Width = 840
         Height = 13
         Margins.Left = 4

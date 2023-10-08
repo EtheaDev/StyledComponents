@@ -77,6 +77,7 @@ type
     RadiusTrackBar: TTrackBar;
     ImageList: TImageList;
     ScrollBox: TScrollBox;
+    FlatButtonCheckBox: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure OKButtonClick(Sender: TObject);
     procedure ApplyButtonClick(Sender: TObject);
@@ -88,12 +89,16 @@ type
     procedure EnabledCheckBoxClick(Sender: TObject);
     procedure DestButtonClick(Sender: TObject);
     procedure RadiusTrackBarChange(Sender: TObject);
+    procedure FlatButtonCheckBoxClick(Sender: TObject);
   private
     {$IFNDEF D10_3+}
     FScaleFactor: Single;
     {$ENDIF}
     FUpdating: Boolean;
-    FStyledButton: TStyledGraphicButton;
+    FFamilyBuilt: TStyledButtonFamily;
+    FStyledButtonRender: TStyledButtonRender;
+    FStyledButton: TControl;
+    FCustomStyleDrawType: Boolean;
     procedure BuildTabControls;
     procedure BuildFamilyPreview(const AFamily: TStyledButtonFamily);
     procedure BuildButtonsPreview(const AFamily: TStyledButtonFamily;
@@ -102,6 +107,7 @@ type
     procedure InitGUI;
     procedure UpdateDestFromGUI;
     procedure ButtonClick(Sender: TObject);
+    procedure ButtonEnter(Sender: TObject);
     procedure UpdateSizeGUI;
     function GetScaleFactor: Single;
     procedure FlowPanelResize(Sender: TObject);
@@ -114,9 +120,13 @@ type
     {$IFDEF D10_3+}
     procedure ScaleForPPI(NewPPI: Integer); override;
     {$ENDIF}
+    property CustomStyleDrawType: Boolean read FCustomStyleDrawType;
   end;
 
-function EditStyledButton(const AButton: TStyledGraphicButton): Boolean;
+function EditStyledButton(const AButton: TControl): Boolean; overload;
+function EditStyledButton(const AButton: TStyledGraphicButton): Boolean; overload;
+function EditStyledButton(const AButton: TStyledButton): Boolean; overload;
+function EditStyledButton(const AButtonRender: TStyledButtonRender): Boolean; overload;
 
 implementation
 
@@ -141,7 +151,27 @@ var
   SavedBounds: TRect = (Left: 0; Top: 0; Right: 0; Bottom: 0);
   //paTopHeight: Integer;
 
+function EditStyledButton(const AButton: TControl): Boolean;
+begin
+  if AButton is TStyledGraphicButton then
+    Result := EditStyledButton(TStyledGraphicButton(AButton))
+  else if AButton is TStyledButton then
+    Result := EditStyledButton(TStyledButton(AButton))
+  else
+    raise Exception.CreateFmt('Cannot Edit Control "%s"', [AButton.Name]);
+end;
+
 function EditStyledButton(const AButton: TStyledGraphicButton): Boolean;
+begin
+  Result := EditStyledButton(AButton.Render);
+end;
+
+function EditStyledButton(const AButton: TStyledButton): Boolean;
+begin
+  Result := EditStyledButton(AButton.Render);
+end;
+
+function EditStyledButton(const AButtonRender: TStyledButtonRender): Boolean;
 var
   LEditor: TStyledButtonEditor;
 begin
@@ -149,24 +179,26 @@ begin
   with LEditor do
   begin
     try
-      FStyledButton := AButton;
-      paTop.Height := SourceButton.Top + AButton.Height + 14;
-      AButton.AssignStyleTo(SourceButton);
-      SourceButton.Enabled := AButton.Enabled;
-      SourceButton.Caption := AButton.Caption;
-      SourceButton.Hint := AButton.Hint;
-      SourceButton.Width := AButton.Width;
-      SourceButton.Height := AButton.Height;
+      FStyledButtonRender := AButtonRender;
+      FStyledButton := FStyledButtonRender.OwnerControl;
+      paTop.Height := SourceButton.Top + AButtonRender.Height + 14;
+      AButtonRender.AssignStyleTo(SourceButton.Render);
+      SourceButton.Enabled := AButtonRender.Enabled;
+      SourceButton.Caption := AButtonRender.Caption;
+      SourceButton.Hint := AButtonRender.Hint;
+      SourceButton.Width := AButtonRender.Width;
+      SourceButton.Height := AButtonRender.Height;
+      SourceButton.Flat := AButtonRender.Flat;
 
-      AButton.AssignStyleTo(DestButton);
-      DestButton.Enabled := AButton.Enabled;
-      DestButton.Width := AButton.Width;
-      DestButton.Height := AButton.Height;
-      DestButton.Caption := AButton.Caption;
-      DestButton.Hint := AButton.Hint;
+      AButtonRender.AssignStyleTo(DestButton.Render);
+      DestButton.Enabled := AButtonRender.Enabled;
+      DestButton.Width := AButtonRender.Width;
+      DestButton.Height := AButtonRender.Height;
+      DestButton.Caption := AButtonRender.Caption;
+      DestButton.Hint := AButtonRender.Hint;
+      DestButton.Flat := AButtonRender.Flat;
       Result := ShowModal = mrOk;
       SavedBounds := BoundsRect;
-      //paTopHeight := paTop.Height;
     finally
       Free;
     end;
@@ -177,20 +209,28 @@ end;
 
 procedure TStyledButtonEditor.ButtonClick(Sender: TObject);
 var
-  LStylesButton: TStyledButton;
+  LStyledButton: TStyledButton;
 begin
-  LStylesButton := Sender as TStyledButton;
-  LStylesButton.AssignStyleTo(DestButton);
-  StyleDrawTypeComboBox.ItemIndex := Ord(LStylesButton.StyleDrawType);
+  LStyledButton := Sender as TStyledButton;
+  FCustomStyleDrawType := False;
+  LStyledButton.Render.SetCustomStyleDrawType(FCustomStyleDrawType);
+  LStyledButton.AssignStyleTo(DestButton.Render);
+  StyleDrawTypeComboBox.ItemIndex := Ord(LStyledButton.StyleDrawType);
   UpdateDestFromGUI;
 end;
 
+
+procedure TStyledButtonEditor.ButtonEnter(Sender: TObject);
+begin
+  ButtonClick(Sender);
+end;
 
 procedure TStyledButtonEditor.ApplyStyle;
 begin
   Screen.Cursor := crHourglass;
   try
-    DestButton.AssignStyleTo(FStyledButton);
+    DestButton.Render.SetCustomStyleDrawType(FCustomStyleDrawType);
+    DestButton.AssignStyleTo(FStyledButtonRender);
     FStyledButton.Enabled := DestButton.Enabled;
   finally
     Screen.Cursor := crDefault;
@@ -252,6 +292,7 @@ begin
 
     BuildButtonsPreview(AFamily, LAppearance, LFlowPanel);
   end;
+  FFamilyBuilt := AFamily;
 end;
 
 procedure TStyledButtonEditor.BuildTabControls;
@@ -268,7 +309,7 @@ begin
     begin
       LFamily := GetButtonFamilyName(I);
       TabControl.Tabs.Add(LFamily);
-      if SameText(LFamily, FStyledButton.StyleFamily) then
+      if SameText(LFamily, FStyledButtonRender.StyleFamily) then
         TabControl.TabIndex := I;
     end;
   end;
@@ -333,18 +374,25 @@ var
   LPos: Integer;
   LDrawName: string;
 begin
-  Caption := Format(Caption, [StyledButtonsVersion]);
-  BuildTabControls;
-  for I := Low(TStyledButtonDrawType) to High(TStyledButtonDrawType) do
-  begin
-    LDrawName := GetEnumName(TypeInfo(TStyledButtonDrawType), Ord(I));
-    LPos := StyleDrawTypeComboBox.Items.Add(LDrawName);
-    if I = SourceButton.StyleDrawType then
-      StyleDrawTypeComboBox.ItemIndex := LPos;
+  TabControl.OnChange := nil;
+  try
+    Caption := Format(Caption, [StyledButtonsVersion]);
+    for I := Low(TStyledButtonDrawType) to High(TStyledButtonDrawType) do
+    begin
+      LDrawName := GetEnumName(TypeInfo(TStyledButtonDrawType), Ord(I));
+      LPos := StyleDrawTypeComboBox.Items.Add(LDrawName);
+      if I = SourceButton.StyleDrawType then
+        StyleDrawTypeComboBox.ItemIndex := LPos;
+    end;
+    EnabledCheckBox.Checked := SourceButton.Enabled;
+    RadiusTrackBar.Position := SourceButton.StyleRadius;
+    FlatButtonCheckBox.Checked := SourceButton.Flat;
+
+    UpdateDestFromGUI;
+  finally
+    TabControl.OnChange := TabControlChange;
   end;
-  EnabledCheckBox.Checked := SourceButton.Enabled;
-  RadiusTrackBar.Position := SourceButton.StyleRadius;
-  UpdateDestFromGUI;
+  BuildTabControls;
 end;
 
 procedure TStyledButtonEditor.UpdateSizeGUI;
@@ -371,10 +419,9 @@ function TStyledButtonEditor.GetScaleFactor: Single;
 begin
   //ScaleFactor is available only from Delphi 10.3, FScaleFactor is calculated
   {$IFDEF D10_3+}
-    Result := ScaleFactor * PixelsPerInch / 96;
+    Result := ScaleFactor;
   {$ELSE}
     Result := FScaleFactor * PixelsPerInch / 96{$ENDIF};
-
 end;
 
 procedure TStyledButtonEditor.HelpButtonClick(Sender: TObject);
@@ -405,11 +452,16 @@ procedure TStyledButtonEditor.RadiusTrackBarChange(Sender: TObject);
 begin
   DestButton.StyleRadius := RadiusTrackBar.Position;
   UpdateDestFromGUI;
+  FFamilyBuilt := '';
+  TabControlChange(TabControl);
 end;
 
 procedure TStyledButtonEditor.StyleDrawTypeComboBoxSelect(Sender: TObject);
 begin
+  FCustomStyleDrawType := True;
   UpdateDestFromGUI;
+  FFamilyBuilt := '';
+  TabControlChange(TabControl);
 end;
 
 {$IFDEF D10_3+}
@@ -425,7 +477,8 @@ var
   LFamily: TStyledButtonFamily;
 begin
   LFamily := TabControl.Tabs[TabControl.TabIndex];
-  BuildFamilyPreview(LFamily);
+  if FFamilyBuilt <> LFamily then
+    BuildFamilyPreview(LFamily);
 end;
 
 procedure TStyledButtonEditor.UpdateDestFromGUI;
@@ -445,6 +498,7 @@ begin
   NewGroupBox.Caption := Format('NEW: %s/%s/%s',
     [DestButton.StyleFamily, DestButton.StyleClass, DestButton.StyleAppearance]);
   DestButton.Hint := NewGroupBox.Caption;
+  DestButton.Flat := FlatButtonCheckBox.Checked;
 end;
 
 procedure TStyledButtonEditor.BuildButtonsPreview(const AFamily: TStyledButtonFamily;
@@ -472,6 +526,9 @@ var
     LStyledButton.StyleClass := AClass;
     LStyledButton.StyleAppearance := AAppearance;
     LStyledButton.OnClick := ButtonClick;
+    LStyledButton.OnEnter := ButtonEnter;
+    LStyledButton.StyleDrawType := TStyledButtonDrawType(StyleDrawTypeComboBox.ItemIndex);
+    LStyledButton.StyleRadius := RadiusTrackBar.Position;
     LStyledButton.Parent := AParent;
   end;
 
@@ -495,6 +552,11 @@ begin
     AFlowPanel.EnableAlign;
     Screen.Cursor := crDefault;
   End;
+end;
+
+procedure TStyledButtonEditor.FlatButtonCheckBoxClick(Sender: TObject);
+begin
+  UpdateDestFromGUI;
 end;
 
 procedure TStyledButtonEditor.FlowPanelResize(Sender: TObject);

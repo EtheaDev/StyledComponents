@@ -7,6 +7,9 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons,
   Vcl.ButtonStylesAttributes, Vcl.StyledButton;
 
+const
+  BTN_ENABLED = True;
+
 type
   TfmBitBtn = class(TForm)
     btOK: TBitBtn;
@@ -80,11 +83,18 @@ procedure TfmBitBtn.CreateButtons(const AStyleFamily: TStyledButtonFamily;
 
   function CreateButtonAs(const ABitBtn: TBitBtn): TStyledButton;
   begin
+    ABitBtn.Enabled := BTN_ENABLED;
     Result := TStyledButton.Create(Self);
     Result.SetBounds(ABitBtn.Left+ALeftOffSet, ABitBtn.Top, ABitBtn.Width, ABitBtn.Height);
     Result.StyleFamily := AStyleFamily;
     Result.Caption := ABitBtn.Caption;
+    Result.Enabled := BTN_ENABLED;
     Result.Kind := ABitBtn.Kind;
+    if Result.Kind = bkCustom then
+    begin
+      Result.NumGlyphs := ABitBtn.NumGlyphs;
+      Result.Glyph := ABitBtn.Glyph;
+    end;
     Result.Parent := Self;
     Result.OnClick := ButtonClick;
     Result.OnMouseEnter := ButtonMouseEnter;

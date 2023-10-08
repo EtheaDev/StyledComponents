@@ -49,7 +49,8 @@ uses
   Vcl.ButtonStylesAttributes,
   Vcl.StyledButtonEditorUnit,
   Vcl.Menus,
-  Vcl.ComCtrls;
+  Vcl.ComCtrls,
+  Vcl.Buttons;
 
 type
   TMainForm = class(TForm)
@@ -63,7 +64,7 @@ type
     Exit1: TMenuItem;
     Panel1: TPanel;
     ShowEditButton: TStyledButton;
-    StyledButton2: TStyledButton;
+    StyledButtonCircular: TStyledButton;
     StyleLabel: TLabel;
     cbChangeStyle: TComboBox;
     PageControl: TPageControl;
@@ -136,7 +137,7 @@ type
     ImageList32: TImageList;
     btn_FABHome: TStyledButton;
     btn_FABHeartDisabled: TStyledButton;
-    StyledButton1: TStyledButton;
+    StyledButtonSquare: TStyledButton;
     gbAngularModalResult: TGroupBox;
     btn_AngularOK: TStyledButton;
     btn_AngularCancel: TStyledButton;

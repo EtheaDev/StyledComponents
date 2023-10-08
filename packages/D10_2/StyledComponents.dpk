@@ -29,6 +29,7 @@ package StyledComponents;
 {$R '..\StyledButton.dcr'}
 {$R '..\StyledTaskDialog.dcr'}
 {$R '..\StyledToolbar.dcr'}
+{$R '..\StyledDbNavigator.dcr'}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -37,23 +38,23 @@ package StyledComponents;
 {$EXTENDEDSYNTAX ON}
 {$IMPORTEDDATA ON}
 {$IOCHECKS ON}
-{$LOCALSYMBOLS ON}
+{$LOCALSYMBOLS OFF}
 {$LONGSTRINGS ON}
 {$OPENSTRINGS ON}
-{$OPTIMIZATION OFF}
-{$OVERFLOWCHECKS ON}
-{$RANGECHECKS ON}
-{$REFERENCEINFO ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
 {$SAFEDIVIDE OFF}
-{$STACKFRAMES ON}
+{$STACKFRAMES OFF}
 {$TYPEDADDRESS OFF}
 {$VARSTRINGCHECKS ON}
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DEFINE DEBUG}
+{$DEFINE RELEASE}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Ethea Styled Components'}
+{$DESCRIPTION 'Ethea - Styled Components'}
 {$LIBSUFFIX 'D10_2'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
@@ -61,7 +62,9 @@ package StyledComponents;
 requires
   rtl,
   vcl,
-  vclimg;
+  vclimg,
+  dbrtl,
+  vcldb;
 
 contains
   Vcl.StyledButton in '..\..\source\Vcl.StyledButton.pas',
@@ -74,8 +77,9 @@ contains
   Vcl.StyledCmpMessages in '..\..\source\Vcl.StyledCmpMessages.pas',
   Vcl.StyledCmpStrUtils in '..\..\source\Vcl.StyledCmpStrUtils.pas',
   Vcl.StyledTaskDialogStdUnit in '..\..\source\Vcl.StyledTaskDialogStdUnit.pas',
+  Vcl.StyledTaskDialogFormUnit in '..\..\source\Vcl.StyledTaskDialogFormUnit.pas' {StyledTaskDialogForm},
   Vcl.StyledToolbar in '..\..\source\Vcl.StyledToolbar.pas',
-  Vcl.StyledTaskDialogFormUnit in '..\..\source\Vcl.StyledTaskDialogFormUnit.pas' {StyledTaskDialogForm};
+  Vcl.StyledDbNavigator in '..\..\source\Vcl.StyledDbNavigator.pas';
 
 end.
 

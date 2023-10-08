@@ -36,7 +36,7 @@ package dclStyledComponents;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Ethea Styled Components'}
+{$DESCRIPTION 'Ethea - Styled Components'}
 {$LIBSUFFIX AUTO}
 {$DESIGNONLY}
 {$IMPLICITBUILD ON}

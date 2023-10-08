@@ -33,25 +33,24 @@ uses
   Vcl.Dialogs;
 
 resourcestring
-{$IFDEF ItaMessages}
-    STR_YES = 'Sì';
-    STR_NO = 'No';
+{$IF DEFINED(ItaMessages) OR DEFINED(CBLIB_ITA)}
+    STR_YES = '&Sì';
+    STR_NO = '&No';
     STR_OK = 'OK';
     STR_CANCEL = 'Annulla';
-    STR_ABORT = 'Interrompi';
-    STR_RETRY = 'Riprova';
-    STR_IGNORE = 'Ignora';
-    STR_UNDO = 'Indietro';
-    STR_ALL = 'Tutti';
-    STR_NOTOALL = 'No a tutti';
-    STR_YESTOALL = 'Sì a tutti';
-    STR_HELP = 'Aiuto';
+    STR_ABORT = '&Interrompi';
+    STR_RETRY = '&Riprova';
+    STR_IGNORE = 'I&gnora';
+    STR_ALL = '&Tutti';
+    STR_NOTOALL = '&No a tutti';
+    STR_YESTOALL = '&Sì a tutti';
+    STR_HELP = '&Aiuto';
     STR_ABOUT = 'Informazioni';
     STR_WARNING = 'Attenzione';
     STR_ERROR = 'Errore';
     STR_INFORMATION = 'Informazione';
     STR_CONFIRM = 'Conferma';
-    STR_CLOSE = 'Chiudi';
+    STR_CLOSE = '&Chiudi';
     EINSTANTERRORDESC = 'Errore nei dati';
     EDATABASEERRORDESC = 'Errore nei dati';
     EGENERICERROR = 'Errore';
@@ -60,25 +59,54 @@ resourcestring
                           'Si consiglia di uscire dal programma e riavviarlo (i dati già registrati non andranno perduti)'+sLineBreak+
                           'Se l''errore dovesse persistere contattare il supporto tecnico';
 
+    //Navigator buttons Captions
+    CaptionFirstRecord = 'Primo';
+    CaptionPriorRecord = 'Precedente';
+    CaptionNextRecord = 'Successivo';
+    CaptionLastRecord = 'Ultimo';
+    CaptionInsertRecord = 'Inserisci';
+    CaptionDeleteRecord = 'Elimina';
+    CaptionEditRecord = 'Modifica';
+    CaptionPostEdit = 'Salva';
+    CaptionCancelEdit = 'Annulla';
+    CaptionConfirmCaption = 'Conferma';
+    CaptionRefreshRecord = 'Aggiorna';
+    CaptionApplyUpdates = 'Applica';
+    CaptionCancelUpdates = 'Ripristina';
+    //Navigator buttons Hints
+    SFirstRecord = 'Primo record';
+    SPriorRecord = 'Record precedente';
+    SNextRecord = 'Record successivo';
+    SLastRecord = 'Ultimo record';
+    SInsertRecord = 'Inserisci record';
+    SDeleteRecord = 'Cancella record';
+    SEditRecord = 'Modifica record';
+    SPostEdit = 'Salva le modifiche';
+    SCancelEdit = 'Annulla le modifiche';
+    SConfirmCaption = 'Conferma';
+    SRefreshRecord = 'Aggiorna i dati';
+    SApplyUpdates = 'Memorizza tutte le modifiche';
+    SCancelUpdates = 'Annulla tutte le modifiche';
+    SDeleteRecordQuestion = 'Vuoi cancellare il record?';
+
 {$ELSEIF Defined(FraMessages)}
-    STR_YES = 'Oui';
-    STR_NO = 'Non';
+    STR_YES = '&Oui';
+    STR_NO = '&Non';
     STR_OK = 'Ok';
     STR_CANCEL = 'Annuler';
-    STR_ABORT = 'Abandonner';
-    STR_RETRY = 'Réessayer';
-    STR_IGNORE = 'Ignorer';
-    STR_UNDO = 'Défaire';
-    STR_ALL = 'Tous';
-    STR_NOTOALL = 'Non à tout';
-    STR_YESTOALL = 'Oui à tout';
-    STR_HELP = 'Help';
+    STR_ABORT = '&Abandonner';
+    STR_RETRY = '&Réessayer';
+    STR_IGNORE = '&Ignorer';
+    STR_ALL = '&Tous';
+    STR_NOTOALL = '&Non à tout';
+    STR_YESTOALL = '&Oui à tout';
+    STR_HELP = '&Aide';
     STR_ABOUT = 'A propos';
     STR_WARNING = 'Attention';
     STR_ERROR = 'Erreur';
     STR_INFORMATION = 'Information';
     STR_CONFIRM = 'Confirmer';
-    STR_CLOSE = 'Fermer';
+    STR_CLOSE = '&Fermer';
     EINSTANTERRORDESC = 'Erreur de données';
     EDATABASEERRORDESC = 'Erreur de données';
     EGENERICERROR = 'Erreur';
@@ -86,25 +114,54 @@ resourcestring
     ERR_ACCES_VIOL_DESC = 'Une erreur non gérée a été detectée.'+sLineBreak+sLineBreak+'%s'+sLineBreak+sLineBreak+
                           'Il est recommandé de fermer et de relancer l''application.'+sLineBreak+
                           'Si le programme persiste, contactez le support technique.';
+
+    //Navigator buttons Captions
+    CaptionFirstRecord = 'Premier';
+    CaptionPriorRecord = 'Précédent';
+    CaptionNextRecord = 'Suivant';
+    CaptionLastRecord = 'Dernier';
+    CaptionInsertRecord = 'Insérer';
+    CaptionDeleteRecord = 'Supprimer';
+    CaptionEditRecord = 'Editer';
+    CaptionPostEdit = 'Valider';
+    CaptionCancelEdit = 'Abandonner';
+    CaptionConfirmCaption = 'Confirmer';
+    CaptionRefreshRecord = 'Rafraichir';
+    CaptionApplyUpdates = 'Appliquer';
+    CaptionCancelUpdates = 'Annuler';
+    //Navigator buttons Hints
+    SFirstRecord = 'Premier enregistrement';
+    SPriorRecord = 'Enregistrement précédent';
+    SNextRecord = 'Enregistrement suivant';
+    SLastRecord = 'Dernier enregistrement';
+    SInsertRecord = 'Insérer un enregistrement';
+    SDeleteRecord = 'Supprimer l''enregistrement';
+    SEditRecord = 'Editer l''enregistrement ';
+    SPostEdit = 'Valider les modifications';
+    SCancelEdit = 'Abandonner les modifications';
+    SConfirmCaption = 'Confirmer';
+    SRefreshRecord = 'Rafraichir les données';
+    SApplyUpdates = 'Appliquer les modifications';
+    SCancelUpdates = 'Annuler les modifications';
+    SDeleteRecordQuestion = 'Supprimer l''enregistrement?';
 {$ELSE}
-    STR_YES = 'Yes';
-    STR_NO = 'No';
+    STR_YES = '&Yes';
+    STR_NO = '&No';
     STR_OK = 'OK';
     STR_CANCEL = 'Cancel';
-    STR_ABORT = 'Abort';
-    STR_RETRY = 'Retry';
-    STR_IGNORE = 'Ignore';
-    STR_UNDO = 'Undo';
-    STR_ALL = 'All';
-    STR_NOTOALL = 'No to all';
-    STR_YESTOALL = 'Yes to all';
-    STR_HELP = 'Help';
+    STR_ABORT = '&Abort';
+    STR_RETRY = '&Retry';
+    STR_IGNORE = '&Ignore';
+    STR_ALL = '&All';
+    STR_NOTOALL = 'N&o to All';
+    STR_YESTOALL = 'Yes to &All';
+    STR_HELP = '&Help';
     STR_ABOUT = 'About';
     STR_WARNING = 'Warning';
     STR_ERROR = 'Error';
     STR_INFORMATION = 'Information';
     STR_CONFIRM = 'Confirm';
-    STR_CLOSE = 'Close';
+    STR_CLOSE = '&Close';
     EDATABASEERRORDESC = 'Error in data';
     EFILERERROR = 'Error in input/output file operation';
     EGENERICERROR = 'Error';
@@ -112,6 +169,36 @@ resourcestring
     ERR_ACCES_VIOL_DESC = 'Unexpected error.'+sLineBreak+sLineBreak+'%s'+sLineBreak+sLineBreak+
                           'It is recommended to exit and reexecute the program.'+sLineBreak+
                           'If this error persists, please contact our technical support.';
+
+    //Navigator buttons Captions
+    CaptionFirstRecord = 'First';
+    CaptionPriorRecord = 'Prior';
+    CaptionNextRecord = 'Next';
+    CaptionLastRecord = 'Last';
+    CaptionInsertRecord = 'Insert';
+    CaptionDeleteRecord = 'Delete';
+    CaptionEditRecord = 'Edit';
+    CaptionPostEdit = 'Post';
+    CaptionCancelEdit = 'Cancel';
+    CaptionConfirmCaption = 'Confirm';
+    CaptionRefreshRecord = 'Refresh';
+    CaptionApplyUpdates = 'Apply';
+    CaptionCancelUpdates = 'Revert';
+    //Navigator buttons Hints
+    SFirstRecord = 'First record';
+    SPriorRecord = 'Prior record';
+    SNextRecord = 'Next record';
+    SLastRecord = 'Last record';
+    SInsertRecord = 'Insert record';
+    SDeleteRecord = 'Delete record';
+    SEditRecord = 'Edit record';
+    SPostEdit = 'Post edit';
+    SCancelEdit = 'Cancel edit';
+    SConfirmCaption = 'Confirm';
+    SRefreshRecord = 'Refresh data';
+    SApplyUpdates = 'Apply updates';
+    SCancelUpdates = 'Revert updates';
+    SDeleteRecordQuestion = 'Delete record?';
 {$ENDIF}
 
 function GetMsgDlgTitle(const AMsgDlgType: TMsgDlgType): string;

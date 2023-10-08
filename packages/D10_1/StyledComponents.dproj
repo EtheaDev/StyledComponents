@@ -5,7 +5,7 @@
         <ProjectVersion>19.5</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Package</AppType>
@@ -40,7 +40,7 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <DCC_DcuOutput>..\..\Dcu\D10_1\$(Platform)\$(Config)</DCC_DcuOutput>
+        <DCC_DcuOutput>..\..\Lib\D10_1\$(Platform)\$(Config)</DCC_DcuOutput>
         <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
         <DCC_E>false</DCC_E>
         <DCC_N>false</DCC_N>
@@ -94,8 +94,11 @@
         <DCCReference Include="..\StyledButton.dcr"/>
         <DCCReference Include="..\StyledTaskDialog.dcr"/>
         <DCCReference Include="..\StyledToolbar.dcr"/>
+        <DCCReference Include="..\StyledDbNavigator.dcr"/>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="vcl.dcp"/>
+        <DCCReference Include="dbrtl.dcp"/>
+        <DCCReference Include="vcldb.dcp"/>
         <DCCReference Include="vclimg.dcp"/>
         <DCCReference Include="..\..\source\Vcl.StyledButton.pas"/>
         <DCCReference Include="..\..\source\Vcl.ButtonStylesAttributes.pas"/>
@@ -107,11 +110,12 @@
         <DCCReference Include="..\..\source\Vcl.StyledCmpMessages.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledCmpStrUtils.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledTaskDialogStdUnit.pas"/>
-        <DCCReference Include="..\..\source\Vcl.StyledToolbar.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledTaskDialogFormUnit.pas">
             <Form>StyledTaskDialogForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="..\..\source\Vcl.StyledToolbar.pas"/>
+        <DCCReference Include="..\..\source\Vcl.StyledDbNavigator.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

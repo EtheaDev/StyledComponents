@@ -1,13 +1,6 @@
 inherited StyledTaskDialogStd: TStyledTaskDialogStd
   Caption = 'StyledTaskDialogStd'
-  ExplicitWidth = 1004
-  ExplicitHeight = 282
-  TextHeight = 13
-  inherited FooterPanel: TPanel
-    inherited FooterTextLabel: TLabel
-      Width = 984
-    end
-  end
+  TextHeight = 15
   inherited CenterPanel: TPanel
     inherited ImagePanel: TPanel
       object Image: TImage
@@ -18,11 +11,6 @@ inherited StyledTaskDialogStd: TStyledTaskDialogStd
         Align = alTop
         Stretch = True
         Transparent = True
-      end
-    end
-    inherited MessageScrollBox: TScrollBox
-      inherited TitleLabel: TLabel
-        Width = 840
       end
     end
   end

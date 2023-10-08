@@ -54,7 +54,7 @@ uses
   Vcl.ImageCollection,
   Vcl.Menus,
   Vcl.ComCtrls,
-  DResources;
+  DResources, Vcl.Buttons;
 
 type
   TMainForm = class(TForm)
@@ -68,7 +68,7 @@ type
     Exit1: TMenuItem;
     Panel1: TPanel;
     ShowEditButton: TStyledButton;
-    StyledButton2: TStyledButton;
+    StyledButtonCircular: TStyledButton;
     StyleLabel: TLabel;
     cbChangeStyle: TComboBox;
     PageControl: TPageControl;
@@ -141,7 +141,7 @@ type
     VirtualImageList32: TVirtualImageList;
     btn_FABHome: TStyledButton;
     btn_FABHeartDisabled: TStyledButton;
-    StyledButton1: TStyledButton;
+    StyledButtonSquare: TStyledButton;
     gbAngularModalResult: TGroupBox;
     btn_AngularOK: TStyledButton;
     btn_AngularCancel: TStyledButton;
@@ -472,11 +472,10 @@ end;
 
 function TMainForm.GetScaleFactor: Single;
 begin
-  //ScaleFactor is available only from Delphi 10.3, FScaleFactor is calculated
   {$IFDEF D10_3+}
-    Result := ScaleFactor * PixelsPerInch / 96;
+    Result := ScaleFactor;
   {$ELSE}
-    Result := FScaleFactor * PixelsPerInch / 96;
+    Result := 1;
   {$ENDIF}
 end;
 
