@@ -1,6 +1,6 @@
 ﻿# Delphi StyledComponents [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 
-## Delphi VCL Buttons and Toolbar with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
+## Delphi VCL Buttons, Toolbar and DbNavigator, with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
 ### Actual official version: 3.1.0
 
