@@ -417,6 +417,9 @@ object MainForm: TMainForm
   object StyledTaskDialog: TStyledTaskDialog
     Buttons = <>
     Caption = 'CAPTION'
+    ExpandedText = 'Expanded Text'
+    Flags = [tfEnableHyperlinks, tfAllowDialogCancellation]
+    FooterText = 'Footer Text'
     RadioButtons = <>
     Text = 
       'Message Text Lorem ipsum dolor sit amet, consectetur adipiscing ' +

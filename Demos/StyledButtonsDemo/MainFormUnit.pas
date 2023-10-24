@@ -261,11 +261,15 @@ begin
 end;
 
 procedure TMainForm.ButtonClick(Sender: TObject);
+const
+  Msg = 'Caption: %s - ModalResult: %d';
 begin
   if Sender is TButton then
-    ShowMessage((Sender as TButton).Caption)
+    ShowMessage(Format(Msg,[TButton(Sender).Caption,
+      TButton(Sender).ModalResult]))
   else
-    ShowMessage((Sender as TStyledButton).Caption);
+    ShowMessage(Format(Msg,[TStyledButton(Sender).Caption,
+      TStyledButton(Sender).ModalResult]));
 end;
 
 procedure TMainForm.FlowPanelResize(Sender: TObject);

@@ -132,7 +132,9 @@ uses
   , Winapi.ShellApi
   , Vcl.StyledCmpMessages
   , Vcl.StyledButton
-  , Vcl.StyledCmpStrUtils;
+  , Vcl.StyledCmpStrUtils
+  , Vcl.StyledTaskDialogStdUnit
+  ;
 
 var
   TaskDialogExecute: ITaskDialogLauncher;
@@ -390,18 +392,18 @@ begin
         LTaskDialogButtonItem := LTaskDialog.Buttons.Add;
         //Button Caption translated
         case DlgBtn of
-          mbYes: LTaskDialogButtonItem.Caption := '&'+STR_YES;
-          mbNo: LTaskDialogButtonItem.Caption := '&'+STR_NO;
+          mbYes: LTaskDialogButtonItem.Caption := STR_YES;
+          mbNo: LTaskDialogButtonItem.Caption := STR_NO;
           mbOK: LTaskDialogButtonItem.Caption := STR_OK;
           mbCancel: LTaskDialogButtonItem.Caption := STR_CANCEL;
           mbAbort: LTaskDialogButtonItem.Caption := STR_ABORT;
           mbRetry: LTaskDialogButtonItem.Caption := STR_RETRY;
           mbIgnore: LTaskDialogButtonItem.Caption := STR_IGNORE;
-          mbAll: LTaskDialogButtonItem.Caption := '&'+STR_ALL;
-          mbNoToAll: LTaskDialogButtonItem.Caption := '&'+STR_NOTOALL;
-          mbYesToAll: LTaskDialogButtonItem.Caption := '&'+STR_YESTOALL;
-          mbHelp: LTaskDialogButtonItem.Caption := '&'+STR_HELP;
-          mbClose: LTaskDialogButtonItem.Caption := '&'+STR_CLOSE;
+          mbAll: LTaskDialogButtonItem.Caption := STR_ALL;
+          mbNoToAll: LTaskDialogButtonItem.Caption := STR_NOTOALL;
+          mbYesToAll: LTaskDialogButtonItem.Caption := STR_YESTOALL;
+          mbHelp: LTaskDialogButtonItem.Caption := STR_HELP;
+          mbClose: LTaskDialogButtonItem.Caption := STR_CLOSE;
         end;
         if DlgBtn = DefaultButton then
           LTaskDialogButtonItem.Default := True;

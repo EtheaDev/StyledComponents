@@ -46,7 +46,6 @@ object MainForm: TMainForm
       ParentFont = False
       Caption = '&Show Editor'
       Images = VirtualImageList32
-      ImageName = 'Basic-Color'
       TabOrder = 0
     end
     object StyledButtonSquare: TStyledButton
@@ -57,7 +56,6 @@ object MainForm: TMainForm
       ImageAlignment = iaCenter
       Images = VirtualImageList32
       ImageIndex = 11
-      ImageName = 'launch-white'
       StyleFamily = 'Bootstrap'
       StyleClass = 'Danger'
       TabOrder = 1
@@ -70,7 +68,6 @@ object MainForm: TMainForm
       ImageAlignment = iaCenter
       Images = VirtualImageList32
       ImageIndex = 18
-      ImageName = 'home-black'
       StyleDrawType = btEllipse
       StyleFamily = 'Bootstrap'
       StyleClass = 'Warning'
@@ -122,7 +119,6 @@ object MainForm: TMainForm
     object tsBootstrap: TTabSheet
       Caption = 'Bootstrap Buttons'
       ImageIndex = 20
-      ImageName = 'Bootstrap-logo'
       object BootStrapLinkLabel: TLinkLabel
         AlignWithMargins = True
         Left = 3
@@ -483,6 +479,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Ok'
           ModalResult = 1
           StyleFamily = 'Bootstrap'
@@ -495,6 +492,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Cancel'
           ModalResult = 2
           StyleFamily = 'Bootstrap'
@@ -507,6 +505,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Abort'
           ModalResult = 3
           StyleFamily = 'Bootstrap'
@@ -519,6 +518,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Retry'
           ModalResult = 4
           StyleFamily = 'Bootstrap'
@@ -531,6 +531,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Ignore'
           ModalResult = 5
           StyleFamily = 'Bootstrap'
@@ -543,6 +544,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Yes'
           ModalResult = 6
           StyleFamily = 'Bootstrap'
@@ -555,6 +557,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'No'
           ModalResult = 7
           StyleFamily = 'Bootstrap'
@@ -567,6 +570,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Close'
           ModalResult = 8
           StyleFamily = 'Bootstrap'
@@ -580,6 +584,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Help'
           ModalResult = 9
           StyleFamily = 'Bootstrap'
@@ -594,6 +599,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'All'
           ModalResult = 12
           StyleFamily = 'Bootstrap'
@@ -604,7 +610,6 @@ object MainForm: TMainForm
     object tsAngular: TTabSheet
       Caption = 'Angular Buttons'
       ImageIndex = 19
-      ImageName = 'Angular-logo'
       object AngularLinkLabel: TLinkLabel
         AlignWithMargins = True
         Left = 3
@@ -971,7 +976,6 @@ object MainForm: TMainForm
           ImageAlignment = iaCenter
           Images = VirtualImageList32
           ImageIndex = 0
-          ImageName = 'home-deeppurple'
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
           StyleClass = 'DeepPurple'
@@ -990,7 +994,6 @@ object MainForm: TMainForm
           ImageAlignment = iaCenter
           Images = VirtualImageList32
           ImageIndex = 10
-          ImageName = 'dots-vertical-black'
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
           StyleClass = 'DeepPurple'
@@ -1009,7 +1012,6 @@ object MainForm: TMainForm
           ImageAlignment = iaCenter
           Images = VirtualImageList32
           ImageIndex = 4
-          ImageName = 'menu-amber'
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
           StyleClass = 'Amber'
@@ -1028,7 +1030,6 @@ object MainForm: TMainForm
           ImageAlignment = iaCenter
           Images = VirtualImageList32
           ImageIndex = 8
-          ImageName = 'heart'
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
           StyleClass = 'Warn'
@@ -1048,7 +1049,6 @@ object MainForm: TMainForm
           ImageAlignment = iaCenter
           Images = VirtualImageList32
           ImageIndex = 12
-          ImageName = 'launch-black'
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
           StyleAppearance = 'Basic'
@@ -1076,7 +1076,6 @@ object MainForm: TMainForm
           ImageAlignment = iaCenter
           Images = VirtualImageList32
           ImageIndex = 13
-          ImageName = 'trash-white'
           StyleRadius = 8
           StyleFamily = 'Angular-Light'
           StyleClass = 'Amber'
@@ -1094,7 +1093,6 @@ object MainForm: TMainForm
           ImageAlignment = iaCenter
           Images = VirtualImageList32
           ImageIndex = 16
-          ImageName = 'bookmark-black'
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
           StyleClass = 'Amber'
@@ -1112,7 +1110,6 @@ object MainForm: TMainForm
           ImageAlignment = iaCenter
           Images = VirtualImageList32
           ImageIndex = 17
-          ImageName = 'home-white'
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
           StyleClass = 'Warn'
@@ -1131,7 +1128,6 @@ object MainForm: TMainForm
           ImageAlignment = iaCenter
           Images = VirtualImageList32
           ImageIndex = 8
-          ImageName = 'heart'
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
           TabOrder = 0
@@ -1153,6 +1149,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Ok'
           ModalResult = 1
           StyleFamily = 'Angular-Light'
@@ -1165,6 +1162,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Cancel'
           ModalResult = 2
           StyleFamily = 'Angular-Light'
@@ -1177,6 +1175,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Abort'
           ModalResult = 3
           StyleFamily = 'Angular-Light'
@@ -1189,6 +1188,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Retry'
           ModalResult = 4
           StyleFamily = 'Angular-Light'
@@ -1201,6 +1201,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Ignore'
           ModalResult = 5
           StyleFamily = 'Angular-Light'
@@ -1213,6 +1214,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Yes'
           ModalResult = 6
           StyleFamily = 'Angular-Light'
@@ -1225,6 +1227,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'No'
           ModalResult = 7
           StyleFamily = 'Angular-Light'
@@ -1237,6 +1240,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Close'
           ModalResult = 8
           StyleFamily = 'Angular-Light'
@@ -1249,6 +1253,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Help'
           ModalResult = 9
           StyleFamily = 'Angular-Light'
@@ -1262,6 +1267,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'All'
           ModalResult = 12
           StyleFamily = 'Angular-Light'
@@ -1272,7 +1278,6 @@ object MainForm: TMainForm
     object tsClassic: TTabSheet
       Caption = 'Classic Buttons (VCL Styled)'
       ImageIndex = 21
-      ImageName = 'Delphi-Logo'
       object GroupBox3: TGroupBox
         Left = 0
         Top = 0
@@ -1569,7 +1574,6 @@ object MainForm: TMainForm
     object tsBasicColor: TTabSheet
       Caption = 'Basic-Color Buttons'
       ImageIndex = 22
-      ImageName = 'Basic-Color'
       object BasicColorScrollBox: TScrollBox
         AlignWithMargins = True
         Left = 3
@@ -1627,7 +1631,6 @@ object MainForm: TMainForm
     object tsSVGColor: TTabSheet
       Caption = 'SVG-Color Buttons'
       ImageIndex = 23
-      ImageName = 'SVG-Color'
       object SvgColorScrollBox: TScrollBox
         AlignWithMargins = True
         Left = 3
@@ -1690,7 +1693,6 @@ object MainForm: TMainForm
       Caption = 'Show Editor'
       Hint = 'Hint of Action'
       ImageIndex = 22
-      ImageName = 'Basic-Color'
       OnExecute = TestActionExecute
     end
   end
@@ -1719,15 +1721,19 @@ object MainForm: TMainForm
     end
   end
   object VirtualImageList32: TVirtualImageList
+    DisabledGrayscale = False
+    DisabledSuffix = '_Disabled'
     Images = <
       item
         CollectionIndex = 0
         CollectionName = 'home-deeppurple'
+        Disabled = False
         Name = 'home-deeppurple'
       end
       item
         CollectionIndex = 1
         CollectionName = 'home-indigo'
+        Disabled = False
         Name = 'home-indigo'
       end
       item

@@ -2,7 +2,7 @@
 
 ## Delphi VCL Buttons and Toolbar with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 3.0.0
+### Actual official version: 3.1.0
 
 | Component | Description |
 | - | - |
@@ -194,6 +194,13 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+23 Oct 2023: version 3.1.0
+- Fixed FlatButton when disabled
+- Fixed Autosize/Wrapable for TStyledToolbar
+- Fixed Background Drawing
+- Fixed default registration for StyledTaskDialogStd form
+- Relesed on GetIt Package Manager
+
 08 Oct 2023: version 3.0.0
 - Complete refactoring using TStyledButtonRender to Render both TStyledGraphicButton and TStyledButton
 - Removed "invisible" TStyledButtonFocusControl present in 2.x version: "Focus" and "TabStop" now works as in standard VCL Button

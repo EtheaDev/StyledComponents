@@ -58,6 +58,7 @@ type
 
   TStyledToolbar = class;
   TStyledToolButton = class;
+  TStyledToolButtonClass = class of TStyledToolButton;
 
   TButtonProc = reference to procedure (Button: TStyledToolButton);
   TControlProc = reference to procedure (Control: TControl);
@@ -168,7 +169,6 @@ type
     FCustomizable: Boolean;
     FList: Boolean;
     FDisabledImages: TCustomImageList;
-
     FImageChangeLink: TChangeLink;
     FDisabledImageChangeLink: TChangeLink;
     FUpdateCount: Integer;
@@ -176,6 +176,7 @@ type
     FOnCustomizeAdded: TSTBButtonEvent;
     FCaptureChangeCancels: Boolean;
     FInMenuLoop: Boolean;
+    FAutoSize: Boolean;
 
     //Styled Attributes
     FStyleRadius: Integer;
@@ -241,7 +242,10 @@ type
     procedure UpdateBevelKind;
     function GetActiveStyleName: string;
     function AsVCLStyle: Boolean;
+    function GetAutoWrap: Boolean;
+    function GetAutoSize: Boolean;
   protected
+    procedure SetAutoSize(AValue: Boolean); override;
     procedure Notification(AComponent: TComponent; AOperation: TOperation); override;
     function TrackMenu(Button: TStyledToolButton): Boolean; dynamic;
     procedure SetParent(AParent: TWinControl); override;
@@ -254,6 +258,7 @@ type
     function GetButtonCount: Integer;
     procedure AlignControls(AControl: TControl; var Rect: TRect); override;
     procedure AdjustSize; override;
+    function GetStyledToolButtonClass: TStyledToolButtonClass; virtual;
   public
     procedure BeginUpdate; virtual;
     procedure EndUpdate; virtual;
@@ -276,10 +281,11 @@ type
     property ButtonCount: Integer read GetButtonCount;
     property Buttons[Index: Integer]: TStyledToolButton read GetButton;
     property StyleApplied: Boolean read FStyleApplied write SetStyleApplied;
+    property AutoWrap: Boolean read GetAutoWrap;
   published
     property Align default alTop;
     property Anchors;
-    property AutoSize;
+    property AutoSize: Boolean read GetAutoSize write SetAutoSize default False;
     property BorderWidth;
     property ButtonHeight: Integer read FButtonHeight write SetButtonHeight default 22;
     property ButtonWidth: Integer read FButtonWidth write SetButtonWidth default 23;
@@ -582,7 +588,7 @@ begin
       FToolBar.FButtonWidth := AWidth;
       LUpdateToolbar := True;
     end;
-    if LUpdateToolbar then
+    if LUpdateToolbar and (AWidth <> 0) and (AHeight <> 0) then
       FToolBar.ResizeButtons;
   end;
 end;
@@ -949,19 +955,29 @@ constructor TStyledToolbar.CreateStyled(AOwner: TComponent;
   const AAppearance: TStyledButtonAppearance);
 begin
   inherited Create(AOwner);
+  FButtons := TList.Create;
+
   ControlStyle := [csAcceptsControls, csCaptureMouse, csClickEvents,
     csDoubleClicks, csMenuEvents, csSetCaption, csGestures];
   ShowCaption := False;
   Width := 150;
   Height := 29;
-  Align := alTop;
   FButtonWidth := 23;
   FButtonHeight := 22;
-  FButtons := TList.Create;
   BevelKind := bkNone;
   BevelInner := bvNone;
   BevelOuter := bvNone;
   BevelEdges := [];
+
+  { The default value for Transparent now depends on if you have
+    Themes turned on or off (this only works on XP) }
+  FTransparent := StyleServices.Enabled;
+  ParentBackground := True;
+  ParentColor := True;
+  BevelOuter := bvNone;
+  Flat := True;
+
+  Align := alTop;
 
   FImageChangeLink := TChangeLink.Create;
   FImageChangeLink.OnChange := ImageListChange;
@@ -971,14 +987,6 @@ begin
 
   //FHotImageChangeLink := TChangeLink.Create;
   //FHotImageChangeLink.OnChange := HotImageListChange;
-
-  { The default value for Transparent now depends on if you have
-    Themes turned on or off (this only works on XP) }
-  FTransparent := StyleServices.Enabled;
-  ParentBackground := True;
-  ParentColor := True;
-  BevelOuter := bvNone;
-  Flat := True;
 
   FStyleDrawType := btRounded;
   FStyleRadius := DEFAULT_RADIUS;
@@ -1033,24 +1041,56 @@ procedure TStyledToolbar.AdjustSize;
 var
   LSize: Integer;
 begin
-  //Recalc correct Size
-  if Assigned(Parent) and AutoSize then
+  inherited;
+  if not (csLoading in ComponentState) and HandleAllocated then
   begin
-    if Align in [alLeft, alRight] then
+    //Recalc correct Size only for AutoSize and AutoWrap
+    if Assigned(Parent) and FAutoSize and AutoWrap and (FButtons.Count > 0) then
     begin
-      LSize := ControlsWidth + Margins.Left + Margins.Right;
-      if (LSize > Width) and (LSize <= Parent.Width) then
-        Width := LSize;
-    end
-    else if Align in [alTop, alBottom] then
-    begin
-      LSize := ControlsHeight + Margins.Top + Margins.Bottom;
-      if (LSize > Height) and (LSize <= Parent.Height) then
-        Height := LSize;
+      if (Align in [alLeft, alRight]) then
+      begin
+        LSize := ControlsWidth;
+        if LSize > Parent.ClientWidth then
+          LSize := Parent.ClientWidth;
+        if (LSize <> Width) then
+          Width := LSize;
+      end
+      else if Align in [alTop, alBottom] then
+      begin
+        LSize := ControlsHeight;
+        if LSize > Parent.ClientHeight then
+          LSize := Parent.ClientHeight;
+        if LSize <> Height then
+          Height := LSize;
+      end;
     end;
-  end
-  else
-    inherited;
+  end;
+end;
+
+procedure TStyledToolbar.SetWrapable(const AValue: Boolean);
+begin
+  if AutoWrap <> AValue then
+  begin
+    if AValue then
+    begin
+      //FlowPanel AutoSize don't work correctly when AutoWrap is True
+      inherited AutoSize := False;
+    end;
+    inherited AutoWrap := AValue;
+  end;
+end;
+
+procedure TStyledToolbar.SetAutoSize(AValue: Boolean);
+begin
+  if AValue <> FAutoSize then
+  begin
+    FAutoSize := AValue;
+    //FlowPanel AutoSize don't work correctly when AutoWrap is True
+    if not AutoWrap then
+      inherited AutoSize := AValue
+    else
+      RequestAlign;
+  end;
 end;
 
 procedure TStyledToolbar.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
@@ -1097,13 +1137,18 @@ begin
       LButton.StyleClass := FStyleClass;
       LButton.StyleAppearance := FStyleAppearance;
       LButton.StyleElements := StyleElements;
-      LButton.Height := FButtonHeight;
-      LButton.Flat := FFlat;
-      if not LButton.IsSeparator then
-        LButton.Width := FButtonWidth;
-      FButtons.Insert(FButtons.Count, LButton);
-      if Assigned(FOnCustomizeAdded) then
-        FOnCustomizeAdded(Self, LButton);
+      LButton.RescalingButton := True;
+      try
+        LButton.Height := FButtonHeight;
+        LButton.Flat := FFlat;
+        if not LButton.IsSeparator then
+          LButton.Width := FButtonWidth;
+        FButtons.Insert(FButtons.Count, LButton);
+        if Assigned(FOnCustomizeAdded) then
+          FOnCustomizeAdded(Self, LButton);
+      finally
+        LButton.RescalingButton := False;
+      end;
     finally
       LButton.EndUpdate;
     end;
@@ -1113,7 +1158,8 @@ begin
   begin
     FButtons.Insert(FButtons.Count, Control);
   end;
-  AdjustSize;
+  if Showing then
+    AdjustSize;
 end;
 
 function TStyledToolbar.IsCustomDrawType: Boolean;
@@ -1208,7 +1254,8 @@ begin
       FButtons.Remove(Control);
     end;
   end;
-  AdjustSize;
+  if Showing then
+    AdjustSize;
 end;
 
 procedure TStyledToolbar.SetCustomizable(const AValue: Boolean);
@@ -1599,11 +1646,6 @@ begin
       [AStyleFamily, AStyleClass, AStyleAppearance]);
 end;
 
-procedure TStyledToolbar.SetWrapable(const AValue: Boolean);
-begin
-  inherited AutoWrap := AValue;
-end;
-
 function TStyledToolbar.TrackMenu(Button: TStyledToolButton): Boolean;
 begin
   { Already in menu loop - click button to drop-down menu }
@@ -1706,18 +1748,14 @@ begin
 end;
 
 procedure TStyledToolbar.ResizeButtons;
-var
-  LWasAutoSize: Boolean;
 begin
   FDisableAlign := True;
   try
     if (FButtonHeight <> 0) and (FButtonWidth <> 0) and
       (FUpdateCount = 0) then
     begin
-      LWasAutoSize := AutoSize;
-      AutoSize := False;
+      BeginUpdate;
       try
-        BeginUpdate;
         ProcessButtons(
           procedure (ABtn: TStyledToolButton)
           begin
@@ -1737,7 +1775,6 @@ begin
           end
         );
       finally
-        AutoSize := LWasAutoSize;
         EndUpdate;
       end;
     end;
@@ -1764,6 +1801,20 @@ begin
   {$ELSE}
   Result := TStyleManager.ActiveStyle.Name;
   {$ENDIF}
+end;
+
+function TStyledToolbar.GetAutoSize: Boolean;
+begin
+  //FlowPanel AutoSize don't work correctly when AutoWrap is True
+  if not AutoWrap then
+    Result := inherited AutoSize
+  else
+    Result := FAutoSize;
+end;
+
+function TStyledToolbar.GetAutoWrap: Boolean;
+begin
+  Result := inherited AutoWrap;
 end;
 
 function TStyledToolbar.GetButton(AIndex: Integer): TStyledToolButton;
@@ -1833,11 +1884,14 @@ function TStyledToolbar.ControlsHeight: Integer;
 var
   LSize: Integer;
 begin
-  LSize := 0;
+  if AlignWithMargins then
+    LSize := Margins.Top + Margins.Bottom + 1
+  else
+    LSize := 1;
   ProcessControls(
     procedure (AControl: TControl)
     begin
-      Inc(LSize, AControl.Height);
+      LSize := LSize + AControl.Height;
     end);
   Result := LSize;
 end;
@@ -1846,11 +1900,14 @@ function TStyledToolbar.ControlsWidth: Integer;
 var
   LSize: Integer;
 begin
-  LSize := 0;
+  if AlignWithMargins then
+    LSize := Margins.Left + Margins.Right + 1
+  else
+    LSize := 1;
   ProcessControls(
     procedure (AControl: TControl)
     begin
-      Inc(LSize, AControl.Width);
+      LSize := LSize + AControl.Width;
     end);
   Result := LSize;
 end;
@@ -1883,12 +1940,17 @@ begin
     Exit;
   for I := 0 to FButtons.Count -1 do
   begin
-    if TObject(FButtons.Items[I]) is TStyledToolButton then
+    if TObject(FButtons.Items[I]) is TControl then
     begin
       LControl := TControl(FButtons.Items[I]);
       AControlProc(Lcontrol);
     end;
   end;
+end;
+
+function TStyledToolbar.GetStyledToolButtonClass: TStyledToolButtonClass;
+begin
+  Result := TStyledToolButton;
 end;
 
 function TStyledToolbar.NewButton(out ANewToolButton: TStyledToolButton;
@@ -1907,7 +1969,7 @@ begin
     end;
     if not Result then
     begin
-      ANewToolButton := TStyledToolButton.Create(Self.Owner);
+      ANewToolButton := GetStyledToolButtonClass.Create(Self.Owner);
       ANewToolButton.Style := AStyle;
       ANewToolButton.Parent := Self;
       ANewToolButton.FToolbar := Self;

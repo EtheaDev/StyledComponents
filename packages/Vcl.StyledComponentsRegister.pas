@@ -48,15 +48,6 @@ Type
     procedure GetValues(Proc: TGetStrProc); override;
   end;
 
-  TButtonPropertyEditor = class(TPropertyEditor)
-  protected
-    function GetButton: TStyledGraphicButton;
-  public
-    function GetAttributes: TPropertyAttributes; override;
-    procedure Edit; override;
-    function GetValue: string; override; abstract;
-  end;
-
   TStyledButtonComponentEditor = class (TComponentEditor)
   private
     function GetButton: TControl;
@@ -247,36 +238,6 @@ begin
   Result := 2;
 end;
 
-{ TButtonPropertyEditor }
-
-procedure TButtonPropertyEditor.Edit;
-var
-  Component : TComponent;
-begin
-  Component := TComponent(GetComponent(0));
-  if Component is TStyledGraphicButton then
-  begin
-    if EditStyledButton(TStyledGraphicButton(Component)) then
-      Designer.Modified;
-  end;
-end;
-
-function TButtonPropertyEditor.GetAttributes: TPropertyAttributes;
-begin
-  Result := [paDialog];
-end;
-
-function TButtonPropertyEditor.GetButton: TStyledGraphicButton;
-var
-  Component : TComponent;
-begin
-  Component := TComponent(GetComponent(0));
-  if Component is TStyledGraphicButton then
-    Result := TStyledGraphicButton(Component)
-  else
-    Result := nil;
-end;
-
 { TStyledButtonsSelection }
 procedure TStyledButtonsSelection.RequiresUnits(Proc: TGetStrProc);
 begin
@@ -291,7 +252,7 @@ var
   LNewButton: TStyledToolButton;
 begin
   inherited;
-  if Index = 0 then
+  if Index = 0 then //Show Styled Toolbar Editor...
   begin
     LToolbar := GetToolbar;
     LNewButton := TStyledToolButton.CreateStyled(LToolbar.Owner,
@@ -317,7 +278,7 @@ begin
       LNewButton.Free;
     end;
   end
-  else if Index = 1 then //Add Button
+  else if Index = 1 then //Add a StyledToolButton
   begin
     LToolbar := GetToolbar;
     if LToolbar.NewButton(LNewButton, tbsButton) then
@@ -331,7 +292,7 @@ begin
       Designer.Modified;
     end;
   end
-  else if Index = 2 then //Add Separator
+  else if Index = 2 then //Add a StyledToolButton as Separator
   begin
     if GetToolbar.NewButton(LNewButton, tbsSeparator) then
     begin
@@ -343,7 +304,7 @@ begin
       Designer.Modified;
     end;
   end
-  else if Index = 3 then
+  else if Index = 3 then //Open Project page on GitHub...
   ShellExecute(0, 'open',
     PChar(GetProjectURL), nil, nil, SW_SHOWNORMAL);
 end;

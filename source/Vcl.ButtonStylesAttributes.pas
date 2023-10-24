@@ -697,6 +697,7 @@ begin
     ARect.Width := 2;
 end;
 
+{$ifdef GDIPlusSupport}
 procedure GPInflateRectF(var ARect: TGPRectF;
   const AValue: Single);
 begin
@@ -706,7 +707,6 @@ begin
   ARect.Height := ARect.Height - AValue -1;
 end;
 
-{$ifdef GDIPlusSupport}
 function GetRoundRectangle(ARectangle: TGPRectF;
   ARadius: Single): TGPGraphicsPath;
 var
@@ -737,6 +737,7 @@ begin
   Result := MakeColor(GetRValue(ColRef), GetGValue(ColRef),
   GetBValue(ColRef));
 end;
+{$ifend}
 
 const //Same as Vcl.Buttons
   BitBtnResNames: array[TBitBtnKind] of PChar = (
@@ -955,6 +956,7 @@ begin
   ACanvas.Polygon(Points3);
 end;
 
+{$ifdef GDIPlusSupport}
 procedure CanvasDrawShape(const ACanvas: TCanvas; ARect: TRect;
   const ADrawType: TStyledButtonDrawType; const ACornerRadius: Integer);
 var

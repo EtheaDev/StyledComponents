@@ -17,13 +17,14 @@ object fmMain: TfmMain
   object ToolBar: TToolBar
     AlignWithMargins = True
     Left = 3
-    Top = 69
+    Top = 71
     Width = 735
-    Height = 66
+    Height = 68
     AutoSize = True
     ButtonHeight = 66
     ButtonWidth = 77
     Caption = 'ToolBar Caption'
+    Flat = False
     Images = VirtualImageList
     ShowCaptions = True
     TabOrder = 1
@@ -120,11 +121,11 @@ object fmMain: TfmMain
     Left = 3
     Top = 3
     Width = 735
-    Height = 60
-    AutoSize = True
+    Height = 62
     ButtonHeight = 60
     ButtonWidth = 77
     Caption = 'StyledToolBar Caption'
+    Flat = False
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -12
@@ -135,6 +136,7 @@ object fmMain: TfmMain
     ParentFont = False
     ShowCaptions = True
     TabOrder = 0
+    Wrapable = False
     OnClick = ToolBarClick
     OnMouseEnter = StyledToolbarMouseEnter
     StyleRadius = 30
@@ -198,6 +200,7 @@ object fmMain: TfmMain
     object StyledToolButton4: TStyledToolButton
       Left = 324
       Top = 0
+      Width = 77
       OnClick = ToolButtonclick
       StyleElements = [seFont, seBorder]
       Caption = 'Menu'
@@ -207,7 +210,7 @@ object fmMain: TfmMain
     end
     object Edit2: TEdit
       AlignWithMargins = True
-      Left = 416
+      Left = 404
       Top = 3
       Width = 120
       Height = 23
@@ -215,7 +218,7 @@ object fmMain: TfmMain
       Text = 'Edit2'
     end
     object StyledToolButton7: TStyledToolButton
-      Left = 539
+      Left = 527
       Top = 0
       OnClick = ToolButtonclick
       Caption = 'Recycle Bin'
@@ -330,9 +333,9 @@ object fmMain: TfmMain
   end
   object ClientPanel: TPanel
     Left = 0
-    Top = 140
+    Top = 142
     Width = 741
-    Height = 283
+    Height = 281
     Align = alClient
     TabOrder = 3
   end

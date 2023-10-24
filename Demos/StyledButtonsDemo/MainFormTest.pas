@@ -124,9 +124,11 @@ implementation
 
 uses
   System.TypInfo
+  , Vcl.StandardButtonStyles
   , Vcl.Themes
   , WinApi.ShellAPI
-  , FAboutForm;
+  , FAboutForm
+  ;
 
 { TMainForm }
 
@@ -157,7 +159,10 @@ var
   procedure CreateStyledButton(AColumn, ATop: Integer;
     AStyleName: string);
   begin
-    With TStyledButton.Create(Self) do
+    With TStyledButton.CreateStyled(Self,
+      DEFAULT_CLASSIC_FAMILY,
+      AStyleName,
+      DEFAULT_APPEARANCE) do
     begin
       Enabled := EnabledCheckBox.Checked;
       if RenderRadioGroup.ItemIndex <> RENDER_FAB then
@@ -184,7 +189,6 @@ var
       Hint := AStyleName;
       SetBounds((AColumn * LWidth) + (BUTTON_MARGIN*AColumn),
         ATop, LWidth, LHeight);
-      StyleName := AStyleName;
       Parent := RightScrollBox;
       PopupMenu := Self.PopupMenu;
       OnClick := ButtonClick;
@@ -281,11 +285,6 @@ var
   I: Integer;
 begin
   Caption := Application.Title + ' - ' + Caption;
-  FStyleNames := TStringList.Create;
-  for I := 0 to High(TStyleManager.StyleNames) do
-    FStyleNames.Add(TStyleManager.StyleNames[i]);
-  FStyleNames.Sorted := True;
-
   BuildStyleList;
   CreateVCLButtons;
   CreateStyledButtons;
@@ -377,6 +376,10 @@ var
   I, SelectedIndex: integer;
   LStyleName, LActiveStyleName: string;
 begin
+  FStyleNames := TStringList.Create;
+  for I := 0 to High(TStyleManager.StyleNames) do
+    FStyleNames.Add(TStyleManager.StyleNames[i]);
+  FStyleNames.Sorted := True;
   SelectedIndex := -1;
   cbChangeStyle.Items.Clear;
   LActiveStyleName := TStyleManager.ActiveStyle.Name;

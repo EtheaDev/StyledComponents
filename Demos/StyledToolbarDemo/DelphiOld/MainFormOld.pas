@@ -101,14 +101,14 @@ type
     procedure CreateStyledToolBar;
     procedure CreateToolbars;
     procedure CreateToolBar;
-    function AddStyledButtonToToolbar(var bar: TStyledToolBar;
-      const Caption: string; const Style: TToolButtonStyle;
-      ImageIndex: Integer = 0;
+    function AddStyledButtonToToolbar(var AToolbar: TStyledToolBar;
+      const ACaption: string; const AStyle: TToolButtonStyle;
+      AImageIndex: Integer = 0;
       const AFamily: TStyledButtonFamily = '';
       const AClass: TStyledButtonClass = '';
       const AAppearance: TStyledButtonAppearance = ''): TStyledToolButton;
-    function AddButtonToToolbar(var bar: TToolBar; caption: string;
-      Style: TToolButtonStyle; ImageIndex: Integer): TToolButton;
+    function AddButtonToToolbar(var AToolbar: TToolBar; ACaption: string;
+      AStyle: TToolButtonStyle; AImageIndex: Integer): TToolButton;
     procedure BuildStyleList;
   public
   end;
@@ -124,44 +124,44 @@ uses
   Themes,
   Vcl.StyledButtonEditorUnit;
 
-function TfmMain.AddStyledButtonToToolbar(var bar: TStyledToolBar;
-  const Caption: string;
-  const Style: TToolButtonStyle;
-  ImageIndex: Integer = 0;
+function TfmMain.AddStyledButtonToToolbar(var AToolbar: TStyledToolBar;
+  const ACaption: string;
+  const AStyle: TToolButtonStyle;
+  AImageIndex: Integer = 0;
   const AFamily: TStyledButtonFamily = '';
   const AClass: TStyledButtonClass = '';
   const AAppearance: TStyledButtonAppearance = ''): TStyledToolButton;
 begin
-  if bar.NewButton(Result, Style) then
+  if AToolbar.NewButton(Result, AStyle) then
   begin
-    Result.Name := Caption;
-    Result.Caption := caption;
-    Result.Hint := Format('Hint of %s button.',[caption]);
-    Result.ImageIndex := ImageIndex;
+    Result.Name := ACaption;
+    Result.Caption := ACaption;
+    Result.Hint := Format('Hint of %s button.',[ACaption]);
+    Result.ImageIndex := AImageIndex;
     Result.SetButtonStyle(AFamily, AClass, AAppearance);
     Result.OnClick := ToolButtonclick;
   end;
 end;
 
-function TfmMain.AddButtonToToolbar(var bar: TToolBar; caption: string;
-  Style: TToolButtonStyle; ImageIndex: Integer): TToolButton;
+function TfmMain.AddButtonToToolbar(var AToolbar: TToolBar; ACaption: string;
+  AStyle: TToolButtonStyle; AImageIndex: Integer): TToolButton;
 var
   lastbtnidx: integer;
 begin
   Result := TToolButton.Create(Self);
   Try
-    Result.Style := Style;
-    Result.Caption := caption;
-    Result.Hint := Format('Hint of %s button.',[caption]);
-    Result.ImageIndex := ImageIndex;
-    lastbtnidx := bar.ButtonCount - 1;
+    Result.Style := AStyle;
+    Result.Caption := ACaption;
+    Result.Hint := Format('Hint of %s button.',[ACaption]);
+    Result.ImageIndex := AImageIndex;
+    lastbtnidx := AToolbar.ButtonCount - 1;
     if lastbtnidx > -1 then
-      Result.Left := bar.Buttons[lastbtnidx].Left + 1
+      Result.Left := AToolbar.Buttons[lastbtnidx].Left + 1
     else
       Result.Left := 0;
-    Result.Parent := bar;
+    Result.Parent := AToolbar;
     Result.OnClick := ToolButtonclick;
-    if Style in [tbsSeparator, tbsDivider] then
+    if AStyle in [tbsSeparator, tbsDivider] then
       Result.Width := 8;
   Except
     Result.Free;
@@ -183,7 +183,7 @@ begin
   FStyledToolBar.Caption := 'StyledToolBar';
   FStyledToolBar.Parent := Self;
   FStyledToolBar.AutoSize := TOOLBAR_AUTOSIZE;
-  FStyledToolBar.AutoWrap := True;
+  FStyledToolBar.Wrapable := not TOOLBAR_AUTOSIZE;
   FStyledToolBar.Images := ImageList32;
   FStyledToolBar.ButtonWidth := BUTTON_WIDTH;
   FStyledToolBar.ButtonHeight := BUTTON_HEIGHT;

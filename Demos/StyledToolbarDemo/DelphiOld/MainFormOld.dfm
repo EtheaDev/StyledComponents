@@ -21,11 +21,12 @@ object fmMain: TfmMain
     Left = 3
     Top = 69
     Width = 735
-    Height = 68
+    Height = 64
     AutoSize = True
-    ButtonHeight = 66
+    ButtonHeight = 62
     ButtonWidth = 77
     Caption = 'ToolBar Caption'
+    Flat = False
     Images = ImageList32
     ShowCaptions = True
     TabOrder = 1
@@ -105,7 +106,7 @@ object fmMain: TfmMain
       Left = 420
       Top = 0
       Width = 121
-      Height = 66
+      Height = 62
       TabOrder = 0
       Text = 'Edit1'
     end
@@ -123,10 +124,10 @@ object fmMain: TfmMain
     Top = 3
     Width = 735
     Height = 60
-    AutoSize = True
     ButtonHeight = 60
     ButtonWidth = 77
     Caption = 'StyledToolBar Caption'
+    Flat = False
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -12
@@ -137,6 +138,7 @@ object fmMain: TfmMain
     ParentFont = False
     ShowCaptions = True
     TabOrder = 0
+    Wrapable = False
     OnClick = ToolBarClick
     OnMouseEnter = StyledToolbarMouseEnter
     StyleRadius = 30
@@ -333,9 +335,9 @@ object fmMain: TfmMain
   end
   object ClientPanel: TPanel
     Left = 0
-    Top = 140
+    Top = 136
     Width = 741
-    Height = 283
+    Height = 287
     Align = alClient
     TabOrder = 3
   end
@@ -395,7 +397,7 @@ object fmMain: TfmMain
     Left = 476
     Top = 274
     Bitmap = {
-      494C01011800B000900020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01011800B000980020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000080000000E0000000010020000000000000C0
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

@@ -9,7 +9,7 @@
         <ProjectVersion>20.0</ProjectVersion>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">Win32</Platform>
+        <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Application</AppType>
     </PropertyGroup>
@@ -1221,9 +1221,6 @@
         <DCCReference Include="..\..\source\Vcl.StyledCmpMessages.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledCmpStrUtils.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledTaskDialog.pas"/>
-        <DCCReference Include="..\..\source\Vcl.StyledTaskDialogFormUnit.pas">
-            <Form>StyledTaskDialogForm</Form>
-        </DCCReference>
         <DCCReference Include="..\..\source\Skia.Vcl.StyledTaskDialogAnimatedUnit.pas">
             <Form>StyledTaskDialogStd</Form>
         </DCCReference>
