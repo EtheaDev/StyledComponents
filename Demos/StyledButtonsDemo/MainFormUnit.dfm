@@ -34,7 +34,7 @@ object MainForm: TMainForm
     object ShowEditButton: TStyledButton
       Left = 10
       Top = 8
-      Width = 172
+      Width = 187
       Height = 50
       Action = TestAction
       Font.Charset = DEFAULT_CHARSET
@@ -46,6 +46,8 @@ object MainForm: TMainForm
       ParentFont = False
       Caption = '&Show Editor'
       Images = VirtualImageList32
+      StyleRadius = 10
+      StyleDrawType = btRoundRect
       TabOrder = 0
     end
     object StyledButtonSquare: TStyledButton
@@ -53,9 +55,11 @@ object MainForm: TMainForm
       Top = 8
       Width = 54
       Height = 50
+      OnClick = StyledButtonSquareClick
       ImageAlignment = iaCenter
       Images = VirtualImageList32
       ImageIndex = 11
+      StyleDrawType = btRoundRect
       StyleFamily = 'Bootstrap'
       StyleClass = 'Danger'
       TabOrder = 1
@@ -65,6 +69,7 @@ object MainForm: TMainForm
       Top = 8
       Width = 50
       Height = 50
+      OnClick = StyledButtonCircularClick
       ImageAlignment = iaCenter
       Images = VirtualImageList32
       ImageIndex = 18
@@ -75,25 +80,27 @@ object MainForm: TMainForm
       TabOrder = 2
     end
     object DefaultStyledButton: TStyledButton
-      Left = 599
-      Top = 8
-      Width = 94
-      Height = 50
+      Left = 563
+      Top = 20
+      Width = 120
+      Height = 33
       OnClick = ButtonClick
       PopUpMenu = PopupMenu
       Caption = 'Default'
       Default = True
+      StyleDrawType = btRounded
       TabOrder = 4
     end
     object CancelStyledButton: TStyledButton
-      Left = 712
-      Top = 8
-      Width = 94
-      Height = 50
+      Left = 696
+      Top = 20
+      Width = 120
+      Height = 33
       OnClick = ButtonClick
       PopUpMenu = PopupMenu
       Caption = 'Cancel'
       Cancel = True
+      StyleDrawType = btRounded
       TabOrder = 5
     end
     object cbChangeStyle: TComboBox
@@ -1721,19 +1728,15 @@ object MainForm: TMainForm
     end
   end
   object VirtualImageList32: TVirtualImageList
-    DisabledGrayscale = False
-    DisabledSuffix = '_Disabled'
     Images = <
       item
         CollectionIndex = 0
         CollectionName = 'home-deeppurple'
-        Disabled = False
         Name = 'home-deeppurple'
       end
       item
         CollectionIndex = 1
         CollectionName = 'home-indigo'
-        Disabled = False
         Name = 'home-indigo'
       end
       item

@@ -142,7 +142,6 @@ object fmMain: TfmMain
     OnClick = ToolBarClick
     OnMouseEnter = StyledToolbarMouseEnter
     StyleRadius = 30
-    StyleDrawType = btRounded
     object StyledToolButton1: TStyledToolButton
       Left = 0
       Top = 0
@@ -202,6 +201,7 @@ object fmMain: TfmMain
     object StyledToolButton4: TStyledToolButton
       Left = 324
       Top = 0
+      Width = 77
       OnClick = ToolButtonclick
       StyleElements = [seFont, seBorder]
       Caption = 'Menu'
@@ -212,7 +212,7 @@ object fmMain: TfmMain
     end
     object Edit2: TEdit
       AlignWithMargins = True
-      Left = 416
+      Left = 404
       Top = 3
       Width = 120
       Height = 23
@@ -220,7 +220,7 @@ object fmMain: TfmMain
       Text = 'Edit2'
     end
     object StyledToolButton7: TStyledToolButton
-      Left = 539
+      Left = 527
       Top = 0
       OnClick = ToolButtonclick
       Caption = 'Recycle Bin'
@@ -397,7 +397,7 @@ object fmMain: TfmMain
     Left = 476
     Top = 274
     Bitmap = {
-      494C01011800B000980020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01011800B000A00020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000080000000E0000000010020000000000000C0
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

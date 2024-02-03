@@ -3,7 +3,7 @@
 {       StyledButtonsDemo: a Demo to show StyledButtons                        }
 {       with different Familes (Classic, Bootstrap and Angular                 }
 {                                                                              }
-{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
+{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -212,10 +212,11 @@ type
     procedure ScrollBoxMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
     procedure PopupMenuClick(Sender: TObject);
+    procedure StyledButtonSquareClick(Sender: TObject);
+    procedure StyledButtonCircularClick(Sender: TObject);
   private
     procedure RepaintAngularBtnWithMR(const AFamily: TStyledButtonFamily);
     procedure BuildStyleList;
-    function GetScaleFactor: Single;
     procedure BuildFamilyPreview(const AFamily: TStyledButtonFamily;
       const AAppearance: TStyledButtonAppearance;
       const AFlowPanel: TFlowPanel);
@@ -253,11 +254,15 @@ begin
 end;
 
 procedure TMainForm.ButtonClick(Sender: TObject);
+const
+  Msg = 'Caption: %s - ModalResult: %d';
 begin
   if Sender is TButton then
-    ShowMessage((Sender as TButton).Caption)
+    ShowMessage(Format(Msg,[TButton(Sender).Caption,
+      TButton(Sender).ModalResult]))
   else
-    ShowMessage((Sender as TStyledButton).Caption);
+    ShowMessage(Format(Msg,[TStyledButton(Sender).Caption,
+      TStyledButton(Sender).ModalResult]));
 end;
 
 procedure TMainForm.FlowPanelResize(Sender: TObject);
@@ -439,14 +444,19 @@ begin
   end;
 end;
 
+procedure TMainForm.StyledButtonCircularClick(Sender: TObject);
+begin
+  EditStyledButton(StyledButtonCircular);
+end;
+
+procedure TMainForm.StyledButtonSquareClick(Sender: TObject);
+begin
+  EditStyledButton(StyledButtonSquare);
+end;
+
 procedure TMainForm.AngularThemesPanelResize(Sender: TObject);
 begin
   rgAngularLightThemes.Width := AngularThemesPanel.Width div 2;
-end;
-
-function TMainForm.GetScaleFactor: Single;
-begin
-  Result := 1;
 end;
 
 procedure TMainForm.BuildFamilyPreview(const AFamily: TStyledButtonFamily;
@@ -465,8 +475,8 @@ var
   begin
     LStyledButton := TStyledButton.CreateStyled(Self,
       AFamily, AClass, AAppearance);
-    LStyledButton.Width := Round(BUTTON_WIDTH * GetScaleFactor);
-    LStyledButton.Height := Round(BUTTON_HEIGHT * GetScaleFactor);
+    LStyledButton.Width := BUTTON_WIDTH;
+    LStyledButton.Height := BUTTON_HEIGHT;
     LStyledButton.AlignWithMargins := True;
     LStyledButton.Caption := AClass;
     LStyledButton.Hint := AClass;

@@ -3,7 +3,7 @@
 {       StyledButtonsDemo: a Demo to show StyledButtons                        }
 {       with different Familes (Classic, Bootstrap and Angular                 }
 {                                                                              }
-{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
+{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -31,10 +31,11 @@ uses
   MainFormUnit in '..\MainFormUnit.pas' {MainForm},
   Vcl.Themes,
   Vcl.Styles,
-  Vcl.StyledButton in '..\..\..\source\Vcl.StyledButton.pas',
-  Vcl.BootstrapButtonStyles in '..\..\..\source\Vcl.BootstrapButtonStyles.pas',
-  Vcl.AngularButtonStyles in '..\..\..\source\Vcl.AngularButtonStyles.pas',
-  Vcl.StandardButtonStyles in '..\..\..\source\Vcl.StandardButtonStyles.pas',
+  Vcl.StyledButton,
+  Vcl.ButtonStylesAttributes,
+  Vcl.BootstrapButtonStyles,
+  Vcl.AngularButtonStyles,
+  Vcl.StandardButtonStyles,
   Vcl.StyledButtonEditorUnit in '..\..\..\packages\Vcl.StyledButtonEditorUnit.pas' {StyledButtonEditor},
   DResources in '..\DResources.pas' {dmResources: TDataModule};
 
@@ -44,6 +45,14 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.Title := 'Styled Buttons Demo - (c) Copyright Ethea S.r.l.';
+
+  //Example to define a default Rendering Style for Styled Buttons
+  //TStyledButton.RegisterDefaultRenderingStyle(btRounded);
+
+  //Example to define a default Rendering Style for Styled Buttons
+  //TStyledButton.RegisterDefaultRenderingStyle(btRoundRect,
+  //  BOOTSTRAP_FAMILY, btn_primary, BOOTSTRAP_NORMAL);
+
   Application.CreateForm(TdmResources, dmResources);
   Application.CreateForm(TMainForm, MainForm);
   Application.Run;

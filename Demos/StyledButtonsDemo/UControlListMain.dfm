@@ -118,6 +118,7 @@ object ControlListMainForm: TControlListMainForm
       Height = 28
       OnClick = StyledGraphicButton2Click
       Caption = 'Secondary'
+      StyleDrawType = btRounded
       StyleFamily = 'Bootstrap'
       StyleClass = 'Secondary'
       StyleAppearance = 'Outline'
@@ -129,6 +130,7 @@ object ControlListMainForm: TControlListMainForm
       Height = 28
       OnClick = StyledGraphicButton2Click
       Caption = 'Primary'
+      StyleDrawType = btRounded
       StyleFamily = 'Bootstrap'
     end
   end

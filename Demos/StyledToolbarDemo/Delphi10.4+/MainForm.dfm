@@ -140,7 +140,6 @@ object fmMain: TfmMain
     OnClick = ToolBarClick
     OnMouseEnter = StyledToolbarMouseEnter
     StyleRadius = 30
-    StyleDrawType = btRounded
     object StyledToolButton1: TStyledToolButton
       Left = 0
       Top = 0

@@ -34,7 +34,7 @@ object MainForm: TMainForm
     object ShowEditButton: TStyledButton
       Left = 10
       Top = 8
-      Width = 172
+      Width = 187
       Height = 50
       Action = TestAction
       Font.Charset = DEFAULT_CHARSET
@@ -45,13 +45,30 @@ object MainForm: TMainForm
       PopUpMenu = PopupMenu
       ParentFont = False
       Caption = '&Show Editor'
+      Images = ImageList32
+      StyleRadius = 10
+      StyleDrawType = btRoundRect
       TabOrder = 0
+    end
+    object StyledButtonSquare: TStyledButton
+      Left = 203
+      Top = 8
+      Width = 54
+      Height = 50
+      OnClick = StyledButtonSquareClick
+      ImageAlignment = iaCenter
+      Images = ImageList32
+      ImageIndex = 11
+      StyleFamily = 'Bootstrap'
+      StyleClass = 'Danger'
+      TabOrder = 1
     end
     object StyledButtonCircular: TStyledButton
       Left = 276
       Top = 8
       Width = 50
       Height = 50
+      OnClick = StyledButtonCircularClick
       ImageAlignment = iaCenter
       Images = ImageList32
       ImageIndex = 18
@@ -59,40 +76,30 @@ object MainForm: TMainForm
       StyleFamily = 'Bootstrap'
       StyleClass = 'Warning'
       StyleAppearance = 'Outline'
-      TabOrder = 1
-    end
-    object StyledButtonSquare: TStyledButton
-      Left = 203
-      Top = 8
-      Width = 54
-      Height = 50
-      ImageAlignment = iaCenter
-      Images = ImageList32
-      ImageIndex = 11
-      StyleFamily = 'Bootstrap'
-      StyleClass = 'Danger'
       TabOrder = 2
     end
     object DefaultStyledButton: TStyledButton
-      Left = 599
-      Top = 8
-      Width = 94
-      Height = 50
+      Left = 563
+      Top = 20
+      Width = 120
+      Height = 33
       OnClick = ButtonClick
       PopUpMenu = PopupMenu
       Caption = 'Default'
       Default = True
-      TabOrder = 3
+      StyleDrawType = btRounded
+      TabOrder = 4
     end
     object CancelStyledButton: TStyledButton
-      Left = 712
-      Top = 8
-      Width = 94
-      Height = 50
+      Left = 696
+      Top = 20
+      Width = 120
+      Height = 33
       OnClick = ButtonClick
       PopUpMenu = PopupMenu
       Caption = 'Cancel'
       Cancel = True
+      StyleDrawType = btRounded
       TabOrder = 5
     end
     object cbChangeStyle: TComboBox
@@ -102,7 +109,7 @@ object MainForm: TMainForm
       Height = 21
       Style = csDropDownList
       DropDownCount = 12
-      TabOrder = 4
+      TabOrder = 3
       OnSelect = cbChangeStyleSelect
     end
   end
@@ -478,6 +485,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Ok'
           ModalResult = 1
           StyleFamily = 'Bootstrap'
@@ -490,6 +498,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Cancel'
           ModalResult = 2
           StyleFamily = 'Bootstrap'
@@ -502,6 +511,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Abort'
           ModalResult = 3
           StyleFamily = 'Bootstrap'
@@ -514,6 +524,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Retry'
           ModalResult = 4
           StyleFamily = 'Bootstrap'
@@ -526,6 +537,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Ignore'
           ModalResult = 5
           StyleFamily = 'Bootstrap'
@@ -538,6 +550,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Yes'
           ModalResult = 6
           StyleFamily = 'Bootstrap'
@@ -550,6 +563,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'No'
           ModalResult = 7
           StyleFamily = 'Bootstrap'
@@ -562,6 +576,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Close'
           ModalResult = 8
           StyleFamily = 'Bootstrap'
@@ -575,6 +590,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Help'
           ModalResult = 9
           StyleFamily = 'Bootstrap'
@@ -589,6 +605,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'All'
           ModalResult = 12
           StyleFamily = 'Bootstrap'
@@ -1138,6 +1155,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Ok'
           ModalResult = 1
           StyleFamily = 'Angular-Light'
@@ -1150,6 +1168,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Cancel'
           ModalResult = 2
           StyleFamily = 'Angular-Light'
@@ -1162,6 +1181,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Abort'
           ModalResult = 3
           StyleFamily = 'Angular-Light'
@@ -1174,6 +1194,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Retry'
           ModalResult = 4
           StyleFamily = 'Angular-Light'
@@ -1186,6 +1207,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Ignore'
           ModalResult = 5
           StyleFamily = 'Angular-Light'
@@ -1198,6 +1220,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Yes'
           ModalResult = 6
           StyleFamily = 'Angular-Light'
@@ -1210,6 +1233,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'No'
           ModalResult = 7
           StyleFamily = 'Angular-Light'
@@ -1222,6 +1246,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Close'
           ModalResult = 8
           StyleFamily = 'Angular-Light'
@@ -1234,6 +1259,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'Help'
           ModalResult = 9
           StyleFamily = 'Angular-Light'
@@ -1247,6 +1273,7 @@ object MainForm: TMainForm
           Width = 74
           Height = 36
           Align = alLeft
+          OnClick = ButtonClick
           Caption = 'All'
           ModalResult = 12
           StyleFamily = 'Angular-Light'
@@ -1365,6 +1392,7 @@ object MainForm: TMainForm
           Hint = 'VCL TButton (use Global application VCL Style)'
           Caption = '"SplitButton"'
           DropDownMenu = PopupMenu
+          Images = ImageList32
           ModalResult = 1
           PopupMenu = PopupMenu
           Style = bsSplitButton
@@ -1475,7 +1503,6 @@ object MainForm: TMainForm
           OnClick = ButtonClick
           Caption = 'Close'
           ModalResult = 8
-          StyleAppearance = 'Outline'
           TabOrder = 7
         end
         object btn_ClassicHelp: TStyledButton
@@ -1488,7 +1515,6 @@ object MainForm: TMainForm
           OnClick = ButtonClick
           Caption = 'Help'
           ModalResult = 9
-          StyleAppearance = 'Outline'
           TabOrder = 8
         end
         object btn_ClassicAll: TStyledButton
@@ -1501,7 +1527,6 @@ object MainForm: TMainForm
           OnClick = ButtonClick
           Caption = 'All'
           ModalResult = 12
-          StyleAppearance = 'Outline'
           TabOrder = 9
         end
       end
@@ -1669,11 +1694,13 @@ object MainForm: TMainForm
     end
   end
   object ActionList: TActionList
+    Images = ImageList32
     Left = 550
     Top = 463
     object TestAction: TAction
       Caption = 'Show Editor'
       Hint = 'Hint of Action'
+      ImageIndex = 22
       OnExecute = TestActionExecute
     end
   end

@@ -3,7 +3,7 @@
 {       Standard Button Family: implementation of "standard" Family            }
 {       attributes for StyledButton similar to VCL Styled Buttons              }
 {                                                                              }
-{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
+{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors: Ariel Montes                                             }
 {                                                                              }
@@ -34,6 +34,7 @@ uses
   , Vcl.ButtonStylesAttributes;
 
 const
+  DEFAULT_STYLEDRAWTYPE = btRoundRect;
   DEFAULT_CLASSIC_FAMILY = 'Classic';
   DEFAULT_WINDOWS_CLASS = 'Windows';
   DEFAULT_APPEARANCE = 'Normal';
@@ -343,6 +344,8 @@ begin
 end;
 
 procedure InitDefaultThemesAttributes;
+var
+  LButtonBorder: TStyledButtonDrawType;
 
   function IsWindows11: Boolean;
   begin
@@ -352,15 +355,15 @@ procedure InitDefaultThemesAttributes;
 begin
   ThemeAttributes := TList<TThemeAttribute>.Create;
 
-  //Non themed Windows Style
   if IsWindows11 then
-    RegisterThemeAttributes('Windows',ttLight,clBlack,clBlack,
-      htmlToColor('#fdfdfd'),htmlToColor('#e0eef9'),
-      htmlToColor('#d0d0d0'),htmlToColor('#0078d4'),btRounded)
+    LButtonBorder := btRoundRect
   else
-    RegisterThemeAttributes('Windows',ttLight,clBlack,clBlack,
-      htmlToColor('#fdfdfd'),htmlToColor('#fdfdfd'),
-      htmlToColor('#d0d0d0'),htmlToColor('#e0eef9'),btRect);
+    LButtonBorder := btRect;
+
+  //Non themed Windows Style
+  RegisterThemeAttributes('Windows',ttLight,clBlack,clBlack,
+    htmlToColor('#fdfdfd'),htmlToColor('#e0eef9'),
+    htmlToColor('#d0d0d0'),htmlToColor('#0078d4'),LButtonBorder);
 
   if StyleServices.Enabled then
   begin
@@ -369,164 +372,164 @@ begin
       htmlToColor('#020202'),htmlToColor('#020202'),btRect);
     RegisterThemeAttributes('Amethyst Kamri',ttLight,clBlack,clBlack,
       htmlToColor('#cdd1e2'),htmlToColor('#F99369'),
-      htmlToColor('#868db0'),htmlToColor('#868db0'),btRounded);
+      htmlToColor('#868db0'),htmlToColor('#868db0'),btRoundRect);
     RegisterThemeAttributes('Aqua Graphite',ttDark,clWhite,clWhite,
       htmlToColor('#0070bb'),htmlToColor('#1585cc'),
-      htmlToColor('#043f5c'),htmlToColor('#043f5c'),btRounded);
+      htmlToColor('#043f5c'),htmlToColor('#043f5c'),btRoundRect);
     RegisterThemeAttributes('Aqua Light Slate',ttLight,clBlack,clBlack,
       htmlToColor('#f1f1f1'),htmlToColor('#a9d8f2'),
-      htmlToColor('#9c9c9c'),htmlToColor('#9c9c9c'),btRounded);
+      htmlToColor('#9c9c9c'),htmlToColor('#9c9c9c'),btRoundRect);
     RegisterThemeAttributes('Auric'	,ttDark,clWhite,clBlack,
       htmlToColor('#5e5e5f'),htmlToColor('#fad535'),
-      clBlack,clBlack,btRounded);
+      clBlack,clBlack,btRoundRect);
     RegisterThemeAttributes('Calypso',ttDark,clWhite,clBlack,
       htmlToColor('#44617c'),htmlToColor('#80ceb5'),
-      htmlToColor('#44617c'),htmlToColor('#80ceb5'),btRounded);
+      htmlToColor('#44617c'),htmlToColor('#80ceb5'),btRoundRect);
     RegisterThemeAttributes('Calypso LE',ttDark,clWhite,clBlack,
       htmlToColor('#44617c'),htmlToColor('#80ceb5'),
-      htmlToColor('#44617c'),htmlToColor('#80ceb5'),btRounded);
+      htmlToColor('#44617c'),htmlToColor('#80ceb5'),btRoundRect);
     RegisterThemeAttributes('Calypso SE',ttDark,clWhite,clBlack,
       htmlToColor('#44617c'),htmlToColor('#6bafe2'),
-      htmlToColor('#44617c'),htmlToColor('#6bafe2'),btRounded);
+      htmlToColor('#44617c'),htmlToColor('#6bafe2'),btRoundRect);
     RegisterThemeAttributes('Calypso SLE',ttDark,clWhite,clBlack,
       htmlToColor('#44617c'),htmlToColor('#6bafe2'),
-      htmlToColor('#44617c'),htmlToColor('#6bafe2'),btRounded);
+      htmlToColor('#44617c'),htmlToColor('#6bafe2'),btRoundRect);
     RegisterThemeAttributes('Carbon',ttDark,htmlToColor('#c0c0c0'),clWhite,
       htmlToColor('#3a3a3a'),htmlToColor('#3e3e3e'),
       htmlToColor('#191919'),htmlToColor('#191919'),btRect);
     RegisterThemeAttributes('Charcoal Dark Slate',ttDark,htmlToColor('#a3a3a3'),clWhite,
       htmlToColor('#3a3a3a'),htmlToColor('#1f1f1f'),
-      htmlToColor('#191919'),htmlToColor('#191919'),btRounded);
+      htmlToColor('#191919'),htmlToColor('#191919'),btRoundRect);
     RegisterThemeAttributes('Cobalt XEMedia',ttDark,htmlToColor('#c0c0c0'),clWhite,
       htmlToColor('#121e32'),htmlToColor('#0f2c54'),
-      htmlToColor('#a1a5ab'),htmlToColor('#a1a5ab'),btRounded);
+      htmlToColor('#a1a5ab'),htmlToColor('#a1a5ab'),btRoundRect);
     RegisterThemeAttributes('Copper',ttLight,clBlack,clWhite,
       clWhite,htmlToColor('#e46b60'),
-      clWhite,htmlToColor('#e46b60'),btRounded);
+      clWhite,htmlToColor('#e46b60'),btRoundRect);
     RegisterThemeAttributes('CopperDark',ttDark,clWhite,clWhite,
       htmlToColor('#2b2b2b'),htmlToColor('#e46b60'),
-      htmlToColor('#2b2b2b'),htmlToColor('#e46b60'),btRounded);
+      htmlToColor('#2b2b2b'),htmlToColor('#e46b60'),btRoundRect);
     RegisterThemeAttributes('Coral',ttDark,clWhite,clWhite,
       htmlToColor('#d86d00'),htmlToColor('#d86d00'),
-      htmlToColor('#d86d00'),htmlToColor('#d1d1d1'),btRounded);
+      htmlToColor('#d86d00'),htmlToColor('#d1d1d1'),btRoundRect);
     RegisterThemeAttributes('Cyan Dusk',ttLight,clBlack,clWhite,
       htmlToColor('#b4bac2'),htmlToColor('#324a65'),
-      htmlToColor('#687e97'),htmlToColor('#687e97'),btRounded);
+      htmlToColor('#687e97'),htmlToColor('#687e97'),btRoundRect);
     RegisterThemeAttributes('Cyan Night',ttLight,clBlack,clWhite,
       htmlToColor('#b0b4bf'),htmlToColor('#323c62'),
-      htmlToColor('#687297'),htmlToColor('#687297'),btRounded);
+      htmlToColor('#687297'),htmlToColor('#687297'),btRoundRect);
     RegisterThemeAttributes('Diamond',ttLight,clBlack,clBlack,
       htmlToColor('#efeff0'),htmlToColor('#f5f5f5'),
-      htmlToColor('#c4c3c3'),htmlToColor('#c4c3c3'),btRounded);
+      htmlToColor('#c4c3c3'),htmlToColor('#c4c3c3'),btRoundRect);
     RegisterThemeAttributes('Emerald',ttDark,clWhite,clWhite,
       htmlToColor('#00a57d'),htmlToColor('#00a57d'),
-      htmlToColor('#00a57d'),htmlToColor('#cbcbc7'),btRounded);
+      htmlToColor('#00a57d'),htmlToColor('#cbcbc7'),btRoundRect);
     RegisterThemeAttributes('Emerald Light Slate',ttLight,clBlack,clBlack,
       htmlToColor('#e0e0e0'),htmlToColor('#87e168'),
-      htmlToColor('#9c9c9c'),htmlToColor('#9c9c9c'),btRounded);
+      htmlToColor('#9c9c9c'),htmlToColor('#9c9c9c'),btRoundRect);
     RegisterThemeAttributes('Flat UI Light',ttLight,clBlack,clWhite,
       htmlToColor('#e4e6e7'),htmlToColor('#3498da'),
-      htmlToColor('#e4e6e7'),htmlToColor('#3498da'),btRounded);
+      htmlToColor('#e4e6e7'),htmlToColor('#3498da'),btRoundRect);
     RegisterThemeAttributes('Glossy',ttDark,clWhite,clWhite,
       htmlToColor('#3d3d3d'),htmlToColor('#2f65a7'),
-      clBlack,clBlack,btRounded);
+      clBlack,clBlack,btRoundRect);
     RegisterThemeAttributes('Glow',ttDark,clWhite,htmlToColor('#37bdbb'),
       htmlToColor('#2e343c'),htmlToColor('#2d333b'),
-      htmlToColor('#1a1c1f'),htmlToColor('#1a1c1f'),btRounded);
+      htmlToColor('#1a1c1f'),htmlToColor('#1a1c1f'),btRoundRect);
     RegisterThemeAttributes('Golden Graphite',ttDark,htmlToColor('#eaeaea'),clWhite,
       htmlToColor('#bb8900'),htmlToColor('#c6920f'),
-      htmlToColor('#5c3e04'),htmlToColor('#5c3e04'),btRounded);
+      htmlToColor('#5c3e04'),htmlToColor('#5c3e04'),btRoundRect);
     RegisterThemeAttributes('Iceberg Classico',ttLight,clBlack,clBlack,
       htmlToColor('#e4eaf1'),htmlToColor('#99c7ea'),
-      htmlToColor('#91a6c0'),htmlToColor('#91a6c0'),btRounded);
+      htmlToColor('#91a6c0'),htmlToColor('#91a6c0'),btRoundRect);
     RegisterThemeAttributes('Jet',ttDark,clWhite,htmlToColor('#cee9f8'),
       htmlToColor('#303030'),htmlToColor('#393939'),
-      htmlToColor('#585858'),htmlToColor('#585858'),btRounded);
+      htmlToColor('#585858'),htmlToColor('#585858'),btRoundRect);
     RegisterThemeAttributes('Lavender Classico',ttLight,clBlack,clBlack,
       htmlToColor('#eaeaee'),htmlToColor('#a9c4e6'),
-      htmlToColor('#a1a1b4'),htmlToColor('#a1a1b4'),btRounded);
+      htmlToColor('#a1a1b4'),htmlToColor('#a1a1b4'),btRoundRect);
     RegisterThemeAttributes('Light',ttLight,clBlack,clBlack,
       htmlToColor('#fdfdfd'),htmlToColor('#d4e6f3'),
       htmlToColor('#ababab'),htmlToColor('#a2c7e4'),btRect);
     RegisterThemeAttributes('Lucky Point',ttDark,clWhite,clBlack,
       htmlToColor('#3f4c6a'),htmlToColor('#74b9c9'),
-      htmlToColor('#3f4c6a'),htmlToColor('#74b9c9'),btRounded);
+      htmlToColor('#3f4c6a'),htmlToColor('#74b9c9'),btRoundRect);
     RegisterThemeAttributes('Luna',ttLight,clBlack,clBlack,
       htmlToColor('#bcd0e9'),htmlToColor('#ffd355'),
-      htmlToColor('#99b5de'),htmlToColor('#99b5de'),btRounded);
+      htmlToColor('#99b5de'),htmlToColor('#99b5de'),btRoundRect);
     RegisterThemeAttributes('Material Oxford Blue',ttDark,clWhite,clWhite,
       htmlToColor('#5f6a72'),htmlToColor('#00a1a1'),
-      htmlToColor('#5f6a72'),htmlToColor('#00a1a1'),btRounded);
+      htmlToColor('#5f6a72'),htmlToColor('#00a1a1'),btRoundRect);
     RegisterThemeAttributes('Material Oxford Blue SE',ttDark,clWhite,clWhite,
       htmlToColor('#5f6a72'),htmlToColor('#0a7fbf'),
-      htmlToColor('#5f6a72'),htmlToColor('#0a7fbf'),btRounded);
+      htmlToColor('#5f6a72'),htmlToColor('#0a7fbf'),btRoundRect);
     RegisterThemeAttributes('Material Patterns Blue',ttLight,clBlack,clBlack,
       htmlToColor('#e6ecf2'),htmlToColor('#e6ecf2'),
-      htmlToColor('#c4d3df'),htmlToColor('#18a1e9'),btRounded);
+      htmlToColor('#c4d3df'),htmlToColor('#18a1e9'),btRoundRect);
     { TODO: Old Delphi Styles
     RegisterThemeAttributes('Metropolis UI Black',ttDark,clWhite,
-      clWebLightYellow,clWebLightYellow,clDkGray,btRounded);
+      clWebLightYellow,clWebLightYellow,clDkGray,btRoundRect);
     RegisterThemeAttributes('Metropolis UI Blue',ttDark,clWhite,
-      clWebDarkSlategray,clWebDarkSlategray,clDkGray,btRounded);
+      clWebDarkSlategray,clWebDarkSlategray,clDkGray,btRoundRect);
     RegisterThemeAttributes('Metropolis UI Dark',ttDark,clWhite,
-      clWebLightYellow,clWebLightYellow,clDkGray,btRounded);
+      clWebLightYellow,clWebLightYellow,clDkGray,btRoundRect);
     RegisterThemeAttributes('Metropolis UI Green',ttDark,clWhite,
-      clWebLightGreen,clWebLightGreen,clWebLightgrey,btRounded);
+      clWebLightGreen,clWebLightGreen,clWebLightgrey,btRoundRect);
     }
     RegisterThemeAttributes('Obsidian',ttLight,clBlack,clBlack,
       htmlToColor('#cfd2d7'),htmlToColor('#ffd24e'),
-      htmlToColor('#2f2f2f'),htmlToColor('#2f2f2f'),btRounded);
+      htmlToColor('#2f2f2f'),htmlToColor('#2f2f2f'),btRoundRect);
     RegisterThemeAttributes('Onyx Blue',ttLight,clBlack,clWhite,
       htmlToColor('#adb0b4'),htmlToColor('#42729a'),
-      htmlToColor('#adb0b4'),htmlToColor('#42729a'),btRounded);
+      htmlToColor('#adb0b4'),htmlToColor('#42729a'),btRoundRect);
     RegisterThemeAttributes('Puerto Rico',ttDark,clWhite,clWhite,
       htmlToColor('#44beb0'),htmlToColor('#52cfc0'),
-      htmlToColor('#44beb0'),htmlToColor('#52cfc0'),btRounded);
+      htmlToColor('#44beb0'),htmlToColor('#52cfc0'),btRoundRect);
     RegisterThemeAttributes('Radiant',ttDark,clWhite,clWhite,
       htmlToColor('#00b8b0'),htmlToColor('#19bfb7'),
-      htmlToColor('#00b8b0'),htmlToColor('#19bfb7'),btRounded);
+      htmlToColor('#00b8b0'),htmlToColor('#19bfb7'),btRoundRect);
     RegisterThemeAttributes('Ruby Graphite',ttDark,clWhite,clWhite,
       htmlToColor('#bb0d00'),htmlToColor('#cc1e15'),
-      htmlToColor('#5c0404'),htmlToColor('#5c0404'),btRounded);
+      htmlToColor('#5c0404'),htmlToColor('#5c0404'),btRoundRect);
     RegisterThemeAttributes('Sapphire Kamri',ttLight,clBlack,clBlack,
       htmlToColor('#c1d9e7'),htmlToColor('#fa946b'),
-      htmlToColor('#6d9dbf'),htmlToColor('#a57b6c'),btRounded);
+      htmlToColor('#6d9dbf'),htmlToColor('#a57b6c'),btRoundRect);
     RegisterThemeAttributes('Silver',ttLight,clBlack,clBlack,
       htmlToColor('#dce0e6'),htmlToColor('#ffd24e'),
-      htmlToColor('#b9bec8'),htmlToColor('#b9bec8'),btRounded);
+      htmlToColor('#b9bec8'),htmlToColor('#b9bec8'),btRoundRect);
     RegisterThemeAttributes('Sky',ttLight,clBlack,clBlack,
       htmlToColor('#efefef'),htmlToColor('#acdbef'),
-      htmlToColor('#bebebe'),htmlToColor('#bebebe'),btRounded);
+      htmlToColor('#bebebe'),htmlToColor('#bebebe'),btRoundRect);
     RegisterThemeAttributes('Slate Classico',ttLight,clBlack,clBlack,
       htmlToColor('#ebebeb'),htmlToColor('#99c7ea'),
-      htmlToColor('#a8a8a8'),htmlToColor('#6692be'),btRounded);
+      htmlToColor('#a8a8a8'),htmlToColor('#6692be'),btRoundRect);
     RegisterThemeAttributes('Smokey Quartz Kamri',ttLight,clBlack,clBlack,
       htmlToColor('#dbdbdb'),htmlToColor('#f39772'),
-      htmlToColor('#9f9f9f'),htmlToColor('#9f9f9f'),btRounded);
+      htmlToColor('#9f9f9f'),htmlToColor('#9f9f9f'),btRoundRect);
     RegisterThemeAttributes('Stellar',ttLight,htmlToColor('#3e629a'),htmlToColor('#3e629a'),
       htmlToColor('#fcfcfc'),clWhite,
-      htmlToColor('#fcfcfc'),htmlToColor('#fcfcfc'),btRounded);
+      htmlToColor('#fcfcfc'),htmlToColor('#fcfcfc'),btRoundRect);
     RegisterThemeAttributes('Stellar Dark',ttLight,htmlToColor('#3e629a'),htmlToColor('#3e629a'),
       htmlToColor('#fcfcfc'),clWhite,
-      htmlToColor('#fcfcfc'),htmlToColor('#fcfcfc'),btRounded);
+      htmlToColor('#fcfcfc'),htmlToColor('#fcfcfc'),btRoundRect);
     RegisterThemeAttributes('Sterling',ttLight,clBlack,htmlToColor('#527593'),
       htmlToColor('#f9fafc'),htmlToColor('#eef6fb'),
-      htmlToColor('#dde1e4'),htmlToColor('#dde1e4'),btRounded);
+      htmlToColor('#dde1e4'),htmlToColor('#dde1e4'),btRoundRect);
     RegisterThemeAttributes('Tablet Dark',ttDark,clWhite,clBlack,
       htmlToColor('#3d4a79'),htmlToColor('#1abc9c'),
-      htmlToColor('#3d4a79'),htmlToColor('#1abc9c'),btRounded);
+      htmlToColor('#3d4a79'),htmlToColor('#1abc9c'),btRoundRect);
     RegisterThemeAttributes('Tablet Light',ttLight,clBlack,clWhite,
       clWhite,htmlToColor('#3d84dd'),
-      htmlToColor('#3d84dd'),htmlToColor('#3d84dd'),btRounded);
+      htmlToColor('#3d84dd'),htmlToColor('#3d84dd'),btRoundRect);
     RegisterThemeAttributes('Turquoise Gray',ttLight,clBlack,clWhite,
       htmlToColor('#ededed'),htmlToColor('#28c0e9'),
-      htmlToColor('#d3d3d3'),htmlToColor('#019ac4'),btRounded);
+      htmlToColor('#d3d3d3'),htmlToColor('#019ac4'),btRoundRect);
     RegisterThemeAttributes('Vapor',ttLight,clBlack,clBlack,
       htmlToColor('#89dcc8'),htmlToColor('#7cc6b4'),
-      htmlToColor('#89dcc8'),htmlToColor('#7cc6b4'),btRounded);
+      htmlToColor('#89dcc8'),htmlToColor('#7cc6b4'),btRoundRect);
     RegisterThemeAttributes('Wedgewood Light',ttLight,clBlack,clWhite,
       htmlToColor('#f5f5f6'),htmlToColor('#5a7390'),
-      htmlToColor('#dfdfe1'),htmlToColor('#dfdfe1'),btRounded);
+      htmlToColor('#dfdfe1'),htmlToColor('#dfdfe1'),btRoundRect);
     RegisterThemeAttributes('Windows10',ttLight,clBlack,clBlack,
       htmlToColor('#cccccc'),htmlToColor('#cccccc'),
       htmlToColor('#cccccc'),htmlToColor('#7a7a7a'),btRect);
@@ -565,29 +568,40 @@ begin
       htmlToColor('#2a353b'),htmlToColor('#7daca8'),btRect);
     RegisterThemeAttributes('Windows11 MineShaft',ttDark,clWhite,clBlack,
       htmlToColor('#373737'),htmlToColor('#47b1e8'),
-      htmlToColor('#373737'),htmlToColor('#47b1e8'),btRounded);
+      htmlToColor('#373737'),htmlToColor('#47b1e8'),btRoundRect);
     RegisterThemeAttributes('Windows11 Modern Dark',ttDark,clWhite,clWhite,
       htmlToColor('#373737'),htmlToColor('#405560'),
-      htmlToColor('#434343'),htmlToColor('#4ab2e9'),btRounded);
+      htmlToColor('#434343'),htmlToColor('#4ab2e9'),btRoundRect);
     RegisterThemeAttributes('Windows11 Modern Light',ttLight,clBlack,clBlack,
       htmlToColor('#fdfdfd'),htmlToColor('#eef4f9'),
-      htmlToColor('#bbbbbb'),htmlToColor('#0067c0'),btRounded);
+      htmlToColor('#bbbbbb'),htmlToColor('#0067c0'),btRoundRect);
     RegisterThemeAttributes('Windows11 Polar Dark',ttDark,clWhite,clWhite,
       htmlToColor('#4b5167'),htmlToColor('#0781e0'),
-      htmlToColor('#4b5167'),htmlToColor('#0781e0'),btRounded);
+      htmlToColor('#4b5167'),htmlToColor('#0781e0'),btRoundRect);
     RegisterThemeAttributes('Windows11 Polar Light',ttLight,clBlack,clBlack,
       htmlToColor('#c7d4e1'),htmlToColor('#a2d0fe'),
-      htmlToColor('#c7d4e1'),htmlToColor('#a2d0fe'),btRounded);
+      htmlToColor('#c7d4e1'),htmlToColor('#a2d0fe'),btRoundRect);
     RegisterThemeAttributes('Windows11 White Smoke',ttLight,clBlack,clWhite,
       htmlToColor('#fdfdfd'),htmlToColor('#1975c5'),
-      htmlToColor('#e9e9e9'),htmlToColor('#1975c5'),btRounded);
+      htmlToColor('#e9e9e9'),htmlToColor('#1975c5'),btRoundRect);
     RegisterThemeAttributes('Zircon',ttLight,clBlack,clBlack,
       htmlToColor('#e5e8e9'),htmlToColor('#a0d4de'),
-      htmlToColor('#e5e8e9'),htmlToColor('#a0d4de'),btRounded);
+      htmlToColor('#e5e8e9'),htmlToColor('#a0d4de'),btRoundRect);
     RegisterThemeAttributes('Zircon SE',ttLight,clBlack,clBlack,
       htmlToColor('#e5e8e9'),htmlToColor('#a0d4de'),
-      htmlToColor('#e5e8e9'),htmlToColor('#a0d4de'),btRounded);
+      htmlToColor('#e5e8e9'),htmlToColor('#a0d4de'),btRoundRect);
   end;
+
+  //IDE Styled
+  RegisterThemeAttributes('Win10IDE_Dark',ttDark,clWhite,clWhite,
+    htmlToColor('#373737'),htmlToColor('#405560'),
+    htmlToColor('#434343'),htmlToColor('#4ab2e9'),btRoundRect);
+  RegisterThemeAttributes('Win10IDE_Light',ttLight,clBlack,clBlack,
+    htmlToColor('#fdfdfd'),htmlToColor('#eef4f9'),
+    htmlToColor('#bbbbbb'),htmlToColor('#0067c0'),btRoundRect);
+  RegisterThemeAttributes('Mountain_Mist',ttLight,clBlack,clBlack,
+    htmlToColor('#fdfdfd'),htmlToColor('#eef4f9'),
+    htmlToColor('#bbbbbb'),htmlToColor('#0067c0'),btRoundRect);
 end;
 
 procedure FreeThemesAttributes;

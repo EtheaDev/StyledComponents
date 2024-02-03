@@ -3,7 +3,7 @@
 {       StyledToolbar: a Toolbar with TStyledToolButtons inside                }
 {       Based on TFlowPanel and TStyledGraphicButton                           }
 {                                                                              }
-{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
+{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -48,6 +48,7 @@ uses
   , Winapi.Windows
   , Vcl.StyledButton
   , Vcl.ButtonStylesAttributes
+  , Vcl.StandardButtonStyles
   ;
 
 resourcestring
@@ -189,6 +190,13 @@ type
     FDisableAlign: Boolean;
     FOnToolButtonClick: TNotifyEvent;
 
+    class var _DefaultStyleDrawType: TStyledButtonDrawType;
+    class var _UseCustomDrawType: Boolean;
+    class var _DefaultFamily: TStyledButtonFamily;
+    class var _DefaultClass: TStyledButtonClass;
+    class var _DefaultAppearance: TStyledButtonAppearance;
+    class var _DefaultStyleRadius: Integer;
+
     function ControlsWidth: Integer;
     function ControlsHeight: Integer;
     procedure InsertButton(Control: TControl);
@@ -260,6 +268,12 @@ type
     procedure AdjustSize; override;
     function GetStyledToolButtonClass: TStyledToolButtonClass; virtual;
   public
+    class procedure RegisterDefaultRenderingStyle(
+      const ADrawType: TStyledButtonDrawType;
+      const AFamily: TStyledButtonFamily = DEFAULT_CLASSIC_FAMILY;
+      const AClass: TStyledButtonClass = DEFAULT_WINDOWS_CLASS;
+      const AAppearance: TStyledButtonAppearance = DEFAULT_APPEARANCE;
+      const AStyleRadius: Integer = DEFAULT_RADIUS); virtual;
     procedure BeginUpdate; virtual;
     procedure EndUpdate; virtual;
     procedure ClearButtons;
@@ -375,7 +389,6 @@ uses
   , Vcl.Forms
   , System.Types
   , System.RTLConsts
-  , Vcl.StandardButtonStyles
   ;
 
 const
@@ -556,7 +569,7 @@ begin
   if AValue <> AutoSize then
   begin
     FAutoSize := AValue;
-    if not (csLoading in ComponentState) and Assigned(FToolBar) then
+    if Assigned(FToolBar) then
       FToolBar.ResizeButtons;
   end;
 end;
@@ -785,7 +798,7 @@ begin
   if Assigned(FToolBar) then
     Result := StyleDrawType <> FToolBar.StyleDrawType
   else
-    Result := StyleDrawType <> btRounded;
+    Result := StyleDrawType <> btRoundRect;
 end;
 
 function TStyledToolButton.IsStoredStyleFamily: Boolean;
@@ -988,8 +1001,8 @@ begin
   //FHotImageChangeLink := TChangeLink.Create;
   //FHotImageChangeLink.OnChange := HotImageListChange;
 
-  FStyleDrawType := btRounded;
-  FStyleRadius := DEFAULT_RADIUS;
+  FStyleDrawType := _DefaultStyleDrawType;
+  FStyleRadius := _DefaultStyleRadius;
   FStyleFamily := AFamily;
   FStyleClass := AClass;
   FStyleAppearance := AAppearance;
@@ -998,9 +1011,9 @@ end;
 constructor TStyledToolbar.Create(AOwner: TComponent);
 begin
   CreateStyled(AOwner,
-    DEFAULT_CLASSIC_FAMILY,
-    DEFAULT_WINDOWS_CLASS,
-    DEFAULT_APPEARANCE);
+    _DefaultFamily,
+    _DefaultClass,
+    _DefaultAppearance);
 end;
 
 destructor TStyledToolbar.Destroy;
@@ -1239,6 +1252,19 @@ begin
       end;
     end);
   Result := LLastControl;
+end;
+
+class procedure TStyledToolbar.RegisterDefaultRenderingStyle(
+  const ADrawType: TStyledButtonDrawType; const AFamily: TStyledButtonFamily;
+  const AClass: TStyledButtonClass; const AAppearance: TStyledButtonAppearance;
+  const AStyleRadius: Integer);
+begin
+  _DefaultStyleDrawType := ADrawType;
+  _UseCustomDrawType := True;
+  _DefaultFamily := AFamily;
+  _DefaultClass := AClass;
+  _DefaultAppearance := AAppearance;
+  _DefaultStyleRadius := AStyleRadius;
 end;
 
 procedure TStyledToolBar.RemoveButton(Control: TControl);
@@ -1749,6 +1775,9 @@ end;
 
 procedure TStyledToolbar.ResizeButtons;
 begin
+  if (csLoading in ComponentState) then
+    Exit;
+
   FDisableAlign := True;
   try
     if (FButtonHeight <> 0) and (FButtonWidth <> 0) and
@@ -1891,7 +1920,8 @@ begin
   ProcessControls(
     procedure (AControl: TControl)
     begin
-      LSize := LSize + AControl.Height;
+      if AControl.Height > LSize then
+        LSize := LSize + AControl.Height;
     end);
   Result := LSize;
 end;
@@ -1907,7 +1937,8 @@ begin
   ProcessControls(
     procedure (AControl: TControl)
     begin
-      LSize := LSize + AControl.Width;
+      if AControl.Width > LSize then
+        LSize := AControl.Width;
     end);
   Result := LSize;
 end;
@@ -2012,5 +2043,12 @@ begin
       DisabledImages := nil;
   end;
 end;
+
+initialization
+  TStyledToolbar._DefaultStyleDrawType := DEFAULT_STYLEDRAWTYPE;
+  TStyledToolbar._DefaultFamily := DEFAULT_CLASSIC_FAMILY;
+  TStyledToolbar._DefaultClass := DEFAULT_WINDOWS_CLASS;
+  TStyledToolbar._DefaultAppearance := DEFAULT_APPEARANCE;
+  TStyledToolbar._DefaultStyleRadius := DEFAULT_RADIUS;
 
 end.

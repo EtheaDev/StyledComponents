@@ -2,7 +2,7 @@
 {                                                                              }
 {       StyledButton Editor: Component editor for Styled Button                }
 {                                                                              }
-{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
+{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -27,7 +27,7 @@ unit Vcl.StyledButtonEditorUnit;
 
 interface
 
-{$INCLUDE StyledComponents.inc}
+{$INCLUDE ..\Source\StyledComponents.inc}
 
 uses
   Winapi.Windows,
@@ -37,18 +37,18 @@ uses
   System.Classes,
   System.Actions,
   Vcl.ActnList,
-  Vcl.StyledButton,
   Vcl.ComCtrls,
   Vcl.ExtCtrls,
   Vcl.Controls,
   Vcl.Forms,
   Vcl.StdCtrls,
+  Vcl.StyledButton,
   Vcl.ButtonStylesAttributes,
   Vcl.StandardButtonStyles,
   Vcl.BootstrapButtonStyles,
   Vcl.AngularButtonStyles,
   Vcl.ColorButtonStyles,
-  Vcl.ImgList;
+  Vcl.ImgList, System.ImageList;
 
 const
   BUTTON_WIDTH = 100;
@@ -57,10 +57,10 @@ const
 type
   TStyledButtonEditor = class(TForm)
     BottomPanel: TPanel;
-    OKButton: TButton;
-    ApplyButton: TButton;
-    CancelButton: TButton;
-    HelpButton: TButton;
+    OKButton: TStyledButton;
+    ApplyButton: TStyledButton;
+    CancelButton: TStyledButton;
+    HelpButton: TStyledButton;
     paTop: TPanel;
     ActualGroupBox: TGroupBox;
     NewGroupBox: TGroupBox;
@@ -91,9 +91,6 @@ type
     procedure RadiusTrackBarChange(Sender: TObject);
     procedure FlatButtonCheckBoxClick(Sender: TObject);
   private
-    {$IFNDEF D10_3+}
-    FScaleFactor: Single;
-    {$ENDIF}
     FUpdating: Boolean;
     FFamilyBuilt: TStyledButtonFamily;
     FStyledButtonRender: TStyledButtonRender;
@@ -109,17 +106,10 @@ type
     procedure ButtonClick(Sender: TObject);
     procedure ButtonEnter(Sender: TObject);
     procedure UpdateSizeGUI;
-    function GetScaleFactor: Single;
     procedure FlowPanelResize(Sender: TObject);
   protected
     procedure Loaded; override;
-    {$IFNDEF D10_3+}
-    procedure ChangeScale(M, D: Integer); override;
-    {$ENDIF}
   public
-    {$IFDEF D10_3+}
-    procedure ScaleForPPI(NewPPI: Integer); override;
-    {$ENDIF}
     property CustomStyleDrawType: Boolean read FCustomStyleDrawType;
   end;
 
@@ -149,7 +139,6 @@ uses
 
 var
   SavedBounds: TRect = (Left: 0; Top: 0; Right: 0; Bottom: 0);
-  //paTopHeight: Integer;
 
 function EditStyledButton(const AButton: TControl): Boolean;
 begin
@@ -181,7 +170,7 @@ begin
     try
       FStyledButtonRender := AButtonRender;
       FStyledButton := FStyledButtonRender.OwnerControl;
-      paTop.Height := SourceButton.Top + AButtonRender.Height + 14;
+      paTop.Height := SourceButton.Top + AButtonRender.Height + SourceButton.Top;
       AButtonRender.AssignStyleTo(SourceButton.Render);
       SourceButton.Enabled := AButtonRender.Enabled;
       SourceButton.Caption := AButtonRender.Caption;
@@ -189,6 +178,7 @@ begin
       SourceButton.Width := AButtonRender.Width;
       SourceButton.Height := AButtonRender.Height;
       SourceButton.Flat := AButtonRender.Flat;
+      SourceButton.Style := AButtonRender.Style;
 
       AButtonRender.AssignStyleTo(DestButton.Render);
       DestButton.Enabled := AButtonRender.Enabled;
@@ -197,6 +187,8 @@ begin
       DestButton.Caption := AButtonRender.Caption;
       DestButton.Hint := AButtonRender.Hint;
       DestButton.Flat := AButtonRender.Flat;
+      DestButton.Style := AButtonRender.Style;
+
       Result := ShowModal = mrOk;
       SavedBounds := BoundsRect;
     finally
@@ -261,16 +253,14 @@ begin
       LGroupBox.Controls[0].Free;
     LGroupBox.Free;
   end;
-
   //Build a GroupBox for any Appearance
   LAppearances := GetButtonFamilyAppearances(AFamily);
-  LGroupBoxHeight := SourceButton.Top + Round(BUTTON_HEIGHT * GetScaleFactor) + Round(BUTTON_MARGIN * GetScaleFactor);
+  LGroupBoxHeight := BUTTON_HEIGHT + BUTTON_MARGIN;
   for I := 0 to Length(LAppearances)-1 do
   begin
     LAppearance := LAppearances[I];
     LGroupBox := TGroupBox.Create(Self);
     LGroupBox.AlignWithMargins := True;
-    LGroupBox.Height := LGroupBoxHeight;
     LGroupBox.Caption := LAppearances[I];
     LGroupBox.Parent := ScrollBox;
     LGroupBox.Top := LGroupBoxHeight * (I);
@@ -279,12 +269,12 @@ begin
       Format('StyleFamily: "%s" - StyleAppearance: "%s": List of StyleClass',
         [AFamily, LAppearance]);
 
-    //Create a FlowPanel inside the Groubox
+    //Create a FlowPanel inside the GroupBox
     LFlowPanel := TFlowPanel.Create(Self);
     LFlowPanel.AlignWithMargins := True;
     LFlowPanel.Margins.Top := 6;
+    LFlowPanel.Margins.Bottom := 6;
     LFlowPanel.Align := alTop;
-    LFlowPanel.Height := LGroupBoxHeight;
     LFlowPanel.AutoSize := True;
     LFlowPanel.BevelOuter := bvNone;
     LFlowPanel.OnResize := FlowPanelResize;
@@ -315,14 +305,6 @@ begin
   end;
   TabControlChange(TabControl);
 end;
-
-{$IFNDEF D10_3+}
-procedure TStyledButtonEditor.ChangeScale(M, D: Integer);
-begin
-  inherited;
-  FScaleFactor := FScaleFactor * M / D;
-end;
-{$ENDIF}
 
 procedure TStyledButtonEditor.DestButtonClick(Sender: TObject);
 begin
@@ -361,6 +343,12 @@ begin
       BottomPanel.StyleElements := BottomPanel.StyleElements - [seClient];
       BottomPanel.ParentBackground := False;
       BottomPanel.Color := LStyle.GetSystemColor(clBtnFace);
+
+      OKButton.StyleClass := LStyle.Name;
+      CancelButton.StyleClass := LStyle.Name;
+      ApplyButton.StyleClass := LStyle.Name;
+      HelpButton.StyleClass := LStyle.Name;
+
       IDEThemeManager.RegisterFormClass(TStyledButtonEditor);
       ThemeProperties.ApplyTheme(Self);
     end;
@@ -415,15 +403,6 @@ begin
     SetBounds(SavedBounds.Left, SavedBounds.Top, SavedBounds.Width, SavedBounds.Height);
 end;
 
-function TStyledButtonEditor.GetScaleFactor: Single;
-begin
-  //ScaleFactor is available only from Delphi 10.3, FScaleFactor is calculated
-  {$IFDEF D10_3+}
-    Result := ScaleFactor;
-  {$ELSE}
-    Result := FScaleFactor * PixelsPerInch / 96{$ENDIF};
-end;
-
 procedure TStyledButtonEditor.HelpButtonClick(Sender: TObject);
 begin
   ShellExecute(handle, 'open',
@@ -433,9 +412,6 @@ end;
 procedure TStyledButtonEditor.Loaded;
 begin
   inherited;
-  {$IFNDEF D10_3+}
-  FScaleFactor := 1;
-  {$ENDIF}
 end;
 
 procedure TStyledButtonEditor.OKButtonClick(Sender: TObject);
@@ -464,14 +440,6 @@ begin
   TabControlChange(TabControl);
 end;
 
-{$IFDEF D10_3+}
-procedure TStyledButtonEditor.ScaleForPPI(NewPPI: Integer);
-begin
-  inherited;
-  FScaleFactor := NewPPI / PixelsPerInch;
-end;
-{$ENDIF}
-
 procedure TStyledButtonEditor.TabControlChange(Sender: TObject);
 var
   LFamily: TStyledButtonFamily;
@@ -483,13 +451,13 @@ end;
 
 procedure TStyledButtonEditor.UpdateDestFromGUI;
 var
-  LRounded: Boolean;
+  LRoundRect: Boolean;
 begin
   DestButton.StyleDrawType := TStyledButtonDrawType(StyleDrawTypeComboBox.ItemIndex);
-  LRounded := DestButton.StyleDrawType = btRounded;
+  LRoundRect := DestButton.StyleDrawType = btRoundRect;
   DestButton.StyleRadius := RadiusTrackBar.Position;
-  StyleRadiusLabel.Visible := LRounded;
-  RadiusTrackBar.Visible := LRounded;
+  StyleRadiusLabel.Visible := LRoundRect;
+  RadiusTrackBar.Visible := LRoundRect;
   StyleRadiusLabel.Caption := Format('StyleRadius: %d', [DestButton.StyleRadius]);
   DestButton.Enabled := EnabledCheckBox.Checked;
   ActualGroupBox.Caption := Format('ACTUAL: %s/%s/%s',
@@ -516,8 +484,8 @@ var
     LStyledButton: TStyledButton;
   begin
     LStyledButton := TStyledButton.Create(Self);
-    LStyledButton.Width := Round(BUTTON_WIDTH * GetScaleFactor);
-    LStyledButton.Height := Round(BUTTON_HEIGHT * GetScaleFactor);
+    LStyledButton.Width := BUTTON_WIDTH;
+    LStyledButton.Height := BUTTON_HEIGHT;
     LStyledButton.AlignWithMargins := True;
     LStyledButton.Caption := AClass;
     LStyledButton.Hint := Format('StyleFamily: "%s" - StyleAppearance: "%s" - StyleClass: "%s"',
@@ -561,7 +529,8 @@ end;
 
 procedure TStyledButtonEditor.FlowPanelResize(Sender: TObject);
 begin
-  TFlowPanel(Sender).Parent.Height := TFlowPanel(Sender).Height + 20;
+  TFlowPanel(Sender).Parent.Height := TFlowPanel(Sender).Height +
+    SourceButton.Top;
 end;
 
 end.

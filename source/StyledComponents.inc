@@ -170,6 +170,8 @@
 
 {$IFDEF DXE6+}
   {$Define GDIPlusSupport}
+  {.$Define DrawTextWithGDIPlus}
+  {.$Define DrawRectWithGDIPlus}
 {$ENDIF}
 
 {$IFDEF D10_3+}

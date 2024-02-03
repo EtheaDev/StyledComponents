@@ -24,16 +24,14 @@ object TestMainForm: TTestMainForm
     Align = alTop
     Color = clGray
     DoubleBuffered = True
-    ParentBackground = False
     ParentDoubleBuffered = False
     TabOrder = 0
-    ExplicitWidth = 984
     DesignSize = (
       988
       57)
     object StyleLabel: TLabel
       Left = 11
-      Top = 5
+      Top = 3
       Width = 130
       Height = 13
       Caption = 'Change application style:'
@@ -51,7 +49,7 @@ object TestMainForm: TTestMainForm
     end
     object cbChangeStyle: TComboBox
       Left = 11
-      Top = 20
+      Top = 18
       Width = 174
       Height = 21
       Style = csDropDownList
@@ -68,22 +66,22 @@ object TestMainForm: TTestMainForm
       OnClick = AboutButtonClick
     end
     object RenderRadioGroup: TRadioGroup
-      Left = 536
-      Top = 5
-      Width = 405
+      Left = 584
+      Top = 9
+      Width = 393
       Height = 42
       Anchors = [akLeft, akTop, akRight]
       Caption = 'Styled Button Rendering Options'
-      Columns = 4
+      Columns = 5
       ItemIndex = 0
       Items.Strings = (
-        'Same as VCL'
+        'As VCL'
         'Rounded'
+        'RoundRect'
         'Rectangle'
         'FAB')
       TabOrder = 4
       OnClick = RenderRadioGroupClick
-      ExplicitWidth = 401
     end
     object SplitButtonsCheckBox: TCheckBox
       Left = 408
@@ -97,12 +95,21 @@ object TestMainForm: TTestMainForm
     object EnabledCheckBox: TCheckBox
       Left = 408
       Top = 27
-      Width = 97
+      Width = 65
       Height = 17
       Caption = 'Enabled'
       Checked = True
       State = cbChecked
       TabOrder = 5
+      OnClick = EnabledCheckBoxClick
+    end
+    object OutlineCheckBox: TCheckBox
+      Left = 489
+      Top = 27
+      Width = 72
+      Height = 17
+      Caption = 'Outline'
+      TabOrder = 6
       OnClick = EnabledCheckBoxClick
     end
   end
@@ -113,7 +120,6 @@ object TestMainForm: TTestMainForm
     Height = 584
     Align = alLeft
     TabOrder = 1
-    ExplicitHeight = 583
     object LeftScrollBox: TScrollBox
       Left = 1
       Top = 25
@@ -122,7 +128,6 @@ object TestMainForm: TTestMainForm
       Align = alClient
       TabOrder = 0
       OnMouseWheel = ScrollBoxMouseWheel
-      ExplicitHeight = 557
     end
     object Panel1: TPanel
       Left = 1
@@ -141,8 +146,6 @@ object TestMainForm: TTestMainForm
     Height = 584
     Align = alClient
     TabOrder = 2
-    ExplicitWidth = 495
-    ExplicitHeight = 583
     object RightScrollBox: TScrollBox
       Left = 1
       Top = 25
@@ -151,8 +154,6 @@ object TestMainForm: TTestMainForm
       Align = alClient
       TabOrder = 0
       OnMouseWheel = ScrollBoxMouseWheel
-      ExplicitWidth = 493
-      ExplicitHeight = 557
     end
     object TopRightPanel: TPanel
       Left = 1
@@ -164,7 +165,6 @@ object TestMainForm: TTestMainForm
         'TStyledButtons with StyleFamily=Classic and StyleClass="VCLStyle' +
         '"'
       TabOrder = 1
-      ExplicitWidth = 493
     end
   end
   object ActionList: TActionList

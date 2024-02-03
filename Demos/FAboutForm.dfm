@@ -16,7 +16,7 @@ object fmAbout: TfmAbout
     Top = 246
     Width = 123
     Height = 15
-    Caption = 'Copyright '#169' 2005-2023'
+    Caption = 'Copyright '#169' 2005-2024'
   end
   object lbAppName: TLabel
     Left = 76

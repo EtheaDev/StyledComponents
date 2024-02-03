@@ -2,7 +2,7 @@
 {                                                                              }
 {       StyledTaskDialog: a Task Dialog Component with StyleButtons            }
 {                                                                              }
-{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
+{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -101,6 +101,8 @@ function StyledTaskDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
 function StyledTaskDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; DefaultButton: TMsgDlgBtn; HelpCtx: Longint;
   X: Integer = -1; Y: Integer = -1): Integer; overload;
+
+procedure StyledShowMessage(const Msg: string); overload;
 
 procedure SetUseAlwaysTaskDialog(Value: boolean);
 procedure RegisterCustomExecute(const AShowStyledTaskDialog: ITaskDialogLauncher;
@@ -487,6 +489,11 @@ begin
     Result := DoTaskMessageDlgPos(Title, Msg, DlgType, Buttons, HelpCtx, DefaultButton, X, Y)
   else
     Result := StyledMessageDlgPos(MsgWithTitle, DlgType, Buttons, DefaultButton, HelpCtx, -1, -1);
+end;
+
+procedure StyledShowMessage(const Msg: string); overload;
+begin
+  StyledMessageDlg(Msg, TMsgDlgType.mtInformation, [TMsgDlgBtn.mbOK], 0);
 end;
 
 { TStyledTaskDialog }

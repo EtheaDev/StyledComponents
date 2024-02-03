@@ -3,7 +3,7 @@
 {       BootstrapButtonStyles: Button Styles inspired to Bootstrap             }
 {       https://getbootstrap.com/docs/4.0/components/buttons/                  }
 {                                                                              }
-{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
+{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -212,7 +212,7 @@ begin
   BootstrapClassToColors(AClass, AAppearance, LFontColor, LButtonColor, LOutLine);
 
   //Default Style Attributes for Bootstrap Buttons
-  ANormalStyle.DrawType := btRounded;
+  ANormalStyle.DrawType := btRoundRect;
   ANormalStyle.FontStyle := [fsBold];
   ANormalStyle.BorderWidth := BOOTSTRAP_BORDER_WIDTH;
 

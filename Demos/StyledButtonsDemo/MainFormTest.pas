@@ -2,7 +2,7 @@
 {                                                                              }
 {       StyledComponents Library                                               }
 {                                                                              }
-{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
+{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -59,12 +59,17 @@ const
   BUTTON_HEIGHT = 28;
   BUTTON_WIDTH = 140;
   BUTTON_MARGIN = 4;
+  {$IFDEF D11+}
   BUTTON_COL_COUNT = 24;
+  {$ELSE}
+  BUTTON_COL_COUNT = 17;
+  {$ENDIF}
 
   RENDER_SAME_AS_VCL = 0;
   RENDER_ROUNDED = 1;
-  RENDER_RECTANGLE = 2;
-  RENDER_FAB = 3;
+  RENDER_ROUNDRECT = 2;
+  RENDER_RECTANGLE = 3;
+  RENDER_FAB = 4;
 
 type
   TTestMainForm = class(TForm)
@@ -91,6 +96,7 @@ type
     VirtualImageList32: TVirtualImageList;
     SplitButtonsCheckBox: TCheckBox;
     EnabledCheckBox: TCheckBox;
+    OutlineCheckBox: TCheckBox;
     procedure TestActionExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure cbChangeStyleSelect(Sender: TObject);
@@ -105,7 +111,7 @@ type
     procedure EnabledCheckBoxClick(Sender: TObject);
   private
     FStyleNames: TStringList;
-    FSplitButtons: Boolean;
+    //FSplitButtons: Boolean;
     procedure GetButtonSize(out AWidth, AHeight: Integer);
     procedure BuildStyleList;
     procedure CreateVCLButtons;
@@ -169,14 +175,19 @@ var
       begin
         case RenderRadioGroup.ItemIndex of
           RENDER_ROUNDED: StyleDrawType := btRounded; //All buttons Rounded
+          RENDER_ROUNDRECT: StyleDrawType := btRoundRect; //All buttons RoundRect
           RENDER_RECTANGLE: StyleDrawType := btRect; //All buttons Rect
         end;
         Caption := AStyleName;
-        if FSplitButtons then
+        if SplitButtonsCheckBox.Checked then
         begin
           Style := bsSplitButton;
           DropDownMenu := Self.PopupMenu;
         end;
+        if OutlineCheckBox.Checked then
+          StyleAppearance := 'Outline'
+        else
+          StyleAppearance := 'Normal';
       end
       else
       begin
@@ -241,7 +252,7 @@ var
       Parent := LeftScrollBox;
       PopupMenu := Self.PopupMenu;
       OnClick := ButtonClick;
-      if FSplitButtons then
+      if SplitButtonsCheckBox.Checked then
       begin
         Style := TButtonStyle.bsSplitButton;
         DropDownMenu := Self.PopupMenu;
@@ -356,7 +367,6 @@ end;
 
 procedure TTestMainForm.SplitButtonsCheckBoxClick(Sender: TObject);
 begin
-  FSplitButtons := SplitButtonsCheckBox.Checked;
   CreateVCLButtons;
   CreateStyledButtons;
 end;

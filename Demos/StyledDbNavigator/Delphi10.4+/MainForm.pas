@@ -3,7 +3,7 @@
 {       TStyledDbNavigator Test                                                }
 {       Comparison TStyledDbNavigator with TDbNavigator                        }
 {                                                                              }
-{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
+{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -30,12 +30,14 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ButtonStylesAttributes,
-  Vcl.StandardButtonStyles, Vcl.AngularButtonStyles, Vcl.BootstrapButtonStyles, Vcl.ColorButtonStyles,
-  Vcl.StyledButton, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnMan,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnMan,
   Vcl.ActnCtrls, Vcl.ImgList, Vcl.StdCtrls, Vcl.StyledDbNavigator, Vcl.Menus,
   Vcl.DBCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids, Datasnap.DBClient, Vcl.Buttons,
-  System.ImageList;
+  System.ImageList,
+  Vcl.StyledButton, Vcl.ButtonStylesAttributes,
+  Vcl.StandardButtonStyles, Vcl.AngularButtonStyles,
+  Vcl.BootstrapButtonStyles, Vcl.ColorButtonStyles;
 
 const
   //Params to check
@@ -254,5 +256,8 @@ initialization
 {$IFDEF DEBUG}
   ReportMemoryLeaksOnShutdown := True;
 {$ENDIF}
+  //Example to define a default Rendering Style for Styled Buttons
+  TStyledButton.RegisterDefaultRenderingStyle(btRounded);
+  TStyledGraphicButton.RegisterDefaultRenderingStyle(btRounded);
 
 end.

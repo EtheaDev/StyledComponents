@@ -3,7 +3,7 @@
 {       TStyledToolbar Test                                                    }
 {       Comparison TStyledToolbar with TToolBar                                }
 {                                                                              }
-{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
+{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -30,6 +30,9 @@ uses
   Vcl.Forms,
   Vcl.Themes,
   Vcl.Styles,
+  Vcl.StyledDbNavigator,
+  Vcl.BootstrapButtonStyles,
+  Vcl.ButtonStylesAttributes,
   MainFormOld in 'MainFormOld.pas' {fmMain};
 
 {$R *.res}
@@ -38,6 +41,12 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.Title := 'Styled DbNavigator Demo - (c) Ethea S.r.l.';
+
+  //Examples to define a default Rendering Style for DbNavigator Styled Buttons
+  //TStyledDbNavigator.RegisterDefaultRenderingStyle(btRounded);
+  //TStyledDbNavigator.RegisterDefaultRenderingStyle(btRoundRect,
+  //  BOOTSTRAP_FAMILY, btn_warning, BOOTSTRAP_NORMAL, 20);
+
   Application.CreateForm(TfmMain, fmMain);
   Application.Run;
 end.

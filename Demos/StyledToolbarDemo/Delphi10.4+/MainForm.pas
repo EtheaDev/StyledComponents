@@ -3,7 +3,7 @@
 {       TStyledToolbar Test                                                    }
 {       Comparison TStyledToolbar with TToolBar                                }
 {                                                                              }
-{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
+{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -38,6 +38,7 @@ uses
 
 const
   //Params to check
+  CAPTION_STR = 'Caption';
   SHOW_CAPTIONS = True;
   BUTTON_WIDTH = 60;
   BUTTON_HEIGHT = 60;
@@ -218,30 +219,30 @@ begin
   //Create Standard Toolbar
   CreateToolBar;
   //Add Buttons, Separators and Dividers
-  AddButtonToToolbar(FToolBar, 'Caption1', tbsButton, 0);
-  AddButtonToToolbar(FToolBar, 'Caption2', tbsButton, 5);
+  AddButtonToToolbar(FToolBar, CAPTION_STR+'1', tbsButton, 0);
+  AddButtonToToolbar(FToolBar, CAPTION_STR+'2', tbsButton, 5);
   AddButtonToToolbar(FToolBar, '', tbsSeparator, -1);
-  AddButtonToToolbar(FToolBar, 'Caption3', tbsButton, 8);
+  AddButtonToToolbar(FToolBar, CAPTION_STR+'3', tbsButton, 8);
   AddButtonToToolbar(FToolBar, '', tbsSeparator, -1);
-  AddButtonToToolbar(FToolBar, 'Caption4', tbsButton, 10);
+  AddButtonToToolbar(FToolBar, CAPTION_STR+'4', tbsButton, 10);
 
   //Create Styled Toolbar
   CreateStyledToolBar;
   //Add StyledButtons, Separators and Dividers with Styles
-  AddStyledButtonToToolbar(FStyledToolBar, 'Caption1', tbsButton, 0,
+  AddStyledButtonToToolbar(FStyledToolBar, CAPTION_STR+'1', tbsButton, 0,
     BOOTSTRAP_FAMILY, btn_primary, BOOTSTRAP_OUTLINE);
 
-  AddStyledButtonToToolbar(FStyledToolBar, 'Caption2', tbsButton, 5,
+  AddStyledButtonToToolbar(FStyledToolBar, CAPTION_STR+'2', tbsButton, 5,
     BOOTSTRAP_FAMILY, btn_secondary, BOOTSTRAP_OUTLINE);
 
   AddStyledButtonToToolbar(FStyledToolBar, '', tbsDivider);
 
-  AddStyledButtonToToolbar(FStyledToolBar, 'Caption3', tbsButton, 8,
+  AddStyledButtonToToolbar(FStyledToolBar, CAPTION_STR+'3', tbsButton, 8,
     BOOTSTRAP_FAMILY, btn_success, BOOTSTRAP_OUTLINE);
 
   AddStyledButtonToToolbar(FStyledToolBar, '', tbsSeparator);
 
-  LButton := AddStyledButtonToToolbar(FStyledToolBar, 'Caption4', tbsButton, 10,
+  LButton := AddStyledButtonToToolbar(FStyledToolBar, CAPTION_STR+'4', tbsButton, 10,
     BOOTSTRAP_FAMILY, btn_danger, BOOTSTRAP_OUTLINE);
 
   tbWidth.Position := BUTTON_WIDTH;

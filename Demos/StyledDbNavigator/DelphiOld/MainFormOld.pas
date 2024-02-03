@@ -3,7 +3,7 @@
 {       TStyledDbNavigator Test                                                }
 {       Comparison TStyledDbNavigator with TDbNavigator                        }
 {                                                                              }
-{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
+{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }

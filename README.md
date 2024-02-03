@@ -2,7 +2,7 @@
 
 ## Delphi VCL Buttons, Toolbar and DbNavigator, with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 3.1.0
+### Actual official version: 3.2.0
 
 | Component | Description |
 | - | - |
@@ -28,43 +28,105 @@ Remember to add the **"{Folder}\StyledComponents\source"** path to use the compo
 
 **TStyledGraphicButton**, **TStyledButton** are designed to expand Button UI styles to break the limits of classic TButton and TBitBtn provided in Delphi.
 
-The Button Styles defined are not affected by VCLStyles and are also visibile on a "non styled" Windows application, so you can have more than a single Button styled also using VCLStyles. You can build rectangular or rounded or ellipsis/circle button as you prefer.
+The Button Styles defined are not affected by VCLStyles and are also visibile on a "non styled" Windows application, so you can have more than a single Button styled also using VCLStyles. You can build Rectangular, Rounded or RoundRect or Ellipsis/Circle button as you prefer.
 
 using only three elements you can setup your Button in a very simple way:
-
-
-
-**Component editor for TStyledGraphicButton and StyledButton:**
-
-To simplify use of the Styled Buttons, there is a useful "Component Editor" to select three values that defines Button Style:
 
 - **StyleFamily**: the main attribute for Styled Button
 - **StyleClass**: a collection of predefined button style
 - **Style Appearance**: eg.Normal or Outline
 
+**Component editor for TStyledGraphicButton and StyledButton:**
+
+To simplify use of the Styled Buttons, there is a useful "Component Editor" to select three values that defines Button Style:
+
 ***List of available StyleFamily***
-- **Classic**: a collection of Styles similar to [VCLStyled TButton](https://docwiki.embarcadero.com/RADStudio/Alexandria/en/Tutorial:_Using_TControl.StyleElements_in_VCL_Applications)
+- **Classic**: a collection of Styles similar to [VCLStyled TButton](https://docwiki.embarcadero.com/RADStudio/Athens/en/Tutorial:_Using_TControl.StyleElements_in_VCL_Applications)
 - **Bootstrap**: a collection of Styles similar to [Bootstrap buttons](https://getbootstrap.com/docs/4.0/components/buttons/)
 - **Angular-Light**: a collection of styles similar to [Angular buttons](https://material.angular.io/components/button/overview)
 - **Angular-Dark**: a collection of styles similar to [Angular buttons](https://material.angular.io/components/button/overview)
 - **Basic-Color**: a collection of styles based to Delphi "normal" and "System" [Color collection](https://docwiki.embarcadero.com/RADStudio/Alexandria/en/Color_Constants)
 - **SVG-Color**: a collection of styles based to Delphi "AlphaColors" [Color collection](https://johndecember.com/html/spec/colorsvghex.html)
 
-*In this picture the Component Editor to select "Boostrap" styles: Style Appearance are Normal and Outline*
+***New Rounded Button Style***
+
+NOTICE: from Version 3.2 the new **StyleDrawType: btRoundRect** (the new default) has been added.
+
+The "old default" btRounded is now used to show "full-rounded" button (as in new Chrome Refresh 2023 UI), but is not the default.
+
+_Before 3.2 version_
+
+StyleDrawType<br>`btRounded (default)`|StyleDrawType<br>`btRect`|StyleDrawType<br>`btEllipse`|
+| :-- | :-- | :-- |
+|![RoundRect](./Images/Classic_Normal_Windows_btRoundRect.png)|![btRect](./Images/Classic_Normal_Windows_btRect.png)|![Ellipse](./Images/Classic_Normal_Windows_btEllipse.png)|
+
+_From 3.2 version_
+
+StyleDrawType<br>`btRoundRect (default)`|StyleDrawType<br>`btRect`|StyleDrawType<br>`btRounded`|StyleDrawType<br>`btEllipse`|
+| :-- | :-- | :-- | :-- |
+|![RoundRect](./Images/Classic_Normal_Windows_btRoundRect.png)|![Classic_Normal_Windows_btRect](./Images/Classic_Normal_Windows_btRect.png)|![Rounded](./Images/Classic_Normal_Windows_btRounded.png)|![Ellipse](./Images/Classic_Normal_Windows_btEllipse.png)|
+
+_Be careful with your existing dfm and code files: if you have stored StyleDrawType = btRounded you must change it with btRoundRect, or remove it, because is the default value._
+
+_In this picture the new "full-rounded" Style introduced in 3.2 version, in "VCL-Styled" Style Demo_
+
+![RoundedButtons.jpg](./Images/RoundedButtons.jpg)
+
+---
+
+***Control the default rendering styles for any Styled Buttons, Toolbars and Dbnavigator***
+
+It's possible to redefine at global application level the default Drawing styles for any Components, adding some line in your project file. For Example:
+
+Add those units in uses of dpr:
+```Pascal
+  Vcl.StyledButton,
+  Vcl.ButtonStylesAttributes,
+  Vcl.StyledDbNavigator,
+  Vcl.StyledToolbar,
+```
+Add those lines in After Application.Initialize in dpr code:
+```Pascal
+  TStyledButton.RegisterDefaultRenderingStyle(btRounded);
+  TStyledDbNavigator.RegisterDefaultRenderingStyle(btRounded);
+  TStyledToolbar.RegisterDefaultRenderingStyle(btRect);
+```
+You can also use a Family/Class/Appearance of any type, for example:
+
+```Pascal
+TStyledButton.RegisterDefaultRenderingStyle(btRoundRect, BOOTSTRAP_FAMILY, btn_primary, BOOTSTRAP_NORMAL);
+```
+
+---
+
+*In this picture the Component Editor selecting "Boostrap" styles and StyleRadius 18: Style Appearance are Normal and Outline*
 
 ![StyledButtonComponentEditorBootstrap.jpg](./Images/StyledButtonComponentEditorBootstrap.jpg)
 
-*In this picture, the Component Editor to select "AngularUI" styles: Style Appearance are Flat, Raised, Basic, Stroked*
+---
+
+*In this picture, the Component Editor selecting "AngularUI" styles: Style Appearance are Flat, Raised, Basic, Stroked*
 
 ![StyledButtonComponentEditorAngular.jpg](./Images/StyledButtonComponentEditorAngular.jpg)
 
-*In this picture, the Component Editor to select "Classic" styles: Style Appearance are Normal and Outline*
+---
+
+*In this picture, the Component Editor selecting "Classic" styles: Style Appearance are Normal and Outline*
 
 ![StyledButtonComponentEditor.jpg](./Images/StyledButtonComponentEditor.jpg)
 
-*In this picture, the Component Editor to select "SVG-Color" styles: Style Appearance are Normal and Outline*
+---
+
+*In this picture, the Component Editor selecting "Basic-Colors" styles and Rounded StyleDrawType: Style Appearance are Normal and Outline*
+
+![StyledButtonComponentEditorRounded.jpg](./Images/StyledButtonComponentEditorRounded.jpg)
+
+---
+*In this picture, the Component Editor selecting "SVG-Color" styles: Style Appearance are Normal and Outline*
 
 ![StyledButtonComponentEditorSVG.jpg](./Images/StyledButtonComponentEditorSVG.jpg)
+
+---
 
 **Look at the Demo Folder:**
 
@@ -194,6 +256,21 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+03 Feb 2024: version 3.2.0
+- Added "full-rounded button" DrawStyle
+- Changed default for StyleDrawType from btRounded to btRoundRect
+- *StyleDrawType=btRounded now draw a "full-rounded button" (StyleRadius ignored)*
+- *StyleDrawType=btRoundRect now draw a "button with rounded corners" (defined by StyleRadius)*
+- Added RegisterDefaultRenderingStyle for all classes (to define default rendering)
+- Fixed storing CustomStyles Attributes info into dfm
+- Fixed redraw when Enabled changed
+- Fixed SplitButton triangle for Flat buttons
+- Experimental: New Animated Buttons (Using Skia4Delphi)
+
+02 Jan 2024: version 3.1.1
+- Fixed Background color for component editor in Delphi 12
+- Fixed Autosize/Wrapable for TStyledToolbar
+
 23 Oct 2023: version 3.1.0
 - Fixed FlatButton when disabled
 - Fixed Autosize/Wrapable for TStyledToolbar

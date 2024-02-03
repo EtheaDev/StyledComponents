@@ -3,7 +3,7 @@
 {       TStyledGraphicButton: a Button Component based on TGraphicControl      }
 {       TStyledButton: a Button Component based on TCustomControl              }
 {                                                                              }
-{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
+{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -47,10 +47,11 @@ uses
   , Vcl.ActnList
   , Vcl.Menus
   , Vcl.ButtonStylesAttributes
+  , Vcl.StandardButtonStyles
   ;
 
 const
-  StyledButtonsVersion = '2.1.0';
+  StyledButtonsVersion = '3.2.0';
   DEFAULT_BTN_WIDTH = 75;
   DEFAULT_BTN_HEIGHT = 25;
   DEFAULT_IMAGE_HMARGIN = 8;
@@ -116,7 +117,6 @@ type
     FStyleClass: TStyledButtonClass;
     FStyleAppearance: TStyledButtonAppearance;
 
-    FCustomDrawType: Boolean;
     FStyleApplied: Boolean;
 
     FDisabledImages: TCustomImageList;
@@ -192,7 +192,8 @@ type
     procedure ImageMarginsChange(Sender: TObject);
     procedure SetImageAlignment(const AValue: TImageAlignment);
     procedure DrawBackgroundAndBorder(const ACanvas: TCanvas;
-      const AStyleAttribute: TStyledButtonAttributes);
+      const AStyleAttribute: TStyledButtonAttributes;
+      const AEraseBackground: Boolean);
     procedure DrawText(const ACanvas: TCanvas;
       const AText: string; var ARect: TRect; AFlags: Cardinal);
     function GetDrawingStyle(const ACanvas: TCanvas): TStyledButtonAttributes;
@@ -244,7 +245,10 @@ type
   private
     procedure SetState(const AValue: TButtonState);
     function GetMouseInControl: Boolean;
+    function GetHasCustomAttributes: Boolean;
+    procedure SetHasCustomAttributes(const AValue: Boolean);
   protected
+    FCustomDrawType: Boolean;
     function GetBackGroundColor: TColor;
     function IsDefaultImageMargins: Boolean;
     function UpdateCount: Integer;
@@ -278,7 +282,8 @@ type
     procedure ActionChange(Sender: TObject; CheckDefaults: Boolean);
     procedure UpdateStyleElements;
     procedure EraseBackground(const ACanvas: TCanvas);
-    procedure DrawButton(const ACanvas: TCanvas);
+    procedure DrawButton(const ACanvas: TCanvas;
+      const AEraseBackground: Boolean);
     procedure DrawImage(const ACanvas: TCanvas;
       var ATextRect: TRect);
     function GetText: TCaption;
@@ -341,7 +346,9 @@ type
       const ASetParentFont: TSetParentFont;
       const AFamily: TStyledButtonFamily;
       const AClass: TStyledButtonClass;
-      const AAppearance: TStyledButtonAppearance);
+      const AAppearance: TStyledButtonAppearance;
+      const ADrawType: TStyledButtonDrawType;
+      const AUseCustomDrawType: Boolean);
     constructor Create(AOwner: TControl;
       const AOnClick: TNotifyEvent;
       const AControlFont: TControlFont;
@@ -427,6 +434,7 @@ type
     property ControlFont: TControlFont read FControlFont write FControlFont;
   public
     procedure SetCustomStyleDrawType(ACustomStyleDrawType: Boolean);
+    property HasCustomAttributes: Boolean read GetHasCustomAttributes write SetHasCustomAttributes default False;
   end;
 
   TStyledGraphicButton = class;
@@ -439,6 +447,13 @@ type
     {$IFDEF D10_4+}
     FImageName: TImageName;
     {$ENDIF}
+    class var _DefaultStyleDrawType: TStyledButtonDrawType;
+    class var _UseCustomDrawType: Boolean;
+    class var _DefaultFamily: TStyledButtonFamily;
+    class var _DefaultClass: TStyledButtonClass;
+    class var _DefaultAppearance: TStyledButtonAppearance;
+    class var _DefaultStyleRadius: Integer;
+
     //Event Handlers passed to Render
     procedure ControlFont(var AValue: TFont);
     procedure ControlClick(Sender: TObject);
@@ -572,8 +587,23 @@ type
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer); override;
     procedure UpdateStyleElements; override;
+    {$IFDEF D10_4+}
+    procedure SetStyleName(const AValue: string); override;
+    {$ENDIF}
     function GetRenderClass: TStyledButtonRenderClass; virtual;
+    constructor InternalCreateStyled(AOwner: TComponent;
+      const AFamily: TStyledButtonFamily;
+      const AClass: TStyledButtonClass;
+      const AAppearance: TStyledButtonAppearance;
+      const ADrawType: TStyledButtonDrawType;
+      const AUseCustomDrawType: Boolean); virtual;
   public
+    class procedure RegisterDefaultRenderingStyle(
+      const ADrawType: TStyledButtonDrawType;
+      const AFamily: TStyledButtonFamily = DEFAULT_CLASSIC_FAMILY;
+      const AClass: TStyledButtonClass = DEFAULT_WINDOWS_CLASS;
+      const AAppearance: TStyledButtonAppearance = DEFAULT_APPEARANCE;
+      const AStyleRadius: Integer = DEFAULT_RADIUS); virtual;
     function GetRescalingButton: Boolean;
     procedure SetRescalingButton(const AValue: Boolean);
     function GetSplitButtonWidth: Integer;
@@ -697,7 +727,13 @@ type
     {$IFDEF D10_4+}
     FImageName: TImageName;
     {$ENDIF}
-    //function StyleServicesEnabled: Boolean;
+    class var _DefaultStyleDrawType: TStyledButtonDrawType;
+    class var _UseCustomDrawType: Boolean;
+    class var _DefaultFamily: TStyledButtonFamily;
+    class var _DefaultClass: TStyledButtonClass;
+    class var _DefaultAppearance: TStyledButtonAppearance;
+    class var _DefaultStyleRadius: Integer;
+
     //Event Handlers passed to Render
     procedure ControlFont(var AValue: TFont);
     procedure ControlClick(Sender: TObject);
@@ -848,10 +884,25 @@ type
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer); override;
     procedure UpdateStyleElements; override;
+    {$IFDEF D10_4+}
+    procedure SetStyleName(const AValue: string); override;
+    {$ENDIF}
     //for StyledButton
     procedure CreateWnd; override;
     function GetRenderClass: TStyledButtonRenderClass; virtual;
+    constructor InternalCreateStyled(AOwner: TComponent;
+      const AFamily: TStyledButtonFamily;
+      const AClass: TStyledButtonClass;
+      const AAppearance: TStyledButtonAppearance;
+      const ADrawType: TStyledButtonDrawType;
+      const AUseCustomDrawType: Boolean); virtual;
   public
+    class procedure RegisterDefaultRenderingStyle(
+      const ADrawType: TStyledButtonDrawType;
+      const AFamily: TStyledButtonFamily = DEFAULT_CLASSIC_FAMILY;
+      const AClass: TStyledButtonClass = DEFAULT_WINDOWS_CLASS;
+      const AAppearance: TStyledButtonAppearance = DEFAULT_APPEARANCE;
+      const AStyleRadius: Integer = DEFAULT_RADIUS); virtual;
     function GetRescalingButton: Boolean;
     procedure SetRescalingButton(const AValue: Boolean);
     function GetSplitButtonWidth: Integer;
@@ -993,7 +1044,6 @@ uses
   System.Types
   , System.RTLConsts
   , Vcl.Forms
-  , Vcl.StandardButtonStyles
   {$IFDEF INCLUDE_BootstrapButtonStyles}
   , Vcl.BootstrapButtonStyles
   {$ENDIF}
@@ -1162,10 +1212,8 @@ begin
   else
     FState := bsUp;
   if FMouseInControl then
-  begin
     FMouseInControl := False;
-    Invalidate;
-  end;
+  Invalidate;
 end;
 
 procedure TStyledButtonRender.CMEnter(var Message: TCMEnter);
@@ -1251,7 +1299,9 @@ constructor TStyledButtonRender.CreateStyled(AOwner: TControl;
   const ASetParentFont: TSetParentFont;
   const AFamily: TStyledButtonFamily;
   const AClass: TStyledButtonClass;
-  const AAppearance: TStyledButtonAppearance);
+  const AAppearance: TStyledButtonAppearance;
+  const ADrawType: TStyledButtonDrawType;
+  const AUseCustomDrawType: Boolean);
 begin
   Assert(Assigned(AOwner));
   inherited Create;
@@ -1306,10 +1356,12 @@ begin
   FOwnerControl.Width := DEFAULT_BTN_WIDTH;
   FOwnerControl.Height := DEFAULT_BTN_HEIGHT;
   FMouseInControl := false;
-  FStyleDrawType := btRounded;
+  FStyleDrawType := ADrawType;
+  FCustomDrawType := AUseCustomDrawType;
   FStyleRadius := DEFAULT_RADIUS;
   FStyleFamily := AFamily;
   FStyleAppearance := AAppearance;
+  //Call the Setter of StyleClass!
   StyleClass := AClass;
 end;
 
@@ -1330,7 +1382,9 @@ begin
     ASetParentFont,
     DEFAULT_CLASSIC_FAMILY,
     DEFAULT_WINDOWS_CLASS,
-    DEFAULT_APPEARANCE);
+    DEFAULT_APPEARANCE,
+    DEFAULT_STYLEDRAWTYPE,
+    False);
 end;
 
 procedure TStyledButtonRender.ActionChange(Sender: TObject; CheckDefaults: Boolean);
@@ -1352,7 +1406,7 @@ var
 begin
   Result := StyleFamilyCheckAttributes(FStyleFamily,
     FStyleClass, FStyleAppearance, LButtonFamily);
-  if Result or (csDesigning in ComponentState) then
+  if Result (*or (csDesigning in ComponentState)*) then
   begin
     StyleFamilyUpdateAttributes(
       FStyleFamily,
@@ -1526,7 +1580,7 @@ end;
 
 function TStyledButtonRender.IsDefaultAppearance: Boolean;
 begin
-  Result := (FStyleFamily = DEFAULT_CLASSIC_FAMILY) and
+  Result := (FStyleFamily = DEFAULT_APPEARANCE) and
     (FStyleClass = DEFAULT_WINDOWS_CLASS) and
     (FStyleAppearance = DEFAULT_APPEARANCE);
 end;
@@ -1607,27 +1661,27 @@ end;
 
 function TStyledButtonRender.IsStyleDisabledStored: Boolean;
 begin
-  Result := FButtonStyleDisabled.IsChanged;
+  Result := FButtonStyleDisabled.HasCustomAttributes;
 end;
 
 function TStyledButtonRender.IsStylePressedStored: Boolean;
 begin
-  Result := FButtonStylePressed.IsChanged;
+  Result := FButtonStylePressed.HasCustomAttributes;
 end;
 
 function TStyledButtonRender.IsStyleSelectedStored: Boolean;
 begin
-  Result := FButtonStyleSelected.IsChanged;
+  Result := FButtonStyleSelected.HasCustomAttributes;
 end;
 
 function TStyledButtonRender.IsStyleHotStored: Boolean;
 begin
-  Result := FButtonStyleHot.IsChanged;
+  Result := FButtonStyleHot.HasCustomAttributes;
 end;
 
 function TStyledButtonRender.IsStyleNormalStored: Boolean;
 begin
-  Result := FButtonStyleNormal.IsChanged;
+  Result := FButtonStyleNormal.HasCustomAttributes;
 end;
 
 function TStyledButtonRender.GetAttributes(const AMode: TStyledButtonState): TStyledButtonAttributes;
@@ -1645,49 +1699,64 @@ end;
 procedure TStyledButtonRender.DrawText(const ACanvas: TCanvas;
   const AText: string; var ARect: TRect; AFlags: Cardinal);
 var
-  TextFormat: TTextFormatFlags;
   R: TRect;
-
-  function CanvasDrawText(ACanvas: TCanvas; const AText: string; var Bounds: TRect; Flag: Cardinal): Integer;
-  begin
-    SetBkMode(ACanvas.Handle, TRANSPARENT);
-    Result := Winapi.Windows.DrawText(ACanvas.Handle, PChar(AText),
-      Length(AText), Bounds, Flag)
-  end;
-
+  OldBKMode: Integer;
 begin
-  TextFormat := TTextFormatFlags(AFlags);
   //Drawing Caption
   R := ARect;
-  CanvasDrawText(ACanvas, AText, R, AFlags or DT_CALCRECT);
+  Winapi.Windows.DrawText(ACanvas.Handle, PChar(AText), Length(AText), R, AFlags or DT_CALCRECT);
   OffsetRect(R, (ARect.Width - R.Width) div 2, (ARect.Height - R.Height) div 2);
-  CanvasDrawText(ACanvas, AText, R, AFlags);
+  OldBKMode := SetBkMode(ACanvas.Handle, TRANSPARENT);
+  CanvasDrawText(ACanvas, R, AText, AFlags);
+  SetBkMode(ACanvas.Handle, OldBKMode);
 end;
 
 procedure TStyledButtonRender.DrawBackgroundAndBorder(
   const ACanvas: TCanvas;
-  const AStyleAttribute: TStyledButtonAttributes);
+  const AStyleAttribute: TStyledButtonAttributes;
+  const AEraseBackground: Boolean);
 var
-  DrawRect, SplitButtonRect: TRect;
+  LDrawRect: TRect;
+  LButtonOffset: Integer;
 begin
   //Erase Background
-  EraseBackground(ACanvas);
+  if AEraseBackground then
+    EraseBackground(ACanvas);
 
   //Don't draw button face for Flat Buttons
-  if FFlat and (FState in [bsUp, bsDisabled]) and not (FMouseInControl) then
-    Exit;
+  if not (FFlat and (FState in [bsUp, bsDisabled]) and not (FMouseInControl)) or
+    Focused then
+  begin
+    LDrawRect := FOwnerControl.ClientRect;
 
-  DrawRect := FOwnerControl.ClientRect;
+    //Draw Button Shape
+    CanvasDrawshape(ACanvas, LDrawRect, FStyleDrawType,
+      FStyleRadius{$IFDEF D10_3+}*FOwnerControl.ScaleFactor{$ENDIF});
+  end;
 
-  //Draw Button Shape
-  CanvasDrawshape(ACanvas, DrawRect, FStyleDrawType, FStyleRadius);
-
+  //Draw Bar and Triangle
   if FDropDownRect.Width > 0 then
   begin
-    SplitButtonRect.Left := DrawRect.Width - FDropDownRect.Width;
-    //Draw Bar and Triangle
-    CanvasDrawBarAndTriangle(ACanvas, FDropDownRect,{$IFDEF D10_3+}FOwnerControl.ScaleFactor{$ELSE}1{$ENDIF},
-      ACanvas.Pen.Color, AStyleAttribute.FontColor);
+    if FFlat then
+      ACanvas.Pen.Style := psClear;
+    if not (StyleDrawType in [btRounded, btEllipse]) then
+    begin
+      CanvasDrawBar(ACanvas, FDropDownRect,
+        {$IFDEF D10_3+}FOwnerControl.ScaleFactor{$ELSE}1{$ENDIF},
+        ACanvas.Pen.Color);
+      CanvasDrawTriangle(ACanvas, FDropDownRect,
+        {$IFDEF D10_3+}FOwnerControl.ScaleFactor{$ELSE}1{$ENDIF},
+        AStyleAttribute.FontColor);
+    end
+    else
+    begin
+      LButtonOffset := FDropDownRect.Height div 8;
+      FDropDownRect.Left := FDropDownRect.Left - LButtonOffset;
+      FDropDownRect.Right := FDropDownRect.Right - LButtonOffset;
+      CanvasDrawTriangle(ACanvas, FDropDownRect,
+        {$IFDEF D10_3+}FOwnerControl.ScaleFactor{$ELSE}1{$ENDIF},
+        AStyleAttribute.FontColor);
+    end;
   end;
 end;
 
@@ -1871,7 +1940,8 @@ begin
   end;
 end;
 
-procedure TStyledButtonRender.DrawButton(const ACanvas: TCanvas);
+procedure TStyledButtonRender.DrawButton(const ACanvas: TCanvas;
+  const AEraseBackground: Boolean);
 var
   LTextFlags: Cardinal;
   LTextRect: TRect;
@@ -1896,7 +1966,7 @@ begin
     if FWordWrap then
       LTextFlags := LTextFlags or DT_WORDBREAK or DT_CENTER;
 
-    DrawBackgroundAndBorder(ACanvas, LStyleAttribute);
+    DrawBackgroundAndBorder(ACanvas, LStyleAttribute, AEraseBackground);
 
     LTextRect := FOwnerControl.ClientRect;
     Dec(LTextRect.Right, FDropDownRect.Width);
@@ -1944,7 +2014,8 @@ begin
   ACanvas.Pen.Width := Round(Result.BorderWidth{$IFDEF D10_3+}*FOwnerControl.ScaleFactor{$ENDIF});
   ACanvas.Pen.Color := Result.BorderColor;
   ACanvas.Brush.Style := Result.BrushStyle;
-  if ACanvas.Brush.Style <> bsClear then
+  //if  ACanvas.Brush.Style <> bsClear then
+  if Result.ButtonDrawStyle <> btnClear then
     ACanvas.Brush.Color := Result.ButtonColor;
   ACanvas.Font := Font;
   ACanvas.Font.Color := Result.FontColor;
@@ -2279,7 +2350,8 @@ end;
 procedure TStyledButtonRender.SetFocus;
 begin
   if FOwnerControl is TCustomControl and
-    TCustomControl(FOwnerControl).CanFocus then
+    TCustomControl(FOwnerControl).CanFocus and
+    TCustomControl(FOwnerControl).TabStop then
     TCustomControl(FOwnerControl).SetFocus;
 end;
 
@@ -2476,6 +2548,27 @@ begin
   end;
 end;
 
+function TStyledButtonRender.GetHasCustomAttributes: Boolean;
+begin
+  Result := FButtonStyleNormal.HasCustomAttributes or
+    FButtonStylePressed.HasCustomAttributes or
+    FButtonStyleSelected.HasCustomAttributes or
+    FButtonStyleHot.HasCustomAttributes or
+    FButtonStyleDisabled.HasCustomAttributes;
+end;
+
+procedure TStyledButtonRender.SetHasCustomAttributes(const AValue: Boolean);
+begin
+  if not AValue then
+  begin
+    FButtonStyleNormal.ResetCustomAttributes;
+    FButtonStylePressed.ResetCustomAttributes;
+    FButtonStyleSelected.ResetCustomAttributes;
+    FButtonStyleHot.ResetCustomAttributes;
+    FButtonStyleDisabled.ResetCustomAttributes;
+  end;
+end;
+
 procedure TStyledButtonRender.SetSelectedImageIndex(const AValue: TImageIndex);
 begin
   if AValue <> FSelectedImageIndex then
@@ -2587,7 +2680,7 @@ procedure TStyledButtonRender.Loaded;
 begin
   inherited;
   SetImageIndex(ImageIndex);
-  if not FStyleApplied then
+  if not FStyleApplied (*and not HasCustomAttributes*) then
   begin
     StyleFamilyUpdateAttributesByModalResult(FModalResult,
       FStyleFamily, FStyleClass, FStyleAppearance);
@@ -2891,15 +2984,16 @@ begin
   FRender := GetRenderClass.CreateStyled(Self,
     ControlClick, ControlFont, GetCaption, SetCaption,
       GetParentFont, SetParentFont,
-      AFamily, AClass, AAppearance);
+      AFamily, AClass, AAppearance,
+      _DefaultStyleDrawType, _UseCustomDrawType);
 end;
 
 constructor TStyledGraphicButton.Create(AOwner: TComponent);
 begin
   CreateStyled(AOwner,
-    DEFAULT_CLASSIC_FAMILY,
-    DEFAULT_WINDOWS_CLASS,
-    DEFAULT_APPEARANCE);
+    _DefaultFamily,
+    _DefaultClass,
+    _DefaultAppearance);
 end;
 
 procedure TStyledGraphicButton.ActionChange(Sender: TObject; CheckDefaults: Boolean);
@@ -2932,6 +3026,16 @@ end;
 function TStyledGraphicButton.ImageMarginsStored: Boolean;
 begin
   Result := not FRender.IsDefaultImageMargins;
+end;
+
+constructor TStyledGraphicButton.InternalCreateStyled(AOwner: TComponent;
+  const AFamily: TStyledButtonFamily; const AClass: TStyledButtonClass;
+  const AAppearance: TStyledButtonAppearance;
+  const ADrawType: TStyledButtonDrawType; const AUseCustomDrawType: Boolean);
+begin
+  _DefaultStyleDrawType := ADrawType;
+  _UseCustomDrawType := AUseCustomDrawType;
+  CreateStyled(AOwner, AFamily, AClass, AAppearance);
 end;
 
 function TStyledGraphicButton.IsCaptionStored: Boolean;
@@ -3050,7 +3154,20 @@ end;
 
 procedure TStyledGraphicButton.Paint;
 begin
-  FRender.DrawButton(Canvas);
+  FRender.DrawButton(Canvas, True);
+end;
+
+class procedure TStyledGraphicButton.RegisterDefaultRenderingStyle(
+  const ADrawType: TStyledButtonDrawType; const AFamily: TStyledButtonFamily;
+  const AClass: TStyledButtonClass; const AAppearance: TStyledButtonAppearance;
+  const AStyleRadius: Integer);
+begin
+  _DefaultStyleDrawType := ADrawType;
+  _UseCustomDrawType := True;
+  _DefaultFamily := AFamily;
+  _DefaultClass := AClass;
+  _DefaultAppearance := AAppearance;
+  _DefaultStyleRadius := AStyleRadius;
 end;
 
 function TStyledGraphicButton.GetRenderClass: TStyledButtonRenderClass;
@@ -3441,6 +3558,17 @@ begin
   FRender.StyleFamily := AValue;
 end;
 
+{$IFDEF D10_4+}
+procedure TStyledGraphicButton.SetStyleName(const AValue: string);
+begin
+  if (AValue <> '') and (StyleFamily <> DEFAULT_CLASSIC_FAMILY) then
+    StyleFamily := DEFAULT_CLASSIC_FAMILY;
+  inherited;
+  if (AValue <> '') then
+    StyleClass := AValue;  
+end;
+{$ENDIF}
+
 procedure TStyledGraphicButton.SetText(const AValue: TCaption);
 begin
   FRender.Caption := AValue;
@@ -3800,9 +3928,11 @@ begin
   {$IFDEF D10_4+}
   FImageName := '';
   {$ENDIF}
-    FRender := GetRenderClass.CreateStyled(Self,
+  FRender := GetRenderClass.CreateStyled(Self,
     ControlClick, ControlFont, GetCaption, SetCaption,
-      GetParentFont, SetParentFont, AFamily, AClass, AAppearance);
+      GetParentFont, SetParentFont,
+      AFamily, AClass, AAppearance,
+      _DefaultStyleDrawType, _UseCustomDrawType);
   TabStop := True;
 end;
 
@@ -3824,9 +3954,9 @@ end;
 constructor TStyledButton.Create(AOwner: TComponent);
 begin
   CreateStyled(AOwner,
-    DEFAULT_CLASSIC_FAMILY,
-    DEFAULT_WINDOWS_CLASS,
-    DEFAULT_APPEARANCE);
+    _DefaultFamily,
+    _DefaultClass,
+    _DefaultAppearance);
 end;
 
 procedure TStyledButton.ActionChange(Sender: TObject; CheckDefaults: Boolean);
@@ -3870,6 +4000,16 @@ end;
 function TStyledButton.ImageMarginsStored: Boolean;
 begin
   Result := not FRender.IsDefaultImageMargins;
+end;
+
+constructor TStyledButton.InternalCreateStyled(AOwner: TComponent;
+  const AFamily: TStyledButtonFamily; const AClass: TStyledButtonClass;
+  const AAppearance: TStyledButtonAppearance;
+  const ADrawType: TStyledButtonDrawType; const AUseCustomDrawType: Boolean);
+begin
+  _DefaultStyleDrawType := ADrawType;
+  _UseCustomDrawType := AUseCustomDrawType;
+  CreateStyled(AOwner, AFamily, AClass, AAppearance);
 end;
 
 function TStyledButton.IsCaptionStored: Boolean;
@@ -4404,6 +4544,17 @@ begin
   FRender.StyleFamily := AValue;
 end;
 
+{$IFDEF D10_4+}
+procedure TStyledButton.SetStyleName(const AValue: string);
+begin
+  if (AValue <> '') and (StyleFamily <> DEFAULT_CLASSIC_FAMILY) then
+    StyleFamily := DEFAULT_CLASSIC_FAMILY;
+  inherited;
+  if (AValue <> '') then
+    StyleClass := AValue;  
+end;
+{$ENDIF}
+
 procedure TStyledButton.SetText(const AValue: TCaption);
 begin
   FRender.Caption := AValue;
@@ -4523,6 +4674,19 @@ begin
   end;
 end;
 
+class procedure TStyledButton.RegisterDefaultRenderingStyle(
+  const ADrawType: TStyledButtonDrawType; const AFamily: TStyledButtonFamily;
+  const AClass: TStyledButtonClass; const AAppearance: TStyledButtonAppearance;
+  const AStyleRadius: Integer);
+begin
+  _DefaultStyleDrawType := ADrawType;
+  _UseCustomDrawType := True;
+  _DefaultFamily := AFamily;
+  _DefaultClass := AClass;
+  _DefaultAppearance := AAppearance;
+  _DefaultStyleRadius := AStyleRadius;
+end;
+
 function TStyledButton.GetTag: Integer;
 begin
   Result := FRender.Tag;
@@ -4563,45 +4727,17 @@ begin
       inherited;
 end;
 
-(*
-function TStyledButton.StyleServicesEnabled: Boolean;
-var
-  LStyle: TCustomStyleServices;
-begin
-  LStyle := StyleServices;
-  Result := LStyle.Available and not LStyle.IsSystemStyle and
-    (FindControl(Handle) = nil);
-end;
-*)
-
 procedure TStyledButton.WMEraseBkGnd(var Message: TWmEraseBkgnd);
-
-  function IsComponentStyleActive: Boolean;
-  begin
-    {$IFDEF D10_4+}
-    Result := IsCustomStyleActive;
-    {$ELSE}
-    Result := False;
-    {$ENDIF}
-  end;
-
 begin
-  if IsComponentStyleActive and (seClient in StyleElements) then
+  { Erase background if we're not doublebuffering or painting to memory. }
+  if not FDoubleBuffered or
+     (TMessage(Message).wParam = WPARAM(TMessage(Message).lParam)) then
   begin
-    Message.Result := 1
-  end
-  else
-  begin
-    { Erase background if we're not doublebuffering or painting to memory. }
-    if not FDoubleBuffered or
-       (TMessage(Message).wParam = WPARAM(TMessage(Message).lParam)) then
-    begin
-      Brush.Color := FRender.GetBackGroundColor;
-      Brush.Style := bsSolid;
-      FillRect(Message.DC, ClientRect, Brush.Handle);
-    end;
-    Message.Result := 1;
+    Brush.Color := FRender.GetBackGroundColor;
+    Brush.Style := bsSolid;
+    FillRect(Message.DC, ClientRect, Brush.Handle);
   end;
+  Message.Result := 1;
 end;
 
 procedure TStyledButton.CNKeyDown(var Message: TWMKeyDown);
@@ -4676,7 +4812,7 @@ begin
         FPaintBuffer := TBitmap.Create;
         try
           FPaintBuffer.SetSize(LControl.Width, LControl.Height);
-          FRender.DrawButton(FPaintBuffer.Canvas);
+          FRender.DrawButton(FPaintBuffer.Canvas, True);
           LCanvas.Draw(0, 0, FPaintBuffer);
         finally
           FPaintBuffer.Free;
@@ -4684,7 +4820,7 @@ begin
       end
      else
        begin
-         FRender.DrawButton(LCanvas);
+         FRender.DrawButton(LCanvas, True);
        end;
     if DC = 0 then
       EndPaint(LControl.Handle, PS);
@@ -4694,5 +4830,18 @@ begin
   end;
   FHandled := True;
 end;
+
+initialization
+  TStyledGraphicButton._DefaultStyleDrawType := DEFAULT_STYLEDRAWTYPE;
+  TStyledGraphicButton._DefaultFamily := DEFAULT_CLASSIC_FAMILY;
+  TStyledGraphicButton._DefaultClass := DEFAULT_WINDOWS_CLASS;
+  TStyledGraphicButton._DefaultAppearance := DEFAULT_APPEARANCE;
+  TStyledGraphicButton._DefaultStyleRadius := DEFAULT_RADIUS;
+
+  TStyledButton._DefaultStyleDrawType := DEFAULT_STYLEDRAWTYPE;
+  TStyledButton._DefaultFamily := DEFAULT_CLASSIC_FAMILY;
+  TStyledButton._DefaultClass := DEFAULT_WINDOWS_CLASS;
+  TStyledButton._DefaultAppearance := DEFAULT_APPEARANCE;
+  TStyledButton._DefaultStyleRadius := DEFAULT_RADIUS;
 
 end.

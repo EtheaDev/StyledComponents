@@ -185,7 +185,6 @@ object fmMain: TfmMain
     Align = alTop
     Flat = True
     TabOrder = 4
-    StyleDrawType = btRounded
   end
   object PopupMenu: TPopupMenu
     Left = 525

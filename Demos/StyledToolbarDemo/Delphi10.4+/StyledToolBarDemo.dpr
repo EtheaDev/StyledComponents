@@ -3,7 +3,7 @@
 {       TStyledToolbar Test                                                    }
 {       Comparison TStyledToolbar with TToolBar                                }
 {                                                                              }
-{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
+{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -28,10 +28,12 @@ program StyledToolBarDemo;
 
 uses
   Vcl.Forms,
-  MainForm in 'MainForm.pas' {fmMain},
-  DResources in 'DResources.pas' {dmResources: TDataModule},
   Vcl.Themes,
-  Vcl.Styles;
+  Vcl.Styles,
+  Vcl.StyledToolbar,
+  Vcl.ButtonStylesAttributes,
+  MainForm in 'MainForm.pas' {fmMain},
+  DResources in 'DResources.pas' {dmResources: TDataModule};
 
 {$R *.res}
 
@@ -40,6 +42,10 @@ begin
   Application.MainFormOnTaskbar := True;
   TStyleManager.TrySetStyle('Windows10');
   Application.Title := 'Styled Toolbar Demo - (c) Ethea S.r.l.';
+
+  //Example to define a default Rendering Style for Styled Buttons
+  //TStyledToolbar.RegisterDefaultRenderingStyle(btRect);
+
   Application.CreateForm(TfmMain, fmMain);
   Application.CreateForm(TdmResources, dmResources);
   Application.Run;

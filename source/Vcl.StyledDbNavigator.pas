@@ -3,7 +3,7 @@
 {       StyledDbNavigator: a DbNavigator with TStyledNavButtons inside         }
 {       Based on TStyledToolbar                                                }
 {                                                                              }
-{       Copyright (c) 2022-2023 (Ethea S.r.l.)                                 }
+{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -54,6 +54,7 @@ uses
   , Winapi.Windows
   , Vcl.StyledButton
   , Vcl.ButtonStylesAttributes
+  , Vcl.StandardButtonStyles
   , Vcl.DBCtrls
   , Data.db
 {$IFDEF D10_4+}
@@ -147,8 +148,16 @@ type
     FDisabledImages: TCustomImageList;
     FShowCaptions: Boolean;
 
+    class var _DefaultStyleDrawType: TStyledButtonDrawType;
+    class var _UseCustomDrawType: Boolean;
+    class var _DefaultFamily: TStyledButtonFamily;
+    class var _DefaultClass: TStyledButtonClass;
+    class var _DefaultAppearance: TStyledButtonAppearance;
+    class var _DefaultStyleRadius: Integer;
+
     {$IFDEF D10_4+}
     FButtonImages: TVirtualImageList;
+
     //Internal ImageList and Collection for standard images
     class var FButtonsImageCollection: TImageCollection;
     class constructor Create;
@@ -226,6 +235,12 @@ type
     procedure SetButtonGlyph(Index: TNavigateBtn); virtual;
     {$ENDIF}
   public
+    class procedure RegisterDefaultRenderingStyle(
+      const ADrawType: TStyledButtonDrawType;
+      const AFamily: TStyledButtonFamily = DEFAULT_CLASSIC_FAMILY;
+      const AClass: TStyledButtonClass = DEFAULT_WINDOWS_CLASS;
+      const AAppearance: TStyledButtonAppearance = DEFAULT_APPEARANCE;
+      const AStyleRadius: Integer = DEFAULT_RADIUS); virtual;
     //Styled constructor
     constructor CreateStyled(AOwner: TComponent;
       const AFamily: TStyledButtonFamily;
@@ -321,7 +336,6 @@ uses
   , Vcl.Graphics
   , System.Types
   , System.RTLConsts
-  , Vcl.StandardButtonStyles
   , Vcl.StyledCmpMessages
   , Vcl.StyledTaskDialog
   ;
@@ -376,9 +390,9 @@ end;
 constructor TStyledDBNavigator.Create(AOwner: TComponent);
 begin
   CreateStyled(AOwner,
-    DEFAULT_CLASSIC_FAMILY,
-    DEFAULT_WINDOWS_CLASS,
-    DEFAULT_APPEARANCE);
+    _DefaultFamily,
+    _DefaultClass,
+    _DefaultAppearance);
 end;
 
 constructor TStyledDBNavigator.CreateStyled(AOwner: TComponent;
@@ -408,6 +422,12 @@ begin
   FButtonImages.ImageCollection := FButtonsImageCollection;
   {$ENDIF}
 
+  FStyleDrawType := _DefaultStyleDrawType;
+  FStyleRadius := _DefaultStyleRadius;
+  FStyleFamily := AFamily;
+  FStyleClass := AClass;
+  FStyleAppearance := AAppearance;
+
   InitButtons;
   InitHints;
   InitCaptions;
@@ -436,12 +456,6 @@ begin
   ParentColor := True;
   BevelOuter := bvNone;
   Flat := False;
-
-  FStyleDrawType := btRounded;
-  FStyleRadius := DEFAULT_RADIUS;
-  FStyleFamily := AFamily;
-  FStyleClass := AClass;
-  FStyleAppearance := AAppearance;
 end;
 
 {$IFDEF D10_4+}
@@ -570,6 +584,19 @@ var
 begin
   for I := Low(FButtons) to High(FButtons) do
     AButtonProc(FButtons[I]);
+end;
+
+class procedure TStyledDBNavigator.RegisterDefaultRenderingStyle(
+  const ADrawType: TStyledButtonDrawType; const AFamily: TStyledButtonFamily;
+  const AClass: TStyledButtonClass; const AAppearance: TStyledButtonAppearance;
+  const AStyleRadius: Integer);
+begin
+  _DefaultStyleDrawType := ADrawType;
+  _UseCustomDrawType := True;
+  _DefaultFamily := AFamily;
+  _DefaultClass := AClass;
+  _DefaultAppearance := AAppearance;
+  _DefaultStyleRadius := AStyleRadius;
 end;
 
 procedure TStyledDBNavigator.InitButtons;
@@ -1426,10 +1453,19 @@ end;
 
 constructor TStyledNavButton.Create(AOwner: TComponent);
 begin
-  inherited;
-  //ControlStyle := ControlStyle + [csCaptureMouse];
   if AOwner is TStyledDbNavigator then
+  begin
     FDbNavigator := TStyledDbNavigator(AOwner);
+    inherited InternalCreateStyled(AOwner,
+      FDbNavigator._DefaultFamily, FDbNavigator._DefaultClass,
+      FDbNavigator._DefaultAppearance,
+      FDbNavigator._DefaultStyleDrawType,
+      FDbNavigator._UseCustomDrawType);
+    StyleRadius := FDbNavigator.StyleRadius;
+  end
+  else
+    inherited Create(AOwner);
+  //ControlStyle := ControlStyle + [csCaptureMouse];
   ImageAlignment := iaTop;
 end;
 
@@ -1573,5 +1609,12 @@ procedure TStyledNavDataLink.ActiveChanged;
 begin
   if FNavigator <> nil then FNavigator.ActiveChanged;
 end;
+
+initialization
+  TStyledDbNavigator._DefaultStyleDrawType := DEFAULT_STYLEDRAWTYPE;
+  TStyledDbNavigator._DefaultFamily := DEFAULT_CLASSIC_FAMILY;
+  TStyledDbNavigator._DefaultClass := DEFAULT_WINDOWS_CLASS;
+  TStyledDbNavigator._DefaultAppearance := DEFAULT_APPEARANCE;
+  TStyledDbNavigator._DefaultStyleRadius := DEFAULT_RADIUS;
 
 end.

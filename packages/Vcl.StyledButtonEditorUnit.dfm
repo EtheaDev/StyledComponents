@@ -8,17 +8,14 @@ object StyledButtonEditor: TStyledButtonEditor
   Color = clBtnFace
   Constraints.MinHeight = 300
   Constraints.MinWidth = 400
-  DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = True
   ShowHint = True
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object SplitterTop: TSplitter
     Left = 0
@@ -39,48 +36,48 @@ object StyledButtonEditor: TStyledButtonEditor
     DesignSize = (
       935
       38)
-    object OKButton: TButton
+    object OKButton: TStyledButton
       Left = 561
       Top = 6
       Width = 85
       Height = 25
       Anchors = [akTop, akRight]
+      OnClick = OKButtonClick
       Caption = 'OK'
       Default = True
       ModalResult = 1
       TabOrder = 0
-      OnClick = OKButtonClick
     end
-    object ApplyButton: TButton
+    object ApplyButton: TStyledButton
       Left = 744
       Top = 6
       Width = 85
       Height = 25
       Anchors = [akTop, akRight]
+      OnClick = ApplyButtonClick
       Caption = '&Apply'
       TabOrder = 2
-      OnClick = ApplyButtonClick
     end
-    object CancelButton: TButton
+    object CancelButton: TStyledButton
       Left = 653
       Top = 6
       Width = 85
       Height = 25
       Anchors = [akTop, akRight]
-      Cancel = True
       Caption = 'Cancel'
+      Cancel = True
       ModalResult = 2
       TabOrder = 1
     end
-    object HelpButton: TButton
+    object HelpButton: TStyledButton
       Left = 836
       Top = 6
       Width = 85
       Height = 25
       Anchors = [akTop, akRight]
+      OnClick = HelpButtonClick
       Caption = '&Help'
       TabOrder = 3
-      OnClick = HelpButtonClick
     end
   end
   object paTop: TPanel
