@@ -9,9 +9,25 @@
 {       https://github.com/EtheaDev/StyledComponents                           }
 {                                                                              }
 {******************************************************************************}
+{                                                                              }
+{  Licensed under the Apache License, Version 2.0 (the "License");             }
+{  you may not use this file except in compliance with the License.            }
+{  You may obtain a copy of the License at                                     }
+{                                                                              }
+{      http://www.apache.org/licenses/LICENSE-2.0                              }
+{                                                                              }
+{  Unless required by applicable law or agreed to in writing, software         }
+{  distributed under the License is distributed on an "AS IS" BASIS,           }
+{  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.    }
+{  See the License for the specific language governing permissions and         }
+{  limitations under the License.                                              }
+{                                                                              }
+{******************************************************************************}
 unit Vcl.StyledComponentsRegister;
 
 interface
+
+{$INCLUDE ..\Source\StyledComponents.inc}
 
 uses
   Classes
@@ -19,8 +35,11 @@ uses
   , Designer
   , DesignEditors
   , VCLEditors
+  , Vcl.ImgList
+  , Vcl.Graphics
   , Vcl.Controls
   , Vcl.ComCtrls
+  , System.Types
   , Vcl.StyledButton
   , Vcl.StyledToolbar
   , Vcl.StyledDbNavigator
@@ -81,6 +100,36 @@ Type
     procedure RequiresUnits(Proc: TGetStrProc); override;
   end;
 
+  TImageIndexPropertyEditor = class(TIntegerProperty, ICustomPropertyListDrawing)
+  public
+    function GetAttributes: TPropertyAttributes; override;
+    procedure GetValues(Proc: TGetStrProc); override;
+    function GetImageListAt(Index: Integer): TCustomImageList; virtual;
+    // ICustomPropertyListDrawing
+    procedure ListMeasureHeight(const Value: string; ACanvas: TCanvas;
+      var AHeight: Integer);
+    procedure ListMeasureWidth(const Value: string; ACanvas: TCanvas;
+      var AWidth: Integer);
+    procedure ListDrawValue(const Value: string; ACanvas: TCanvas;
+      const ARect: TRect; ASelected: Boolean);
+  end;
+
+  {$IFDEF D10_4}
+  TImageNamePropertyEditor = class(TStringProperty, ICustomPropertyListDrawing)
+  public
+    function GetAttributes: TPropertyAttributes; override;
+    procedure GetValues(Proc: TGetStrProc); override;
+    function GetImageListAt(Index: Integer): TCustomImageList; virtual;
+    // ICustomPropertyListDrawing
+    procedure ListMeasureHeight(const Value: string; ACanvas: TCanvas;
+      var AHeight: Integer);
+    procedure ListMeasureWidth(const Value: string; ACanvas: TCanvas;
+      var AWidth: Integer);
+    procedure ListDrawValue(const Value: string; ACanvas: TCanvas;
+      const ARect: TRect; ASelected: Boolean);
+  end;
+  {$ENDIF}
+
 procedure Register;
 
 implementation
@@ -93,7 +142,9 @@ uses
   , Vcl.StyledButtonEditorUnit
   , Vcl.StyledCmpStrUtils
   , Vcl.DbCtrls
+  , System.SysUtils
   , System.Contnrs
+  , System.UITypes
   , Winapi.ShellAPI
   , Winapi.Windows
   ;
@@ -393,6 +444,157 @@ begin
   Result := 2;
 end;
 
+{ TImageIndexPropertyEditor }
+
+function TImageIndexPropertyEditor.GetImageListAt(Index: Integer): TCustomImageList;
+var
+  LComponent: TPersistent;
+begin
+  Result := nil;
+  LComponent := GetComponent(Index);
+  if LComponent is TStyledButton then
+    Result := TStyledButton(LComponent).Images
+  else if LComponent is TStyledGraphicButton then
+    Result := TStyledGraphicButton(LComponent).Images;
+end;
+
+function TImageIndexPropertyEditor.GetAttributes: TPropertyAttributes;
+begin
+  Result := [paMultiSelect, paValueList, paRevertable];
+end;
+
+procedure TImageIndexPropertyEditor.GetValues(Proc: TGetStrProc);
+var
+  ImgList: TCustomImageList;
+  I: Integer;
+begin
+  ImgList := GetImageListAt(0);
+  if Assigned(ImgList) then
+    for I := 0 to ImgList.Count -1 do
+      Proc(IntToStr(I));
+end;
+
+procedure TImageIndexPropertyEditor.ListDrawValue(const Value: string;
+  ACanvas: TCanvas; const ARect: TRect; ASelected: Boolean);
+var
+  ImgList: TCustomImageList;
+  X: Integer;
+begin
+  ImgList := GetImageListAt(0);
+  ACanvas.FillRect(ARect);
+  X := ARect.Left + 2;
+  if Assigned(ImgList) then
+  begin
+    ImgList.Draw(ACanvas, X, ARect.Top + 2, StrToInt(Value));
+    Inc(X, ImgList.Width);
+  end;
+  ACanvas.TextOut(X + 3, ARect.Top + 1, Value);
+end;
+
+procedure TImageIndexPropertyEditor.ListMeasureHeight(const Value: string;
+  ACanvas: TCanvas; var AHeight: Integer);
+var
+  ImgList: TCustomImageList;
+begin
+  ImgList := GetImageListAt(0);
+  AHeight := ACanvas.TextHeight(Value) + 2;
+  if Assigned(ImgList) and (ImgList.Height + 4 > AHeight) then
+    AHeight := ImgList.Height + 4;
+end;
+
+procedure TImageIndexPropertyEditor.ListMeasureWidth(const Value: string;
+  ACanvas: TCanvas; var AWidth: Integer);
+var
+  ImgList: TCustomImageList;
+begin
+  ImgList := GetImageListAt(0);
+  AWidth := ACanvas.TextWidth(Value) + 4;
+  if Assigned(ImgList) then
+    Inc(AWidth, ImgList.Width);
+end;
+
+{$IFDEF D10_4}
+{ TImageNamePropertyEditor }
+
+function TImageNamePropertyEditor.GetImageListAt(Index: Integer): TCustomImageList;
+var
+  LComponent: TPersistent;
+begin
+  Result := nil;
+  LComponent := GetComponent(Index);
+  if LComponent is TStyledButton then
+    Result := TStyledButton(LComponent).Images
+  else if LComponent is TStyledGraphicButton then
+    Result := TStyledGraphicButton(LComponent).Images;
+end;
+
+function TImageNamePropertyEditor.GetAttributes: TPropertyAttributes;
+begin
+  Result := [paMultiSelect, paValueList, paRevertable];
+end;
+
+procedure TImageNamePropertyEditor.GetValues(Proc: TGetStrProc);
+var
+  ImgList: TCustomImageList;
+  I: Integer;
+  LImageName: TImageName;
+  LImageIndex: TImageIndex;
+begin
+  ImgList := GetImageListAt(0);
+  if Assigned(ImgList) and ImgList.IsImageNameAvailable then
+  begin
+    for I := 0 to ImgList.Count -1 do
+    begin
+      LImageName := '';
+      LImageIndex := I;
+      ImgList.CheckIndexAndName(LImageIndex, LImageName);
+      Proc(LImageName);
+    end;
+  end;
+end;
+
+procedure TImageNamePropertyEditor.ListDrawValue(const Value: string;
+  ACanvas: TCanvas; const ARect: TRect; ASelected: Boolean);
+var
+  ImgList: TCustomImageList;
+  X: Integer;
+  LImageIndex: TImageIndex;
+begin
+  ImgList := GetImageListAt(0);
+  ACanvas.FillRect(ARect);
+  X := ARect.Left + 2;
+  if Assigned(ImgList) then
+  begin
+    LImageIndex := ImgList.GetIndexByName(Value);
+    ImgList.Draw(ACanvas, X, ARect.Top + 2, LImageIndex);
+    Inc(X, ImgList.Width);
+  end;
+  ACanvas.TextOut(X + 3, ARect.Top + 1, Value);
+end;
+
+procedure TImageNamePropertyEditor.ListMeasureHeight(const Value: string;
+  ACanvas: TCanvas; var AHeight: Integer);
+var
+  ImgList: TCustomImageList;
+begin
+  ImgList := GetImageListAt(0);
+  AHeight := ACanvas.TextHeight(Value) + 2;
+  if Assigned(ImgList) and (ImgList.Height + 4 > AHeight) then
+    AHeight := ImgList.Height + 4;
+end;
+
+procedure TImageNamePropertyEditor.ListMeasureWidth(const Value: string;
+  ACanvas: TCanvas; var AWidth: Integer);
+var
+  ImgList: TCustomImageList;
+begin
+  ImgList := GetImageListAt(0);
+  AWidth := ACanvas.TextWidth(Value) + 4;
+  if Assigned(ImgList) then
+    Inc(AWidth, ImgList.Width);
+end;
+{$ENDIF}
+
 procedure Register;
 begin
   Classes.RegisterClass(TStyledToolButton);
@@ -430,6 +632,26 @@ begin
     TStyledToolbar, 'StyleAppearance', TStyledAppearancePropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
     TStyledDbNavigator, 'StyleAppearance', TStyledAppearancePropertyEditor);
+
+  RegisterPropertyEditor(TypeInfo(System.UITypes.TImageIndex),
+    TStyledButton, 'ImageIndex', TImageIndexPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(System.UITypes.TImageIndex),
+    TStyledGraphicButton, 'ImageIndex', TImageIndexPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(System.UITypes.TImageIndex),
+    TStyledButton, 'HotImageIndex', TImageIndexPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(System.UITypes.TImageIndex),
+    TStyledGraphicButton, 'HotImageIndex', TImageIndexPropertyEditor);
+
+{$IFDEF D10_4}
+  RegisterPropertyEditor(TypeInfo(System.UITypes.TImageName),
+    TStyledButton, 'ImageName', TImageNamePropertyEditor);
+  RegisterPropertyEditor(TypeInfo(System.UITypes.TImageName),
+    TStyledGraphicButton, 'ImageName', TImageNamePropertyEditor);
+  RegisterPropertyEditor(TypeInfo(System.UITypes.TImageName),
+    TStyledButton, 'HotImageName', TImageNamePropertyEditor);
+  RegisterPropertyEditor(TypeInfo(System.UITypes.TImageName),
+    TStyledGraphicButton, 'HotImageName', TImageNamePropertyEditor);
+{$ENDIF}
 
   RegisterComponentEditor(TStyledGraphicButton, TStyledButtonComponentEditor);
   RegisterComponentEditor(TStyledButton, TStyledButtonComponentEditor);
