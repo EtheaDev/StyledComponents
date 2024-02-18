@@ -417,9 +417,9 @@ begin
   TStringList(FCaptions).OnChange := CaptionsChanged;
   {$IFDEF D10_4+}
   FButtonImages := TVirtualImageList.Create(Self);
-  FButtonImages.SetSize(DEFAULT_BTN_IMAGE_SIZE, DEFAULT_BTN_IMAGE_SIZE);
   FButtonImages.AutoFill := True;
   FButtonImages.ImageCollection := FButtonsImageCollection;
+  FButtonImages.SetSize(DEFAULT_BTN_IMAGE_SIZE, DEFAULT_BTN_IMAGE_SIZE);
   {$ENDIF}
 
   FStyleDrawType := _DefaultStyleDrawType;
@@ -507,7 +507,15 @@ end;
 procedure TStyledDBNavigator.ChangeScale(M, D: Integer; isDpiChange: Boolean);
 begin
   inherited;
-  FButtonImages.SetSize(MulDiv(FButtonImages.Width, M, D), MulDiv(FButtonImages.Height, M, D));
+  if isDpiChange and (M <> D) then
+  begin
+    ProcessButtons(
+      procedure (ABtn: TStyledNavButton)
+      begin
+        ABtn.ChangeScale(M, D);
+      end
+    );
+  end;
 end;
 
 procedure TStyledDBNavigator.UpdateButtonsImageIndex;

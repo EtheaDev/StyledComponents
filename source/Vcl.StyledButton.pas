@@ -51,7 +51,7 @@ uses
   ;
 
 const
-  StyledButtonsVersion = '3.2.0';
+  StyledButtonsVersion = '3.2.1';
   DEFAULT_BTN_WIDTH = 75;
   DEFAULT_BTN_HEIGHT = 25;
   DEFAULT_IMAGE_HMARGIN = 8;
@@ -1406,7 +1406,7 @@ var
 begin
   Result := StyleFamilyCheckAttributes(FStyleFamily,
     FStyleClass, FStyleAppearance, LButtonFamily);
-  if Result (*or (csDesigning in ComponentState)*) then
+  if Result or (csDesigning in ComponentState) then
   begin
     StyleFamilyUpdateAttributes(
       FStyleFamily,

@@ -48,7 +48,7 @@ uses
   Vcl.BootstrapButtonStyles,
   Vcl.AngularButtonStyles,
   Vcl.ColorButtonStyles,
-  Vcl.ImgList, System.ImageList;
+  Vcl.ImgList;
 
 const
   BUTTON_WIDTH = 100;

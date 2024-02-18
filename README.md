@@ -2,7 +2,7 @@
 
 ## Delphi VCL Buttons, Toolbar and DbNavigator, with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 3.2.0
+### Actual official version: 3.2.1
 
 | Component | Description |
 | - | - |
@@ -74,7 +74,7 @@ _In this picture the new "full-rounded" Style introduced in 3.2 version, in "VCL
 
 ---
 
-***Control the default rendering styles for any Styled Buttons, Toolbars and Dbnavigator***
+***Control the default rendering styles for any Styled Buttons, Toolbars and DbNavigator***
 
 It's possible to redefine at global application level the default Drawing styles for any Components, adding some line in your project file. For Example:
 
@@ -85,7 +85,7 @@ Add those units in uses of dpr:
   Vcl.StyledDbNavigator,
   Vcl.StyledToolbar,
 ```
-Add those lines in After Application.Initialize in dpr code:
+Add those lines after Application.Initialize in dpr code:
 ```Pascal
   TStyledButton.RegisterDefaultRenderingStyle(btRounded);
   TStyledDbNavigator.RegisterDefaultRenderingStyle(btRounded);
@@ -99,19 +99,19 @@ TStyledButton.RegisterDefaultRenderingStyle(btRoundRect, BOOTSTRAP_FAMILY, btn_p
 
 ---
 
-*In this picture the Component Editor selecting "Boostrap" styles and StyleRadius 18: Style Appearance are Normal and Outline*
+*In this picture the Component Editor selecting "Boostrap" styles and StyleRadius 18: Style Appearance can be Normal or Outline*
 
 ![StyledButtonComponentEditorBootstrap.jpg](./Images/StyledButtonComponentEditorBootstrap.jpg)
 
 ---
 
-*In this picture, the Component Editor selecting "AngularUI" styles: Style Appearance are Flat, Raised, Basic, Stroked*
+*In this picture, the Component Editor selecting "AngularUI" styles: Style Appearance can be Flat, Raised, Basic, Stroked*
 
 ![StyledButtonComponentEditorAngular.jpg](./Images/StyledButtonComponentEditorAngular.jpg)
 
 ---
 
-*In this picture, the Component Editor selecting "Classic" styles: Style Appearance are Normal and Outline*
+*In this picture, the Component Editor selecting "Classic" styles: Style Appearance can be Normal or Outline*
 
 ![StyledButtonComponentEditor.jpg](./Images/StyledButtonComponentEditor.jpg)
 
@@ -122,7 +122,7 @@ TStyledButton.RegisterDefaultRenderingStyle(btRoundRect, BOOTSTRAP_FAMILY, btn_p
 ![StyledButtonComponentEditorRounded.jpg](./Images/StyledButtonComponentEditorRounded.jpg)
 
 ---
-*In this picture, the Component Editor selecting "SVG-Color" styles: Style Appearance are Normal and Outline*
+*In this picture, the Component Editor selecting "SVG-Color" styles: Style Appearance can be Normal or Outline*
 
 ![StyledButtonComponentEditorSVG.jpg](./Images/StyledButtonComponentEditorSVG.jpg)
 
@@ -256,6 +256,11 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+18 Feb 2024: version 3.2.1
+- Fixed rendering icons on StyledDbNavigator
+- Fixed rendering Glyph for ImageIndex <> -1
+- Fixed rendering button when placed into Form designer
+
 03 Feb 2024: version 3.2.0
 - Added "full-rounded button" DrawStyle
 - Changed default for StyleDrawType from btRounded to btRoundRect

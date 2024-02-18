@@ -48,15 +48,16 @@ uses
   Vcl.BootstrapButtonStyles,
   Vcl.AngularButtonStyles,
   Vcl.ColorButtonStyles,
-  Vcl.ImgList, System.ImageList;
+  Vcl.ImgList,
+  Vcl.StyledAttributesFrameUnit;
 
 type
   TStyledButtonCustomEditor = class(TForm)
     BottomPanel: TPanel;
-    OKButton: TButton;
-    ApplyButton: TButton;
-    CancelButton: TButton;
-    HelpButton: TButton;
+    OKButton: TStyledButton;
+    ApplyButton: TStyledButton;
+    CancelButton: TStyledButton;
+    HelpButton: TStyledButton;
     paTop: TPanel;
     ActualGroupBox: TGroupBox;
     NewGroupBox: TGroupBox;
@@ -69,8 +70,9 @@ type
     EnabledCheckBox: TCheckBox;
     StyleDrawTypeComboBox: TComboBox;
     RadiusTrackBar: TTrackBar;
-    ImageList: TImageList;
     FlatButtonCheckBox: TCheckBox;
+    TabControl: TTabControl;
+    ScrollBox: TScrollBox;
     procedure FormCreate(Sender: TObject);
     procedure OKButtonClick(Sender: TObject);
     procedure ApplyButtonClick(Sender: TObject);
