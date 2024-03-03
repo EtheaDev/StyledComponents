@@ -11,7 +11,7 @@ object MainForm: TMainForm
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
-  Font.Name = 'Tahoma'
+  Font.Name = 'Segoe UI'
   Font.Style = []
   Position = poScreenCenter
   ShowHint = True
@@ -38,25 +38,25 @@ object MainForm: TMainForm
       Caption = 'Expanded Text:'
     end
     object FooterTextLabel: TLabel
-      Left = 49
+      Left = 50
       Top = 105
-      Width = 61
+      Width = 60
       Height = 13
       Alignment = taRightJustify
       Caption = 'Footer Text:'
     end
     object Label1: TLabel
-      Left = 28
+      Left = 26
       Top = 167
-      Width = 82
+      Width = 84
       Height = 13
       Alignment = taRightJustify
       Caption = 'Verification Text:'
     end
     object CaptionLabel: TLabel
-      Left = 37
+      Left = 29
       Top = 21
-      Width = 73
+      Width = 81
       Height = 13
       Alignment = taRightJustify
       Caption = 'Dialog Caption:'
@@ -64,7 +64,7 @@ object MainForm: TMainForm
     object StyleLabel: TLabel
       Left = 531
       Top = 186
-      Width = 121
+      Width = 130
       Height = 13
       Anchors = [akRight, akBottom]
       Caption = 'Change application style:'
@@ -181,30 +181,30 @@ object MainForm: TMainForm
       object TitleLabel: TLabel
         Left = 7
         Top = 5
-        Width = 24
+        Width = 25
         Height = 13
         Caption = 'Title:'
       end
       object TextMessageLabel: TLabel
         Left = 7
         Top = 52
-        Width = 46
+        Width = 48
         Height = 13
         Caption = 'Message:'
       end
       object FontLabel: TLabel
-        Left = 260
+        Left = 256
         Top = 239
-        Width = 71
+        Width = 75
         Height = 13
         Alignment = taRightJustify
         Anchors = [akLeft, akBottom]
         Caption = 'Message Font:'
       end
       object Label2: TLabel
-        Left = 21
+        Left = 16
         Top = 241
-        Width = 84
+        Width = 89
         Height = 13
         Alignment = taRightJustify
         Anchors = [akLeft, akBottom]
@@ -349,9 +349,9 @@ object MainForm: TMainForm
         214
         342)
       object DefaultButtonLabel: TLabel
-        Left = 10
+        Left = 5
         Top = 317
-        Width = 74
+        Width = 79
         Height = 13
         Alignment = taRightJustify
         Anchors = [akLeft, akBottom]
@@ -371,7 +371,7 @@ object MainForm: TMainForm
         Width = 196
         Height = 196
         Anchors = [akLeft, akTop, akBottom]
-        ItemHeight = 13
+        ItemHeight = 17
         TabOrder = 1
       end
       object DefaultButtonComboBox: TComboBox

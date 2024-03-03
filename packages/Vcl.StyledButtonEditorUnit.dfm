@@ -44,11 +44,11 @@ object StyledButtonEditor: TStyledButtonEditor
       Width = 85
       Height = 25
       Anchors = [akTop, akRight]
-      OnClick = OKButtonClick
       Caption = 'OK'
       Default = True
       ModalResult = 1
       TabOrder = 0
+      OnClick = OKButtonClick
     end
     object ApplyButton: TStyledButton
       Left = 744
@@ -56,9 +56,9 @@ object StyledButtonEditor: TStyledButtonEditor
       Width = 85
       Height = 25
       Anchors = [akTop, akRight]
-      OnClick = ApplyButtonClick
       Caption = '&Apply'
       TabOrder = 2
+      OnClick = ApplyButtonClick
     end
     object CancelButton: TStyledButton
       Left = 653
@@ -66,8 +66,8 @@ object StyledButtonEditor: TStyledButtonEditor
       Width = 85
       Height = 25
       Anchors = [akTop, akRight]
-      Caption = 'Cancel'
       Cancel = True
+      Caption = 'Cancel'
       ModalResult = 2
       TabOrder = 1
     end
@@ -77,9 +77,9 @@ object StyledButtonEditor: TStyledButtonEditor
       Width = 85
       Height = 25
       Anchors = [akTop, akRight]
-      OnClick = HelpButtonClick
       Caption = '&Help'
       TabOrder = 3
+      OnClick = HelpButtonClick
     end
   end
   object paTop: TPanel

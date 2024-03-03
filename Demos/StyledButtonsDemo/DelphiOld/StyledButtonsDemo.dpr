@@ -46,7 +46,7 @@ begin
   Application.Title := 'Styled Buttons Demo - (c) Copyright Ethea S.r.l.';
 
   //Example to define a default Rendering Style for Styled Buttons
-  TStyledButton.RegisterDefaultRenderingStyle(btRounded);
+  //TStyledButton.RegisterDefaultRenderingStyle(btRounded);
 
   //Example to define a default Rendering Style for Styled Buttons
   //TStyledButton.RegisterDefaultRenderingStyle(btRoundRect,

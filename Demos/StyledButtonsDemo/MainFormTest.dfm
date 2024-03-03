@@ -19,16 +19,13 @@ object TestMainForm: TTestMainForm
   object TopPanel: TPanel
     Left = 0
     Top = 0
-    Width = 988
-    Height = 57
+    Width = 984
+    Height = 65
     Align = alTop
     Color = clGray
     DoubleBuffered = True
     ParentDoubleBuffered = False
     TabOrder = 0
-    DesignSize = (
-      988
-      57)
     object StyleLabel: TLabel
       Left = 11
       Top = 3
@@ -49,7 +46,7 @@ object TestMainForm: TTestMainForm
     end
     object cbChangeStyle: TComboBox
       Left = 11
-      Top = 18
+      Top = 19
       Width = 174
       Height = 21
       Style = csDropDownList
@@ -66,13 +63,12 @@ object TestMainForm: TTestMainForm
       OnClick = AboutButtonClick
     end
     object RenderRadioGroup: TRadioGroup
-      Left = 584
-      Top = 9
-      Width = 393
-      Height = 42
-      Anchors = [akLeft, akTop, akRight]
+      Left = 687
+      Top = 4
+      Width = 286
+      Height = 56
       Caption = 'Styled Button Rendering Options'
-      Columns = 5
+      Columns = 3
       ItemIndex = 0
       Items.Strings = (
         'As VCL'
@@ -80,51 +76,57 @@ object TestMainForm: TTestMainForm
         'RoundRect'
         'Rectangle'
         'FAB')
-      TabOrder = 4
-      OnClick = RenderRadioGroupClick
-    end
-    object SplitButtonsCheckBox: TCheckBox
-      Left = 408
-      Top = 4
-      Width = 97
-      Height = 17
-      Caption = 'Split Buttons'
       TabOrder = 3
-      OnClick = SplitButtonsCheckBoxClick
+      OnClick = RadioGroupClick
     end
     object EnabledCheckBox: TCheckBox
-      Left = 408
-      Top = 27
+      Left = 381
+      Top = 10
       Width = 65
       Height = 17
       Caption = 'Enabled'
       Checked = True
       State = cbChecked
-      TabOrder = 5
+      TabOrder = 4
       OnClick = EnabledCheckBoxClick
     end
     object OutlineCheckBox: TCheckBox
-      Left = 489
-      Top = 27
+      Left = 381
+      Top = 33
       Width = 72
       Height = 17
       Caption = 'Outline'
-      TabOrder = 6
+      TabOrder = 5
       OnClick = EnabledCheckBoxClick
+    end
+    object StyleRadioGroup: TRadioGroup
+      Left = 452
+      Top = 4
+      Width = 225
+      Height = 56
+      Caption = 'Styled Button Style'
+      Columns = 2
+      ItemIndex = 0
+      Items.Strings = (
+        'Push Button'
+        'Split Button'
+        'Command Link')
+      TabOrder = 6
+      OnClick = RadioGroupClick
     end
   end
   object LeftPanel: TPanel
     Left = 0
-    Top = 57
+    Top = 65
     Width = 489
-    Height = 584
+    Height = 575
     Align = alLeft
     TabOrder = 1
     object LeftScrollBox: TScrollBox
       Left = 1
       Top = 25
       Width = 487
-      Height = 558
+      Height = 549
       Align = alClient
       TabOrder = 0
       OnMouseWheel = ScrollBoxMouseWheel
@@ -141,16 +143,16 @@ object TestMainForm: TTestMainForm
   end
   object RightPanel: TPanel
     Left = 489
-    Top = 57
-    Width = 499
-    Height = 584
+    Top = 65
+    Width = 495
+    Height = 575
     Align = alClient
     TabOrder = 2
     object RightScrollBox: TScrollBox
       Left = 1
       Top = 25
-      Width = 497
-      Height = 558
+      Width = 493
+      Height = 549
       Align = alClient
       TabOrder = 0
       OnMouseWheel = ScrollBoxMouseWheel
@@ -158,7 +160,7 @@ object TestMainForm: TTestMainForm
     object TopRightPanel: TPanel
       Left = 1
       Top = 1
-      Width = 497
+      Width = 493
       Height = 24
       Align = alTop
       Caption = 

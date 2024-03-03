@@ -64,12 +64,17 @@ const
   {$ELSE}
   BUTTON_COL_COUNT = 17;
   {$ENDIF}
+  COMMANDLINK_HINT = 'CommandLink Hint very long.';
 
   RENDER_SAME_AS_VCL = 0;
   RENDER_ROUNDED = 1;
   RENDER_ROUNDRECT = 2;
   RENDER_RECTANGLE = 3;
   RENDER_FAB = 4;
+
+  STYLE_PUSHBUTTON = 0;
+  STYLE_SPLITBUTTON = 1;
+  STYLE_COMMANDLINK = 2;
 
 type
   TTestMainForm = class(TForm)
@@ -94,9 +99,9 @@ type
     TopRightPanel: TPanel;
     RenderRadioGroup: TRadioGroup;
     VirtualImageList32: TVirtualImageList;
-    SplitButtonsCheckBox: TCheckBox;
     EnabledCheckBox: TCheckBox;
     OutlineCheckBox: TCheckBox;
+    StyleRadioGroup: TRadioGroup;
     procedure TestActionExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure cbChangeStyleSelect(Sender: TObject);
@@ -104,7 +109,7 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure ScrollBoxMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
-    procedure RenderRadioGroupClick(Sender: TObject);
+    procedure RadioGroupClick(Sender: TObject);
     procedure PopUpMenuClick(Sender: TObject);
     procedure SplitButtonsCheckBoxClick(Sender: TObject);
     procedure AboutButtonClick(Sender: TObject);
@@ -164,46 +169,52 @@ var
 
   procedure CreateStyledButton(AColumn, ATop: Integer;
     AStyleName: string);
+  var
+    LButton: TStyledButton;
   begin
-    With TStyledButton.CreateStyled(Self,
+    LButton := TStyledButton.CreateStyled(Self,
       DEFAULT_CLASSIC_FAMILY,
       AStyleName,
-      DEFAULT_APPEARANCE) do
+      DEFAULT_APPEARANCE);
+
+    LButton.Enabled := EnabledCheckBox.Checked;
+    LButton.SetBounds((AColumn * LWidth) + (BUTTON_MARGIN*AColumn),
+      ATop, LWidth, LHeight);
+    if RenderRadioGroup.ItemIndex <> RENDER_FAB then
     begin
-      Enabled := EnabledCheckBox.Checked;
-      if RenderRadioGroup.ItemIndex <> RENDER_FAB then
-      begin
-        case RenderRadioGroup.ItemIndex of
-          RENDER_ROUNDED: StyleDrawType := btRounded; //All buttons Rounded
-          RENDER_ROUNDRECT: StyleDrawType := btRoundRect; //All buttons RoundRect
-          RENDER_RECTANGLE: StyleDrawType := btRect; //All buttons Rect
-        end;
-        Caption := AStyleName;
-        if SplitButtonsCheckBox.Checked then
-        begin
-          Style := bsSplitButton;
-          DropDownMenu := Self.PopupMenu;
-        end;
-        if OutlineCheckBox.Checked then
-          StyleAppearance := 'Outline'
-        else
-          StyleAppearance := 'Normal';
-      end
-      else
-      begin
-        //Render FAB button
-        StyleDrawType := btEllipse;
-        Images := VirtualImageList32;
-        ImageAlignment := iaCenter;
-        ImageIndex := I mod VirtualImageList32.Count;
+      case RenderRadioGroup.ItemIndex of
+        RENDER_ROUNDED: LButton.StyleDrawType := btRounded; //All buttons Rounded
+        RENDER_ROUNDRECT: LButton.StyleDrawType := btRoundRect; //All buttons RoundRect
+        RENDER_RECTANGLE: LButton.StyleDrawType := btRect; //All buttons Rect
       end;
-      Hint := AStyleName;
-      SetBounds((AColumn * LWidth) + (BUTTON_MARGIN*AColumn),
-        ATop, LWidth, LHeight);
-      Parent := RightScrollBox;
-      PopupMenu := Self.PopupMenu;
-      OnClick := ButtonClick;
+      LButton.CommandLinkHint := COMMANDLINK_HINT;
+      LButton.Caption := AStyleName;
+      case StyleRadioGroup.ItemIndex of
+        STYLE_PUSHBUTTON: LButton.Style := bsPushButton;
+        STYLE_SPLITBUTTON: LButton.Style := bsSplitButton;
+        STYLE_COMMANDLINK: LButton.Style := bsCommandLink;
+      end;
+      if LButton.Style = bsSplitButton then
+        LButton.DropDownMenu := Self.PopupMenu
+      else
+        LButton.DropDownMenu := nil;
+      if OutlineCheckBox.Checked then
+        LButton.StyleAppearance := 'Outline'
+      else
+        LButton.StyleAppearance := 'Normal';
+    end
+    else
+    begin
+      //Render FAB button
+      LButton.StyleDrawType := btEllipse;
+      LButton.Images := VirtualImageList32;
+      LButton.ImageAlignment := iaCenter;
+      LButton.ImageIndex := I mod VirtualImageList32.Count;
     end;
+    LButton.Hint := AStyleName;
+    LButton.Parent := RightScrollBox;
+    LButton.PopupMenu := Self.PopupMenu;
+    LButton.OnClick := ButtonClick;
   end;
 
 begin
@@ -237,27 +248,29 @@ var
   LStyleName: string;
   LColumn: Integer;
   LWidth, LHeight: Integer;
+  LButton: TButton;
 
   procedure CreateVCLButton(AColumn, ATop: Integer;
     AStyleName: string);
   begin
-    With TButton.Create(Self) do
-    begin
-      Enabled := EnabledCheckBox.Checked;
-      SetBounds((AColumn * LWidth) + (BUTTON_MARGIN*AColumn),
-        ATop, LWidth, LHeight);
-      StyleName := AStyleName;
-      Caption := AStyleName;
-      Hint := AStyleName;
-      Parent := LeftScrollBox;
-      PopupMenu := Self.PopupMenu;
-      OnClick := ButtonClick;
-      if SplitButtonsCheckBox.Checked then
-      begin
-        Style := TButtonStyle.bsSplitButton;
-        DropDownMenu := Self.PopupMenu;
-      end;
+    LButton := TButton.Create(Self);
+    LButton.Enabled := EnabledCheckBox.Checked;
+    LButton.SetBounds((AColumn * LWidth) + (BUTTON_MARGIN*AColumn),
+      ATop, LWidth, LHeight);
+    case StyleRadioGroup.ItemIndex of
+      STYLE_PUSHBUTTON: LButton.Style := bsPushButton;
+      STYLE_SPLITBUTTON: LButton.Style := bsSplitButton;
+      STYLE_COMMANDLINK: LButton.Style := bsCommandLink;
     end;
+    if LButton.Style = bsSplitButton then
+      LButton.DropDownMenu := Self.PopupMenu;
+    LButton.StyleName := AStyleName;
+    LButton.CommandLinkHint := COMMANDLINK_HINT;
+    LButton.Caption := AStyleName;
+    LButton.Hint := AStyleName;
+    LButton.Parent := LeftScrollBox;
+    LButton.PopupMenu := Self.PopupMenu;
+    LButton.OnClick := ButtonClick;
   end;
 
 begin
@@ -292,8 +305,6 @@ begin
 end;
 
 procedure TTestMainForm.FormCreate(Sender: TObject);
-var
-  I: Integer;
 begin
   Caption := Application.Title + ' - ' + Caption;
   BuildStyleList;
@@ -323,6 +334,11 @@ begin
     AWidth := BUTTON_HEIGHT * 2;
     AHeight := BUTTON_HEIGHT * 2;
   end;
+  if StyleRadioGroup.ItemIndex = STYLE_COMMANDLINK then
+  begin
+    Inc(AHeight, 40);
+    Inc(AWidth, 40);
+  end;
 end;
 
 procedure TTestMainForm.PopUpMenuClick(Sender: TObject);
@@ -330,7 +346,7 @@ begin
   ShowMessage((Sender as TMenuItem).Caption);
 end;
 
-procedure TTestMainForm.RenderRadioGroupClick(Sender: TObject);
+procedure TTestMainForm.RadioGroupClick(Sender: TObject);
 begin
   CreateVCLButtons;
   CreateStyledButtons;

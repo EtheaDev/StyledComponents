@@ -20,7 +20,7 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   TStyleManager.TrySetStyle('Windows10');
-  Application.Title := 'VCL Styled Buttons compared to StyleButtons';
+  Application.Title := 'VCL Styled Buttons compared to StyleButtons - (c) Ethea S.r.l.';
   Application.CreateForm(TdmResources, dmResources);
   Application.CreateForm(TTestMainForm, TestMainForm);
   Application.Run;

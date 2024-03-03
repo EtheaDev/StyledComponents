@@ -1464,7 +1464,7 @@ begin
   if AOwner is TStyledDbNavigator then
   begin
     FDbNavigator := TStyledDbNavigator(AOwner);
-    inherited InternalCreateStyled(AOwner,
+    inherited CreateStyled(AOwner,
       FDbNavigator._DefaultFamily, FDbNavigator._DefaultClass,
       FDbNavigator._DefaultAppearance,
       FDbNavigator._DefaultStyleDrawType,

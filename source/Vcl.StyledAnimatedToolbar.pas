@@ -266,7 +266,7 @@ end;
 
 procedure TStyledAnimatedToolButton.WMSetFocus(var Message: TMessage);
 begin
-  if AnimateOnFocused in FAutoAnimationTypes then
+  if AnimateOnFocus in FAutoAnimationTypes then
       AnimatedImage.StartAnimation;
   inherited;
 end;
@@ -316,11 +316,13 @@ begin
 end;
 
 procedure TStyledAnimatedToolButton.Paint;
+(*
 var
   LImageRect: TRect;
   LImageList: TCustomImageList;
   LImageIndex: Integer;
   LImageWidth, LImageHeight: Integer;
+*)
 begin
 (*
   if Assigned(FSkAnimatedImage) then

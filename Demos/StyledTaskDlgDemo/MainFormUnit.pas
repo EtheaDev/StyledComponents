@@ -278,8 +278,8 @@ end;
 
 procedure TMainForm.Loaded;
 begin
-  Font.Assign(Screen.IconFont);
-  Screen.MessageFont.Assign(Font);
+  //Font.Assign(Screen.IconFont);
+  //Screen.MessageFont.Assign(Font);
   inherited;
 end;
 

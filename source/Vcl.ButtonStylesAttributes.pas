@@ -29,21 +29,29 @@ unit Vcl.ButtonStylesAttributes;
 interface
 
 {$INCLUDE StyledComponents.inc}
+{$IFDEF D10_4+}
+  {$R CommandLinkPNG.RES}
+{$ELSE}
+  {$R CommandLinkBMP.RES}
+{$ENDIF}
 
 uses
   Winapi.Windows
-  , Vcl.Graphics
   , System.Classes
   , System.Contnrs
   , System.UITypes
   , System.Types
+  , Vcl.Graphics
   , Vcl.Controls
   , Vcl.Buttons
+  , Vcl.StdCtrls
+  , Vcl.ImgList
   , Winapi.CommCtrl
   ;
 
 const
   DEFAULT_RADIUS = 6;
+  RESOURCE_SHIELD_ICON = 'BUTTON_SHIELD_ADMIN';
 
 resourcestring
   ERROR_FAMILY_NOT_FOUND = 'Styled Button Family "%s" not found';
@@ -192,10 +200,41 @@ procedure CloneButtonStyle(const ASource: TStyledButtonAttributes;
   var ADest: TStyledButtonAttributes);
 function GetWindowsVersion: TWindowsVersion;
 
-//drawing "old-style" with masked bitmap
-procedure DrawBitBtnGlyph(ACanvas: TCanvas; ARect: TRect; Kind: Vcl.Buttons.TBitBtnKind;
+//Calculate Image and Text Rect for Drawing using ImageAlignment and ImageMargins
+//for StyledButton and StyledGraphicButton
+procedure CalcImageAndTextRect(const ASurfaceRect: TRect;
+  const ACaption: string;
+  out ATextRect: TRect; out AImageRect: TRect;
+  const AImageWidth, AImageHeight: Integer;
+  const AImageAlignment: TImageAlignment;
+  const AImageMargins: TImageMargins;
+  const AScale: Single); overload;
+
+//Calculate Image and Text Rect for Drawing using ButtonLayout, Margin and Spacing
+//For StyledSpeedButton and StyledBitBtn
+procedure CalcImageAndTextRect(const ACanvas: TCanvas;
+  const ACaption: string; const AClient: TRect;
+  const AOffset: TPoint;
+  var AGlyphPos: TPoint; var ATextBounds: TRect;
+  const AImageWidth, AImageHeight: Integer;
+  const ALayout: TButtonLayout;
+  const AMargin, ASpacing: Integer;
+  const ABiDiFlags: Cardinal); overload;
+
+//draw of Glyph
+procedure DrawBitBtnGlyph(ACanvas: TCanvas; ARect: TRect;
+  Kind: Vcl.Buttons.TBitBtnKind;
   AState: TButtonState; AEnabled: Boolean;
   AOriginal: TBitmap; ANumGlyphs: Integer; const ATransparentColor: TColor);
+
+//drawing "old-style" with masked bitmap
+procedure DrawBitmapTransparent(ACanvas: TCanvas; ARect: TRect;
+  const AWidth, AHeight: Integer; AOriginal: TBitmap;
+  AState: TButtonState; ANumGlyphs: Integer; const ATransparentColor: TColor);
+
+//drawing Command-Link Arrow (white or Black)
+procedure DrawIconFromCommandLinkRes(ACanvas: TCanvas; ARect: TRect;
+  AVCLStyleName: string; AState: TButtonState; AEnabled: Boolean);
 
 //Draw rectangle and border into Canvas
 procedure DrawRect(ACanvas: TCanvas; var ARect: TRect);
@@ -255,6 +294,7 @@ uses
 {$endif}
   , System.SysUtils
   , System.Math
+  , Vcl.StandardButtonStyles
   ;
 
 var
@@ -552,6 +592,8 @@ begin
   LFamily := TButtonFamily.Create;
   LFamily.FStyleFamily := AStyledButtonAttributes.ButtonFamilyName;
   LFamily.FCustomAttributes := AStyledButtonAttributes;
+  if not Assigned(FFamilies) then
+    FFamilies := TObjectList.Create(True);
   FFamilies.Add(LFamily);
 end;
 
@@ -1070,30 +1112,420 @@ const //Same as Vcl.Buttons
     nil, 'BBOK', 'BBCANCEL', 'BBHELP', 'BBYES', 'BBNO', 'BBCLOSE',
     'BBABORT', 'BBRETRY', 'BBIGNORE', 'BBALL');
 
-procedure DrawBitBtnGlyph(ACanvas: TCanvas; ARect: TRect; Kind: Vcl.Buttons.TBitBtnKind;
-  AState: TButtonState; AEnabled: Boolean;
-  AOriginal: TBitmap; ANumGlyphs: Integer; const ATransparentColor: TColor);
+procedure CalcImageAndTextRect(const ASurfaceRect: TRect;
+  const ACaption: string;
+  out ATextRect: TRect; out AImageRect: TRect;
+  const AImageWidth, AImageHeight: Integer;
+  const AImageAlignment: TImageAlignment;
+  const AImageMargins: TImageMargins;
+  const AScale: Single);
+var
+  IW, IH, IX, IY: Integer;
+  LImageAlignment: TImageAlignment;
+begin
+  if ACaption = '' then
+    LImageAlignment := iaCenter
+  else
+    LImageAlignment := AImageAlignment;
+  //Text Rect as whole surface Rect (if there is no Image)
+  ATextRect := ASurfaceRect;
+
+  //Calc Image Rect and Change ATextRect
+  IH := AImageHeight;
+  IW := AImageWidth;
+  if (IH > 0) and (IW > 0) then
+  begin
+    IX := Round(ATextRect.Left + (2*AScale));
+    IY := ATextRect.Top + (ATextRect.Height - IH) div 2;
+    case LImageAlignment of
+      iaCenter:
+        begin
+          IX := ATextRect.CenterPoint.X - IW div 2;
+        end;
+      iaLeft:
+        begin
+          IX := Round(ATextRect.Left + (2*AScale));
+          Inc(IX, AImageMargins.Left);
+          Inc(IY, AImageMargins.Top);
+          Dec(IY, AImageMargins.Bottom);
+          Inc(ATextRect.Left, IX + IW + AImageMargins.Right);
+        end;
+      iaRight:
+        begin
+          IX := Round(ATextRect.Right - IW - (2*AScale));
+          Dec(IX, AImageMargins.Right);
+          Dec(IX, AImageMargins.Left);
+          Inc(IY, AImageMargins.Top);
+          Dec(IY, AImageMargins.Bottom);
+          ATextRect.Right := IX;
+        end;
+      iaTop:
+        begin
+          IX := ATextRect.Left + (ATextRect.Width - IW) div 2;
+          Inc(IX, AImageMargins.Left);
+          Dec(IX, AImageMargins.Right);
+          IY := Round(ATextRect.Top + (2*AScale));
+          Inc(IY, AImageMargins.Top);
+          Inc(ATextRect.Top, IY + IH + AImageMargins.Bottom);
+        end;
+      iaBottom:
+        begin
+          IX := ATextRect.Left + (ATextRect.Width - IW) div 2;
+          Inc(IX, AImageMargins.Left);
+          Dec(IX, AImageMargins.Right);
+          IY := Round(ATextRect.Bottom - IH - (2*AScale));
+          Dec(IY, AImageMargins.Bottom);
+          Dec(IY, AImageMargins.Top);
+          ATextRect.Bottom := IY;
+        end;
+    end;
+  end
+  else
+  begin
+    IX := 0;
+    IY := 0;
+  end;
+  AImageRect.Left := IX;
+  AImageRect.Top := IY;
+  AImageRect.Width := IW;
+  AImageRect.Height := IH;
+
+  if ATextRect.IsEmpty then
+    ATextRect := ASurfaceRect;
+end;
+
+procedure CalcImageAndTextRect(const ACanvas: TCanvas;
+  const ACaption: string; const AClient: TRect;
+  const AOffset: TPoint;
+  var AGlyphPos: TPoint; var ATextBounds: TRect;
+  const AImageWidth, AImageHeight: Integer;
+  const ALayout: TButtonLayout;
+  const AMargin, ASpacing: Integer;
+  const ABiDiFlags: Cardinal);
+var
+  LTextPos: TPoint;
+  LClientSize, LGlyphSize, LTextSize: TPoint;
+  LTotalSize: TPoint;
+  LLayout: TButtonLayout;
+  LMargin, LSpacing: Integer;
+begin
+  LLayout := ALayout;
+  if (ABiDiFlags and DT_RIGHT) = DT_RIGHT then
+  begin
+    if LLayout = blGlyphLeft then LLayout := blGlyphRight
+    else if LLayout = blGlyphRight then LLayout := blGlyphLeft;
+  end;
+
+  { calculate the item sizes }
+  LClientSize := Point(
+    AClient.Right - AClient.Left,
+    AClient.Bottom - AClient.Top);
+
+  LGlyphSize := Point(AImageWidth, AImageHeight);
+
+  if Length(ACaption) > 0 then
+  begin
+    ATextBounds := Rect(0, 0, AClient.Right - AClient.Left, 0);
+    DrawText(ACanvas.Handle, ACaption, Length(ACaption), ATextBounds,
+      DT_CALCRECT or ABiDiFlags);
+    LTextSize := Point(
+      ATextBounds.Right - ATextBounds.Left,
+      ATextBounds.Bottom - ATextBounds.Top);
+  end
+  else
+  begin
+    ATextBounds := Rect(0, 0, 0, 0);
+    LTextSize := Point(0,0);
+  end;
+
+  { If the layout has the glyph on the right or the left, then both the
+    text and the glyph are centered vertically.  If the glyph is on the top
+    or the bottom, then both the text and the glyph are centered horizontally.}
+  if LLayout in [blGlyphLeft, blGlyphRight] then
+  begin
+    AGlyphPos.Y := (LClientSize.Y - LGlyphSize.Y + 1) div 2;
+    LTextPos.Y := (LClientSize.Y - LTextSize.Y + 1) div 2;
+  end
+  else
+  begin
+    AGlyphPos.X := (LClientSize.X - LGlyphSize.X + 1) div 2;
+    LTextPos.X := (LClientSize.X - LTextSize.X + 1) div 2;
+  end;
+
+  { if there is no text or no bitmap, then Spacing is irrelevant }
+  if (LTextSize.X = 0) or (LGlyphSize.X = 0) then
+    LSpacing := 0
+  else
+    LSpacing := ASpacing;
+
+  { adjust Margin and Spacing }
+  LMargin := AMargin;
+  if LMargin = -1 then
+  begin
+    if LSpacing < 0 then
+    begin
+      LTotalSize := Point(LGlyphSize.X + LTextSize.X, LGlyphSize.Y + LTextSize.Y);
+      if ALayout in [blGlyphLeft, blGlyphRight] then
+        LMargin := (LClientSize.X - LTotalSize.X) div 3
+      else
+        LMargin := (LClientSize.Y - LTotalSize.Y) div 3;
+      LSpacing := LMargin;
+    end
+    else
+    begin
+      LTotalSize := Point(LGlyphSize.X + LSpacing + LTextSize.X, LGlyphSize.Y +
+        LSpacing + LTextSize.Y);
+      if LLayout in [blGlyphLeft, blGlyphRight] then
+        LMargin := (LClientSize.X - LTotalSize.X + 1) div 2
+      else
+        LMargin := (LClientSize.Y - LTotalSize.Y + 1) div 2;
+    end;
+  end
+  else
+  begin
+    if LSpacing < 0 then
+    begin
+      LTotalSize := Point(
+        LClientSize.X - (LMargin + LGlyphSize.X),
+        LClientSize.Y - (LMargin + LGlyphSize.Y));
+      if LLayout in [blGlyphLeft, blGlyphRight] then
+        LSpacing := (LTotalSize.X - LTextSize.X) div 2
+      else
+        LSpacing := (LTotalSize.Y - LTextSize.Y) div 2;
+    end;
+  end;
+
+  case LLayout of
+    blGlyphLeft:
+      begin
+        AGlyphPos.X := LMargin;
+        LTextPos.X := AGlyphPos.X + LGlyphSize.X + LSpacing;
+      end;
+    blGlyphRight:
+      begin
+        AGlyphPos.X := LClientSize.X - LMargin - LGlyphSize.X;
+        LTextPos.X := AGlyphPos.X - LSpacing - LTextSize.X;
+      end;
+    blGlyphTop:
+      begin
+        AGlyphPos.Y := LMargin;
+        LTextPos.Y := AGlyphPos.Y + LGlyphSize.Y + LSpacing;
+      end;
+    blGlyphBottom:
+      begin
+        AGlyphPos.Y := LClientSize.Y - LMargin - LGlyphSize.Y;
+        LTextPos.Y := AGlyphPos.Y - LSpacing - LTextSize.Y;
+      end;
+  end;
+
+  { fixup the result variables }
+  Inc(AGlyphPos.X, AClient.Left + AOffset.X);
+  Inc(AGlyphPos.Y, AClient.Top + AOffset.Y);
+
+  OffsetRect(ATextBounds, LTextPos.X + AClient.Left + AOffset.X, LTextPos.Y + AClient.Top + AOffset.Y);
+end;
+
+procedure DrawIconFromCommandLinkRes(ACanvas: TCanvas; ARect: TRect;
+  AVCLStyleName: string; AState: TButtonState; AEnabled: Boolean);
+var
+  LResName: String;
+  LThemeAttribute: TThemeAttribute;
+  {$IFDEF D10_4+}
+  LImage: TWicImage;
+  {$ELSE}
+  LBitmap: TBitmap;
+  {$ENDIF}
+begin
+  if AVCLStyleName = RESOURCE_SHIELD_ICON then
+  begin
+    LResName := RESOURCE_SHIELD_ICON;
+  end
+  else if (AVCLStyleName = 'Windows') then
+  begin
+    //Load image from resources by Kind
+    LResName := 'CMD_LINK_ARROW_BLUE';
+  end
+  else
+  begin
+    GetStyleAttributes(AVCLStyleName, LThemeAttribute);
+    if LThemeAttribute.ThemeType = ttLight then
+      LResName := 'CMD_LINK_ARROW_BLACK'
+    else
+      LResName := 'CMD_LINK_ARROW_WHITE';
+  end;
+  {$IFDEF D10_4+}
+  LImage := TWicImage.Create;
+  try
+    LImage.InterpolationMode := wipmHighQualityCubic;
+    LImage.LoadFromResourceName(HInstance, LResName);
+    ACanvas.StretchDraw(ARect, LImage);
+    Exit;
+  finally
+    LImage.Free;
+  end;
+  {$ELSE}
+  LBitmap := TBitmap.Create;
+  try
+    LBitmap.PixelFormat := pf32bit;
+    //LBitmap.TransparentMode := tmFixed;
+    LBitmap.LoadFromResourceName(HInstance, LResName);
+    //ACanvas.StretchDraw(ARect, LBitmap);
+    //LBitmapRect := TRect.Create(ARect.Top, ARect.Left, LBitmap.Width, LBitmap.Height);
+    DrawBitmapTransparent(ACanvas, ARect, ARect.Width, ARect.Height, LBitmap, bsUp, 1, clBlack);
+    Exit;
+  finally
+    LBitmap.Free;
+  end;
+  {$ENDIF}
+end;
+
+procedure DrawBitmapTransparent(ACanvas: TCanvas; ARect: TRect;
+  const AWidth, AHeight: Integer; AOriginal: TBitmap;
+  AState: TButtonState; ANumGlyphs: Integer; const ATransparentColor: TColor);
 const
   ROP_DSPDxax = $00E20746;
 var
   IL: TImageList;
-  LResName: String;
-  LOriginal, TmpImage, MonoBmp, DDB: TBitmap;
-  LNumGlyphs: Integer;
-  IWidth, IHeight: Integer;
+  TmpImage, MonoBmp, DDB: TBitmap;
   IRect, ORect: TRect;
   I: TButtonState;
   DestDC: HDC;
   LIndex: Integer;
+begin
+  LIndex := -1;
+  TmpImage := nil;
+  IL := nil;
+  try
+    TmpImage := TBitmap.Create;
+    TmpImage.Width := AWidth;
+    TmpImage.Height := AHeight;
+    IL := TImageList.CreateSize(TmpImage.Width, TmpImage.Height);
+    IRect := Rect(0, 0, AWidth, AHeight);
+    TmpImage.Canvas.Brush.Color := clBtnFace;
+    TmpImage.Palette := CopyPalette(AOriginal.Palette);
+    I := AState;
+    if Ord(I) >= ANumGlyphs then I := bsUp;
+    ORect := Rect(Ord(I) * AWidth, 0, (Ord(I) + 1) * AWidth, AHeight);
+    case AState of
+      bsUp, bsDown,
+      bsExclusive:
+        begin
+          TmpImage.Canvas.CopyRect(IRect, AOriginal.Canvas, ORect);
+          if AOriginal.TransparentMode = tmFixed then
+            LIndex := IL.AddMasked(TmpImage, ATransparentColor)
+          else
+            LIndex := IL.AddMasked(TmpImage, clDefault);
+          IL.Masked := True;
+        end;
+      bsDisabled:
+        begin
+          MonoBmp := nil;
+          DDB := nil;
+          try
+            MonoBmp := TBitmap.Create;
+            DDB := TBitmap.Create;
+            DDB.Assign(AOriginal);
+            DDB.HandleType := bmDDB;
+            if ANumGlyphs > 1 then
+            with TmpImage.Canvas do
+            begin    { Change white & gray to clBtnHighlight and clBtnShadow }
+              CopyRect(IRect, DDB.Canvas, ORect);
+              MonoBmp.Monochrome := True;
+              MonoBmp.Width := AWidth;
+              MonoBmp.Height := AHeight;
+
+              { Convert white to clBtnHighlight }
+              DDB.Canvas.Brush.Color := clWhite;
+              MonoBmp.Canvas.CopyRect(IRect, DDB.Canvas, ORect);
+              Brush.Color := clBtnHighlight;
+              DestDC := Handle;
+              SetTextColor(DestDC, clBlack);
+              SetBkColor(DestDC, clWhite);
+              BitBlt(DestDC, 0, 0, AWidth, AHeight,
+                     MonoBmp.Canvas.Handle, 0, 0, ROP_DSPDxax);
+
+              { Convert gray to clBtnShadow }
+              DDB.Canvas.Brush.Color := clGray;
+              MonoBmp.Canvas.CopyRect(IRect, DDB.Canvas, ORect);
+              Brush.Color := clBtnShadow;
+              DestDC := Handle;
+              SetTextColor(DestDC, clBlack);
+              SetBkColor(DestDC, clWhite);
+              BitBlt(DestDC, 0, 0, AWidth, AHeight,
+                     MonoBmp.Canvas.Handle, 0, 0, ROP_DSPDxax);
+
+              { Convert transparent color to clBtnFace }
+              DDB.Canvas.Brush.Color := ColorToRGB(ATransparentColor);
+              MonoBmp.Canvas.CopyRect(IRect, DDB.Canvas, ORect);
+              Brush.Color := clBtnFace;
+              DestDC := Handle;
+              SetTextColor(DestDC, clBlack);
+              SetBkColor(DestDC, clWhite);
+              BitBlt(DestDC, 0, 0, AWidth, AHeight,
+                     MonoBmp.Canvas.Handle, 0, 0, ROP_DSPDxax);
+            end
+            else
+            begin
+              { Create a disabled version }
+              with MonoBmp do
+              begin
+                Assign(AOriginal);
+                HandleType := bmDDB;
+                Canvas.Brush.Color := clBlack;
+                Width := AWidth;
+                if Monochrome then
+                begin
+                  Canvas.Font.Color := clWhite;
+                  Monochrome := False;
+                  Canvas.Brush.Color := clWhite;
+                end;
+                Monochrome := True;
+              end;
+              with TmpImage.Canvas do
+              begin
+                Brush.Color := clBtnFace;
+                FillRect(IRect);
+                Brush.Color := clBtnHighlight;
+                SetTextColor(Handle, clBlack);
+                SetBkColor(Handle, clWhite);
+                BitBlt(Handle, 1, 1, AWidth, AHeight,
+                  MonoBmp.Canvas.Handle, 0, 0, ROP_DSPDxax);
+                Brush.Color := clBtnShadow;
+                SetTextColor(Handle, clBlack);
+                SetBkColor(Handle, clWhite);
+                BitBlt(Handle, 0, 0, AWidth, AHeight,
+                  MonoBmp.Canvas.Handle, 0, 0, ROP_DSPDxax);
+              end;
+            end;
+          finally
+            DDB.Free;
+            MonoBmp.Free;
+          end;
+          LIndex := IL.AddMasked(TmpImage, clDefault);
+        end;
+    end;
+    ImageList_DrawEx(IL.Handle, LIndex, ACanvas.Handle, ARect.Left, ARect.Top, AWidth, AHeight,
+      clNone, clNone, ILD_Transparent);
+  finally
+    IL.Free;
+    TmpImage.Free;
+  end;
+end;
+
+procedure DrawBitBtnGlyph(ACanvas: TCanvas; ARect: TRect;
+  Kind: Vcl.Buttons.TBitBtnKind;
+  AState: TButtonState; AEnabled: Boolean;
+  AOriginal: TBitmap; ANumGlyphs: Integer; const ATransparentColor: TColor);
+var
+  LResName: String;
+  LOriginal: TBitmap;
+  LNumGlyphs: Integer;
   {$IFDEF D10_4+}
   LImage: TWicImage;
   {$ENDIF}
 begin
   if not AEnabled then
     AState := bsDisabled;
-  LIndex := -1;
-  IL := nil;
-  TmpImage := nil;
   LOriginal := nil;
   try
     if Kind = bkCustom then
@@ -1124,125 +1556,13 @@ begin
         LOriginal.LoadFromResourceName(HInstance, LResName);
       {$ENDIF}
     end;
-    if (LOriginal.Width = 0) or (LOriginal.Height = 0) then
+    if not Assigned(LOriginal) or ((LOriginal.Width = 0) or (LOriginal.Height = 0)) then
       Exit;
-    IWidth := LOriginal.Width div LNumGlyphs;
-    IHeight := LOriginal.Height;
-    TmpImage := TBitmap.Create;
-    TmpImage.Width := IWidth;
-    TmpImage.Height := IHeight;
-    IL := TImageList.CreateSize(TmpImage.Width, TmpImage.Height);
-    IRect := Rect(0, 0, IWidth, IHeight);
-    TmpImage.Canvas.Brush.Color := clBtnFace;
-    TmpImage.Palette := CopyPalette(LOriginal.Palette);
-    I := AState;
-    if Ord(I) >= LNumGlyphs then I := bsUp;
-    ORect := Rect(Ord(I) * IWidth, 0, (Ord(I) + 1) * IWidth, IHeight);
-    case AState of
-      bsUp, bsDown,
-      bsExclusive:
-        begin
-          TmpImage.Canvas.CopyRect(IRect, LOriginal.Canvas, ORect);
-          if LOriginal.TransparentMode = tmFixed then
-            LIndex := IL.AddMasked(TmpImage, ATransparentColor)
-          else
-            LIndex := IL.AddMasked(TmpImage, clDefault);
-          IL.Masked := True;
-        end;
-      bsDisabled:
-        begin
-          MonoBmp := nil;
-          DDB := nil;
-          try
-            MonoBmp := TBitmap.Create;
-            DDB := TBitmap.Create;
-            DDB.Assign(LOriginal);
-            DDB.HandleType := bmDDB;
-            if ANumGlyphs > 1 then
-            with TmpImage.Canvas do
-            begin    { Change white & gray to clBtnHighlight and clBtnShadow }
-              CopyRect(IRect, DDB.Canvas, ORect);
-              MonoBmp.Monochrome := True;
-              MonoBmp.Width := IWidth;
-              MonoBmp.Height := IHeight;
-
-              { Convert white to clBtnHighlight }
-              DDB.Canvas.Brush.Color := clWhite;
-              MonoBmp.Canvas.CopyRect(IRect, DDB.Canvas, ORect);
-              Brush.Color := clBtnHighlight;
-              DestDC := Handle;
-              SetTextColor(DestDC, clBlack);
-              SetBkColor(DestDC, clWhite);
-              BitBlt(DestDC, 0, 0, IWidth, IHeight,
-                     MonoBmp.Canvas.Handle, 0, 0, ROP_DSPDxax);
-
-              { Convert gray to clBtnShadow }
-              DDB.Canvas.Brush.Color := clGray;
-              MonoBmp.Canvas.CopyRect(IRect, DDB.Canvas, ORect);
-              Brush.Color := clBtnShadow;
-              DestDC := Handle;
-              SetTextColor(DestDC, clBlack);
-              SetBkColor(DestDC, clWhite);
-              BitBlt(DestDC, 0, 0, IWidth, IHeight,
-                     MonoBmp.Canvas.Handle, 0, 0, ROP_DSPDxax);
-
-              { Convert transparent color to clBtnFace }
-              DDB.Canvas.Brush.Color := ColorToRGB(ATransparentColor);
-              MonoBmp.Canvas.CopyRect(IRect, DDB.Canvas, ORect);
-              Brush.Color := clBtnFace;
-              DestDC := Handle;
-              SetTextColor(DestDC, clBlack);
-              SetBkColor(DestDC, clWhite);
-              BitBlt(DestDC, 0, 0, IWidth, IHeight,
-                     MonoBmp.Canvas.Handle, 0, 0, ROP_DSPDxax);
-            end
-            else
-            begin
-              { Create a disabled version }
-              with MonoBmp do
-              begin
-                Assign(LOriginal);
-                HandleType := bmDDB;
-                Canvas.Brush.Color := clBlack;
-                Width := IWidth;
-                if Monochrome then
-                begin
-                  Canvas.Font.Color := clWhite;
-                  Monochrome := False;
-                  Canvas.Brush.Color := clWhite;
-                end;
-                Monochrome := True;
-              end;
-              with TmpImage.Canvas do
-              begin
-                Brush.Color := clBtnFace;
-                FillRect(IRect);
-                Brush.Color := clBtnHighlight;
-                SetTextColor(Handle, clBlack);
-                SetBkColor(Handle, clWhite);
-                BitBlt(Handle, 1, 1, IWidth, IHeight,
-                  MonoBmp.Canvas.Handle, 0, 0, ROP_DSPDxax);
-                Brush.Color := clBtnShadow;
-                SetTextColor(Handle, clBlack);
-                SetBkColor(Handle, clWhite);
-                BitBlt(Handle, 0, 0, IWidth, IHeight,
-                  MonoBmp.Canvas.Handle, 0, 0, ROP_DSPDxax);
-              end;
-            end;
-          finally
-            DDB.Free;
-            MonoBmp.Free;
-          end;
-          LIndex := IL.AddMasked(TmpImage, clDefault);
-        end;
-    end;
-    ImageList_DrawEx(IL.Handle, LIndex, ACanvas.Handle, ARect.Left, ARect.Top, 0, 0,
-      clNone, clNone, ILD_Transparent);
+    DrawBitmapTransparent(ACanvas, ARect, LOriginal.Width div LNumGlyphs, LOriginal.Height, LOriginal,
+      AState, LNumGlyphs, ATransparentColor);
   finally
-    TmpImage.Free;
     if Kind <> bkCustom then
       LOriginal.Free;
-    IL.Free;
   end;
 end;
 
@@ -1530,7 +1850,6 @@ end;
 
 initialization
   _WindowsVersion := wvUndefined;
-  FFamilies := TObjectList.Create(True);
 
 finalization
   FFamilies.Free;

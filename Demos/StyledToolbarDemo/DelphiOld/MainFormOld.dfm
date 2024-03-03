@@ -248,11 +248,11 @@ object fmMain: TfmMain
         Width = 108
         Height = 41
         Hint = 'Create Toolbar "runtime"'
-        OnClick = CreateButtonClick
-        StyleElements = [seFont, seBorder]
         Caption = 'Create Toolbars'
-        StyleClass = 'Windows10'
         TabOrder = 0
+        StyleElements = [seFont, seBorder]
+        OnClick = CreateButtonClick
+        StyleClass = 'Windows10'
       end
     end
     object BottomClientPanel: TPanel
@@ -335,7 +335,7 @@ object fmMain: TfmMain
   end
   object ClientPanel: TPanel
     Left = 0
-    Top = 136
+    Top = 137
     Width = 741
     Height = 287
     Align = alClient

@@ -109,16 +109,28 @@ begin
 end;
 
 procedure TStyledAnimatedButtonComponentEditor.ExecuteVerb(Index: Integer);
+var
+  LButton: TStyledAnimatedButton;
+  LSource: TBytes;
 begin
   inherited;
+  LButton := GetButton as TStyledAnimatedButton;
   if Index = 0 then
   begin
-    if EditStyledButton(GetButton) then
+    if EditStyledButton(LButton) then
       Designer.Modified;
   end
   else if Index = 1 then
-  ShellExecute(0, 'open',
-    PChar(GetProjectURL), nil, nil, SW_SHOWNORMAL);
+  begin
+    LSource := LButton.AnimationSource.Data;
+    if TAnimatedImageSourcePropertyEditor.TryEdit(LSource) then
+      LButton.AnimationSource.Data := LSource;
+  end
+  else if Index = 2 then
+  begin
+    ShellExecute(0, 'open',
+      PChar(GetProjectURL), nil, nil, SW_SHOWNORMAL);
+  end;
 end;
 
 function TStyledAnimatedButtonComponentEditor.GetVerb(Index: Integer): string;
@@ -126,12 +138,14 @@ begin
   if Index = 0 then
     Result := 'Styled Button Editor...'
   else if Index = 1 then
+    Result := 'Animation Editor...'
+  else if Index = 2 then
     Result := 'Project page on GitHub...';
 end;
 
 function TStyledAnimatedButtonComponentEditor.GetVerbCount: Integer;
 begin
-  Result := 2;
+  Result := 3;
 end;
 
 { TStyledAnimatedToolbarComponentEditor }
@@ -347,7 +361,7 @@ begin
 
   RegisterComponents('Styled Animated Components',
     [TStyledAnimatedButton
-    ,TStyledAnimatedToolbar
+    //,TStyledAnimatedToolbar
     ,TStyledAnimatedTaskDialog
     //,TStyledAnimatedDbNavigator
     ]);

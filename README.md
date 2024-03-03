@@ -1,34 +1,62 @@
-﻿# Delphi StyledComponents [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
+﻿# Delphi VCL StyledComponents [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 
-## Delphi VCL Buttons, Toolbar and DbNavigator, with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
+## Components similar to Delphi VCL Buttons, Toolbar and DbNavigator, with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 3.2.1
+### Actual official version: 3.3.0
 
+## List of available Components:
 | Component | Description |
 | - | - |
 | ![OK_BUTTON_GRAPH_128.png](./Images/OK_GRAPH_BUTTON_128.png) | **TStyledGraphicButton** is a "pure" Graphic Button with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) with support of ImageList, Action and full configuration of five states: Normal, Pressed, Selected, Hot and Disabled. You can use it also into a TVirtualList component.|
-| ![OK_BUTTON_128.png](./Images/OK_BUTTON_128.png) | **TStyledButton** is classic "button control" with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) with support of ImageList, Action and full configuration of five states: Normal, Pressed, Selected, Hot and Disabled, plus Focus and TabStop support. You can easily replace all of your TButton and TBitBtn components.|
+| ![OK_BUTTON_128.png](./Images/OK_BUTTON_128.png) | **TStyledButton** is classic "button control" with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) with support of ImageList, Action and full configuration of five states: Normal, Pressed, Selected, Hot and Disabled, plus Focus and TabStop support. You can easily replace all of your TButton components.|
 | ![TOOL_BAR_128.png](./Images/TOOL_BAR_128.png) | **TStyledToolbar** is a Toolbar that uses StyledToolButton, with full customizable of every button style and full control over the size of the buttons, also when Captions are visible. The width and height of the StyledToolButtons inside, do not depends on Caption size, as in classic TToolBar.|
 | ![StyledDbNavigator_128.png](./Images/StyledDbNavigator_128.png) | **TStyledDbNavigator** is a special "DbNavigator" component, with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color), plus Button captions and better "move" icons in vertical mode. |
 | ![StyledTaskDialog_128.png](./Images/StyledTaskDialog_128.png) | **TStyledTaskDialog** is a special "TaskDialog" component (to replace MessageDlg and TaskDlg) with custom Button Captions and Icons. Using a special Form you can show a full customizable Dialog. Using Skia4Delpghi you can show animated dialogs!|
-
 ---
+For "backward compatibily", you can also use those components.
 
-## Installation of Packages for Delphi (from XE6 to Delphi 12) ##
+| Component | Description |
+| - | - |
+| ![OK_SPEEDBUTTON_128.png](./Images/OK_SPEEDBUTTON_128.png) | **TStyledSpeedButton** derives from TStyledGraphicButton, and introduce _Layout_, _Margin_ and _Spacing_ properties, to control Drawing (Icon and Caption) as a standard TSpeedButton. You can also use Glyph and NumGlyphs.|
+| ![OK_BITBTN_128.png](./Images/OK_BITBTN_128.png) | **TStyledBitBtn** derives from TStyledButton, and introduce _Layout_, _Margin_ and _Spacing_ properties, to control Drawing (Icon and Caption) as a standard TBitBtn. You can also use Glyph and NumGlyphs.|
+
+Those components uses some properties to Draw Icon and Caption in a different way:
+- A _Glyph_ and _NumGlyphs_ for the Icon of the button (not reccomended, because doesn't scale)
+- The position of the caption, using _ButtonLayout_ instead and _Margin_ (instead of _ImageAlignment_ and _ImageMargins_)
+- The space between the Icon and the Caption, defined by _spacing_.
+---
+## New _TStyledAnimatedButton_ Component (beta):
+| Component | Description |
+| - | - |
+| ![OK_ANIMATED_BUTTON_128.png](./Images/OK_ANIMATED_BUTTON_128.png) | **TStyledAnimatedButton** is Styled Button with with "animated icon" using a Skia TSkAnimatedImage component inside. You can select the events that starts the animation, like: _AnimateOnMouseOver_, _AnimateOnClick_, _AnimateAlways_, _AnimateOnFocus_. |
+---
+## Installation ##
+
+### Installation of Packages for Delphi/VCL (from XE6 to Delphi 12) ###
 
 Open the package group **Vcl.StyledComponents.groupproj** from the correct folder of your Delphi version (eg. \StyledComponents\Packages\D12).
 
-Then build the run-time package: **StyledComponentsDXX** and install the design-time package: **dclStyledComponentsDXX**.
+Then build the run-time package: **StyledComponentsXXX** and install the design-time package: **dclStyledComponentsXXX**.
 
 Remember to add the **"{Folder}\StyledComponents\source"** path to use the components in your application or the library path **"{Folder}\StyledComponents\Lib\DXX\WinXX\Release"**
+
+### Installation of Animated Components for Delphi/VCL (from XE7 to Delphi 12) ###
+
+If you want to use also the Animated Components, you need Skia4Delphi previously installed in your IDE (In Delphi 12 it's already installed).
+
+Open the package group **Vcl.StyledAnimatedComponents.groupproj** from the correct folder of your Delphi version (eg. \StyledComponents\Packages\D12).
+
+Then build the run-time package: **StyledAnimatedComponentsXXX** and install the design-time package: **dclStyledAnimatedComponentsXXX**.
 
 *if you need package for other Delphi version not included (newer than XE6) please add a new [Issue](https://github.com/EtheaDev/StyledComponents/issues)*
 
 ## Description of Styled Buttons ##
 
-**TStyledGraphicButton**, **TStyledButton** are designed to expand Button UI styles to break the limits of classic TButton and TBitBtn provided in Delphi.
+**TStyledGraphicButton**, **TStyledButton**, **TStyledBitBtn** and **TStyledSpeedButton** are designed to expand Button UI styles to break the limits of classic VCL Button components.
 
-The Button Styles defined are not affected by VCLStyles and are also visibile on a "non styled" Windows application, so you can have more than a single Button styled also using VCLStyles. You can build Rectangular, Rounded or RoundRect or Ellipsis/Circle button as you prefer.
+The Button Styles defined are not affected by VCLStyles and are also visibile on a "non styled" Windows application, so you can have more than a single Button styled also using VCLStyles.
+
+You can build Rectangular, Rounded or RoundRect or Ellipsis/Circle button as you prefer.
 
 using only three elements you can setup your Button in a very simple way:
 
@@ -71,9 +99,7 @@ _Be careful with your existing dfm and code files: if you have stored StyleDrawT
 _In this picture the new "full-rounded" Style introduced in 3.2 version, in "VCL-Styled" Style Demo_
 
 ![RoundedButtons.jpg](./Images/RoundedButtons.jpg)
-
 ---
-
 ***Control the default rendering styles for any Styled Buttons, Toolbars and DbNavigator***
 
 It's possible to redefine at global application level the default Drawing styles for any Components, adding some line in your project file. For Example:
@@ -96,41 +122,30 @@ You can also use a Family/Class/Appearance of any type, for example:
 ```Pascal
 TStyledButton.RegisterDefaultRenderingStyle(btRoundRect, BOOTSTRAP_FAMILY, btn_primary, BOOTSTRAP_NORMAL);
 ```
-
 ---
-
 *In this picture the Component Editor selecting "Boostrap" styles and StyleRadius 18: Style Appearance can be Normal or Outline*
 
 ![StyledButtonComponentEditorBootstrap.jpg](./Images/StyledButtonComponentEditorBootstrap.jpg)
-
 ---
-
 *In this picture, the Component Editor selecting "AngularUI" styles: Style Appearance can be Flat, Raised, Basic, Stroked*
 
 ![StyledButtonComponentEditorAngular.jpg](./Images/StyledButtonComponentEditorAngular.jpg)
-
 ---
-
 *In this picture, the Component Editor selecting "Classic" styles: Style Appearance can be Normal or Outline*
 
 ![StyledButtonComponentEditor.jpg](./Images/StyledButtonComponentEditor.jpg)
-
 ---
-
 *In this picture, the Component Editor selecting "Basic-Colors" styles and Rounded StyleDrawType: Style Appearance are Normal and Outline*
 
 ![StyledButtonComponentEditorRounded.jpg](./Images/StyledButtonComponentEditorRounded.jpg)
-
 ---
 *In this picture, the Component Editor selecting "SVG-Color" styles: Style Appearance can be Normal or Outline*
 
 ![StyledButtonComponentEditorSVG.jpg](./Images/StyledButtonComponentEditorSVG.jpg)
-
 ---
-
 **Look at the Demo Folder:**
 
-**Demos\Delphi10_3+\StyledButtonsDemo**
+**Demos\StyledButtonsDemo\DelphiNNN\StyledButtonsDemo.dpr**
 
 A simple demo to show the use of Buttons in many different ways...
 
@@ -140,11 +155,23 @@ In the demo you can test many different ways to obtain Styled Button, Icon, FAB.
 
 ![StyledButtonDemoAngular.jpg](./Images/StyledButtonDemoAngular.jpg)
 
-**Demos\Delphi10_4+\StyledButtonInControlList**
+**Demos\StyledButtonsDemo\Delphi11+\StyledButtonInControlList**
 
-A simple demo to show how to use StyledGraphicButton into a ControlList (only for D10.4+)
+A simple demo to show how to use StyledGraphicButton into a ControlList (only for D11+)
 
 ![StyledButtonInControlListDemo.jpg](./Images/StyledButtonInControlListDemo.jpg)
+
+**Demos\StyledButtonsDemo\Delphi10_4+\StyledButtonsVCLStyled.dpr**
+
+A simple demo to show how StyledButton with "Classic" Family is compatible with VCL Styles (only for D10.4+)
+
+![StyledButtonsVCLStyled.jpg](./Images/StyledButtonsVCLStyled.jpg)
+
+**Demos\StyledAnimatedButtonsDemo\DelphiXE7+\AnimatedButtonsTest.dpr**
+
+A simple demo to show StyledAnimatedButton and StyledAnimatedTaskDialog (available from Delphi XE7+ using Skia4Delphi)
+
+![StyledAnimatedButtonsDemo.jpg](./Images/StyledAnimatedButtonsDemo.jpg)
 
 ---
 
@@ -256,6 +283,25 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+3 Mar 2024: version 3.3.0
+- New version with three new components and many improvements:
+- Added a more stable version of the Animated Styled Button Component (Using Skia4Delphi)
+- Added a Demo for Animated Styled Button Component
+- Added Packages for Animated Styled Button Component
+- Added new TStyledSpeedButton and TStyledBitBtn, with Drawing using Spacing, Margin and Layout
+- More properties for TStyledButton, for 100% backward compatibili with TButton:
+- 1) Added CommandLinkHint and "bsCommandLink" mode for Style property
+- 2) Added ElevationRequired Flag to automatically show "administrator-shield" icon
+- 3) Added StylusHotImageIndex and StylusHotImageName properties
+- 4) Added Down and GroupIndex and AllowAllUp to TStyledSpeedButton
+- Added "Transparent" mode for TStyledGraphicButton and TStyledSpeedButton
+- Added CaptionAlignment (LeftJustify, RightJustify and Center) to control Caption position
+- Added Interposer Unit (Vcl.StyledComponentsHooks.pas) to easily replace standard VCL Buttons
+- Added a section in the Wiki to explain how to replace standard VCL Buttons
+- Fixed and optimized DoubleBuffered mode to avoid flickering
+- Fixed Parent-Background painting
+- Fixed minor bugs
+
 18 Feb 2024: version 3.2.1
 - Fixed rendering icons on StyledDbNavigator
 - Fixed rendering Glyph for ImageIndex <> -1

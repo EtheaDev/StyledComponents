@@ -104,7 +104,7 @@ type
     procedure InitGUI;
     procedure UpdateDestFromGUI;
     procedure ButtonClick(Sender: TObject);
-    procedure ButtonEnter(Sender: TObject);
+    //procedure ButtonEnter(Sender: TObject);
     procedure UpdateSizeGUI;
     procedure FlowPanelResize(Sender: TObject);
   protected
@@ -114,9 +114,9 @@ type
   end;
 
 function EditStyledButton(const AButton: TControl): Boolean; overload;
-function EditStyledButton(const AButton: TStyledGraphicButton): Boolean; overload;
-function EditStyledButton(const AButton: TStyledButton): Boolean; overload;
-function EditStyledButton(const AButtonRender: TStyledButtonRender): Boolean; overload;
+function EditStyledGraphicButton(const AButton: TCustomStyledGraphicButton): Boolean; overload;
+function EditStyledButton(const AButton: TCustomStyledButton): Boolean; overload;
+function EditStyledButtonRender(const AButtonRender: TStyledButtonRender): Boolean; overload;
 
 implementation
 
@@ -142,25 +142,25 @@ var
 
 function EditStyledButton(const AButton: TControl): Boolean;
 begin
-  if AButton is TStyledGraphicButton then
-    Result := EditStyledButton(TStyledGraphicButton(AButton))
-  else if AButton is TStyledButton then
-    Result := EditStyledButton(TStyledButton(AButton))
+  if AButton is TCustomStyledGraphicButton then
+    Result := EditStyledGraphicButton(TCustomStyledGraphicButton(AButton))
+  else if AButton is TCustomStyledButton then
+    Result := EditStyledButton(TCustomStyledButton(AButton))
   else
     raise Exception.CreateFmt('Cannot Edit Control "%s"', [AButton.Name]);
 end;
 
-function EditStyledButton(const AButton: TStyledGraphicButton): Boolean;
+function EditStyledGraphicButton(const AButton: TCustomStyledGraphicButton): Boolean;
 begin
-  Result := EditStyledButton(AButton.Render);
+  Result := EditStyledButtonRender(AButton.Render);
 end;
 
-function EditStyledButton(const AButton: TStyledButton): Boolean;
+function EditStyledButton(const AButton: TCustomStyledButton): Boolean;
 begin
-  Result := EditStyledButton(AButton.Render);
+  Result := EditStyledButtonRender(AButton.Render);
 end;
 
-function EditStyledButton(const AButtonRender: TStyledButtonRender): Boolean;
+function EditStyledButtonRender(const AButtonRender: TStyledButtonRender): Boolean;
 var
   LEditor: TStyledButtonEditor;
 begin
@@ -201,9 +201,9 @@ end;
 
 procedure TStyledButtonEditor.ButtonClick(Sender: TObject);
 var
-  LStyledButton: TStyledButton;
+  LStyledButton: TStyledGraphicButton;
 begin
-  LStyledButton := Sender as TStyledButton;
+  LStyledButton := Sender as TStyledGraphicButton;
   FCustomStyleDrawType := False;
   LStyledButton.Render.SetCustomStyleDrawType(FCustomStyleDrawType);
   LStyledButton.AssignStyleTo(DestButton.Render);
@@ -211,11 +211,12 @@ begin
   UpdateDestFromGUI;
 end;
 
-
+(*
 procedure TStyledButtonEditor.ButtonEnter(Sender: TObject);
 begin
   ButtonClick(Sender);
 end;
+*)
 
 procedure TStyledButtonEditor.ApplyStyle;
 begin
@@ -278,6 +279,7 @@ begin
     LFlowPanel.AutoSize := True;
     LFlowPanel.BevelOuter := bvNone;
     LFlowPanel.OnResize := FlowPanelResize;
+    LFlowPanel.DoubleBuffered := True;
     LFlowPanel.Parent := LGroupBox;
 
     BuildButtonsPreview(AFamily, LAppearance, LFlowPanel);
@@ -406,7 +408,7 @@ end;
 procedure TStyledButtonEditor.HelpButtonClick(Sender: TObject);
 begin
   ShellExecute(handle, 'open',
-    PChar(GetProjectURL), nil, nil, SW_SHOWNORMAL)
+    PChar(GetProjectWikiURL), nil, nil, SW_SHOWNORMAL)
 end;
 
 procedure TStyledButtonEditor.Loaded;
@@ -481,9 +483,9 @@ var
     const AParent: TFlowPanel;
     const AClass: TStyledButtonClass);
   var
-    LStyledButton: TStyledButton;
+    LStyledButton: TStyledGraphicButton;
   begin
-    LStyledButton := TStyledButton.Create(Self);
+    LStyledButton := TStyledGraphicButton.Create(Self);
     LStyledButton.Width := BUTTON_WIDTH;
     LStyledButton.Height := BUTTON_HEIGHT;
     LStyledButton.AlignWithMargins := True;
@@ -494,7 +496,7 @@ var
     LStyledButton.StyleClass := AClass;
     LStyledButton.StyleAppearance := AAppearance;
     LStyledButton.OnClick := ButtonClick;
-    LStyledButton.OnEnter := ButtonEnter;
+    //LStyledButton.OnEnter := ButtonEnter;
     LStyledButton.StyleDrawType := TStyledButtonDrawType(StyleDrawTypeComboBox.ItemIndex);
     LStyledButton.StyleRadius := RadiusTrackBar.Position;
     LStyledButton.Parent := AParent;

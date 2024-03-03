@@ -29,7 +29,7 @@ interface
 
 uses
   Vcl.StyledButton, Vcl.Imaging.pngimage, Vcl.ExtCtrls, Vcl.Controls,
-  System.Classes, Vcl.StdCtrls, Vcl.Forms;
+  System.Classes, Vcl.StdCtrls, Vcl.Forms, Vcl.Graphics;
 
 type
   TfmAbout = class(TForm)
@@ -75,7 +75,6 @@ end;
 procedure ShowAboutForm;
 var
   FAboutForm : TfmAbout;
-  AMajorVersion, AMinorVersion, ARelease, ABuild: Integer;
 begin
   FAboutForm := TfmAbout.Create(nil);
   Try

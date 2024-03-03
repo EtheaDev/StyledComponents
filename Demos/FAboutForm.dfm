@@ -41,9 +41,9 @@ object fmAbout: TfmAbout
     Top = 267
     Width = 75
     Height = 26
+    Cancel = True
     Caption = 'OK'
     Default = True
-    Cancel = True
     ModalResult = 1
     TabOrder = 1
   end

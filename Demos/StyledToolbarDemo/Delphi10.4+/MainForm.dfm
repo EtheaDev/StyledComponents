@@ -67,7 +67,6 @@ object fmMain: TfmMain
       Top = 0
       Hint = 'Like Button'
       Caption = 'Like'
-      Down = True
       Grouped = True
       ImageIndex = 8
       Style = tbsCheck
@@ -143,15 +142,15 @@ object fmMain: TfmMain
     object StyledToolButton1: TStyledToolButton
       Left = 0
       Top = 0
+      AllowAllUp = True
       OnClick = ToolButtonclick
       Caption = 'Open'
       ImageIndex = 11
       Style = tbsCheck
       StyleFamily = 'Bootstrap'
       StyleClass = 'Warning'
-      AllowAllUp = True
-      Down = True
       Grouped = True
+      Down = True
     end
     object StyledToolButton2: TStyledToolButton
       Left = 77
@@ -177,7 +176,6 @@ object fmMain: TfmMain
       Caption = 'Like'
       ImageIndex = 8
       Style = tbsCheck
-      Down = True
       Grouped = True
     end
     object StyledToolButton5: TStyledToolButton
@@ -245,11 +243,11 @@ object fmMain: TfmMain
         Width = 108
         Height = 41
         Hint = 'Create Toolbar "runtime"'
-        OnClick = CreateButtonClick
-        StyleElements = [seFont, seBorder]
         Caption = 'Create Toolbars'
-        StyleClass = 'Windows10'
         TabOrder = 0
+        StyleElements = [seFont, seBorder]
+        OnClick = CreateButtonClick
+        StyleClass = 'Windows10'
       end
     end
     object BottomClientPanel: TPanel

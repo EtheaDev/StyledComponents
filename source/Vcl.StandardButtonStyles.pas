@@ -84,6 +84,9 @@ procedure RegisterThemeAttributes(const AVCLStyleName: string;
   const ABorderHotColor: TColor;
   const ABorderType: TStyledButtonDrawType);
 
+function GetStyleAttributes(const AStyleName: string;
+  out AThemeAttribute: TThemeAttribute): Boolean;
+
 implementation
 
 uses
@@ -408,7 +411,7 @@ begin
       clWhite,htmlToColor('#e46b60'),btRoundRect);
     RegisterThemeAttributes('CopperDark',ttDark,clWhite,clWhite,
       htmlToColor('#2b2b2b'),htmlToColor('#e46b60'),
-      htmlToColor('#2b2b2b'),htmlToColor('#e46b60'),btRoundRect);
+      htmlToColor('#898989'),htmlToColor('#E46B60'),btRoundRect);
     RegisterThemeAttributes('Coral',ttDark,clWhite,clWhite,
       htmlToColor('#d86d00'),htmlToColor('#d86d00'),
       htmlToColor('#d86d00'),htmlToColor('#d1d1d1'),btRoundRect);

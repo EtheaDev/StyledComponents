@@ -66,9 +66,7 @@ type
 
   TStyledToolButton = class(TStyledGraphicButton)
   private
-    FAllowAllUp: Boolean;
     FAutoSize: Boolean;
-    FDown: Boolean;
     FGrouped: Boolean;
     FMarked: Boolean;
     FStyle: TToolButtonStyle;
@@ -81,10 +79,8 @@ type
     function IsStoredStyleFamily: Boolean;
     function IsStoredStyleAppearance: Boolean;
     function GetIndex: Integer;
-    function IsCheckedStored: Boolean;
     function IsImagesStored: Boolean;
     function IsWidthStored: Boolean;
-    procedure SetDown(AValue: Boolean);
     procedure SetGrouped(AValue: Boolean);
     procedure SetMarked(AValue: Boolean);
     procedure SetStyle(AValue: TToolButtonStyle);
@@ -102,6 +98,7 @@ type
     procedure SetMenuItem(const AValue: TMenuItem);
     function GetWrap: Boolean;
     procedure SetWrap(const AValue: Boolean);
+    procedure UpdateGroupIndex;
   protected
     FToolBar: TStyledToolBar;
     function GetCaption: TCaption; override;
@@ -126,13 +123,14 @@ type
     procedure Click; override;
     procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
   published
-    property AllowAllUp: Boolean read FAllowAllUp write FAllowAllUp default False;
+    property AllowAllUp default False;
     property AutoSize: Boolean read FAutoSize write SetAutoSize default False;
     property Caption: TCaption read GetCaption write SetCaption stored IsCaptionStored;
-    property Down: Boolean read FDown write SetDown stored IsCheckedStored default False;
+    property Down default False;
     property Enabled: Boolean read GetEnable write SetEnable stored IsEnabledStored;
     property Flat stored IsStoredFlat;
     property Grouped: Boolean read FGrouped write SetGrouped default False;
+    property GroupIndex default -1;
     property Height: Integer read GetHeight write SetHeight stored False;
     property Images stored IsImagesStored;
     property ImageAlignment: TImageAlignment read FImageAlignment write SetImageAlignment Stored IsImageAlignmentStored;
@@ -252,6 +250,7 @@ type
     function AsVCLStyle: Boolean;
     function GetAutoWrap: Boolean;
     function GetAutoSize: Boolean;
+    procedure SetTransparent(const AValue: Boolean);
   protected
     procedure SetAutoSize(AValue: Boolean); override;
     procedure Notification(AComponent: TComponent; AOperation: TOperation); override;
@@ -337,7 +336,7 @@ type
     property TabOrder;
     property TabStop;
     property Touch;
-    property Transparent: Boolean read FTransparent write FTransparent stored False;
+    property Transparent: Boolean read FTransparent write SetTransparent stored False;
     property Visible;
     property StyleElements;
     property Wrapable: Boolean read GetWrapable write SetWrapable default True;
@@ -422,11 +421,13 @@ procedure TStyledToolButton.MouseUp(Button: TMouseButton; Shift: TShiftState;
   X, Y: Integer);
 begin
   inherited MouseUp(Button, Shift, X, Y);
+(*
   if (Button = mbLeft) and (Style = tbsCheck) then
   begin
-    if (FDown and AllowAllUp) or (not FDown) then
+    if (Down and AllowAllUp) or (not Down) then
       Down := not Down;
   end;
+*)
 end;
 
 procedure TStyledToolButton.Click;
@@ -445,7 +446,7 @@ end;
 
 function TStyledToolButton.GetButtonState: TStyledButtonState;
 begin
-  if (Style = tbsCheck) and FDown then
+  if (Style = tbsCheck) and Down then
     Result := bsmPressed
   else
     Result := inherited GetButtonState;
@@ -514,12 +515,6 @@ begin
     Result := False
   else
     Result := inherited IsCaptionStored;
-end;
-
-function TStyledToolButton.IsCheckedStored: Boolean;
-begin
-  Result := (ActionLink = nil) or
-    not TGraphicButtonActionLink(ActionLink).IsCheckedLinked;
 end;
 
 function TStyledToolButton.IsImageAlignmentStored: Boolean;
@@ -713,20 +708,6 @@ begin
   end;
 end;
 
-procedure TStyledToolButton.SetDown(AValue: Boolean);
-begin
-  if FDown <> AValue then
-  begin
-    FDown := AValue;
-    if FDown and FGrouped then
-    begin
-      UpAllPrevButtons(Index-1);
-      UpAllNextButtons(Index+1);
-    end;
-    UpdateButtonContent;
-  end;
-end;
-
 procedure TStyledToolButton.SetEnable(const AValue: Boolean);
 begin
   if FEnabled <> AValue then
@@ -736,9 +717,24 @@ begin
   end;
 end;
 
+procedure TStyledToolButton.UpdateGroupIndex;
+begin
+  if Style = tbsCheck then
+  begin
+    if FGrouped  then
+      Render.GroupIndex := -1
+    else if Render.GroupIndex = -1 then
+      Render.GroupIndex := 0;
+  end;
+end;
+
 procedure TStyledToolButton.SetGrouped(AValue: Boolean);
 begin
-  FGrouped := AValue;
+  if FGrouped <> AValue then
+  begin
+    FGrouped := AValue;
+    UpdateGroupIndex;
+  end;
 end;
 
 procedure TStyledToolButton.SetHeight(const AValue: Integer);
@@ -864,15 +860,16 @@ begin
   if FStyle <> AValue then
   begin
     FStyle := AValue;
+    UpdateGroupIndex;
     if IsDropDown then
     begin
-      inherited Style := bsSplitButton;
+      inherited Style := TCustomButton.TButtonStyle.bsSplitButton;
       if FToolBar.AutoSize then
         FToolBar.ResizeButtons;
     end
     else
     begin
-      inherited Style := bsPushButton;
+      inherited Style := TCustomButton.TButtonStyle.bsPushButton;
     end;
     if IsSeparator <> WasSeparator then
     begin
@@ -982,9 +979,7 @@ begin
   BevelOuter := bvNone;
   BevelEdges := [];
 
-  { The default value for Transparent now depends on if you have
-    Themes turned on or off (this only works on XP) }
-  FTransparent := StyleServices.Enabled;
+  Transparent := StyleServices.Enabled;
   ParentBackground := True;
   ParentColor := True;
   BevelOuter := bvNone;
@@ -1670,6 +1665,17 @@ begin
   if not ApplyToolbarStyle then
     raise EStyledButtonError.CreateFmt(ERROR_SETTING_TOOLBAR_STYLE,
       [AStyleFamily, AStyleClass, AStyleAppearance]);
+end;
+
+procedure TStyledToolbar.SetTransparent(const AValue: Boolean);
+begin
+  if FTransparent <> AValue then
+  begin
+    FTransparent := AValue;
+    if AValue then
+      ControlStyle := ControlStyle - [csOpaque] else
+      ControlStyle := ControlStyle + [csOpaque];
+  end;
 end;
 
 function TStyledToolbar.TrackMenu(Button: TStyledToolButton): Boolean;

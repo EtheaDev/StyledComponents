@@ -2,8 +2,8 @@ object fmBitBtn: TfmBitBtn
   Left = 0
   Top = 0
   Caption = 'BitButtons - Kind and ModalResult Demo'
-  ClientHeight = 364
-  ClientWidth = 745
+  ClientHeight = 573
+  ClientWidth = 801
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,10 +14,10 @@ object fmBitBtn: TfmBitBtn
   OnCreate = FormCreate
   TextHeight = 15
   object btOK: TBitBtn
-    Left = 16
-    Top = 16
-    Width = 75
-    Height = 25
+    Left = 8
+    Top = 22
+    Width = 100
+    Height = 44
     Kind = bkOK
     NumGlyphs = 2
     TabOrder = 0
@@ -26,100 +26,100 @@ object fmBitBtn: TfmBitBtn
     OnMouseLeave = ButtonMouseLeave
   end
   object btCancel: TBitBtn
-    Left = 16
-    Top = 47
-    Width = 75
-    Height = 25
+    Left = 8
+    Top = 72
+    Width = 100
+    Height = 44
     Kind = bkCancel
     NumGlyphs = 2
     TabOrder = 1
     OnClick = ButtonClick
   end
   object btClose: TBitBtn
-    Left = 16
-    Top = 78
-    Width = 75
-    Height = 25
+    Left = 8
+    Top = 122
+    Width = 100
+    Height = 44
     Kind = bkClose
     NumGlyphs = 2
     TabOrder = 2
     OnClick = ButtonClick
   end
   object btYes: TBitBtn
-    Left = 16
-    Top = 109
-    Width = 75
-    Height = 25
+    Left = 8
+    Top = 172
+    Width = 100
+    Height = 44
     Kind = bkYes
     NumGlyphs = 2
     TabOrder = 3
     OnClick = ButtonClick
   end
   object btNo: TBitBtn
-    Left = 16
-    Top = 140
-    Width = 75
-    Height = 25
+    Left = 8
+    Top = 222
+    Width = 100
+    Height = 44
     Kind = bkNo
     NumGlyphs = 2
     TabOrder = 4
     OnClick = ButtonClick
   end
   object btAbort: TBitBtn
-    Left = 16
-    Top = 171
-    Width = 75
-    Height = 25
+    Left = 8
+    Top = 272
+    Width = 100
+    Height = 44
     Kind = bkAbort
     NumGlyphs = 2
     TabOrder = 5
     OnClick = ButtonClick
   end
   object btRetry: TBitBtn
-    Left = 16
-    Top = 202
-    Width = 75
-    Height = 25
+    Left = 8
+    Top = 322
+    Width = 100
+    Height = 44
     Kind = bkRetry
     NumGlyphs = 2
     TabOrder = 6
     OnClick = ButtonClick
   end
   object btIgnore: TBitBtn
-    Left = 16
-    Top = 233
-    Width = 75
-    Height = 25
+    Left = 8
+    Top = 372
+    Width = 100
+    Height = 44
     Kind = bkIgnore
     NumGlyphs = 2
     TabOrder = 7
     OnClick = ButtonClick
   end
   object btHelp: TBitBtn
-    Left = 16
-    Top = 264
-    Width = 75
-    Height = 25
+    Left = 8
+    Top = 422
+    Width = 100
+    Height = 44
     Kind = bkHelp
     NumGlyphs = 2
     TabOrder = 8
     OnClick = ButtonClick
   end
   object btAll: TBitBtn
-    Left = 16
-    Top = 295
-    Width = 75
-    Height = 25
+    Left = 8
+    Top = 472
+    Width = 100
+    Height = 44
     Kind = bkAll
     NumGlyphs = 2
     TabOrder = 9
     OnClick = ButtonClick
   end
   object btCustom: TBitBtn
-    Left = 16
-    Top = 326
-    Width = 75
-    Height = 25
+    Left = 8
+    Top = 522
+    Width = 100
+    Height = 44
     Caption = 'Custom'
     Glyph.Data = {
       76010000424D7601000000000000760000002800000020000000100000000100

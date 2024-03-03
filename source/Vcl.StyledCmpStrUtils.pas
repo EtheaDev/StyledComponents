@@ -38,6 +38,7 @@ function ClearHRefs(const Msg: string; OnlyFileNotExists: boolean = False): stri
 function GetErrorClassNameDesc(const ExceptionClassName : string;
   IsAccessViolation: boolean) : string;
 function GetProjectURL: string;
+function GetProjectWikiURL: string;
 
 implementation
 
@@ -49,6 +50,11 @@ uses
 function GetProjectURL: string;
 begin
   Result := 'https://github.com/EtheaDev/StyledComponents';
+end;
+
+function GetProjectWikiURL: string;
+begin
+  Result := 'https://github.com/EtheaDev/StyledComponents/wiki';
 end;
 
 function HRefToString(const HRef: string): string;

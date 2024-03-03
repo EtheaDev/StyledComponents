@@ -1,6 +1,7 @@
 {******************************************************************************}
 {                                                                              }
-{       TStyledAnimatedButton: a StyledButton with support for Skia Animations }
+{       TStyledAnimatedButton: a StyledButton with "animated icon"             }
+{       using a Skia TSkAnimatedImage component                                }
 {                                                                              }
 {       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
@@ -50,12 +51,40 @@ const
   DEFAULT_ANIM_MARGIN = 10;
 
 type
-  TAutoAnimationType = (AnimateOnMouseOver, AnimateOnClick, AnimateAlways, AnimateOnFocused);
+  TAutoAnimationType = (AnimateOnMouseOver, AnimateOnClick, AnimateAlways, AnimateOnFocus);
   TAutoAnimationTypes = set of TAutoAnimationType;
 
   TStyledAnimatedButtonRender = class(TStyledButtonRender)
+  private
+    FAnimationHeight: Integer;
+    FAnimationWidth: Integer;
+    FAutoSizeAnimation: Boolean;
+    FAutoSizeAnimationMargin: Integer;
+    procedure SetAutoSizeAnimationMargin(const AValue: Integer);
+    procedure SetAnimationHeight(const AValue: Integer);
+    procedure SetAnimationWidth(const AValue: Integer);
+    procedure SetAutoSizeAnimation(const AValue: Boolean);
   public
+    {$IFDEF HiDPISupport}
+    procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
+    {$ENDIF}
     function GetImageSize(out AWidth: Integer; out AHeight: Integer; out AImageList: TCustomImageList; out AImageIndex: Integer): Boolean; override;
+    constructor CreateStyled(AOwner: TControl;
+      const AOnClick: TNotifyEvent;
+      const AControlFont: TControlFont;
+      const AGetCaption: TGetCaption;
+      const ASetCaption: TSetCaption;
+      const AGetParentFont: TGetParentFont;
+      const ASetParentFont: TSetParentFont;
+      const AFamily: TStyledButtonFamily;
+      const AClass: TStyledButtonClass;
+      const AAppearance: TStyledButtonAppearance;
+      const ADrawType: TStyledButtonDrawType;
+      const AUseCustomDrawType: Boolean); override;
+    property AnimationHeight: Integer read FAnimationHeight write SetAnimationHeight;
+    property AnimationWidth: Integer read FAnimationWidth write SetAnimationWidth;
+    property AutoSizeAnimation: Boolean read FAutoSizeAnimation write SetAutoSizeAnimation;
+    property AutoSizeAnimationMargin: Integer read FAutoSizeAnimationMargin write SetAutoSizeAnimationMargin;
   end;
 
   TStyledAnimatedButton = class(TStyledButton)
@@ -66,10 +95,6 @@ type
     procedure AnimatedImageMouseEnter(Sender: TObject);
     procedure AnimatedImageMouseLeave(Sender: TObject);
   private
-    FAnimationHeight: Integer;
-    FAnimationWidth: Integer;
-    FAutoSizeAnimation: Boolean;
-    FAutoSizeAnimationMargin: Integer;
     FAutoAnimationTypes: TAutoAnimationTypes;
     function GetAnimatedImage: TSkAnimatedImage;
     function GetSource: TSkAnimatedImage.TSource;
@@ -89,9 +114,15 @@ type
     procedure SetAnimationLoop(const AValue: Boolean);
     function GetAnimationInverse: Boolean;
     function GetAnimationLoop: Boolean;
+    function GetAnimationHeight: Integer;
+    function GetAnimationWidth: Integer;
+    function GetAutoSizeAnimation: Boolean;
+    function GetAutoSizeAnimationMargin: Integer;
+    function GetRender: TStyledAnimatedButtonRender;
   strict protected
     procedure DefineProperties(AFiler: TFiler); override;
   protected
+    procedure Loaded; override;
     procedure SetCursor(const AValue: TCursor); override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     procedure Paint; override;
@@ -105,7 +136,6 @@ type
     procedure LoadAnimationFromFile(const AFileName: TFileName);
     procedure LoadAnimationFromStream(const AStream: TStream);
     procedure Click; override;
-  public
     //Animation procedures and functions
     function CanPlayAnimation: boolean;
     procedure StartAnimation(ALoop: Boolean = False;
@@ -116,15 +146,16 @@ type
     function AnimationIsRunning: Boolean;
     procedure CreateAnimation;
     property AnimatedImage: TSkAnimatedImage read GetAnimatedImage;
+    property Render: TStyledAnimatedButtonRender read GetRender;
   published
     property AutoAnimationTypes: TAutoAnimationTypes read FAutoAnimationTypes write SetAutoAnimationTypes default [AnimateOnMouseOver];
-    property AutoSizeAnimation: Boolean read FAutoSizeAnimation write SetAutoSizeAnimation default True;
-    property AutoSizeAnimationMargin: Integer read FAutoSizeAnimationMargin write SetAutoSizeAnimationMargin default DEFAULT_ANIM_MARGIN;
+    property AutoSizeAnimation: Boolean read GetAutoSizeAnimation write SetAutoSizeAnimation default True;
+    property AutoSizeAnimationMargin: Integer read GetAutoSizeAnimationMargin write SetAutoSizeAnimationMargin default DEFAULT_ANIM_MARGIN;
     property AnimationSource: TSkAnimatedImage.TSource read GetSource write SetSource;
-    property AnimationWidth: Integer read FAnimationWidth write SetAnimationWidth default DEFAULT_ANIM_SIZE;
-    property AnimationHeight: Integer read FAnimationHeight write SetAnimationHeight  default DEFAULT_ANIM_SIZE;
-    property AnimationLoop: Boolean read GetAnimationLoop write SetAnimationLoop;
-    property AnimationInverse: Boolean read GetAnimationInverse write SetAnimationInverse;
+    property AnimationWidth: Integer read GetAnimationWidth write SetAnimationWidth default DEFAULT_ANIM_SIZE;
+    property AnimationHeight: Integer read GetAnimationHeight write SetAnimationHeight  default DEFAULT_ANIM_SIZE;
+    property AnimationLoop: Boolean read GetAnimationLoop write SetAnimationLoop default False;
+    property AnimationInverse: Boolean read GetAnimationInverse write SetAnimationInverse default False;
   end;
 
 implementation
@@ -136,6 +167,104 @@ uses
   , Vcl.VirtualImageList
   {$ENDIF}
   ;
+
+{ TStyledAnimatedButtonRender }
+
+procedure TStyledAnimatedButtonRender.SetAutoSizeAnimationMargin(
+  const AValue: Integer);
+begin
+  if FAutoSizeAnimationMargin <> AValue then
+  begin
+    FAutoSizeAnimationMargin := AValue;
+    Invalidate;
+  end;
+end;
+
+constructor TStyledAnimatedButtonRender.CreateStyled(AOwner: TControl;
+  const AOnClick: TNotifyEvent; const AControlFont: TControlFont;
+  const AGetCaption: TGetCaption; const ASetCaption: TSetCaption;
+  const AGetParentFont: TGetParentFont; const ASetParentFont: TSetParentFont;
+  const AFamily: TStyledButtonFamily; const AClass: TStyledButtonClass;
+  const AAppearance: TStyledButtonAppearance;
+  const ADrawType: TStyledButtonDrawType; const AUseCustomDrawType: Boolean);
+begin
+  inherited;
+  AnimationHeight := DEFAULT_ANIM_SIZE;
+  AnimationWidth := DEFAULT_ANIM_SIZE;
+  AutoSizeAnimationMargin := DEFAULT_ANIM_MARGIN;
+  AutoSizeAnimation := True;
+end;
+
+function TStyledAnimatedButtonRender.GetImageSize(out AWidth, AHeight: Integer;
+  out AImageList: TCustomImageList; out AImageIndex: Integer): Boolean;
+var
+  LStyledAnimatedButton: TStyledAnimatedButton;
+  LSize: Integer;
+begin
+  Result := inherited GetImageSize(AWidth, AHeight, AImageList, AImageIndex);
+  if not Result then
+  begin
+    if OwnerControl is TStyledAnimatedButton then
+    begin
+      LStyledAnimatedButton := TStyledAnimatedButton(OwnerControl);
+      if LStyledAnimatedButton.AutoSizeAnimation then
+      begin
+        LSize := Min(OwnerControl.Width, OwnerControl.Height);
+        AWidth := LSize - (FAutoSizeAnimationMargin * 2);
+        AHeight := AWidth;
+      end
+      else
+      begin
+        AWidth := FAnimationWidth;
+        AHeight := FAnimationHeight;
+      end;
+    end;
+  end;
+end;
+
+procedure TStyledAnimatedButtonRender.SetAnimationHeight(const AValue: Integer);
+begin
+  if FAnimationHeight <> AValue then
+  begin
+    FAnimationHeight := AValue;
+    FAutoSizeAnimation := False;
+    Invalidate;
+  end;
+end;
+
+procedure TStyledAnimatedButtonRender.SetAnimationWidth(const AValue: Integer);
+begin
+  if FAnimationWidth <> AValue then
+  begin
+    FAnimationWidth := AValue;
+    FAutoSizeAnimation := False;
+    Invalidate;
+  end;
+end;
+
+procedure TStyledAnimatedButtonRender.SetAutoSizeAnimation(
+  const AValue: Boolean);
+begin
+  if FAutoSizeAnimation <> AValue then
+  begin
+    FAutoSizeAnimation := AValue;
+    Invalidate;
+  end;
+end;
+
+{$IFDEF HiDPISupport}
+procedure TStyledAnimatedButtonRender.ChangeScale(M, D: Integer; isDpiChange: Boolean);
+begin
+  if isDpiChange then
+  begin
+    FAnimationHeight := MulDiv(FAnimationHeight, M, D);
+    FAnimationWidth := MulDiv(FAnimationWidth, M, D);
+    FAutoSizeAnimationMargin := MulDiv(FAutoSizeAnimationMargin, M, D);
+  end;
+end;
+{$ENDIF}
+
+{ TStyledAnimatedButton }
 
 procedure TStyledAnimatedButton.CreateAnimation;
 begin
@@ -161,24 +290,20 @@ constructor TStyledAnimatedButton.CreateStyled(
   const AAppearance: TStyledButtonAppearance);
 begin
   inherited CreateStyled(AOwner, AFamily, AClass, AAppearance);
-  FAnimationHeight := DEFAULT_ANIM_SIZE;
-  FAnimationWidth := DEFAULT_ANIM_SIZE;
-  FAutoSizeAnimationMargin := DEFAULT_ANIM_MARGIN;
-  FAutoSizeAnimation := True;
   FAutoAnimationTypes := [AnimateOnMouseOver];
 end;
 
 procedure TStyledAnimatedButton.ReadData(AStream: TStream);
 begin
-  if AStream.Size = 0 then
+  if (AStream.Size = 0) and Assigned(FSkAnimatedImage) then
     FSkAnimatedImage.Source.Data := nil
   else
-    FSkAnimatedImage.LoadFromStream(AStream);
+    AnimatedImage.LoadFromStream(AStream);
 end;
 
 procedure TStyledAnimatedButton.WriteData(AStream: TStream);
 begin
-  if FSkAnimatedImage.Source.Data <> nil then
+  if Assigned(FSkAnimatedImage) and (FSkAnimatedImage.Source.Data <> nil) then
     AStream.WriteBuffer(FSkAnimatedImage.Source.Data,
       Length(FSkAnimatedImage.Source.Data));
 end;
@@ -189,7 +314,7 @@ procedure TStyledAnimatedButton.DefineProperties(AFiler: TFiler);
   begin
     if AFiler.Ancestor <> nil then
       Result := (not (AFiler.Ancestor is TStyledAnimatedButton)) or
-        not TStyledAnimatedButton(AFiler.Ancestor).AnimationSource.Equals(FSkAnimatedImage.Source)
+        not TStyledAnimatedButton(AFiler.Ancestor).AnimationSource.Equals(Self.AnimationSource)
     else
       Result := AnimatedImage.Source.Data <> nil;
   end;
@@ -211,6 +336,11 @@ begin
   Result := FSkAnimatedImage;
 end;
 
+function TStyledAnimatedButton.GetAnimationHeight: Integer;
+begin
+  Result := Render.AnimationHeight;
+end;
+
 function TStyledAnimatedButton.GetAnimationInverse: Boolean;
 begin
   Result := AnimatedImage.GetInverse;
@@ -219,6 +349,26 @@ end;
 function TStyledAnimatedButton.GetAnimationLoop: Boolean;
 begin
   Result := AnimatedImage.GetLoop;
+end;
+
+function TStyledAnimatedButton.GetAnimationWidth: Integer;
+begin
+  Result := Render.AnimationWidth;
+end;
+
+function TStyledAnimatedButton.GetAutoSizeAnimation: Boolean;
+begin
+  Result := Render.AutoSizeAnimation;
+end;
+
+function TStyledAnimatedButton.GetAutoSizeAnimationMargin: Integer;
+begin
+  Result := Render.AutoSizeAnimationMargin;
+end;
+
+function TStyledAnimatedButton.GetRender: TStyledAnimatedButtonRender;
+begin
+  Result := inherited Render as TStyledAnimatedButtonRender;
 end;
 
 function TStyledAnimatedButton.GetRenderClass: TStyledButtonRenderClass;
@@ -241,7 +391,15 @@ begin
   AnimatedImage.LoadFromStream(AStream);
 end;
 
-procedure TStyledAnimatedButton.Notification(AComponent: TComponent; Operation: TOperation);
+procedure TStyledAnimatedButton.Loaded;
+begin
+  inherited;
+  if csDesigning in ComponentState then
+    AnimatedImage.StartAnimation;
+end;
+
+procedure TStyledAnimatedButton.Notification(AComponent: TComponent;
+  Operation: TOperation);
 begin
 (*
   if (Operation = opInsert) and (AComponent = Images) then
@@ -267,13 +425,14 @@ end;
 
 procedure TStyledAnimatedButton.WMKillFocus(var Message: TMessage);
 begin
-  if AnimateOnFocused in FAutoAnimationTypes then
-      AnimatedImage.StopAnimation;
+  inherited;
+  if AnimateOnFocus in FAutoAnimationTypes then
+    AnimatedImage.StopAnimation;
 end;
 
 procedure TStyledAnimatedButton.WMSetFocus(var Message: TMessage);
 begin
-  if AnimateOnFocused in FAutoAnimationTypes then
+  if AnimateOnFocus in FAutoAnimationTypes then
       AnimatedImage.StartAnimation;
   inherited;
 end;
@@ -347,20 +506,20 @@ begin
       LImageList, LImageIndex);
     if (LImageWidth=0) or (LImageHeight=0) then
     begin
-      LImageWidth := FAnimationWidth;
-      LImageHeight := FAnimationHeight;
+      LImageWidth := Render.AnimationWidth;
+      LImageHeight := Render.AnimationHeight;
     end;
     LImageRect := ClientRect;
     LImageRect := CalcImageRect(LImageRect, LImageWidth, LImageHeight);
     if (LImageRect.Width <> 0) and (LImageRect.Height <> 0) then
     begin
-      FSkAnimatedImage.SetBounds(LImageRect.Left, LImageRect.Top, LImageRect.Width, LImageRect.Height);
+      FSkAnimatedImage.SetBounds(LImageRect.Left, LImageRect.Top,
+        LImageRect.Width, LImageRect.Height);
       if not FSkAnimatedImage.AnimationRunning then
         FSkAnimatedImage.Animation.Progress := 1;
     end;
-  end
-  else
-    inherited;
+  end;
+  inherited;
 end;
 
 procedure TStyledAnimatedButton.PauseAnimation;
@@ -381,12 +540,7 @@ end;
 
 procedure TStyledAnimatedButton.SetAnimationHeight(const AValue: Integer);
 begin
-  if FAnimationHeight <> AValue then
-  begin
-    FAnimationHeight := AValue;
-    FAutoSizeAnimation := False;
-    Invalidate;
-  end;
+  Render.AnimationHeight := AValue;
 end;
 
 procedure TStyledAnimatedButton.SetAnimationInverse(const AValue: Boolean);
@@ -401,12 +555,7 @@ end;
 
 procedure TStyledAnimatedButton.SetAnimationWidth(const AValue: Integer);
 begin
-  if FAnimationWidth <> AValue then
-  begin
-    FAnimationWidth := AValue;
-    FAutoSizeAnimation := False;
-    Invalidate;
-  end;
+  Render.AnimationWidth := AValue;
 end;
 
 procedure TStyledAnimatedButton.SetAutoAnimationTypes(
@@ -426,20 +575,12 @@ end;
 
 procedure TStyledAnimatedButton.SetAutoSizeAnimation(const AValue: Boolean);
 begin
-  if FAutoSizeAnimation <> AValue then
-  begin
-    FAutoSizeAnimation := AValue;
-    Invalidate;
-  end;
+  Render.AutoSizeAnimation := AValue;
 end;
 
 procedure TStyledAnimatedButton.SetAutoSizeAnimationMargin(const AValue: Integer);
 begin
-  if FAutoSizeAnimationMargin <> AValue then
-  begin
-    FAutoSizeAnimationMargin := AValue;
-    Invalidate;
-  end;
+  Render.AutoSizeAnimationMargin := AValue;
 end;
 
 procedure TStyledAnimatedButton.SetCursor(const AValue: TCursor);
@@ -447,36 +588,6 @@ begin
   inherited;
   //Same cursor of button for the internal component
   AnimatedImage.Cursor := AValue;
-end;
-
-{ TStyledAnimatedButtonRender }
-
-function TStyledAnimatedButtonRender.GetImageSize(out AWidth, AHeight: Integer;
-  out AImageList: TCustomImageList; out AImageIndex: Integer): Boolean;
-var
-  LStyledAnimatedButton: TStyledAnimatedButton;
-  LSize: Integer;
-begin
-  Result := inherited GetImageSize(AWidth, AHeight, AImageList, AImageIndex);
-  if not Result then
-  begin
-    if OwnerControl is TStyledAnimatedButton then
-    begin
-      LStyledAnimatedButton := TStyledAnimatedButton(OwnerControl);
-      if LStyledAnimatedButton.AutoSizeAnimation then
-      begin
-        LSize := Min(OwnerControl.Width, OwnerControl.Height);
-        AWidth := LSize - (LStyledAnimatedButton.FAutoSizeAnimationMargin * 2);
-        AHeight := AWidth;
-      end
-      else
-      begin
-        AWidth := LStyledAnimatedButton.FAnimationWidth;
-        AHeight := LStyledAnimatedButton.FAnimationHeight;
-      end;
-      Result := True;
-    end;
-  end;
 end;
 
 end.

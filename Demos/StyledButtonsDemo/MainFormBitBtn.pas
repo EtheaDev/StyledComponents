@@ -63,11 +63,11 @@ end;
 
 procedure TfmBitBtn.ButtonMouseEnter(Sender: TObject);
 var
-  LBtn: TStyledButton;
+  LBtn: TStyledBitBtn;
 begin
-  if Sender is TStyledButton then
+  if Sender is TStyledBitBtn then
   begin
-    LBtn := TStyledButton(Sender);
+    LBtn := TStyledBitBtn(Sender);
     Hint := Format('StyleFamily: %s - StyleClass: %s - StyleAppearance: %s',
       [LBtn.StyleFamily, LBtn.StyleClass, LBtn.StyleAppearance]);
   end;
@@ -81,11 +81,12 @@ end;
 procedure TfmBitBtn.CreateButtons(const AStyleFamily: TStyledButtonFamily;
   const ALeftOffSet: Integer);
 
-  function CreateButtonAs(const ABitBtn: TBitBtn): TStyledButton;
+  function CreateButtonAs(const ABitBtn: TBitBtn): TStyledBitBtn;
   begin
     ABitBtn.Enabled := BTN_ENABLED;
-    Result := TStyledButton.Create(Self);
-    Result.SetBounds(ABitBtn.Left+ALeftOffSet, ABitBtn.Top, ABitBtn.Width, ABitBtn.Height);
+    Result := TStyledBitBtn.Create(Self);
+    Result.SetBounds(ABitBtn.Left+ALeftOffSet,
+      ABitBtn.Top, ABitBtn.Width, ABitBtn.Height);
     Result.StyleFamily := AStyleFamily;
     Result.Caption := ABitBtn.Caption;
     Result.Enabled := BTN_ENABLED;
@@ -117,12 +118,12 @@ end;
 procedure TfmBitBtn.FormCreate(Sender: TObject);
 begin
   Caption := Application.Title;
-  CreateButtons(DEFAULT_CLASSIC_FAMILY, 100);
-  CreateButtons(BOOTSTRAP_FAMILY, 200);
-  CreateButtons(ANGULAR_LIGHT_FAMILY, 300);
-  CreateButtons(ANGULAR_DARK_FAMILY, 400);
-  CreateButtons(BASIC_COLOR_FAMILY, 500);
-  CreateButtons(SVG_COLOR_FAMILY, 600);
+  CreateButtons(DEFAULT_CLASSIC_FAMILY, 110);
+  CreateButtons(BOOTSTRAP_FAMILY, 220);
+  CreateButtons(ANGULAR_LIGHT_FAMILY, 330);
+  CreateButtons(ANGULAR_DARK_FAMILY, 440);
+  CreateButtons(BASIC_COLOR_FAMILY, 550);
+  CreateButtons(SVG_COLOR_FAMILY, 660);
 end;
 
 initialization

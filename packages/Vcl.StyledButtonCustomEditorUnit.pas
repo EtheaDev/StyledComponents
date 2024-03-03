@@ -99,6 +99,9 @@ type
     property CustomStyleDrawType: Boolean read FCustomStyleDrawType;
   end;
 
+var
+  StyledButtonCustomEditor: TStyledButtonCustomEditor;
+
 function EditStyledButtonAttributes(const AButton: TControl): Boolean; overload;
 function EditStyledButtonAttributes(const AButton: TStyledGraphicButton): Boolean; overload;
 function EditStyledButtonAttributes(const AButton: TStyledButton): Boolean; overload;
