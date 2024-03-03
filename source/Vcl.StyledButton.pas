@@ -53,7 +53,7 @@ uses
   ;
 
 const
-  StyledButtonsVersion = '3.3.0';
+  StyledButtonsVersion = '3.3.1';
   DEFAULT_BTN_WIDTH = 75;
   DEFAULT_BTN_HEIGHT = 25;
   DEFAULT_IMAGE_HMARGIN = 8;
@@ -2299,10 +2299,20 @@ begin
       LHandle := TWinControl(FOwnerControl).Handle
     else
       LHandle := 0;
-    if LStyle.Available and Transparent then
-      LStyle.DrawParentBackground(LHandle, ACanvas.Handle, nil, False)
+    if OwnerControl is TCustomStyledGraphicButton then
+    begin
+      if LStyle.Available and Transparent then
+        LStyle.DrawParentBackground(LHandle, ACanvas.Handle, nil, False)
+      else
+        PerformEraseBackground(FOwnerControl, ACanvas.Handle);
+    end
     else
-      PerformEraseBackground(FOwnerControl, ACanvas.Handle);
+    begin
+      if LStyle.Available then
+        LStyle.DrawParentBackground(LHandle, ACanvas.Handle, nil, False)
+      else
+        PerformEraseBackground(FOwnerControl, ACanvas.Handle);
+    end;
   end;
 end;
 
