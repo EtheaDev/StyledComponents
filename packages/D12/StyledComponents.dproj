@@ -100,6 +100,7 @@
         <DCCReference Include="vclimg.dcp"/>
         <DCCReference Include="dbrtl.dcp"/>
         <DCCReference Include="vcldb.dcp"/>
+        <DCCReference Include="bindcomp.dcp"/>
         <DCCReference Include="..\..\source\Vcl.StyledButton.pas"/>
         <DCCReference Include="..\..\source\Vcl.ButtonStylesAttributes.pas"/>
         <DCCReference Include="..\..\source\Vcl.StandardButtonStyles.pas"/>

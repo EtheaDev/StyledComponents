@@ -39,7 +39,7 @@ object StyledButtonEditor: TStyledButtonEditor
       935
       38)
     object OKButton: TStyledButton
-      Left = 561
+      Left = 557
       Top = 6
       Width = 85
       Height = 25
@@ -51,7 +51,7 @@ object StyledButtonEditor: TStyledButtonEditor
       OnClick = OKButtonClick
     end
     object ApplyButton: TStyledButton
-      Left = 744
+      Left = 740
       Top = 6
       Width = 85
       Height = 25
@@ -61,7 +61,7 @@ object StyledButtonEditor: TStyledButtonEditor
       OnClick = ApplyButtonClick
     end
     object CancelButton: TStyledButton
-      Left = 653
+      Left = 649
       Top = 6
       Width = 85
       Height = 25
@@ -72,7 +72,7 @@ object StyledButtonEditor: TStyledButtonEditor
       TabOrder = 1
     end
     object HelpButton: TStyledButton
-      Left = 836
+      Left = 832
       Top = 6
       Width = 85
       Height = 25
@@ -101,7 +101,7 @@ object StyledButtonEditor: TStyledButtonEditor
       TabOrder = 0
       object SourceButton: TStyledGraphicButton
         AlignWithMargins = True
-        Left = 8
+        Left = 3
         Top = 24
         Width = 120
         Height = 34
@@ -134,9 +134,9 @@ object StyledButtonEditor: TStyledButtonEditor
   end
   object TabControl: TTabControl
     Left = 0
-    Top = 169
+    Top = 177
     Width = 935
-    Height = 336
+    Height = 328
     Align = alClient
     Images = ImageList
     TabHeight = 32
@@ -150,7 +150,7 @@ object StyledButtonEditor: TStyledButtonEditor
       Left = 7
       Top = 41
       Width = 921
-      Height = 288
+      Height = 280
       Align = alClient
       BevelOuter = bvNone
       BorderStyle = bsNone
@@ -163,7 +163,7 @@ object StyledButtonEditor: TStyledButtonEditor
     Left = 3
     Top = 104
     Width = 929
-    Height = 59
+    Height = 67
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 3
@@ -171,63 +171,86 @@ object StyledButtonEditor: TStyledButtonEditor
       Left = 0
       Top = 0
       Width = 929
-      Height = 59
+      Height = 67
       Align = alClient
       Caption = 'Button Attributes'
       TabOrder = 0
       object StyleDrawTypeLabel: TLabel
-        Left = 19
-        Top = 26
+        Left = 294
+        Top = 21
         Width = 77
         Height = 13
-        Alignment = taRightJustify
         Caption = 'StyleDrawType:'
       end
       object StyleRadiusLabel: TLabel
-        Left = 386
-        Top = 26
+        Left = 455
+        Top = 21
         Width = 69
         Height = 13
-        Alignment = taRightJustify
         Caption = 'StyledRadius:'
       end
+      object StyleLabel: TLabel
+        Left = 143
+        Top = 21
+        Width = 27
+        Height = 13
+        Caption = 'Style:'
+      end
       object EnabledCheckBox: TCheckBox
-        Left = 253
-        Top = 25
-        Width = 106
+        Left = 62
+        Top = 23
+        Width = 80
         Height = 17
-        Caption = 'Button Enabled'
+        Caption = 'Enabled'
         TabOrder = 1
         OnClick = EnabledCheckBoxClick
       end
       object StyleDrawTypeComboBox: TComboBox
-        Left = 102
-        Top = 23
+        Left = 294
+        Top = 36
         Width = 145
         Height = 21
         Style = csDropDownList
-        TabOrder = 0
-        OnSelect = StyleDrawTypeComboBoxSelect
+        TabOrder = 4
+        OnSelect = StyleComboBoxSelect
       end
       object RadiusTrackBar: TTrackBar
-        Left = 464
-        Top = 20
+        Left = 445
+        Top = 34
         Width = 225
-        Height = 32
+        Height = 24
         Max = 30
         Min = 1
         Position = 1
-        TabOrder = 2
+        TabOrder = 5
         OnChange = RadiusTrackBarChange
       end
       object FlatButtonCheckBox: TCheckBox
-        Left = 695
-        Top = 25
-        Width = 106
+        Left = 9
+        Top = 23
+        Width = 50
         Height = 17
-        Caption = 'Flat button'
-        TabOrder = 3
+        Caption = 'Flat'
+        TabOrder = 0
         OnClick = FlatButtonCheckBoxClick
+      end
+      object AsVCLComponentCheckBox: TCheckBox
+        Left = 9
+        Top = 46
+        Width = 131
+        Height = 17
+        Caption = 'As VCL Component'
+        TabOrder = 2
+        OnClick = AsVCLComponentCheckBoxClick
+      end
+      object StyleComboBox: TComboBox
+        Left = 143
+        Top = 36
+        Width = 145
+        Height = 21
+        Style = csDropDownList
+        TabOrder = 3
+        OnSelect = StyleComboBoxSelect
       end
     end
   end
@@ -238,7 +261,7 @@ object StyledButtonEditor: TStyledButtonEditor
     Left = 432
     Top = 280
     Bitmap = {
-      494C010106000800080020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010106000800040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000004000000001002000000000000080
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000111010

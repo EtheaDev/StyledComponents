@@ -78,6 +78,9 @@ type
     ImageList: TImageList;
     ScrollBox: TScrollBox;
     FlatButtonCheckBox: TCheckBox;
+    AsVCLComponentCheckBox: TCheckBox;
+    StyleLabel: TLabel;
+    StyleComboBox: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure OKButtonClick(Sender: TObject);
     procedure ApplyButtonClick(Sender: TObject);
@@ -85,11 +88,12 @@ type
     procedure FormShow(Sender: TObject);
     procedure TabControlChange(Sender: TObject);
     procedure paTopResize(Sender: TObject);
-    procedure StyleDrawTypeComboBoxSelect(Sender: TObject);
+    procedure StyleComboBoxSelect(Sender: TObject);
     procedure EnabledCheckBoxClick(Sender: TObject);
     procedure DestButtonClick(Sender: TObject);
     procedure RadiusTrackBarChange(Sender: TObject);
     procedure FlatButtonCheckBoxClick(Sender: TObject);
+    procedure AsVCLComponentCheckBoxClick(Sender: TObject);
   private
     FUpdating: Boolean;
     FFamilyBuilt: TStyledButtonFamily;
@@ -103,7 +107,7 @@ type
     procedure ApplyStyle;
     procedure InitGUI;
     procedure UpdateDestFromGUI;
-    procedure ButtonClick(Sender: TObject);
+    procedure SelectButtonClick(Sender: TObject);
     //procedure ButtonEnter(Sender: TObject);
     procedure UpdateSizeGUI;
     procedure FlowPanelResize(Sender: TObject);
@@ -199,7 +203,7 @@ end;
 
 { TStyledButtonEditorForm }
 
-procedure TStyledButtonEditor.ButtonClick(Sender: TObject);
+procedure TStyledButtonEditor.SelectButtonClick(Sender: TObject);
 var
   LStyledButton: TStyledGraphicButton;
 begin
@@ -208,13 +212,15 @@ begin
   LStyledButton.Render.SetCustomStyleDrawType(FCustomStyleDrawType);
   LStyledButton.AssignStyleTo(DestButton.Render);
   StyleDrawTypeComboBox.ItemIndex := Ord(LStyledButton.StyleDrawType);
+  StyleComboBox.ItemIndex := Ord(LStyledButton.Style);
+  AsVCLComponentCheckBox.Checked := LStyledButton.AsVCLComponent;
   UpdateDestFromGUI;
 end;
 
 (*
 procedure TStyledButtonEditor.ButtonEnter(Sender: TObject);
 begin
-  ButtonClick(Sender);
+  SelectButtonClick(Sender);
 end;
 *)
 
@@ -228,6 +234,16 @@ begin
   finally
     Screen.Cursor := crDefault;
   end;
+end;
+
+procedure TStyledButtonEditor.AsVCLComponentCheckBoxClick(Sender: TObject);
+begin
+  if AsVCLComponentCheckBox.Checked then
+  begin
+    TabControl.TabIndex := 0;
+    TabControlChange(TabControl);
+  end;
+  UpdateDestFromGUI;
 end;
 
 procedure TStyledButtonEditor.ApplyButtonClick(Sender: TObject);
@@ -361,8 +377,9 @@ end;
 procedure TStyledButtonEditor.InitGUI;
 var
   I: TStyledButtonDrawType;
+  J: TCustomButton.TButtonStyle;
   LPos: Integer;
-  LDrawName: string;
+  LDrawName, LStyleName: string;
 begin
   TabControl.OnChange := nil;
   try
@@ -374,7 +391,18 @@ begin
       if I = SourceButton.StyleDrawType then
         StyleDrawTypeComboBox.ItemIndex := LPos;
     end;
+
+    AsVCLComponentCheckBox.Checked := SourceButton.AsVCLComponent;
+    for J := Low(TCustomButton.TButtonStyle) to High(TCustomButton.TButtonStyle) do
+    begin
+      LStyleName := GetEnumName(TypeInfo(TCustomButton.TButtonStyle), Ord(J));
+      LPos := StyleComboBox.Items.Add(LStyleName);
+      if J = SourceButton.Style then
+        StyleComboBox.ItemIndex := LPos;
+    end;
+
     EnabledCheckBox.Checked := SourceButton.Enabled;
+    AsVCLComponentCheckBox.Checked := SourceButton.AsVCLComponent;
     RadiusTrackBar.Position := SourceButton.StyleRadius;
     FlatButtonCheckBox.Checked := SourceButton.Flat;
 
@@ -434,7 +462,7 @@ begin
   TabControlChange(TabControl);
 end;
 
-procedure TStyledButtonEditor.StyleDrawTypeComboBoxSelect(Sender: TObject);
+procedure TStyledButtonEditor.StyleComboBoxSelect(Sender: TObject);
 begin
   FCustomStyleDrawType := True;
   UpdateDestFromGUI;
@@ -455,20 +483,23 @@ procedure TStyledButtonEditor.UpdateDestFromGUI;
 var
   LRoundRect: Boolean;
 begin
+  DestButton.Style := TCustomButton.TButtonStyle(StyleComboBox.ItemIndex);
   DestButton.StyleDrawType := TStyledButtonDrawType(StyleDrawTypeComboBox.ItemIndex);
   LRoundRect := DestButton.StyleDrawType = btRoundRect;
   DestButton.StyleRadius := RadiusTrackBar.Position;
   StyleRadiusLabel.Visible := LRoundRect;
   RadiusTrackBar.Visible := LRoundRect;
-  StyleRadiusLabel.Caption := Format('StyleRadius: %d', [DestButton.StyleRadius]);
   DestButton.Enabled := EnabledCheckBox.Checked;
-  ActualGroupBox.Caption := Format('ACTUAL: %s/%s/%s',
-    [SourceButton.StyleFamily, SourceButton.StyleClass, SourceButton.StyleAppearance]);
   SourceButton.Hint := ActualGroupBox.Caption;
-  NewGroupBox.Caption := Format('NEW: %s/%s/%s',
-    [DestButton.StyleFamily, DestButton.StyleClass, DestButton.StyleAppearance]);
   DestButton.Hint := NewGroupBox.Caption;
   DestButton.Flat := FlatButtonCheckBox.Checked;
+  DestButton.AsVCLComponent := AsVCLComponentCheckBox.Checked;
+
+  StyleRadiusLabel.Caption := Format('StyleRadius: %d', [DestButton.StyleRadius]);
+  ActualGroupBox.Caption := Format('ACTUAL: %s/%s/%s',
+    [SourceButton.StyleFamily, SourceButton.StyleClass, SourceButton.StyleAppearance]);
+  NewGroupBox.Caption := Format('NEW: %s/%s/%s',
+    [DestButton.StyleFamily, DestButton.StyleClass, DestButton.StyleAppearance]);
 end;
 
 procedure TStyledButtonEditor.BuildButtonsPreview(const AFamily: TStyledButtonFamily;
@@ -478,6 +509,12 @@ var
   J: Integer;
   LClasses: TButtonClasses;
   LDefaultClass: TStyledButtonClass;
+
+  function NormalizedName(const AName: string): string;
+  begin
+    Result := StringReplace(AName,' ','_',[rfReplaceAll]);
+    Result := StringReplace(Result,'-','_',[rfReplaceAll]);
+  end;
 
   procedure CreateButton(
     const AParent: TFlowPanel;
@@ -490,15 +527,16 @@ var
     LStyledButton.Height := BUTTON_HEIGHT;
     LStyledButton.AlignWithMargins := True;
     LStyledButton.Caption := AClass;
-    LStyledButton.Hint := Format('StyleFamily: "%s" - StyleAppearance: "%s" - StyleClass: "%s"',
-      [AFamily, AAppearance, AClass]);
+    LStyledButton.Hint := Format('StyleFamily: "%s" - StyleClass: "%s" - StyleAppearance: "%s"',
+      [AFamily, AClass, AAppearance]);
     LStyledButton.StyleFamily := AFamily;
     LStyledButton.StyleClass := AClass;
     LStyledButton.StyleAppearance := AAppearance;
-    LStyledButton.OnClick := ButtonClick;
+    LStyledButton.OnClick := SelectButtonClick;
     //LStyledButton.OnEnter := ButtonEnter;
     LStyledButton.StyleDrawType := TStyledButtonDrawType(StyleDrawTypeComboBox.ItemIndex);
     LStyledButton.StyleRadius := RadiusTrackBar.Position;
+    LStyledButton.AsVCLComponent := False;
     LStyledButton.Parent := AParent;
   end;
 

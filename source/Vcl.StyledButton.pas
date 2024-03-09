@@ -53,7 +53,7 @@ uses
   ;
 
 const
-  StyledButtonsVersion = '3.3.1';
+  StyledButtonsVersion = '3.3.2';
   DEFAULT_BTN_WIDTH = 75;
   DEFAULT_BTN_HEIGHT = 25;
   DEFAULT_IMAGE_HMARGIN = 8;
@@ -238,7 +238,8 @@ type
     procedure SetStyle(const AValue: TCustomButton.TButtonStyle);
     function GetActiveStyleName: string;
     function AsVCLStyle: Boolean;
-
+    function GetAsVCLComponent: Boolean;
+    procedure SetAsVCLComponent(const AValue: Boolean);
     //Owner Control access
     function GetAction: TCustomAction;
     procedure SetAction(const AAction: TCustomAction);
@@ -315,7 +316,6 @@ type
       X, Y: Integer);
     procedure Loaded;
     procedure ActionChange(Sender: TObject; CheckDefaults: Boolean);
-    procedure UpdateStyleElements;
     procedure EraseBackground(const ACanvas: TCanvas);
     procedure DrawButton(const ACanvas: TCanvas;
       const AEraseBackground: Boolean);
@@ -403,6 +403,7 @@ type
       const ASetParentFont: TSetParentFont);
     destructor Destroy; override;
     function IsDefaultAppearance: Boolean;
+    property AsVCLComponent: Boolean read GetAsVCLComponent write SetAsVCLComponent;
     property Active: Boolean read FActive write FActive;
     property Focused: Boolean read GetFocused;
     property ButtonState: TStyledButtonState read GetButtonState;
@@ -643,6 +644,9 @@ type
     procedure SetDown(const AValue: Boolean);
     procedure SetGroupIndex(const AValue: Integer);
     function IsCheckedStored: Boolean;
+    function GetAsVCLComponent: Boolean;
+    procedure SetAsVCLComponent(const AValue: Boolean);
+    function GetActiveStyleName: string;
   protected
     procedure SetCursor(const AValue: TCursor); virtual;
     function GetCaption: TCaption; virtual;
@@ -668,7 +672,6 @@ type
       X, Y: Integer); override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer); override;
-    procedure UpdateStyleElements; override;
     {$IFDEF D10_4+}
     procedure SetStyleName(const AValue: string); override;
     {$ENDIF}
@@ -725,6 +728,8 @@ type
       const AUseCustomDrawType: Boolean); overload; virtual;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    property ActiveStyleName: string read GetActiveStyleName;
+    property AsVCLComponent: Boolean read GetAsVCLComponent write SetAsVCLComponent;
     property Focused: Boolean read GetFocused;
     property ButtonState: TStyledButtonState read GetButtonState;
     property MouseInControl: Boolean read GetMouseInControl;
@@ -789,10 +794,12 @@ type
 
   TStyledGraphicButton = class(TCustomStyledGraphicButton)
   published
+    property ActiveStyleName;
     property Action;
     property Align;
     property AllowAllUp;
     property Anchors;
+    property AsVCLComponent stored False;
     property Constraints;
     property Cursor default crHandPoint;
     property GroupIndex;
@@ -870,8 +877,6 @@ type
   end;
 
   TStyledSpeedButton = class(TCustomStyledGraphicButton)
-  private
-  protected
   public
     constructor Create(AOwner: TComponent); override;
   published
@@ -879,6 +884,7 @@ type
     property Align;
     property AllowAllUp;
     property Anchors;
+    property AsVCLComponent stored False;
     property BiDiMode;
     property Constraints;
     property Cursor default crHandPoint;
@@ -1098,6 +1104,9 @@ type
     function IsCaptionAlignmentStored: Boolean;
     function GetElevationRequired: Boolean;
     procedure SetElevationRequired(const AValue: Boolean);
+    function GetAsVCLComponent: Boolean;
+    procedure SetAsVCLComponent(const AValue: Boolean);
+    function GetActiveStyleName: string;
   protected
     procedure SetCursor(const AValue: TCursor); virtual;
     function CalcImageRect(var ATextRect: TRect;
@@ -1124,7 +1133,6 @@ type
       X, Y: Integer); override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer); override;
-    procedure UpdateStyleElements; override;
     {$IFDEF D10_4+}
     procedure SetStyleName(const AValue: string); override;
     {$ENDIF}
@@ -1182,6 +1190,9 @@ type
       const AUseCustomDrawType: Boolean); overload; virtual;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+
+    property ActiveStyleName: string read GetActiveStyleName;
+    property AsVCLComponent: Boolean read GetAsVCLComponent write SetAsVCLComponent;
     property ButtonState: TStyledButtonState read GetButtonState;
     property MouseInControl: Boolean read GetMouseInControl;
     property StyleApplied: Boolean read GetStyleApplied write SetStyleApplied;
@@ -1254,9 +1265,11 @@ type
 
   TStyledButton = class(TCustomStyledButton)
   published
+    property ActiveStyleName;
     property Action;
     property Align;
     property Anchors;
+    property AsVCLComponent stored False;
     property BiDiMode;
     property Cancel;
     property Caption;
@@ -1365,6 +1378,7 @@ type
     property Action;
     property Align;
     property Anchors;
+    property AsVCLComponent stored False;
     property BiDiMode;
     property Cancel;
     property Caption;
@@ -1486,6 +1500,7 @@ end;
 
 procedure TStyledButtonRender.AssignStyleTo(ADest: TStyledButtonRender);
 begin
+  ADest.AsVCLComponent := Self.AsVCLComponent;
   if not ParentFont then
     ADest.Font.Assign(Self.Font);
   ADest.FFlat := Self.FFlat;
@@ -1686,7 +1701,7 @@ end;
 
 procedure TStyledButtonRender.UpdateControlStyle;
 begin
-  UpdateStyleElements;
+  ApplyButtonStyle;
 end;
 
 function TStyledButtonRender.UpdateCount: Integer;
@@ -1853,15 +1868,30 @@ end;
 function TStyledButtonRender.ApplyButtonStyle: Boolean;
 var
   LButtonFamily: TButtonFamily;
+  LStyleClass: TStyledButtonClass;
+  LStyleAppearance: TStyledButtonAppearance;
 begin
+  if AsVCLStyle then
+  begin
+    //if StyleElements contains seClient then use
+    //VCL Style assigned to Button or Global VCL Style
+    if seBorder in FOwnerControl.StyleElements then
+      LStyleAppearance := DEFAULT_APPEARANCE;
+    LStyleClass := GetActiveStyleName;
+  end
+  else
+  begin
+    LStyleClass := FStyleClass;
+    LStyleAppearance := FStyleAppearance;
+  end;
   Result := StyleFamilyCheckAttributes(FStyleFamily,
-    FStyleClass, FStyleAppearance, LButtonFamily);
-  if Result or (csDesigning in ComponentState) then
+    LStyleClass, LStyleAppearance, LButtonFamily);
+  if Result (*or (csDesigning in ComponentState)*) then
   begin
     StyleFamilyUpdateAttributes(
       FStyleFamily,
-      FStyleClass,
-      FstyleAppearance,
+      LStyleClass,
+      LStyleAppearance,
       FButtonStyleNormal,
       FButtonStylePressed,
       FButtonStyleSelected,
@@ -1870,6 +1900,11 @@ begin
 
     if not FCustomDrawType then
       FStyleDrawType := FButtonStyleNormal.DrawType;
+  end
+  else
+  begin
+    FStyleClass := LStyleClass;
+    FStyleAppearance := LStyleAppearance;
   end;
   if Result then
     Invalidate;
@@ -2071,31 +2106,41 @@ begin
     (seClient in FOwnerControl.StyleElements);
 end;
 
+function TStyledButtonRender.GetAsVCLComponent: Boolean;
+begin
+  Result := (FStyleFamily = DEFAULT_CLASSIC_FAMILY) and
+    (seClient in FOwnerControl.StyleElements);
+end;
+
+procedure TStyledButtonRender.SetAsVCLComponent(const AValue: Boolean);
+begin
+  if AValue <> GetAsVCLComponent then
+  begin
+    if AValue then
+    begin
+      FStyleFamily := DEFAULT_CLASSIC_FAMILY;
+      FStyleClass := DEFAULT_WINDOWS_CLASS;
+      FStyleAppearance := DEFAULT_APPEARANCE;
+      FOwnerControl.StyleElements := FOwnerControl.StyleElements + [seClient];
+    end
+    else if FStyleFamily = DEFAULT_CLASSIC_FAMILY then
+    begin
+      FOwnerControl.StyleElements := FOwnerControl.StyleElements - [seClient];
+    end;
+    ApplyButtonStyle;
+  end;
+end;
+
 function TStyledButtonRender.IsStoredStyleClass: Boolean;
 var
   LClass: TStyledButtonClass;
   LAppearance: TStyledButtonAppearance;
   LButtonFamily: TButtonFamily;
-  LModalResultClass: TStyledButtonClass;
 begin
   StyleFamilyCheckAttributes(FStyleFamily, LClass, LAppearance, LButtonFamily);
-
-  if AsVCLStyle then
-  begin
-    Result := (FStyleClass <> GetActiveStyleName)
-      and not SameText(FStyleClass, 'Windows');
-  end
-  else
-  begin
-    if FModalResult <> mrNone then
-    begin
-      LButtonFamily.StyledAttributes.GetStyleByModalResult(FModalResult,
-        LModalResultClass, LAppearance);
-      Result := FStyleClass <> LModalResultClass;
-    end
-    else
-      Result := FStyleClass <> LClass;
-  end;
+  if FModalResult <> mrNone then
+    LButtonFamily.StyledAttributes.GetStyleByModalResult(FModalResult, LClass, LAppearance);
+  Result := FStyleClass <> LClass;
 end;
 
 function TStyledButtonRender.IsStoredStyleAppearance: Boolean;
@@ -2405,7 +2450,12 @@ begin
         LImageRect.Left := Round(10*GetOwnerScaleFactor);
         LImageRect.Height := Round(20*GetOwnerScaleFactor);
         LImageRect.Width := LImageRect.Height;
-        DrawIconFromCommandLinkRes(ACanvas, LImageRect, Self.StyleClass, FState, Enabled)
+        if AsVCLComponent then
+          DrawIconFromCommandLinkRes(ACanvas, LImageRect,
+            Self.ActiveStyleName, FState, Enabled)
+        else
+          DrawIconFromCommandLinkRes(ACanvas, LImageRect,
+            Self.FStyleClass, FState, Enabled);
       end;
     end
     else
@@ -2445,7 +2495,7 @@ begin
       LTextRect.Left := Round(38*GetOwnerScaleFactor);
     LTextRect.Right := ASurfaceRect.Right;
     ACanvas.Font.Height := Round(-16*GetOwnerScaleFactor);
-    if Self.StyleClass = 'Windows' then
+    if AsVCLComponent and (ActiveStyleName = 'Windows') then
       ACanvas.Font.Color := HtmlToColor('#0279D7'); //Windows Blue color
     //Calculate TextRect: WordWrap, centered
     LTextFlags := DT_NOCLIP or DT_VCENTER or DT_WORDBREAK;
@@ -2582,16 +2632,19 @@ end;
 
 procedure TStyledButtonRender.SetStyleDrawType(const AValue: TStyledButtonDrawType);
 begin
-  FStyleDrawType := AValue;
-  FCustomDrawType := True;
-(* do not assign DrawType to any Style
-    FButtonStyleNormal.DrawType := FDrawType;
-    FButtonStylePressed.DrawType := FDrawType;
-    FButtonStyleSelected.DrawType := FDrawType;
-    FButtonStyleHot.DrawType := FDrawType;
-    FButtonStyleDisabled.DrawType := FDrawType;
-*)
-  Invalidate;
+  if FStyleDrawType <> AValue then
+  begin
+    FStyleDrawType := AValue;
+    FCustomDrawType := True;
+    (* do not assign DrawType to any Style
+        FButtonStyleNormal.DrawType := FDrawType;
+        FButtonStylePressed.DrawType := FDrawType;
+        FButtonStyleSelected.DrawType := FDrawType;
+        FButtonStyleHot.DrawType := FDrawType;
+        FButtonStyleDisabled.DrawType := FDrawType;
+    *)
+    Invalidate;
+  end;
 end;
 
 function TStyledButtonRender.IsDefaultImageMargins: Boolean;
@@ -2817,42 +2870,7 @@ end;
 
 function TStyledButtonRender.GetActiveStyleName: string;
 begin
-  {$IFDEF D10_4+}
-  Result := FOwnerControl.GetStyleName;
-  if Result = '' then
-  begin
-    {$IFDEF D11+}
-    if (csDesigning in ComponentState) then
-      Result := TStyleManager.ActiveDesigningStyle.Name
-    else
-      Result := TStyleManager.ActiveStyle.Name;
-    {$ELSE}
-      Result := TStyleManager.ActiveStyle.Name;
-    {$ENDIF}
-  end;
-  {$ELSE}
-  Result := TStyleManager.ActiveStyle.Name;
-  {$ENDIF}
-end;
-
-procedure TStyledButtonRender.UpdateStyleElements;
-var
-  LStyleClass: TStyledButtonClass;
-begin
-  if AsVCLStyle then
-  begin
-    //if StyleElements contains seClient then Update style
-    //as VCL Style assigned to Button or Global VCL Style
-    if seBorder in FOwnerControl.StyleElements then
-      StyleAppearance := DEFAULT_APPEARANCE;
-    LStyleClass := GetActiveStyleName;
-    if LStyleClass <> FStyleClass then
-    begin
-      FStyleClass := LStyleClass;
-      StyleApplied := ApplyButtonStyle;
-    end;
-  end;
-  inherited;
+  Result := Vcl.ButtonStylesAttributes.GetActiveStyleName(FOwnerControl);
 end;
 
 procedure TStyledButtonRender.SetDisabledImages(const AValue: TCustomImageList);
@@ -3044,7 +3062,7 @@ begin
     //Force style of the button as defined into Family
     StyleFamilyUpdateAttributesByModalResult(FModalResult,
       FStyleFamily, FStyleClass, FStyleAppearance);
-    UpdateStyleElements;
+    ApplyButtonStyle;
     StyleApplied := ApplyButtonStyle;
   end
   else
@@ -3294,12 +3312,12 @@ begin
   if (FStyleFamily = DEFAULT_CLASSIC_FAMILY) then
   begin
     if (LValue <> DEFAULT_WINDOWS_CLASS) then
-      FOwnerControl.StyleElements := FOwnerControl.StyleElements - [seClient]
-    else
-      LValue := GetActiveStyleName;
+      FOwnerControl.StyleElements := FOwnerControl.StyleElements - [seClient];
+//    else
+//      LValue := GetActiveStyleName;
+    if LValue = '' then
+      LValue := DEFAULT_WINDOWS_CLASS;
   end;
-  if LValue = '' then
-    LValue := DEFAULT_WINDOWS_CLASS;
   if (LValue <> Self.FStyleClass) or not FStyleApplied then
   begin
     Self.FStyleClass := LValue;
@@ -4067,15 +4085,19 @@ begin
   Result := TGraphicButtonActionLink;
 end;
 
+function TCustomStyledGraphicButton.GetActiveStyleName: string;
+begin
+  Result := FRender.ActiveStyleName;
+end;
+
 function TCustomStyledGraphicButton.GetAllowAllUp: Boolean;
 begin
   Result := FRender.AllowAllUp;
 end;
 
-procedure TCustomStyledGraphicButton.UpdateStyleElements;
+function TCustomStyledGraphicButton.GetAsVCLComponent: Boolean;
 begin
-  FRender.UpdateStyleElements;
-  inherited;
+  Result := FRender.AsVCLComponent;
 end;
 
 function TCustomStyledGraphicButton.GetDisabledImages: TCustomImageList;
@@ -4224,6 +4246,11 @@ end;
 procedure TCustomStyledGraphicButton.SetAllowAllUp(const AValue: Boolean);
 begin
   FRender.AllowAllUp := AValue;
+end;
+
+procedure TCustomStyledGraphicButton.SetAsVCLComponent(const AValue: Boolean);
+begin
+  FRender.AsVCLComponent := AValue;
 end;
 
 procedure TCustomStyledGraphicButton.SetButtonStyle(const AStyleFamily: TStyledButtonFamily;
@@ -5173,10 +5200,14 @@ begin
   Result := TGraphicButtonActionLink;
 end;
 
-procedure TCustomStyledButton.UpdateStyleElements;
+function TCustomStyledButton.GetActiveStyleName: string;
 begin
-  FRender.UpdateStyleElements;
-  inherited;
+  Result := FRender.ActiveStyleName;
+end;
+
+function TCustomStyledButton.GetAsVCLComponent: Boolean;
+begin
+  Result := FRender.AsVCLComponent;
 end;
 
 function TCustomStyledButton.GetDisabledImages: TCustomImageList;
@@ -5350,6 +5381,11 @@ procedure TCustomStyledButton.SetButtonStyle(
   const AStyleAppearance: TStyledButtonAppearance);
 begin
   FRender.SetButtonStyle(AStyleFamily, AStyleClass, AStyleAppearance);
+end;
+
+procedure TCustomStyledButton.SetAsVCLComponent(const AValue: Boolean);
+begin
+  FRender.AsVCLComponent := AValue;
 end;
 
 procedure TCustomStyledButton.SetButtonStyle(const AStyleFamily: TStyledButtonFamily;

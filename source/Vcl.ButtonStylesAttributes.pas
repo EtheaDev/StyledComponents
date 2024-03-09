@@ -46,6 +46,7 @@ uses
   , Vcl.Buttons
   , Vcl.StdCtrls
   , Vcl.ImgList
+  , Vcl.Themes
   , Winapi.CommCtrl
   ;
 
@@ -198,6 +199,7 @@ function ColorIsLight(Color: TColor): Boolean;
 function SameStyledButtonStyle(Style1, Style2: TStyledButtonAttributes): Boolean;
 procedure CloneButtonStyle(const ASource: TStyledButtonAttributes;
   var ADest: TStyledButtonAttributes);
+function GetActiveStyleName(const AControl: TControl): string;
 function GetWindowsVersion: TWindowsVersion;
 
 //Calculate Image and Text Rect for Drawing using ImageAlignment and ImageMargins
@@ -400,6 +402,34 @@ begin
   ADest.FHasCustomFontColor := ASource.FHasCustomFontColor;
   ADest.FHasCustomButtonColor := ASource.FHasCustomButtonColor;
   ADest.FHasCustomRadius := ASource.FHasCustomRadius;
+end;
+
+function GetActiveStyleName(const AControl: TControl): string;
+begin
+  {$IFDEF D10_4+}
+  Result := AControl.GetStyleName;
+  if Result = '' then
+  begin
+    {$IFDEF D11+}
+    if (csDesigning in AControl.ComponentState) then
+      Result := TStyleManager.ActiveDesigningStyle.Name
+    else
+      Result := TStyleManager.ActiveStyle.Name;
+    {$ELSE}
+      Result := TStyleManager.ActiveStyle.Name;
+    {$ENDIF}
+  end;
+  {$ELSE}
+  Result := TStyleManager.ActiveStyle.Name;
+  {$ENDIF}
+  if (csDesigning in AControl.ComponentState) then
+  begin
+    if (Result = 'Windows Designer Dark') or
+      (Result = 'Win10IDE_Dark') or
+      (Result = 'Win10IDE_Light') or
+      (Result = 'Mountain_Mist' ) then
+      Result := 'Windows';
+  end;
 end;
 
 function GetWindowsVersion: TWindowsVersion;

@@ -153,7 +153,7 @@ end;
 function TTestForm.CreateNewButton(const AParent: TWinControl; const ALeft,
   ATop: Integer; const AImageName, AStyle: string): TStyledAnimatedButton;
 var
-  LIconName: string;
+  LIconName, LResName: string;
   LFileName: TFileName;
 begin
   Result := TStyledAnimatedButton.CreateStyled(
@@ -170,7 +170,9 @@ begin
   //Result.ImageName := AImageName;
   //Result.ImageAlignment := TImageAlignment.iaTop;
   LFileName := Format(ExtractFilePath(Application.ExeName)+'..\..\..\..\Animations\%s.json', [LIconName]);
-  Result.LoadAnimationFromFile(LFileName);
+  LResName := UpperCase(Format('LOTTIE_%s',[LIconName]));
+  Result.LoadAnimationFromResource(LResName);
+  //Result.LoadAnimationFromFile(LFileName);
   Result.Caption := AImageName;
   Result.StyleClass := AStyle;
   Result.AutoAnimationTypes := GetAnimTypes;

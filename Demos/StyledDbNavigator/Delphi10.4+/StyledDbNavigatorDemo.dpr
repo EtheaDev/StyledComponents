@@ -41,7 +41,7 @@ uses
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.Title := 'Styled DbNavigator Demo - (c) Ethea S.r.l.';
+  Application.Title := 'Styled DbNavigator and BindNavigator Demo - (c) Ethea S.r.l.';
 
   //Examples to define a default Rendering Style for DbNavigator Styled Buttons
   //TStyledDbNavigator.RegisterDefaultRenderingStyle(btRounded);

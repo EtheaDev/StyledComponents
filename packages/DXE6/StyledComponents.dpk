@@ -54,7 +54,7 @@ package StyledComponents;
 {$IMAGEBASE $400000}
 {$DEFINE RELEASE}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Ethea - Styled Components'}
+{$DESCRIPTION 'Ethea Styled Components'}
 {$LIBSUFFIX 'DXE6'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
@@ -64,7 +64,9 @@ requires
   vcl,
   vclimg,
   dbrtl,
-  vcldb;
+  vcldb,
+  bindengine,
+  bindcomp;
 
 contains
   Vcl.StyledButton in '..\..\source\Vcl.StyledButton.pas',

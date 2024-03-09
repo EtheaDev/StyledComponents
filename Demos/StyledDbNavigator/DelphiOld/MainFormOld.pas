@@ -1,7 +1,7 @@
 {******************************************************************************}
 {                                                                              }
-{       TStyledDbNavigator Test                                                }
-{       Comparison TStyledDbNavigator with TDbNavigator                        }
+{       TStyledDbNavigator and TStyledBindNavigator Test                       }
+{       Compared to TDbNavigator and TBindNavigator                            }
 {                                                                              }
 {       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
@@ -30,15 +30,19 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ButtonStylesAttributes,
-  Vcl.StandardButtonStyles, Vcl.AngularButtonStyles, Vcl.BootstrapButtonStyles, Vcl.ColorButtonStyles,
-  Vcl.StyledButton, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnMan,
-  Vcl.ActnCtrls, Vcl.ImgList, Vcl.StdCtrls, Vcl.StyledDbNavigator, Vcl.Menus,
-  Vcl.DBCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids, Datasnap.DBClient, Vcl.Buttons;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnMan,
+  Vcl.ActnCtrls, Vcl.ImgList, Vcl.StdCtrls, Vcl.Menus,
+  Vcl.DBCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids, Datasnap.DBClient, Vcl.Buttons,
+  Data.Bind.Controls,
+  Data.Bind.Components, Data.Bind.DBScope, Vcl.Bind.Navigator,
+  Vcl.StyledButton, Vcl.ButtonStylesAttributes,
+  Vcl.StandardButtonStyles, Vcl.AngularButtonStyles,
+  Vcl.BootstrapButtonStyles, Vcl.ColorButtonStyles, Vcl.StyledDbNavigator;
 
 const
   //Params to check
-  FLAT_BUTTONS = False;
+  FLAT_BUTTONS = True;
   DBNAV_HEIGHT = 50;
   DBNAV_WIDTH = 50;
   SHOW_CAPTIONS = False;
@@ -52,7 +56,6 @@ const
 type
   TfmMain = class(TForm)
     BottomPanel: TPanel;
-    ImageList32: TImageList;
     ClientPanel: TPanel;
     LeftPanel: TPanel;
     CreateButton: TStyledButton;
@@ -86,7 +89,12 @@ type
     DBGrid1: TDBGrid;
     DataSource: TDataSource;
     StyledDBNavigator: TStyledDbNavigator;
+    StyledBindNavigator: TStyledBindNavigator;
     CustomImagesCheckBox: TCheckBox;
+    BindNavigator: TBindNavigator;
+    BindSourceDB: TBindSourceDB;
+    ImageList32: TImageList;
+    VCLButton: TButton;
     procedure FormCreate(Sender: TObject);
     procedure ToolButtonclick(Sender: TObject);
     procedure CreateButtonClick(Sender: TObject);
@@ -97,7 +105,9 @@ type
   private
     FDbNavigator: TDbNavigator;
     FStyledDbNavigator: TStyledDbNavigator;
+    FStyledBindNavigator: TStyledBindNavigator;
     procedure CreateStyledDbNavigator;
+    procedure CreateStyledBindNavigator;
     procedure CreateDbNavigators;
     procedure CreateDbNavigator;
     procedure BuildStyleList;
@@ -125,16 +135,30 @@ end;
 procedure TfmMain.CreateStyledDbNavigator;
 begin
   FStyledDbNavigator := TStyledDbNavigator.Create(Self);
-  //FStyledDbNavigator.Flat := True;
+  FStyledDbNavigator.Flat := FLAT_BUTTONS;
   FStyledDbNavigator.ShowCaptions := SHOW_CAPTIONS;
   FStyledDbNavigator.Align := DBNAV_ALIGN;
   FStyledDbNavigator.Kind := DBNAV_KIND;
   FStyledDbNavigator.Height := DBNAV_HEIGHT;
   FStyledDbNavigator.Width := DBNAV_WIDTH;
-  FStyledDbNavigator.StyleElements := [];
-  FStyledDbNavigator.VisibleButtons := [nbFirst, nbPrior, nbNext, nbLast, nbInsert, nbDelete, nbEdit, nbPost, nbCancel, nbRefresh, nbApplyUpdates, nbCancelUpdates];
+  FStyledDbNavigator.VisibleButtons := [TNavigateBtn.nbFirst, TNavigateBtn.nbPrior, TNavigateBtn.nbNext, TNavigateBtn.nbLast];
   FStyledDbNavigator.DataSource := DataSource;
   FStyledDbNavigator.Parent := Self;
+end;
+
+procedure TfmMain.CreateStyledBindNavigator;
+begin
+  FStyledBindNavigator := TStyledBindNavigator.Create(Self);
+  FStyledBindNavigator.Flat := FLAT_BUTTONS;
+  FStyledBindNavigator.ShowCaptions := SHOW_CAPTIONS;
+  FStyledBindNavigator.Align := DBNAV_ALIGN;
+  FStyledBindNavigator.Kind := DBNAV_KIND;
+  FStyledBindNavigator.Height := DBNAV_HEIGHT;
+  FStyledBindNavigator.Width := DBNAV_WIDTH;
+  FStyledBindNavigator.VisibleButtons :=
+    [TNavigateButton.nbFirst, TNavigateButton.nbPrior, TNavigateButton.nbNext, TNavigateButton.nbLast];
+  FStyledBindNavigator.DataSource := BindSourceDB;
+  FStyledBindNavigator.Parent := Self;
 end;
 
 procedure TfmMain.CustomImagesCheckBoxClick(Sender: TObject);
@@ -142,25 +166,29 @@ begin
   if StyledDBNavigator.Images = ImageList32 then
   begin
     FStyledDBNavigator.Images := nil;
+    FStyledBindNavigator.Images := nil;
     StyledDBNavigator.Images := nil;
+    StyledBindNavigator.Images := nil;
   end
   else
   begin
     FStyledDBNavigator.Images := ImageList32;
+    FStyledBindNavigator.Images := ImageList32;
     StyledDBNavigator.Images := ImageList32;
+    StyledBindNavigator.Images := ImageList32;
   end;
 end;
 
 procedure TfmMain.CreateDbNavigator;
 begin
   FDbNavigator := TDbNavigator.Create(Self);
-  //FDbNavigator.Flat := True;
+  FDbNavigator.Flat := FLAT_BUTTONS;
   FDbNavigator.Align := DBNAV_ALIGN;
   FDbNavigator.Kind := DBNAV_KIND;
   FDbNavigator.Height := DBNAV_HEIGHT;
   FDbNavigator.Width := DBNAV_WIDTH;
   FDbNavigator.StyleElements := [];
-  FDbNavigator.VisibleButtons := [nbFirst, nbPrior, nbNext, nbLast, nbInsert, nbDelete, nbEdit, nbPost, nbCancel, nbRefresh, nbApplyUpdates, nbCancelUpdates];
+  FDbNavigator.VisibleButtons := [TNavigateBtn.nbFirst, TNavigateBtn.nbPrior, TNavigateBtn.nbNext, TNavigateBtn.nbLast];
   FDbNavigator.DataSource := DataSource;
   FDbNavigator.Parent := Self;
 end;
@@ -172,6 +200,9 @@ begin
 
   //Create Styled DbNavigator
   CreateStyledDbNavigator;
+
+  //Create Styled Bind Navigator
+  CreateStyledBindNavigator;
 end;
 
 procedure TfmMain.FormCreate(Sender: TObject);
@@ -206,6 +237,13 @@ begin
     FStyledDbNavigator.Height := tbHeight.Position;
     FStyledDbNavigator.Width := tbWidth.Position;
   end;
+  if Assigned(FStyledBindNavigator) then
+  begin
+    FStyledBindNavigator.Flat := FlatCheckBox.Checked;
+    FStyledBindNavigator.ShowCaptions := ShowCaptionsCheckBox.Checked;
+    FStyledBindNavigator.Height := tbHeight.Position;
+    FStyledBindNavigator.Width := tbWidth.Position;
+  end;
   if Assigned(FDbNavigator) then
   begin
     FDbNavigator.Flat := FlatCheckBox.Checked;
@@ -215,10 +253,17 @@ begin
   DbNavigator.Flat := FlatCheckBox.Checked;
   DbNavigator.Width := tbWidth.Position;
   DbNavigator.Height := tbHeight.Position;
+  BindNavigator.Flat := FlatCheckBox.Checked;
+  BindNavigator.Width := tbWidth.Position;
+  BindNavigator.Height := tbHeight.Position;
   StyledDbNavigator.Flat := FlatCheckBox.Checked;
   StyledDbNavigator.ShowCaptions := ShowCaptionsCheckBox.Checked;
   StyledDbNavigator.Height := tbHeight.Position;
   StyledDbNavigator.Width := tbWidth.Position;
+  StyledBindNavigator.Flat := FlatCheckBox.Checked;
+  StyledBindNavigator.ShowCaptions := ShowCaptionsCheckBox.Checked;
+  StyledBindNavigator.Height := tbHeight.Position;
+  StyledBindNavigator.Width := tbWidth.Position;
 end;
 
 procedure TfmMain.BuildStyleList;

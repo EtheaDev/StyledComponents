@@ -50,7 +50,6 @@ object MainForm: TMainForm
       PopupMenu = PopupMenu
       TabOrder = 0
       StyleRadius = 10
-      StyleDrawType = btRoundRect
     end
     object StyledButtonSquare: TStyledButton
       Left = 203
@@ -63,7 +62,6 @@ object MainForm: TMainForm
       Images = VirtualImageList32
       TabOrder = 1
       OnClick = StyledButtonSquareClick
-      StyleDrawType = btRoundRect
       StyleFamily = 'Bootstrap'
       StyleClass = 'Danger'
     end
@@ -123,7 +121,6 @@ object MainForm: TMainForm
     Top = 70
     Width = 895
     Height = 621
-    ActivePage = tsBootstrap
     Align = alClient
     Images = VirtualImageList32
     TabOrder = 1

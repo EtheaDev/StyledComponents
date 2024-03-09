@@ -64,7 +64,8 @@ requires
   vcl,
   vclimg,
   dbrtl,
-  vcldb;
+  vcldb,
+  bindcomp;
 
 contains
   Vcl.StyledButton in '..\..\source\Vcl.StyledButton.pas',

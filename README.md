@@ -1,8 +1,8 @@
 ﻿# Delphi VCL StyledComponents [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 
-## Components similar to Delphi VCL Buttons, Toolbar and DbNavigator, with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
+## Components similar to Delphi VCL Buttons, Toolbar, DbNavigator and BindNavigator, with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 3.3.1
+### Actual official version: 3.3.2
 
 ## List of available Components:
 | Component | Description |
@@ -11,8 +11,11 @@
 | ![OK_BUTTON_128.png](./Images/OK_BUTTON_128.png) | **TStyledButton** is classic "button control" with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) with support of ImageList, Action and full configuration of five states: Normal, Pressed, Selected, Hot and Disabled, plus Focus and TabStop support. You can easily replace all of your TButton components.|
 | ![TOOL_BAR_128.png](./Images/TOOL_BAR_128.png) | **TStyledToolbar** is a Toolbar that uses StyledToolButton, with full customizable of every button style and full control over the size of the buttons, also when Captions are visible. The width and height of the StyledToolButtons inside, do not depends on Caption size, as in classic TToolBar.|
 | ![StyledDbNavigator_128.png](./Images/StyledDbNavigator_128.png) | **TStyledDbNavigator** is a special "DbNavigator" component, with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color), plus Button captions and better "move" icons in vertical mode. |
+| ![StyledBindNavigator_128.png](./Images/StyledBindNavigator_128.png) | **TStyledBindNavigator** is a special "BindNavigator" component, with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color), plus Button captions and better "move" icons in vertical mode. |
 | ![StyledTaskDialog_128.png](./Images/StyledTaskDialog_128.png) | **TStyledTaskDialog** is a special "TaskDialog" component (to replace MessageDlg and TaskDlg) with custom Button Captions and Icons. Using a special Form you can show a full customizable Dialog. Using Skia4Delpghi you can show animated dialogs!|
+
 ---
+
 For "backward compatibily", you can also use those components.
 
 | Component | Description |
@@ -24,12 +27,16 @@ Those components uses some properties to Draw Icon and Caption in a different wa
 - A _Glyph_ and _NumGlyphs_ for the Icon of the button (not reccomended, because doesn't scale)
 - The position of the caption, using _ButtonLayout_ instead and _Margin_ (instead of _ImageAlignment_ and _ImageMargins_)
 - The space between the Icon and the Caption, defined by _spacing_.
+
 ---
+
 ## New _TStyledAnimatedButton_ Component (beta):
 | Component | Description |
 | - | - |
 | ![OK_ANIMATED_BUTTON_128.png](./Images/OK_ANIMATED_BUTTON_128.png) | **TStyledAnimatedButton** is Styled Button with with "animated icon" using a Skia TSkAnimatedImage component inside. You can select the events that starts the animation, like: _AnimateOnMouseOver_, _AnimateOnClick_, _AnimateAlways_, _AnimateOnFocus_. |
+
 ---
+
 ## Installation ##
 
 ### Installation of Packages for Delphi/VCL (from XE6 to Delphi 12) ###
@@ -76,6 +83,30 @@ To simplify use of the Styled Buttons, there is a useful "Component Editor" to s
 - **Basic-Color**: a collection of styles based to Delphi "normal" and "System" [Color collection](https://docwiki.embarcadero.com/RADStudio/Alexandria/en/Color_Constants)
 - **SVG-Color**: a collection of styles based to Delphi "AlphaColors" [Color collection](https://johndecember.com/html/spec/colorsvghex.html)
 
+***Control the default rendering styles for any Styled Buttons, Toolbars and DbNavigator***
+
+It's possible to redefine at global application level the default Drawing styles for any Components, adding some line in your project file. For Example:
+
+Add those units in uses of dpr:
+```Pascal
+  Vcl.StyledButton,
+  Vcl.ButtonStylesAttributes,
+  Vcl.StyledDbNavigator,
+  Vcl.StyledToolbar,
+```
+Add those lines after Application.Initialize in dpr code:
+```Pascal
+  TStyledButton.RegisterDefaultRenderingStyle(btRounded);
+  TStyledDbNavigator.RegisterDefaultRenderingStyle(btRounded);
+  TStyledToolbar.RegisterDefaultRenderingStyle(btRect);
+```
+You can also use a Family/Class/Appearance of any type, for example:
+
+```Pascal
+TStyledButton.RegisterDefaultRenderingStyle(btRoundRect, BOOTSTRAP_FAMILY, btn_primary, BOOTSTRAP_NORMAL);
+```
+You can also use [Interposer Unit (Vcl.StyledComponentsHooks.pas)](/wiki/Interposer-Unit-(Vcl.StyledComponentsHooks)) to easily change all Buttons of your application.
+
 ***New Rounded Button Style***
 
 NOTICE: from Version 3.2 the new **StyleDrawType: btRoundRect** (the new default) has been added.
@@ -100,28 +131,6 @@ _In this picture the new "full-rounded" Style introduced in 3.2 version, in "VCL
 
 ![RoundedButtons.jpg](./Images/RoundedButtons.jpg)
 ---
-***Control the default rendering styles for any Styled Buttons, Toolbars and DbNavigator***
-
-It's possible to redefine at global application level the default Drawing styles for any Components, adding some line in your project file. For Example:
-
-Add those units in uses of dpr:
-```Pascal
-  Vcl.StyledButton,
-  Vcl.ButtonStylesAttributes,
-  Vcl.StyledDbNavigator,
-  Vcl.StyledToolbar,
-```
-Add those lines after Application.Initialize in dpr code:
-```Pascal
-  TStyledButton.RegisterDefaultRenderingStyle(btRounded);
-  TStyledDbNavigator.RegisterDefaultRenderingStyle(btRounded);
-  TStyledToolbar.RegisterDefaultRenderingStyle(btRect);
-```
-You can also use a Family/Class/Appearance of any type, for example:
-
-```Pascal
-TStyledButton.RegisterDefaultRenderingStyle(btRoundRect, BOOTSTRAP_FAMILY, btn_primary, BOOTSTRAP_NORMAL);
-```
 ---
 *In this picture the Component Editor selecting "Boostrap" styles and StyleRadius 18: Style Appearance can be Normal or Outline*
 
@@ -190,21 +199,23 @@ In the StyledToolbar the dimension is always defined by "ButtonWidth" property.
 
 ---
 
-## Description of StyledDbNavigator ##
+## Description of StyledDbNavigator and StyledBindNavigator ##
 
-TStyledDbNavigator (and TStyledNavButton) shows a Navigator like a classic TDbnavigator but with the same Style attributes that can be assigned to Styled Graphic Buttons.
+TStyledDbNavigator (with TStyledNavButton buttons) shows a Navigator like a classic TDbNavigator but with the same Style attributes that can be assigned to Styled Graphic Buttons.
 
-In the TStyledDbNavigator demo, you can see how to use this component, compared to the classic Delphi TDbNavigator.
+TStyledBindNavigator (with TStyledNavButton buttons) shows a Navigator like a classic TBindNavigator but with the same Style attributes that can be assigned to Styled Graphic Buttons.
 
-*In this picture, the StyledDbNavigator with a custom imagelist for images and Captions visible*
+In the TStyledDbNavigator demo, you can see how to use those components, compared to the classic Delphi TDbNavigator and TBindNavigator.
+
+*In this picture, the StyledDbNavigator and StyledBindNavigator with a custom imagelist for images and Captions visible*
 
 ![StyledDbNavigatorDemo.jpg](./Images/StyledDbNavigatorDemo.jpg)
 
 The major differences are:
 - the possibility to set and show Captions on the StyledDbNavigator.
 - The "Icons" with up/down directions when the navigator is displayed in vertical position.
-- The icons are more readable (like the "Edit" one) and readeble in light and dark mode.
-- Custom images using a custom Imagelist.
+- The icons are more readable (like the "Edit" one) and customized form VCL Styled in light and dark mode.
+- It's possible to use a Custom Imagelist, to show other images on the buttons.
 
 ---
 
@@ -283,6 +294,14 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+9 Mar 2024: version 3.3.2
+- Added AsVCLComponent property to Buttons to simplify backward compatibility
+- Component Editor redesigned
+- Added component TStyledBindNavigator
+- Updated Packages and Demos
+- Fixed rescaling images of TStyledDBNavigator
+- Fixed GropIndex of TStyledToolButton
+
 3 Mar 2024: version 3.3.1
 - New version with three new components and many improvements:
 - Added a more stable version of the Animated Styled Button Component (Using Skia4Delphi)

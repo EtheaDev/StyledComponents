@@ -40,6 +40,7 @@ object fmMain: TfmMain
       Down = True
       Grouped = True
       ImageIndex = 12
+      ImageName = 'launch-black'
       Style = tbsCheck
       OnClick = ToolButtonclick
     end
@@ -50,6 +51,7 @@ object fmMain: TfmMain
       Caption = 'Home'
       Grouped = True
       ImageIndex = 2
+      ImageName = 'home-pink'
       Style = tbsCheck
       OnClick = ToolButtonclick
     end
@@ -60,6 +62,7 @@ object fmMain: TfmMain
       Hint = 'Hint of Sep'
       Caption = 'Sep'
       ImageIndex = 11
+      ImageName = 'launch-white'
       Style = tbsSeparator
     end
     object ToolButton3: TToolButton
@@ -69,6 +72,7 @@ object fmMain: TfmMain
       Caption = 'Like'
       Grouped = True
       ImageIndex = 8
+      ImageName = 'heart'
       Style = tbsCheck
       OnClick = ToolButtonclick
     end
@@ -79,6 +83,7 @@ object fmMain: TfmMain
       Caption = 'Options'
       Grouped = True
       ImageIndex = 10
+      ImageName = 'dots-vertical-black'
       Style = tbsCheck
       OnClick = ToolButtonclick
     end
@@ -88,6 +93,7 @@ object fmMain: TfmMain
       Width = 10
       Caption = 'ToolButton6'
       ImageIndex = 9
+      ImageName = 'dots-vertical-white'
       Style = tbsDivider
     end
     object ToolButton7: TToolButton
@@ -96,6 +102,7 @@ object fmMain: TfmMain
       Caption = 'Menu'
       DropdownMenu = PopupMenu
       ImageIndex = 4
+      ImageName = 'menu-amber'
       Style = tbsDropDown
       OnClick = ToolButtonclick
     end
@@ -112,6 +119,7 @@ object fmMain: TfmMain
       Top = 0
       Caption = 'Recycle Bim'
       ImageIndex = 14
+      ImageName = 'trash-black'
       OnClick = ToolButtonclick
     end
   end
@@ -143,14 +151,15 @@ object fmMain: TfmMain
       Left = 0
       Top = 0
       AllowAllUp = True
+      Down = True
       OnClick = ToolButtonclick
       Caption = 'Open'
       ImageIndex = 11
+      ImageName = 'launch-white'
       Style = tbsCheck
       StyleFamily = 'Bootstrap'
       StyleClass = 'Warning'
       Grouped = True
-      Down = True
     end
     object StyledToolButton2: TStyledToolButton
       Left = 77
@@ -158,6 +167,7 @@ object fmMain: TfmMain
       OnClick = ToolButtonclick
       Caption = 'Home'
       ImageIndex = 0
+      ImageName = 'home-deeppurple'
       Style = tbsCheck
       StyleFamily = 'Angular-Light'
       StyleClass = 'Amber'
@@ -168,6 +178,7 @@ object fmMain: TfmMain
       Left = 154
       Top = 0
       Style = tbsSeparator
+      StyleClass = 'Windows'
     end
     object StyledToolButton3: TStyledToolButton
       Left = 162
@@ -175,7 +186,9 @@ object fmMain: TfmMain
       OnClick = ToolButtonclick
       Caption = 'Like'
       ImageIndex = 8
+      ImageName = 'heart'
       Style = tbsCheck
+      StyleClass = 'Windows'
       Grouped = True
     end
     object StyledToolButton5: TStyledToolButton
@@ -185,6 +198,7 @@ object fmMain: TfmMain
       StyleElements = [seFont, seBorder]
       Caption = 'Options'
       ImageIndex = 9
+      ImageName = 'dots-vertical-white'
       Style = tbsCheck
       StyleClass = 'Aqua Graphite'
       Grouped = True
@@ -193,6 +207,7 @@ object fmMain: TfmMain
       Left = 316
       Top = 0
       Style = tbsSeparator
+      StyleClass = 'Windows'
     end
     object StyledToolButton4: TStyledToolButton
       Left = 324
@@ -203,7 +218,9 @@ object fmMain: TfmMain
       Caption = 'Menu'
       DropDownMenu = PopupMenu
       ImageIndex = 5
+      ImageName = 'menu-pink'
       Style = tbsDropDown
+      StyleClass = 'Windows'
     end
     object Edit2: TEdit
       AlignWithMargins = True
@@ -220,6 +237,8 @@ object fmMain: TfmMain
       OnClick = ToolButtonclick
       Caption = 'Recycle Bin'
       ImageIndex = 14
+      ImageName = 'trash-black'
+      StyleClass = 'Windows'
     end
   end
   object BottomPanel: TPanel

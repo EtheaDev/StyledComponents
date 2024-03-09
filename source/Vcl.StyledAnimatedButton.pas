@@ -135,6 +135,7 @@ type
     destructor Destroy; override;
     procedure LoadAnimationFromFile(const AFileName: TFileName);
     procedure LoadAnimationFromStream(const AStream: TStream);
+    procedure LoadAnimationFromResource(const AResourceName: string);
     procedure Click; override;
     //Animation procedures and functions
     function CanPlayAnimation: boolean;
@@ -390,6 +391,21 @@ procedure TStyledAnimatedButton.LoadAnimationFromStream(const AStream: TStream);
 begin
   AnimatedImage.LoadFromStream(AStream);
 end;
+
+procedure TStyledAnimatedButton.LoadAnimationFromResource(
+  const AResourceName: string);
+var
+  LStream: TResourceStream;
+begin
+  LStream := TResourceStream.Create(HInstance, AResourceName,
+    RT_RCDATA);
+  try
+    AnimatedImage.LoadFromStream(LStream);
+  finally
+    LStream.Free;
+  end;
+end;
+
 
 procedure TStyledAnimatedButton.Loaded;
 begin

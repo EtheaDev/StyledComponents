@@ -314,6 +314,10 @@ end;
 procedure TMainForm.TestActionExecute(Sender: TObject);
 begin
   EditStyledButton(ShowEditButton);
+  ShowEditButton.Hint := Format('%s/%s/%s',
+    [ShowEditButton.StyleFamily,
+    ShowEditButton.StyleClass,
+    ShowEditButton.StyleAppearance]);
 end;
 
 procedure TMainForm.LinkLabelLinkClick(Sender: TObject;

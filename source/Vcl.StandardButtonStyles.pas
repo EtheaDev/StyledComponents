@@ -71,6 +71,7 @@ Type
     FontColor: TColor;
     FontHotColor: TColor;
     BorderType: TStyledButtonDrawType;
+    IDEStyle: Boolean;
   end;
 
 //To add new styles used from your application that are not managed by default
@@ -82,7 +83,8 @@ procedure RegisterThemeAttributes(const AVCLStyleName: string;
   const AHotColor: TColor;
   const ABorderColor: TColor;
   const ABorderHotColor: TColor;
-  const ABorderType: TStyledButtonDrawType);
+  const ABorderType: TStyledButtonDrawType;
+  const AIDEStyle: Boolean = False);
 
 function GetStyleAttributes(const AStyleName: string;
   out AThemeAttribute: TThemeAttribute): Boolean;
@@ -281,9 +283,9 @@ begin
   //with lighter or darker button color
   CloneButtonStyle(AHotStyle, ASelectedStyle);
   if LDarkStyle then
-    ASelectedStyle.ButtonColor := LightenColor(LHotColor, 20)
+    ASelectedStyle.ButtonColor := LightenColor(LHotColor, 10)
   else
-    ASelectedStyle.ButtonColor := DarkenColor(LHotColor, 20);
+    ASelectedStyle.ButtonColor := DarkenColor(LHotColor, 10);
 
   //Pressed Button, , similar to Hot
   //with lighter or darker button and border color
@@ -300,9 +302,18 @@ begin
   end;
 
   //Disabled Button (lighten)
-  ADisabledStyle.BorderColor := LightenColor(ADisabledStyle.BorderColor, 50);
-  ADisabledStyle.ButtonColor := LightenColor(ADisabledStyle.ButtonColor, 50);
-  ADisabledStyle.FontColor := LightenColor(ADisabledStyle.FontColor, 50);
+  if LDarkStyle then
+  begin
+    ADisabledStyle.BorderColor := LightenColor(ADisabledStyle.BorderColor, 10);
+    ADisabledStyle.ButtonColor := LightenColor(ADisabledStyle.ButtonColor, 10);
+    ADisabledStyle.FontColor := DarkenColor(ADisabledStyle.FontColor, 50);
+  end
+  else
+  begin
+    ADisabledStyle.BorderColor := LightenColor(ADisabledStyle.BorderColor, 50);
+    ADisabledStyle.ButtonColor := LightenColor(ADisabledStyle.ButtonColor, 50);
+    ADisabledStyle.FontColor := LightenColor(ADisabledStyle.FontColor, 50);
+  end;
 end;
 
 procedure RegisterThemeAttributes(
@@ -314,7 +325,8 @@ procedure RegisterThemeAttributes(
   const AHotColor: TColor;
   const ABorderColor: TColor;
   const ABorderHotColor: TColor;
-  const ABorderType: TStyledButtonDrawType);
+  const ABorderType: TStyledButtonDrawType;
+  const AIDEStyle: Boolean = False);
 var
   LThemeAttribute: TThemeAttribute;
 
@@ -329,6 +341,7 @@ var
     LThemeAttribute.FontHotColor   := AFontHotColor;
     LThemeAttribute.HotColor       := AHotColor;
     LThemeAttribute.BorderType     := ABorderType;
+    LThemeAttribute.IDEStyle       := AIDEStyle;
   end;
 
 begin
@@ -566,9 +579,10 @@ begin
     RegisterThemeAttributes('Windows10 Purple',ttDark,clWhite,clWhite,
       htmlToColor('#672d63'),htmlToColor('#672d63'),
       htmlToColor('#672d63'),clWhite,btRect);
-    RegisterThemeAttributes('Windows10 SlateGray',ttDark,clWhite,htmlToColor('#7daca8'),
+    RegisterThemeAttributes('Windows10 SlateGray',ttDark,clWhite,
+      htmlToColor('#7daca8'),htmlToColor('#2a353b'),
       htmlToColor('#2a353b'),htmlToColor('#2a353b'),
-      htmlToColor('#2a353b'),htmlToColor('#7daca8'),btRect);
+      htmlToColor('#7daca8'),btRect);
     RegisterThemeAttributes('Windows11 MineShaft',ttDark,clWhite,clBlack,
       htmlToColor('#373737'),htmlToColor('#47b1e8'),
       htmlToColor('#373737'),htmlToColor('#47b1e8'),btRoundRect);
@@ -598,13 +612,13 @@ begin
   //IDE Styled
   RegisterThemeAttributes('Win10IDE_Dark',ttDark,clWhite,clWhite,
     htmlToColor('#373737'),htmlToColor('#405560'),
-    htmlToColor('#434343'),htmlToColor('#4ab2e9'),btRoundRect);
+    htmlToColor('#434343'),htmlToColor('#4ab2e9'),btRoundRect, True);
   RegisterThemeAttributes('Win10IDE_Light',ttLight,clBlack,clBlack,
     htmlToColor('#fdfdfd'),htmlToColor('#eef4f9'),
-    htmlToColor('#bbbbbb'),htmlToColor('#0067c0'),btRoundRect);
+    htmlToColor('#bbbbbb'),htmlToColor('#0067c0'),btRoundRect, True);
   RegisterThemeAttributes('Mountain_Mist',ttLight,clBlack,clBlack,
     htmlToColor('#fdfdfd'),htmlToColor('#eef4f9'),
-    htmlToColor('#bbbbbb'),htmlToColor('#0067c0'),btRoundRect);
+    htmlToColor('#bbbbbb'),htmlToColor('#0067c0'),btRoundRect, True);
 end;
 
 procedure FreeThemesAttributes;

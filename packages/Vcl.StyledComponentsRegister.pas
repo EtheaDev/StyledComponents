@@ -86,9 +86,9 @@ Type
     procedure ExecuteVerb(Index: Integer); override;
   end;
 
-  TStyledDbNavigatorComponentEditor = class (TComponentEditor)
+  TStyledNavigatorComponentEditor = class (TComponentEditor)
   private
-    function GetDbNavigator: TStyledDbNavigator;
+    function GetDbNavigator: TCustomStyledDbNavigator;
   public
     function GetVerbCount: Integer; override;
     function GetVerb(Index: Integer): string; override;
@@ -163,7 +163,7 @@ begin
   else if AComponent is TStyledToolbar then
     LFamily := TStyledToolbar(AComponent).StyleFamily
   else if AComponent is TStyledDbNavigator then
-    LFamily := TStyledDbNavigator(AComponent).StyleFamily;
+    LFamily := TCustomStyledDbNavigator(AComponent).StyleFamily;
   if LFamily <> '' then
   begin
     Result := True;
@@ -390,11 +390,11 @@ begin
   Result := 4;
 end;
 
-{ TStyledDbNavigatorComponentEditor }
+{ TStyledNavigatorComponentEditor }
 
-procedure TStyledDbNavigatorComponentEditor.ExecuteVerb(Index: Integer);
+procedure TStyledNavigatorComponentEditor.ExecuteVerb(Index: Integer);
 var
-  LDbNavigator: TStyledDbNavigator;
+  LDbNavigator: TCustomStyledDbNavigator;
   LNavButton: TStyledNavButton;
 begin
   inherited;
@@ -424,17 +424,17 @@ begin
     PChar(GetProjectURL), nil, nil, SW_SHOWNORMAL);
 end;
 
-function TStyledDbNavigatorComponentEditor.GetDbNavigator: TStyledDbNavigator;
+function TStyledNavigatorComponentEditor.GetDbNavigator: TCustomStyledDbNavigator;
 var
   LComponent: TPersistent;
 begin
   Result := nil;
   LComponent := GetComponent;
-  if LComponent is TStyledDbNavigator then
-    Result := TStyledDbNavigator(LComponent);
+  if LComponent is TCustomStyledDbNavigator then
+    Result := TCustomStyledDbNavigator(LComponent);
 end;
 
-function TStyledDbNavigatorComponentEditor.GetVerb(Index: Integer): string;
+function TStyledNavigatorComponentEditor.GetVerb(Index: Integer): string;
 begin
   if Index = 0 then
     Result := 'Styled DbNavigator Editor...'
@@ -442,7 +442,7 @@ begin
     Result := 'Project page on GitHub...';
 end;
 
-function TStyledDbNavigatorComponentEditor.GetVerbCount: Integer;
+function TStyledNavigatorComponentEditor.GetVerbCount: Integer;
 begin
   Result := 2;
 end;
@@ -609,7 +609,8 @@ begin
      TStyledBitBtn,
      TStyledToolbar,
      TStyledTaskDialog,
-     TStyledDbNavigator]);
+     TStyledDbNavigator,
+     TStyledBindNavigator]);
 
   //Property Editor for StyleFamily
   RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
@@ -710,7 +711,8 @@ begin
   RegisterComponentEditor(TStyledBitBtn, TStyledButtonComponentEditor);
   RegisterComponentEditor(TStyledToolButton, TStyledButtonComponentEditor);
   RegisterComponentEditor(TStyledToolbar, TStyledToolbarComponentEditor);
-  RegisterComponentEditor(TStyledDbNavigator, TStyledDbNavigatorComponentEditor);
+  RegisterComponentEditor(TStyledDbNavigator, TStyledNavigatorComponentEditor);
+  RegisterComponentEditor(TStyledBindNavigator, TStyledNavigatorComponentEditor);
 
   //To auto add units
   RegisterSelectionEditor(TCustomStyledGraphicButton, TStyledComponentSelection);

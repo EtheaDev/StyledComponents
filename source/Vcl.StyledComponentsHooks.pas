@@ -49,6 +49,9 @@ type
   //Interposer Class for TDbNavigator -> TStyledDbNavigator
   TDbNavigator = class(TStyledDbNavigator) end;
 
+  //Interposer Class for TBindNavigator -> TStyledBindNavigator
+  TBindNavigator = class(TStyledBindNavigator) end;
+
   //Interposer Class for TToolbar -> TStyledToolbar
   TToolbar = class(TStyledToolbar) end;
 

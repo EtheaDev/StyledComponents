@@ -57,6 +57,8 @@ uses
   , Vcl.StandardButtonStyles
   , Vcl.DBCtrls
   , Data.db
+  , Data.Bind.Components
+  , Data.Bind.Controls
 {$IFDEF D10_4+}
   , Vcl.VirtualImageList
   , Vcl.ImageCollection
@@ -66,15 +68,28 @@ uses
 resourcestring
   ERROR_SETTING_DBNAVIGATOR_STYLE = 'Error setting DbNavigator Style: %s/%s/%s not available';
 
+const
+  NavigatorDefaultBtns = [
+    TNavigateBtn.nbFirst, TNavigateBtn.nbPrior, TNavigateBtn.nbNext,
+    TNavigateBtn.nbLast, TNavigateBtn.nbInsert, TNavigateBtn.nbDelete,
+    TNavigateBtn.nbEdit, TNavigateBtn.nbPost, TNavigateBtn.nbCancel,
+    TNavigateBtn.nbRefresh];
+
+  NavigatorMoveBtns = [TNavigateBtn.nbFirst..TNavigateBtn.nbLast];
+
 type
   EStyledDbnavigatorError = Exception;
 
+  TCustomStyledDBNavigator = class;
   TStyledDbNavigator = class;
   TStyledNavButton = class;
   TStyledNavDataLink = class;
 
   TButtonProc = reference to procedure (Button: TStyledNavButton);
   TNavButtons = array[TNavigateBtn] of TStyledNavButton;
+
+  TNavigateButtonEvent = procedure (Sender: TObject; Button: TNavigateButton) of object;
+  TNavigatorOrientation = (orHorizontal, orVertical);
 
   { TStyledNavButton }
 
@@ -83,8 +98,9 @@ type
     FIndex: TNavigateBtn;
     FNavStyle: TNavButtonStyle;
     FRepeatTimer: TTimer;
-    FDbNavigator: TStyledDBNavigator;
+    FDbNavigator: TCustomStyledDBNavigator;
     FImageAlignment: TImageAlignment;
+    FDragging: Boolean;
     procedure TimerExpired(Sender: TObject);
     procedure UpdateButtonContent;
     function IsImageAlignmentStored: Boolean;
@@ -107,12 +123,11 @@ type
     property Caption: TCaption read GetCaption write SetCaption stored IsCaptionStored;
   end;
 
-  { TStyledDBNavigator }
+  { TCustomStyledDBNavigator }
 
-  TStyledDBNavigator = class (TCustomPanel)
+  TCustomStyledDBNavigator = class (TCustomPanel)
   private
-    //Standard support ad TDbNavigator
-    FDataLink: TStyledNavDataLink;
+    //Standard support as TDbNavigator
     FVisibleButtons: TNavButtonSet;
     FHints: TStrings;
     FCaptions: TStrings;
@@ -163,6 +178,9 @@ type
     class constructor Create;
     class destructor Destroy;
     procedure UpdateButtonsImageIndex;
+    procedure UpdateButtonsIcons;
+
+    procedure CMStyleChanged(var Message: TMessage); message CM_STYLECHANGED;
     {$ELSE}
     procedure UpdateButtonsGlyphs;
     {$ENDIF}
@@ -171,21 +189,16 @@ type
     procedure DisabledImageListChange(Sender: TObject);
     procedure ProcessButtons(AButtonProc: TButtonProc);
 
-    function GetActiveStyleName: string;
     function AsVCLStyle: Boolean;
     function ApplyDbnavigatorStyle: Boolean;
 
     procedure BtnMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
-    procedure ClickHandler(Sender: TObject);
-    function GetDataSource: TDataSource;
     function GetHints: TStrings;
     procedure HintsChanged(Sender: TObject);
     procedure CaptionsChanged(Sender: TObject);
     procedure InitButtons;
-    procedure InitHints;
     procedure InitCaptions;
-    procedure SetDataSource(const AValue: TDataSource);
     procedure SetFlat(const AValue: Boolean);
     procedure SetHints(const AValue: TStrings);
     procedure SetKind(const AValue: TDBNavigatorKind);
@@ -195,12 +208,7 @@ type
     procedure WMSetFocus(var Message: TWMSetFocus); message WM_SETFOCUS;
     procedure WMKillFocus(var Message: TWMKillFocus); message WM_KILLFOCUS;
     procedure WMGetDlgCode(var Message: TWMGetDlgCode); message WM_GETDLGCODE;
-    procedure CMEnabledChanged(var Message: TMessage); message CM_ENABLEDCHANGED;
     procedure WMWindowPosChanging(var Message: TWMWindowPosChanging); message WM_WINDOWPOSCHANGING;
-    procedure ApplyUpdates;
-    function CanApplyUpdates: Boolean;
-    procedure CancelUpdates;
-    function CanCancelUpdates: Boolean;
     function IsCustomDrawType: Boolean;
     function IsCustomRadius: Boolean;
     function IsStoredStyleAppearance: Boolean;
@@ -218,20 +226,21 @@ type
     procedure UpdateButtons;
     function GetCaptions: TStrings;
     procedure SetCaptions(const AValue: TStrings);
+    function GetAsVCLComponent: Boolean;
+    procedure SetAsVCLComponent(const AValue: Boolean);
   protected
+    function GetActiveStyleName: string;
+    procedure ClickHandler(Sender: TObject); virtual; abstract;
+    procedure InitHints; virtual;
+    function GetButton(const AValue: TNavigateBtn): TStyledNavButton;
     procedure UpdateStyleElements; override;
-    procedure ActiveChanged;
     procedure CalcMinSize(var W, H: Integer);
     procedure CreateWnd; override;
-    procedure DataChanged;
-    procedure EditingChanged;
     procedure KeyDown(var Key: Word; Shift: TShiftState); override;
     procedure Loaded; override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     procedure Paint; override;
-    {$IFDEF D10_4+}
-    procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
-    {$ELSE}
+    {$IFNDEF D10_4+}
     procedure SetButtonGlyph(Index: TNavigateBtn); virtual;
     {$ENDIF}
   public
@@ -253,18 +262,16 @@ type
       const AStyleAppearance: TStyledButtonAppearance);
     procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
     procedure GetChildren(Proc: TGetChildProc; Root: TComponent); override;
-    procedure BtnClick(Index: TNavigateBtn); virtual;
+
     property StyleApplied: Boolean read FStyleApplied write SetStyleApplied;
     //Access readonly properties
     property Buttons: TNavButtons read FButtons;
     property ButtonWidth: Integer read FButtonWidth;
     property ButtonHeight: Integer  read FButtonHeight;
-  published
-    property DataSource: TDataSource read GetDataSource write SetDataSource;
-    property VisibleButtons: TNavButtonSet read FVisibleButtons write SetVisible
-      default [nbFirst, nbPrior, nbNext, nbLast, nbInsert, nbDelete,
-        nbEdit, nbPost, nbCancel, nbRefresh];
+    property VisibleButtons: TNavButtonSet read FVisibleButtons write SetVisible default NavigatorDefaultBtns;
     property MaxErrors: Integer read FMaxErrors write FMaxErrors default -1;
+
+    property AsVCLComponent: Boolean read GetAsVCLComponent write SetAsVCLComponent stored False;
     property Align;
     property Anchors;
     property Constraints;
@@ -312,6 +319,80 @@ type
     property StyleAppearance: TStyledButtonAppearance read FStyleAppearance write SetStyleAppearance stored IsStoredStyleAppearance;
   end;
 
+  TStyledDBNavigator = class (TCustomStyledDBNavigator)
+  private
+    FDataLink: TStyledNavDataLink;
+    procedure SetDataSource(const AValue: TDataSource);
+    function GetDataSource: TDataSource;
+    procedure CMEnabledChanged(var Message: TMessage); message CM_ENABLEDCHANGED;
+  protected
+    procedure DataChanged;
+    procedure EditingChanged;
+    procedure ActiveChanged;
+    procedure ClickHandler(Sender: TObject); override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure ApplyUpdates; virtual;
+    function CanApplyUpdates: Boolean; virtual;
+    procedure CancelUpdates; virtual;
+    function CanCancelUpdates: Boolean; virtual;
+    procedure Loaded; override;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+    procedure BtnClick(Index: TNavigateBtn); virtual;
+  published
+    property ActiveStyleName: string read GetActiveStyleName;
+    property Align;
+    property Anchors;
+    property AsVCLComponent stored False;
+    property BeforeAction;
+    property Captions;
+    property ConfirmDelete;
+    property Constraints;
+    property Ctl3D;
+    property DataSource: TDataSource read GetDataSource write SetDataSource;
+    property DragCursor;
+    property DragKind;
+    property DragMode;
+    property DisabledImages;
+    property Enabled;
+    property Flat;
+    property Hints;
+    property Images;
+    property Kind;
+    property MaxErrors;
+    property ParentCtl3D;
+    property ParentShowHint;
+    property PopupMenu;
+    property ShowCaptions;
+    property ShowHint;
+    property StyleElements;
+    property TabOrder;
+    property TabStop;
+    property Visible;
+    property VisibleButtons;
+
+    property OnClick;
+    property OnContextPopup;
+    property OnDblClick;
+    property OnDragDrop;
+    property OnDragOver;
+    property OnEndDock;
+    property OnEndDrag;
+    property OnEnter;
+    property OnExit;
+    property OnResize;
+    property OnStartDock;
+    property OnStartDrag;
+
+    //StyledComponents Attributes
+    property StyleRadius;
+    property StyleDrawType;
+    property StyleFamily;
+    property StyleClass;
+    property StyleAppearance;
+  end;
+
   { TStyledNavDataLink }
 
   TStyledNavDataLink = class(TDataLink)
@@ -326,6 +407,90 @@ type
     destructor Destroy; override;
   end;
 
+  { TStyledBindNavigator }
+
+  TStyledBindNavigator = class(TCustomStyledDbNavigator, IBindNavigator)
+  private
+    FController: TBindNavigatorController;
+    FBeforeAction: TNavigateButtonEvent;
+    FOnNavClick: TNavigateButtonEvent;
+    procedure OnActiveChanged(Sender: TObject);
+    procedure OnDataChanged(Sender: TObject);
+    procedure OnEditingChanged(Sender: TObject);
+    function GetDataSource: TBaseLinkingBindSource;
+    procedure SetDataSource(Value: TBaseLinkingBindSource);
+    procedure SetVisible(const Value: TNavigateButtons);
+    function GetButton(Index: TNavigateButton): TStyledNavButton;
+    function GetOrientation: TNavigatorOrientation;
+    procedure SetOrientation(const Value: TNavigatorOrientation);
+    function NavigateButtonToNavBtn(const AValue: TNavigateButton): TNavigateBtn;
+    function NavBtnToNavigateButton(const AValue: TNavigateBtn): TNavigateButton;
+    function NavigateButtonsToNavBtns(const AValue: TNavigateButtons): TNavButtonSet;
+    function NavBtnsToNavigateButtons(const AValue: TNavButtonSet): TNavigateButtons;
+    function GetVisibleButtons: TNavigateButtons;
+  protected
+    procedure ClickHandler(Sender: TObject); override;
+    property Buttons[Index: TNavigateButton]: TStyledNavButton read GetButton;
+    procedure ActiveChanged;
+    procedure DataChanged;
+    procedure EditingChanged;
+    //procedure BtnIDClick(Index: TNavBtnID); override;
+  public
+    procedure BtnClick(Index: TNavigateButton); reintroduce; virtual;
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+  published
+    property Align;
+    property Anchors;
+    property AsVCLComponent stored False;
+    property BeforeAction: TNavigateButtonEvent read FBeforeAction write FBeforeAction;
+    property Captions;
+    property ConfirmDelete;
+    property Constraints;
+    property Ctl3D;
+    property DataSource: TBaseLinkingBindSource read GetDataSource write SetDataSource;
+    property DragCursor;
+    property DragKind;
+    property DragMode;
+    property DisabledImages;
+    property Enabled;
+    property Flat;
+    property Hints;
+    property Images;
+    property Kind;
+    property MaxErrors;
+    property Orientation: TNavigatorOrientation read GetOrientation write SetOrientation default orHorizontal;
+    property ParentCtl3D;
+    property ParentShowHint;
+    property PopupMenu;
+    property ShowCaptions;
+    property ShowHint;
+    property StyleElements;
+    property TabOrder;
+    property TabStop;
+    property Visible;
+    property VisibleButtons: TNavigateButtons read GetVisibleButtons write SetVisible default NavigatorDefaultButtons;
+
+    property OnClick: TNavigateButtonEvent read FOnNavClick write FOnNavClick;
+    property OnContextPopup;
+    property OnDblClick;
+    property OnDragDrop;
+    property OnDragOver;
+    property OnEndDock;
+    property OnEndDrag;
+    property OnEnter;
+    property OnExit;
+    property OnResize;
+    property OnStartDock;
+    property OnStartDrag;
+
+    //StyledComponents Attributes
+    property StyleRadius;
+    property StyleDrawType;
+    property StyleFamily;
+    property StyleClass;
+    property StyleAppearance;
+  end;
 
 implementation
 
@@ -342,6 +507,10 @@ uses
 
 const
   DEFAULT_BTN_IMAGE_SIZE = 15;
+  COLORED_IMAGE_COLLECTION = 'SNB_';
+  WHITE_IMAGE_COLLECTION = 'NAVW_';
+  BLACK_IMAGE_COLLECTION = 'NAVB_';
+  VERTICAL_ICON = '_VERT';
 
 { TStyledDBNavigator }
 
@@ -357,37 +526,50 @@ var
     @CaptionPostEdit, @CaptionCancelEdit, @CaptionRefreshRecord, @CaptionApplyUpdates, @CaptionCancelUpdates);
 
 {$IFDEF D10_4+}
-class constructor TStyledDBNavigator.Create;
+class constructor TCustomStyledDBNavigator.Create;
 begin
 end;
 
 procedure InitButtonsImageCollection;
 var
-  I: TNavigateBtn;
-  LBtnName, LResName: string;
+  LBtnName: string;
+
+  procedure AddImageToCollection(const APrefix, ABtnName: string);
+  begin
+    TCustomStyledDBNavigator.FButtonsImageCollection.Add(
+      APrefix+ABtnName, HInstance,
+      APrefix+ABtnName, ['', '_20X']);
+  end;
+
 begin
-  if TStyledDBNavigator.FButtonsImageCollection <> nil then
+  if TCustomStyledDBNavigator.FButtonsImageCollection <> nil then
     Exit;
-  TStyledDBNavigator.FButtonsImageCollection := TImageCollection.Create(nil);
-  for I := Low(BtnTypeName) to High(BtnTypeName) do
+  TCustomStyledDBNavigator.FButtonsImageCollection := TImageCollection.Create(nil);
+  for var I := Low(BtnTypeName) to High(BtnTypeName) do
   begin
     LBtnName := BtnTypeName[I];
-    LResName := 'SNB_' + BtnTypeName[I];
-    TStyledDBNavigator.FButtonsImageCollection.Add(LBtnName, HInstance,
-      LResName, ['', '_20X']);
+    //Add colored image (prefix SNB in StyledNavButtonsPNG.RES)
+    AddImageToCollection(COLORED_IMAGE_COLLECTION,LBtnName);
+    //Add black image (prefix NAVB in StyledNavButtonsPNG.RES)
+    AddImageToCollection(BLACK_IMAGE_COLLECTION,LBtnName);
+    //Add white image (prefix NAVW in StyledNavButtonsPNG.RES)
+    AddImageToCollection(WHITE_IMAGE_COLLECTION,LBtnName);
   end;
   //Add also vertical images
-  for I := nbFirst to nbLast do
+  for var I := TNavigateBtn.nbFirst to TNavigateBtn.nbLast do
   begin
-    LBtnName := BtnTypeName[I] + '_VERT';
-    LResName := 'SNB_' + BtnTypeName[I] + '_VERT';
-    TStyledDBNavigator.FButtonsImageCollection.Add(LBtnName, HInstance,
-      LResName, ['', '_20X']);
+    LBtnName := BtnTypeName[I] + VERTICAL_ICON;
+    //Add colored image (prefix SNB in StyledNavButtonsPNG.RES)
+    AddImageToCollection(COLORED_IMAGE_COLLECTION,LBtnName);
+    //Add black image (prefix NAVB in StyledNavButtonsPNG.RES)
+    AddImageToCollection(BLACK_IMAGE_COLLECTION,LBtnName);
+    //Add white image (prefix NAVW in StyledNavButtonsPNG.RES)
+    AddImageToCollection(WHITE_IMAGE_COLLECTION,LBtnName);
   end;
 end;
 {$ENDIF}
 
-constructor TStyledDBNavigator.Create(AOwner: TComponent);
+constructor TCustomStyledDBNavigator.Create(AOwner: TComponent);
 begin
   CreateStyled(AOwner,
     _DefaultFamily,
@@ -395,7 +577,7 @@ begin
     _DefaultAppearance);
 end;
 
-constructor TStyledDBNavigator.CreateStyled(AOwner: TComponent;
+constructor TCustomStyledDBNavigator.CreateStyled(AOwner: TComponent;
   const AFamily: TStyledButtonFamily; const AClass: TStyledButtonClass;
   const AAppearance: TStyledButtonAppearance);
 begin
@@ -408,15 +590,13 @@ begin
     - [csDoubleClicks, csAcceptsControls, csSetCaption, csGestures] + [csOpaque];
   if not NewStyleControls then
     ControlStyle := ControlStyle + [csFramed];
-  FDataLink := TStyledNavDataLink.Create(Self);
-  FVisibleButtons := [nbFirst, nbPrior, nbNext, nbLast, nbInsert,
-    nbDelete, nbEdit, nbPost, nbCancel, nbRefresh];
+  FVisibleButtons := NavigatorDefaultBtns;
   FHints := TStringList.Create;
   FCaptions := TStringList.Create;
   TStringList(FHints).OnChange := HintsChanged;
   TStringList(FCaptions).OnChange := CaptionsChanged;
   {$IFDEF D10_4+}
-  FButtonImages := TVirtualImageList.Create(Self);
+  FButtonImages := TVirtualImageList.Create(AOwner);
   FButtonImages.AutoFill := True;
   FButtonImages.ImageCollection := FButtonsImageCollection;
   FButtonImages.SetSize(DEFAULT_BTN_IMAGE_SIZE, DEFAULT_BTN_IMAGE_SIZE);
@@ -439,7 +619,7 @@ begin
   Height := 25;
   FButtonWidth := 0;
   FButtonHeight := 0;
-  FocusedButton := nbFirst;
+  FocusedButton := TNavigateBtn.nbFirst;
   FConfirmDelete := True;
   FullRepaint := False;
 
@@ -458,11 +638,8 @@ begin
   Flat := False;
 end;
 
-{$IFDEF D10_4+}
-
-
-{$ELSE}
-procedure TStyledDBNavigator.UpdateButtonsGlyphs;
+{$IFNDEF D10_4+}
+procedure TCustomStyledDBNavigator.UpdateButtonsGlyphs;
 var
   I: TNavigateBtn;
   UseGlyphs: Boolean;
@@ -478,7 +655,7 @@ begin
 end;
 {$ENDIF}
 
-procedure TStyledDBNavigator.CreateWnd;
+procedure TCustomStyledDBNavigator.CreateWnd;
 begin
   inherited;
   {$IFNDEF D10_4+}
@@ -486,11 +663,10 @@ begin
   {$ENDIF}
 end;
 
-destructor TStyledDBNavigator.Destroy;
+destructor TCustomStyledDBNavigator.Destroy;
 begin
   FreeAndNil(FDefaultHints);
   FreeAndNil(FDefaultCaptions);
-  FreeAndNil(FDataLink);
   FreeAndNil(FHints);
   FreeAndNil(FCaptions);
   FreeAndNil(FDisabledImageChangeLink);
@@ -499,26 +675,18 @@ begin
 end;
 
 {$IFDEF D10_4+}
-class destructor TStyledDBNavigator.Destroy;
+class destructor TCustomStyledDBNavigator.Destroy;
 begin
   FreeAndNil(FButtonsImageCollection);
 end;
 
-procedure TStyledDBNavigator.ChangeScale(M, D: Integer; isDpiChange: Boolean);
+procedure TCustomStyledDBNavigator.CMStyleChanged(var Message: TMessage);
 begin
-  inherited;
-  if isDpiChange and (M <> D) then
-  begin
-    ProcessButtons(
-      procedure (ABtn: TStyledNavButton)
-      begin
-        ABtn.ChangeScale(M, D);
-      end
-    );
-  end;
+  UpdateButtonsIcons;
+  Invalidate;
 end;
 
-procedure TStyledDBNavigator.UpdateButtonsImageIndex;
+procedure TCustomStyledDBNavigator.UpdateButtonsImageIndex;
 var
   I: TNavigateBtn;
   Btn: TStyledNavButton;
@@ -526,14 +694,63 @@ begin
   for I := Low(FButtons) to High(FButtons) do
   begin
     Btn := Buttons[I];
-    if (FKind = dbnVertical) and (I in [nbFirst, nbPrior, nbNext, nbLast]) then
+    if (FKind = dbnVertical) and (I in NavigatorMoveBtns) then
       Btn.ImageIndex := Ord(I) + Ord(High(FButtons)) +1
     else
       Btn.ImageIndex := Ord(I);
   end;
 end;
+
+procedure TCustomStyledDBNavigator.UpdateButtonsIcons;
+var
+  LStyleName, LBtnName: string;
+  LThemeAttribute: TThemeAttribute;
+begin
+  if Assigned(FImages) then
+  begin
+    UpdateButtonsImageIndex;
+    Exit;
+  end;
+
+  if (StyleFamily = DEFAULT_CLASSIC_FAMILY) then
+    LStyleName := StyleClass;
+  if LStyleName = 'Windows' then
+    LStyleName := GetActiveStyleName;
+  for var I := Low(FButtons) to High(FButtons) do
+  begin
+    var Btn := Buttons[I];
+    LBtnName := BtnTypeName[I];
+
+    if (LStyleName = 'Windows') then
+    begin
+      //Use colored images (for backward compatibility)
+      LBtnName := COLORED_IMAGE_COLLECTION+LBtnName;
+    end
+    else
+    begin
+      if GetStyleAttributes(LStyleName, LThemeAttribute) then
+      begin
+        if LThemeAttribute.ThemeType = ttLight then
+          //Use black images for light theme
+          LBtnName := BLACK_IMAGE_COLLECTION+LBtnName
+        else
+          //Use white images for dark theme
+          LBtnName := WHITE_IMAGE_COLLECTION+LBtnName;
+      end
+      else
+        //Use colored images (for backward compatibility)
+        LBtnName := COLORED_IMAGE_COLLECTION+LBtnName;
+    end;
+
+    //Vertical images
+    if (FKind = dbnVertical) and
+      (I in NavigatorMoveBtns) then
+      LBtnName := LBtnName+VERTICAL_ICON;
+    Btn.ImageName := LBtnName;
+  end;
+end;
 {$ELSE}
-procedure TStyledDBNavigator.SetButtonGlyph(Index: TNavigateBtn);
+procedure TCustomStyledDBNavigator.SetButtonGlyph(Index: TNavigateBtn);
 var
   LResName: string;
 begin
@@ -543,7 +760,7 @@ begin
 end;
 {$ENDIF}
 
-procedure TStyledDBNavigator.Paint;
+procedure TCustomStyledDBNavigator.Paint;
 begin
   if StyleServices.Enabled and not StyleServices.IsSystemStyle  then
     with Canvas do
@@ -556,7 +773,7 @@ begin
     inherited;
 end;
 
-procedure TStyledDBNavigator.ImageListChange(Sender: TObject);
+procedure TCustomStyledDBNavigator.ImageListChange(Sender: TObject);
 begin
   ProcessButtons(
     procedure (ABtn: TStyledNavButton)
@@ -570,13 +787,13 @@ begin
       {$ENDIF}
     end);
   {$IFDEF D10_4+}
-  UpdateButtonsImageIndex;
+  UpdateButtonsIcons;
   {$ELSE}
   UpdateButtonsGlyphs;
   {$ENDIF}
 end;
 
-procedure TStyledDBNavigator.DisabledImageListChange(Sender: TObject);
+procedure TCustomStyledDBNavigator.DisabledImageListChange(Sender: TObject);
 begin
   ProcessButtons(
     procedure (ABtn: TStyledNavButton)
@@ -586,7 +803,7 @@ begin
   );
 end;
 
-procedure TStyledDBNavigator.ProcessButtons(AButtonProc: TButtonProc);
+procedure TCustomStyledDBNavigator.ProcessButtons(AButtonProc: TButtonProc);
 var
   I: TNavigateBtn;
 begin
@@ -594,7 +811,7 @@ begin
     AButtonProc(FButtons[I]);
 end;
 
-class procedure TStyledDBNavigator.RegisterDefaultRenderingStyle(
+class procedure TCustomStyledDBNavigator.RegisterDefaultRenderingStyle(
   const ADrawType: TStyledButtonDrawType; const AFamily: TStyledButtonFamily;
   const AClass: TStyledButtonClass; const AAppearance: TStyledButtonAppearance;
   const AStyleRadius: Integer);
@@ -607,7 +824,7 @@ begin
   _DefaultStyleRadius := AStyleRadius;
 end;
 
-procedure TStyledDBNavigator.InitButtons;
+procedure TCustomStyledDBNavigator.InitButtons;
 var
   I: TNavigateBtn;
   Btn: TStyledNavButton;
@@ -633,16 +850,16 @@ begin
     else
       Y := Y + FMinBtnSize.Y;
   end;
-  FButtons[nbPrior].NavStyle := FButtons[nbPrior].NavStyle + [nsAllowTimer];
-  FButtons[nbNext].NavStyle  := FButtons[nbNext].NavStyle + [nsAllowTimer];
+  FButtons[TNavigateBtn.nbPrior].NavStyle := FButtons[TNavigateBtn.nbPrior].NavStyle + [nsAllowTimer];
+  FButtons[TNavigateBtn.nbNext].NavStyle  := FButtons[TNavigateBtn.nbNext].NavStyle + [nsAllowTimer];
   {$IFDEF D10_4+}
-  UpdateButtonsImageIndex;
+  UpdateButtonsIcons;
   {$ELSE}
   UpdateButtonsGlyphs;
   {$ENDIF}
 end;
 
-procedure TStyledDBNavigator.InitCaptions;
+procedure TCustomStyledDBNavigator.InitCaptions;
 var
   I: Integer;
   J: TNavigateBtn;
@@ -666,7 +883,7 @@ begin
   end;
 end;
 
-procedure TStyledDBNavigator.InitHints;
+procedure TCustomStyledDBNavigator.InitHints;
 var
   I: Integer;
   J: TNavigateBtn;
@@ -690,17 +907,17 @@ begin
   end;
 end;
 
-function TStyledDBNavigator.IsCustomDrawType: Boolean;
+function TCustomStyledDBNavigator.IsCustomDrawType: Boolean;
 begin
   Result := FCustomDrawType;
 end;
 
-function TStyledDBNavigator.IsCustomRadius: Boolean;
+function TCustomStyledDBNavigator.IsCustomRadius: Boolean;
 begin
   Result := StyleRadius <> DEFAULT_RADIUS;
 end;
 
-function TStyledDBNavigator.IsStoredStyleAppearance: Boolean;
+function TCustomStyledDBNavigator.IsStoredStyleAppearance: Boolean;
 var
   LClass: TStyledButtonClass;
   LAppearance: TStyledButtonAppearance;
@@ -710,7 +927,7 @@ begin
   Result := FStyleAppearance <> LAppearance;
 end;
 
-function TStyledDBNavigator.IsStoredStyleClass: Boolean;
+function TCustomStyledDBNavigator.IsStoredStyleClass: Boolean;
 var
   LClass: TStyledButtonClass;
   LAppearance: TStyledButtonAppearance;
@@ -718,7 +935,7 @@ var
 begin
   StyleFamilyCheckAttributes(FStyleFamily, LClass, LAppearance, LButtonFamily);
 
-  if (FStyleFamily = DEFAULT_CLASSIC_FAMILY) and (seClient in StyleElements) then
+  if AsVCLStyle then
   begin
     Result := (FStyleClass <> GetActiveStyleName)
       and not SameText(FStyleClass, 'Windows');
@@ -727,22 +944,22 @@ begin
     Result := FStyleClass <> LClass;
 end;
 
-function TStyledDBNavigator.IsStoredStyleFamily: Boolean;
+function TCustomStyledDBNavigator.IsStoredStyleFamily: Boolean;
 begin
   Result := FStyleFamily <> DEFAULT_CLASSIC_FAMILY;
 end;
 
-procedure TStyledDBNavigator.HintsChanged(Sender: TObject);
+procedure TCustomStyledDBNavigator.HintsChanged(Sender: TObject);
 begin
   InitHints;
 end;
 
-procedure TStyledDBNavigator.CaptionsChanged(Sender: TObject);
+procedure TCustomStyledDBNavigator.CaptionsChanged(Sender: TObject);
 begin
   InitCaptions;
 end;
 
-procedure TStyledDBNavigator.SetFlat(const AValue: Boolean);
+procedure TCustomStyledDBNavigator.SetFlat(const AValue: Boolean);
 begin
   if FFlat <> AValue then
   begin
@@ -755,21 +972,21 @@ begin
   end;
 end;
 
-procedure TStyledDBNavigator.SetHints(const AValue: TStrings);
+procedure TCustomStyledDBNavigator.SetHints(const AValue: TStrings);
 begin
   if AValue.Text = FDefaultHints.Text then
     FHints.Clear else
     FHints.Assign(AValue);
 end;
 
-procedure TStyledDBNavigator.SetCaptions(const AValue: TStrings);
+procedure TCustomStyledDBNavigator.SetCaptions(const AValue: TStrings);
 begin
   if AValue.Text = FDefaultCaptions.Text then
     FCaptions.Clear else
     FCaptions.Assign(AValue);
 end;
 
-procedure TStyledDBNavigator.SetImages(const AValue: TCustomImageList);
+procedure TCustomStyledDBNavigator.SetImages(const AValue: TCustomImageList);
 begin
   if FImages <> AValue then
   begin
@@ -778,7 +995,7 @@ begin
   end;
 end;
 
-function TStyledDBNavigator.GetHints: TStrings;
+function TCustomStyledDBNavigator.GetHints: TStrings;
 begin
   if (csDesigning in ComponentState) and not (csWriting in ComponentState) and
      not (csReading in ComponentState) and (FHints.Count = 0) then
@@ -786,7 +1003,7 @@ begin
     Result := FHints;
 end;
 
-function TStyledDBNavigator.GetCaptions: TStrings;
+function TCustomStyledDBNavigator.GetCaptions: TStrings;
 begin
   if (csDesigning in ComponentState) and not (csWriting in ComponentState) and
      not (csReading in ComponentState) and (FCaptions.Count = 0) then
@@ -794,7 +1011,7 @@ begin
     Result := FCaptions;
 end;
 
-procedure TStyledDBNavigator.SetKind(const AValue: TDBNavigatorKind);
+procedure TCustomStyledDBNavigator.SetKind(const AValue: TDBNavigatorKind);
 begin
   if FKind <> AValue then
   begin
@@ -802,7 +1019,7 @@ begin
     if not (csLoading in ComponentState) then
       SetBounds(Left, Top, Height, Width);
     {$IFDEF D10_4+}
-    UpdateButtonsImageIndex;
+    UpdateButtonsIcons;
     {$ELSE}
     UpdateButtonsGlyphs;
     {$ENDIF}
@@ -810,27 +1027,18 @@ begin
   end;
 end;
 
-function TStyledDBNavigator.GetActiveStyleName: string;
+function TCustomStyledDBNavigator.GetActiveStyleName: string;
 begin
-  {$IFDEF D10_4+}
-  Result := GetStyleName;
-  if Result = '' then
-  begin
-    {$IFDEF D11+}
-    if (csDesigning in ComponentState) then
-      Result := TStyleManager.ActiveDesigningStyle.Name
-    else
-      Result := TStyleManager.ActiveStyle.Name;
-    {$ELSE}
-      Result := TStyleManager.ActiveStyle.Name;
-    {$ENDIF}
-  end;
-  {$ELSE}
-  Result := TStyleManager.ActiveStyle.Name;
-  {$ENDIF}
+  Result := Vcl.ButtonStylesAttributes.GetActiveStyleName(Self);
 end;
 
-procedure TStyledDBNavigator.GetChildren(Proc: TGetChildProc; Root: TComponent);
+function TCustomStyledDBNavigator.GetButton(
+  const AValue: TNavigateBtn): TStyledNavButton;
+begin
+  Result := FButtons[Avalue];
+end;
+
+procedure TCustomStyledDBNavigator.GetChildren(Proc: TGetChildProc; Root: TComponent);
 //var
 //  J: TNavigateBtn;
 begin
@@ -838,14 +1046,12 @@ begin
 //    Proc(FButtons[J]);
 end;
 
-procedure TStyledDBNavigator.Notification(AComponent: TComponent;
+procedure TCustomStyledDBNavigator.Notification(AComponent: TComponent;
   Operation: TOperation);
 begin
   inherited Notification(AComponent, Operation);
   if (Operation = opRemove) then
   begin
-    if (FDataLink <> nil) and (AComponent = DataSource) then
-      DataSource := nil;
     if (AComponent = Images) then
       Images := {$IFDEF D10_4+}FButtonImages;{$ELSE}nil;{$ENDIF}
     if (AComponent = DisabledImages) then
@@ -853,7 +1059,7 @@ begin
   end;
 end;
 
-procedure TStyledDBNavigator.SetVisible(const AValue: TNavButtonSet);
+procedure TCustomStyledDBNavigator.SetVisible(const AValue: TNavButtonSet);
 var
   I: TNavigateBtn;
   W, H: Integer;
@@ -869,14 +1075,14 @@ begin
   Invalidate;
 end;
 
-procedure TStyledDBNavigator.UpdateStyleElements;
+procedure TCustomStyledDBNavigator.UpdateStyleElements;
 var
   LStyleClass: TStyledButtonClass;
 begin
   if AsVCLStyle then
   begin
     //if StyleElements contains seClient then Update style
-    //as VCL Style assigned to Toolbar or Global VCL Style
+    //as VCL Style assigned to Dbnavigator or Global VCL Style
     if seBorder in StyleElements then
       StyleAppearance := DEFAULT_APPEARANCE;
     LStyleClass := GetActiveStyleName;
@@ -892,13 +1098,13 @@ begin
   inherited;
 end;
 
-procedure TStyledDBNavigator.CalcMinSize(var W, H: Integer);
+procedure TCustomStyledDBNavigator.CalcMinSize(var W, H: Integer);
 var
   Count: Integer;
   I: TNavigateBtn;
 begin
   if (csLoading in ComponentState) then Exit;
-  if FButtons[nbFirst] = nil then Exit;
+  if FButtons[TNavigateBtn.nbFirst] = nil then Exit;
 
   Count := 0;
   for I := Low(FButtons) to High(FButtons) do
@@ -934,7 +1140,7 @@ begin
   {$ENDIF}
 end;
 
-procedure TStyledDBNavigator.UpdateButtons;
+procedure TCustomStyledDBNavigator.UpdateButtons;
 begin
   ProcessButtons(
     procedure (ABtn: TStyledNavButton)
@@ -943,7 +1149,7 @@ begin
     end);
 end;
 
-procedure TStyledDBNavigator.SetShowCaptions(const AValue: Boolean);
+procedure TCustomStyledDBNavigator.SetShowCaptions(const AValue: Boolean);
 begin
   if FShowCaptions <> AValue then
   begin
@@ -952,7 +1158,7 @@ begin
   end;
 end;
 
-procedure TStyledDBNavigator.SetSize(var W: Integer; var H: Integer);
+procedure TCustomStyledDBNavigator.SetSize(var W: Integer; var H: Integer);
 var
   Count: Integer;
   I: TNavigateBtn;
@@ -961,7 +1167,7 @@ var
 begin
   if (csLoading in ComponentState) then
     Exit;
-  if FButtons[nbFirst] = nil then
+  if FButtons[TNavigateBtn.nbFirst] = nil then
     Exit;
 
   CalcMinSize(W, H);
@@ -1026,7 +1232,7 @@ begin
   end;
 end;
 
-procedure TStyledDBNavigator.SetStyleAppearance(
+procedure TCustomStyledDBNavigator.SetStyleAppearance(
   const AValue: TStyledButtonAppearance);
 var
   LValue: TStyledButtonAppearance;
@@ -1047,12 +1253,12 @@ begin
   end;
 end;
 
-procedure TStyledDBNavigator.SetStyleApplied(const AValue: Boolean);
+procedure TCustomStyledDBNavigator.SetStyleApplied(const AValue: Boolean);
 begin
   FStyleApplied := AValue;
 end;
 
-procedure TStyledDBNavigator.SetStyleClass(const AValue: TStyledButtonClass);
+procedure TCustomStyledDBNavigator.SetStyleClass(const AValue: TStyledButtonClass);
 var
   LValue: TStyledButtonClass;
 begin
@@ -1064,15 +1270,20 @@ begin
     ProcessButtons(
       procedure (ABtn: TStyledNavButton)
       begin
-        if ABtn.StyleClass = StyleClass then
-          ABtn.StyleClass := LValue;
+        ABtn.StyleClass := LValue;
       end);
     FStyleClass := LValue;
+    {$IFDEF D10_4+}
+    UpdateButtonsIcons;
+    {$ENDIF}
     StyleApplied := ApplyDbnavigatorStyle;
+    if (FStyleFamily = DEFAULT_CLASSIC_FAMILY) and
+      (LValue <> 'Windows') then
+      StyleElements := [seFont, seBorder];
   end;
 end;
 
-procedure TStyledDBNavigator.SetStyleDrawType(
+procedure TCustomStyledDBNavigator.SetStyleDrawType(
   const AValue: TStyledButtonDrawType);
 begin
   FCustomDrawType := True;
@@ -1089,7 +1300,7 @@ begin
   end;
 end;
 
-procedure TStyledDBNavigator.SetStyleFamily(const AValue: TStyledButtonFamily);
+procedure TCustomStyledDBNavigator.SetStyleFamily(const AValue: TStyledButtonFamily);
 var
   LValue: TStyledButtonFamily;
 begin
@@ -1106,12 +1317,15 @@ begin
       end);
     FStyleFamily := LValue;
     StyleApplied := ApplyDbnavigatorStyle;
+    {$IFDEF D10_4+}
+    UpdateButtonsIcons;
+    {$ENDIF}
   end;
   if FStyleFamily = DEFAULT_CLASSIC_FAMILY then
     StyleElements := [seFont, seClient, seBorder];
 end;
 
-procedure TStyledDBNavigator.SetStyleRadius(const AValue: Integer);
+procedure TCustomStyledDBNavigator.SetStyleRadius(const AValue: Integer);
 begin
   if FStyleRadius <> AValue then
   begin
@@ -1128,7 +1342,7 @@ begin
   end;
 end;
 
-procedure TStyledDBNavigator.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+procedure TCustomStyledDBNavigator.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
 var
   W, H: Integer;
 begin
@@ -1138,7 +1352,7 @@ begin
   inherited SetBounds (ALeft, ATop, W, H);
 end;
 
-procedure TStyledDBNavigator.WMSize(var Message: TWMSize);
+procedure TCustomStyledDBNavigator.WMSize(var Message: TWMSize);
 var
   W, H: Integer;
 begin
@@ -1148,19 +1362,14 @@ begin
   SetSize(W, H);
 end;
 
-procedure TStyledDBNavigator.WMWindowPosChanging(var Message: TWMWindowPosChanging);
+procedure TCustomStyledDBNavigator.WMWindowPosChanging(var Message: TWMWindowPosChanging);
 begin
   inherited;
   if (SWP_NOSIZE and Message.WindowPos.Flags) = 0 then
     CalcMinSize(Message.WindowPos.cx, Message.WindowPos.cy);
 end;
 
-procedure TStyledDBNavigator.ClickHandler(Sender: TObject);
-begin
-  BtnClick(TStyledNavButton(Sender).Index);
-end;
-
-procedure TStyledDBNavigator.BtnMouseDown(Sender: TObject; Button: TMouseButton;
+procedure TCustomStyledDBNavigator.BtnMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 var
   OldFocus: TNavigateBtn;
@@ -1180,7 +1389,7 @@ begin
   end;
 end;
 
-function TStyledDBNavigator.ApplyDbnavigatorStyle: Boolean;
+function TCustomStyledDBNavigator.ApplyDbnavigatorStyle: Boolean;
 var
   LButtonFamily: TButtonFamily;
   LAttributesNormal, LAttributesOther: TStyledButtonAttributes;
@@ -1217,92 +1426,50 @@ begin
   end;
 end;
 
-procedure TStyledDBNavigator.ApplyUpdates;
-var
-  Intf: IDataSetCommandSupport;
+function TCustomStyledDBNavigator.AsVCLStyle: Boolean;
 begin
-  if (Self.DataSource <> nil) and Supports(Self.DataSource.DataSet, IDataSetCommandSupport, Intf) then
-    Intf.ExecuteCommand(sApplyUpdatesDataSetCommand, [MaxErrors])
-end;
-
-function TStyledDBNavigator.AsVCLStyle: Boolean;
-begin
-  //if StyleFamily is Classic and StyleElements contains seClient
-  //assume to draw the component as the equivalent VCL
   Result := (StyleFamily = DEFAULT_CLASSIC_FAMILY) and
     (seClient in StyleElements);
 end;
 
-function TStyledDBNavigator.CanApplyUpdates: Boolean;
-var
-  Intf: IDataSetCommandSupport;
+procedure TCustomStyledDBNavigator.SetAsVCLComponent(const AValue: Boolean);
 begin
-  if (Self.DataSource <> nil) and Supports(Self.DataSource.DataSet, IDataSetCommandSupport, Intf) then
-    Result := dcEnabled in Intf.GetCommandStates(sApplyUpdatesDataSetCommand)
-  else
-    Result := False;
-end;
-
-procedure TStyledDBNavigator.CancelUpdates;
-var
-  Intf: IDataSetCommandSupport;
-begin
-  if (Self.DataSource <> nil) and Supports(Self.DataSource.DataSet, IDataSetCommandSupport, Intf) then
-    Intf.ExecuteCommand(sCancelUpdatesDataSetCommand, [MaxErrors])
-end;
-
-function TStyledDBNavigator.CanCancelUpdates: Boolean;
-var
-  Intf: IDataSetCommandSupport;
-begin
-  if (Self.DataSource <> nil) and Supports(Self.DataSource.DataSet, IDataSetCommandSupport, Intf) then
-    Result := dcEnabled in Intf.GetCommandStates(sCancelUpdatesDataSetCommand)
-  else
-    Result := False;
-end;
-
-procedure TStyledDBNavigator.BtnClick(Index: TNavigateBtn);
-begin
-  if (DataSource <> nil) and (DataSource.State <> dsInactive) then
+  if AValue <> GetAsVCLComponent then
   begin
-    if not (csDesigning in ComponentState) and Assigned(FBeforeAction) then
-      FBeforeAction(Self, Index);
-    with DataSource.DataSet do
+    if AValue then
     begin
-      case Index of
-        nbPrior: Prior;
-        nbNext: Next;
-        nbFirst: First;
-        nbLast: Last;
-        nbInsert: Insert;
-        nbEdit: Edit;
-        nbCancel: Cancel;
-        nbPost: Post;
-        nbRefresh: Refresh;
-        nbDelete:
-          if not FConfirmDelete or
-            (StyledMessageDlg(SDeleteRecordQuestion, mtConfirmation,
-            mbOKCancel, 0) <> idCancel) then Delete;
-        nbApplyUpdates: Self.ApplyUpdates;
-        nbCancelUpdates: Self.CancelUpdates;
-      end;
+      FStyleFamily := DEFAULT_CLASSIC_FAMILY;
+      FStyleClass := DEFAULT_WINDOWS_CLASS;
+      FStyleAppearance := DEFAULT_APPEARANCE;
+      StyleElements := StyleElements + [seClient];
+      FCustomDrawType := False;
+    end
+    else if FStyleFamily = DEFAULT_CLASSIC_FAMILY then
+    begin
+      StyleElements := StyleElements - [seClient];
     end;
+    UpdateStyleElements;
   end;
-  if not (csDesigning in ComponentState) and Assigned(FOnNavClick) then
-    FOnNavClick(Self, Index);
 end;
 
-procedure TStyledDBNavigator.WMSetFocus(var Message: TWMSetFocus);
+function TCustomStyledDBNavigator.GetAsVCLComponent: Boolean;
+begin
+  Result := (StyleFamily = DEFAULT_CLASSIC_FAMILY) and
+    (seClient in StyleElements)  and
+    (FStyleClass = GetActiveStyleName);
+end;
+
+procedure TCustomStyledDBNavigator.WMSetFocus(var Message: TWMSetFocus);
 begin
   FButtons[FocusedButton].Invalidate;
 end;
 
-procedure TStyledDBNavigator.WMKillFocus(var Message: TWMKillFocus);
+procedure TCustomStyledDBNavigator.WMKillFocus(var Message: TWMKillFocus);
 begin
   FButtons[FocusedButton].Invalidate;
 end;
 
-procedure TStyledDBNavigator.KeyDown(var Key: Word; Shift: TShiftState);
+procedure TCustomStyledDBNavigator.KeyDown(var Key: Word; Shift: TShiftState);
 var
   NewFocus: TNavigateBtn;
   OldFocus: TNavigateBtn;
@@ -1347,44 +1514,47 @@ begin
   end;
 end;
 
-procedure TStyledDBNavigator.WMGetDlgCode(var Message: TWMGetDlgCode);
+procedure TCustomStyledDBNavigator.WMGetDlgCode(var Message: TWMGetDlgCode);
 begin
   Message.Result := DLGC_WANTARROWS;
 end;
 
-procedure TStyledDBNavigator.DataChanged;
-var
-  UpEnable, DnEnable: Boolean;
-  CanModify, CanRefresh: Boolean;
+procedure TCustomStyledDBNavigator.SetDbNavigatorStyle(
+  const AStyleFamily: TStyledButtonFamily;
+  const AStyleClass: TStyledButtonClass;
+  const AStyleAppearance: TStyledButtonAppearance);
 begin
-  CanModify := Enabled and FDataLink.Active and FDataLink.DataSet.CanModify;
-  CanRefresh := Enabled and FDataLink.Active and FDataLink.DataSet.CanRefresh;
-  UpEnable := Enabled and FDataLink.Active and not FDataLink.DataSet.BOF;
-  DnEnable := Enabled and FDataLink.Active and not FDataLink.DataSet.EOF;
-  FButtons[nbFirst].Enabled := UpEnable;
-  FButtons[nbPrior].Enabled := UpEnable;
-  FButtons[nbNext].Enabled := DnEnable;
-  FButtons[nbLast].Enabled := DnEnable;
-  FButtons[nbDelete].Enabled := CanModify and
-    not (FDataLink.DataSet.BOF and FDataLink.DataSet.EOF);
-  FButtons[nbRefresh].Enabled := CanRefresh;
-  FButtons[nbApplyUpdates].Enabled := CanModify and Self.CanApplyUpdates;
-  FButtons[nbCancelUpdates].Enabled := CanModify and Self.CanCancelUpdates;
+  StyleFamily := AStyleFamily;
+  StyleClass := AStyleClass;
+  StyleAppearance := AStyleAppearance;
+  if not ApplyDbnavigatorStyle then
+    raise EStyledButtonError.CreateFmt(ERROR_SETTING_DBNAVIGATOR_STYLE,
+      [AStyleFamily, AStyleClass, AStyleAppearance]);
 end;
 
-procedure TStyledDBNavigator.EditingChanged;
-var
-  CanModify: Boolean;
+procedure TCustomStyledDBNavigator.SetDisabledImages(const AValue: TCustomImageList);
 begin
-  CanModify := Enabled and FDataLink.Active and FDataLink.DataSet.CanModify;
-  Buttons[nbInsert].Enabled := CanModify;
-  Buttons[nbEdit].Enabled := CanModify and not FDataLink.Editing;
-  Buttons[nbPost].Enabled := CanModify and FDataLink.Editing;
-  Buttons[nbCancel].Enabled := CanModify and FDataLink.Editing;
-  Buttons[nbRefresh].Enabled := Enabled and (nbRefresh in VisibleButtons) and FDataLink.Active and FDataLink.DataSet.CanRefresh;
-  Buttons[nbApplyUpdates].Enabled := CanModify and (nbApplyUpdates in VisibleButtons) and Self.CanApplyUpdates;
-  Buttons[nbCancelUpdates].Enabled := CanModify and (nbCancelUpdates in VisibleButtons) and Self.CanCancelUpdates;
+  if FDisabledImages <> AValue then
+  begin
+    FDisabledImages := AValue;
+    DisabledImageListChange(Self);
+  end;
 end;
+
+procedure TCustomStyledDBNavigator.Loaded;
+var
+  W, H: Integer;
+begin
+  inherited Loaded;
+  W := Width;
+  H := Height;
+  SetSize(W, H);
+  if (W <> Width) or (H <> Height) then
+    inherited SetBounds (Left, Top, W, H);
+  InitHints;
+end;
+
+{ TStyledDBNavigator }
 
 procedure TStyledDBNavigator.ActiveChanged;
 var
@@ -1400,11 +1570,152 @@ begin
   end;
 end;
 
+procedure TStyledDBNavigator.ApplyUpdates;
+var
+  Intf: IDataSetCommandSupport;
+begin
+  if (Self.DataSource <> nil) and Supports(Self.DataSource.DataSet, IDataSetCommandSupport, Intf) then
+    Intf.ExecuteCommand(sApplyUpdatesDataSetCommand, [MaxErrors])
+end;
+
+procedure TStyledDBNavigator.BtnClick(Index: TNavigateBtn);
+begin
+  if (DataSource <> nil) and (DataSource.State <> dsInactive) then
+  begin
+    if not (csDesigning in ComponentState) and Assigned(FBeforeAction) then
+      FBeforeAction(Self, Index);
+    with DataSource.DataSet do
+    begin
+      case Index of
+        TNavigateBtn.nbPrior: Prior;
+        TNavigateBtn.nbNext: Next;
+        TNavigateBtn.nbFirst: First;
+        TNavigateBtn.nbLast: Last;
+        TNavigateBtn.nbInsert: Insert;
+        TNavigateBtn.nbEdit: Edit;
+        TNavigateBtn.nbCancel: Cancel;
+        TNavigateBtn.nbPost: Post;
+        TNavigateBtn.nbRefresh: Refresh;
+        TNavigateBtn.nbDelete:
+          if not FConfirmDelete or
+            (StyledMessageDlg(SDeleteRecordQuestion, mtConfirmation,
+            mbOKCancel, 0) <> idCancel) then Delete;
+        TNavigateBtn.nbApplyUpdates: Self.ApplyUpdates;
+        TNavigateBtn.nbCancelUpdates: Self.CancelUpdates;
+      end;
+    end;
+  end;
+  if not (csDesigning in ComponentState) and Assigned(FOnNavClick) then
+    FOnNavClick(Self, Index);
+end;
+
+function TStyledDBNavigator.CanApplyUpdates: Boolean;
+var
+  Intf: IDataSetCommandSupport;
+begin
+  if (Self.DataSource <> nil) and Supports(Self.DataSource.DataSet, IDataSetCommandSupport, Intf) then
+    Result := dcEnabled in Intf.GetCommandStates(sApplyUpdatesDataSetCommand)
+  else
+    Result := False;
+end;
+
+function TStyledDBNavigator.CanCancelUpdates: Boolean;
+var
+  Intf: IDataSetCommandSupport;
+begin
+  if (Self.DataSource <> nil) and Supports(Self.DataSource.DataSet, IDataSetCommandSupport, Intf) then
+    Result := dcEnabled in Intf.GetCommandStates(sCancelUpdatesDataSetCommand)
+  else
+    Result := False;
+end;
+
+procedure TStyledDBNavigator.CancelUpdates;
+var
+  Intf: IDataSetCommandSupport;
+begin
+  if (Self.DataSource <> nil) and Supports(Self.DataSource.DataSet, IDataSetCommandSupport, Intf) then
+    Intf.ExecuteCommand(sCancelUpdatesDataSetCommand, [MaxErrors])
+end;
+
+procedure TStyledDBNavigator.ClickHandler(Sender: TObject);
+begin
+  inherited;
+  BtnClick(TStyledNavButton(Sender).Index);
+end;
+
 procedure TStyledDBNavigator.CMEnabledChanged(var Message: TMessage);
 begin
   inherited;
   if not (csLoading in ComponentState) then
     ActiveChanged;
+end;
+
+constructor TStyledDBNavigator.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  FDataLink := TStyledNavDataLink.Create(Self);
+end;
+
+procedure TStyledDBNavigator.DataChanged;
+var
+  UpEnable, DnEnable: Boolean;
+  CanModify, CanRefresh: Boolean;
+begin
+  CanModify := Enabled and FDataLink.Active and FDataLink.DataSet.CanModify;
+  CanRefresh := Enabled and FDataLink.Active and FDataLink.DataSet.CanRefresh;
+  UpEnable := Enabled and FDataLink.Active and not FDataLink.DataSet.BOF;
+  DnEnable := Enabled and FDataLink.Active and not FDataLink.DataSet.EOF;
+  FButtons[TNavigateBtn.nbFirst].Enabled := UpEnable;
+  FButtons[TNavigateBtn.nbPrior].Enabled := UpEnable;
+  FButtons[TNavigateBtn.nbNext].Enabled := DnEnable;
+  FButtons[TNavigateBtn.nbLast].Enabled := DnEnable;
+  FButtons[TNavigateBtn.nbDelete].Enabled := CanModify and
+    not (FDataLink.DataSet.BOF and FDataLink.DataSet.EOF);
+  FButtons[TNavigateBtn.nbRefresh].Enabled := CanRefresh;
+  FButtons[TNavigateBtn.nbApplyUpdates].Enabled := CanModify and Self.CanApplyUpdates;
+  FButtons[TNavigateBtn.nbCancelUpdates].Enabled := CanModify and Self.CanCancelUpdates;
+end;
+
+destructor TStyledDBNavigator.Destroy;
+begin
+  FreeAndNil(FDataLink);
+  inherited Destroy;
+end;
+
+procedure TStyledDBNavigator.EditingChanged;
+var
+  CanModify: Boolean;
+begin
+  CanModify := Enabled and FDataLink.Active and FDataLink.DataSet.CanModify;
+  Buttons[TNavigateBtn.nbInsert].Enabled := CanModify;
+  Buttons[TNavigateBtn.nbEdit].Enabled := CanModify and not FDataLink.Editing;
+  Buttons[TNavigateBtn.nbPost].Enabled := CanModify and FDataLink.Editing;
+  Buttons[TNavigateBtn.nbCancel].Enabled := CanModify and FDataLink.Editing;
+  Buttons[TNavigateBtn.nbRefresh].Enabled := Enabled and (TNavigateBtn.nbRefresh in VisibleButtons) and FDataLink.Active and FDataLink.DataSet.CanRefresh;
+  Buttons[TNavigateBtn.nbApplyUpdates].Enabled := CanModify and (TNavigateBtn.nbApplyUpdates in VisibleButtons) and Self.CanApplyUpdates;
+  Buttons[TNavigateBtn.nbCancelUpdates].Enabled := CanModify and (TNavigateBtn.nbCancelUpdates in VisibleButtons) and Self.CanCancelUpdates;
+end;
+
+function TStyledDBNavigator.GetDataSource: TDataSource;
+begin
+  Result := FDataLink.DataSource;
+end;
+
+procedure TStyledDBNavigator.Loaded;
+begin
+  inherited;
+  ActiveChanged;
+end;
+
+procedure TStyledDBNavigator.Notification(AComponent: TComponent;
+  Operation: TOperation);
+begin
+  inherited Notification(AComponent, Operation);
+  if (Operation = opRemove) then
+  begin
+    if (FDataLink <> nil) and (AComponent = DataSource) then
+      DataSource := nil;
+  end;
 end;
 
 procedure TStyledDBNavigator.SetDataSource(const AValue: TDataSource);
@@ -1416,60 +1727,20 @@ begin
     AValue.FreeNotification(Self);
 end;
 
-procedure TStyledDBNavigator.SetDbNavigatorStyle(
-  const AStyleFamily: TStyledButtonFamily;
-  const AStyleClass: TStyledButtonClass;
-  const AStyleAppearance: TStyledButtonAppearance);
-begin
-  StyleFamily := AStyleFamily;
-  StyleClass := AStyleClass;
-  StyleAppearance := AStyleAppearance;
-  if not ApplyDbnavigatorStyle then
-    raise EStyledButtonError.CreateFmt(ERROR_SETTING_DBNAVIGATOR_STYLE,
-      [AStyleFamily, AStyleClass, AStyleAppearance]);
-end;
-
-procedure TStyledDBNavigator.SetDisabledImages(const AValue: TCustomImageList);
-begin
-  if FDisabledImages <> AValue then
-  begin
-    FDisabledImages := AValue;
-    DisabledImageListChange(Self);
-  end;
-end;
-
-function TStyledDBNavigator.GetDataSource: TDataSource;
-begin
-  Result := FDataLink.DataSource;
-end;
-
-procedure TStyledDBNavigator.Loaded;
-var
-  W, H: Integer;
-begin
-  inherited Loaded;
-  W := Width;
-  H := Height;
-  SetSize(W, H);
-  if (W <> Width) or (H <> Height) then
-    inherited SetBounds (Left, Top, W, H);
-  InitHints;
-  ActiveChanged;
-end;
-
 {TStyledNavButton}
 
 constructor TStyledNavButton.Create(AOwner: TComponent);
 begin
-  if AOwner is TStyledDbNavigator then
+  if AOwner is TCustomStyledDbNavigator then
   begin
-    FDbNavigator := TStyledDbNavigator(AOwner);
+    FDbNavigator := TCustomStyledDbNavigator(AOwner);
     inherited CreateStyled(AOwner,
       FDbNavigator._DefaultFamily, FDbNavigator._DefaultClass,
       FDbNavigator._DefaultAppearance,
       FDbNavigator._DefaultStyleDrawType,
       FDbNavigator._UseCustomDrawType);
     StyleRadius := FDbNavigator.StyleRadius;
+    ControlStyle := [csCaptureMouse, csDoubleClicks, csSetCaption, csOpaque];
   end
   else
     inherited Create(AOwner);
@@ -1513,14 +1784,26 @@ begin
     FRepeatTimer.Interval := InitRepeatPause;
     FRepeatTimer.Enabled := True;
   end;
+  if (Button = mbLeft) and Enabled then
+  begin
+    FDragging := True;
+  end;
 end;
 
 procedure TStyledNavButton.MouseUp(Button: TMouseButton; Shift: TShiftState;
   X, Y: Integer);
+var
+  DoClick: Boolean;
 begin
-  inherited MouseUp(Button, Shift, X, Y);
   if FRepeatTimer <> nil then
     FRepeatTimer.Enabled := False;
+  inherited MouseUp(Button, Shift, X, Y);
+  if FDragging then
+  begin
+    FDragging := False;
+    DoClick := (X >= 0) and (X < ClientWidth) and (Y >= 0) and (Y <= ClientHeight);
+    if DoClick then Click;
+  end;
 end;
 
 procedure TStyledNavButton.TimerExpired(Sender: TObject);
@@ -1561,6 +1844,7 @@ begin
     else
       inherited Images := {$IFDEF D10_4+}FDbNavigator.FButtonImages;{$ELSE}nil;{$ENDIF}
     inherited DisabledImages := FDbNavigator.DisabledImages;
+    StyleElements := FDbNavigator.StyleElements;
   end;
   Invalidate;
 end;
@@ -1618,11 +1902,236 @@ begin
   if FNavigator <> nil then FNavigator.ActiveChanged;
 end;
 
+var
+  NavigateButtonHintId: array[TNavigateButton] of string = (SFirstRecord, SPriorRecord,
+    SNextRecord, SLastRecord, SInsertRecord, SDeleteRecord, SEditRecord,
+    SPostEdit, SCancelEdit, SRefreshRecord,
+    SApplyUpdates, SCancelUpdates);
+
+procedure TStyledBindNavigator.ClickHandler(Sender: TObject);
+begin
+  inherited;
+  BtnClick(NavBtnToNavigateButton(TStyledNavButton(Sender).Index));
+end;
+
+constructor TStyledBindNavigator.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  VisibleButtons := NavigatorDefaultButtons;
+  FController := TBindNavigatorController.Create(Self);
+  FController.OnEditingChanged := OnEditingChanged;
+  FController.OnDataChanged := OnDataChanged;
+  FController.OnActiveChanged := OnActiveChanged;
+end;
+
+procedure TStyledBindNavigator.ActiveChanged;
+var
+  LActive: Boolean;
+begin
+  LActive := FController.Active;
+  if not (Enabled and LActive) then
+    FController.DisableButtons(
+      procedure(AButton: TNavigateButton; AEnabled: Boolean)
+      begin
+        Buttons[AButton].Enabled := AEnabled;
+      end)
+  else
+  begin
+    FController.EnableButtons(NavigatorButtons, Self.Enabled,
+      procedure(AButton: TNavigateButton; AEnabled: Boolean)
+      begin
+        Buttons[AButton].Enabled := AEnabled;
+      end)
+  end;
+end;
+
+procedure TStyledBindNavigator.DataChanged;
+begin
+  FController.EnableButtons(NavigatorScrollButtons + [nbDelete, nbApplyUpdates, nbCancelUpdates], Self.Enabled,
+    procedure(AButton: TNavigateButton; AEnabled: Boolean)
+    begin
+      Buttons[AButton].Enabled := AEnabled;
+    end);
+end;
+
+destructor TStyledBindNavigator.Destroy;
+begin
+  FreeAndNil(FController);
+  inherited;
+end;
+
+procedure TStyledBindNavigator.EditingChanged;
+begin
+  FController.EnableButtons(NavigatorEditButtons - [nbDelete], Enabled,
+    procedure(AButton: TNavigateButton; AEnabled: Boolean)
+    begin
+      Buttons[AButton].Enabled := AEnabled;
+    end);
+end;
+
+procedure TStyledBindNavigator.OnEditingChanged(Sender: TObject);
+begin
+  EditingChanged;
+end;
+
+procedure TStyledBindNavigator.OnActiveChanged(Sender: TObject);
+begin
+  ActiveChanged;
+end;
+
+procedure TStyledBindNavigator.OnDataChanged(Sender: TObject);
+begin
+  DataChanged;
+end;
+
+procedure TStyledBindNavigator.SetDataSource(Value: TBaseLinkingBindSource);
+begin
+  if FController.DataSource <> Value then
+  begin
+    FController.DataSource := Value;
+    if not (csLoading in ComponentState) then
+      ActiveChanged;
+  end;
+end;
+
+function TStyledBindNavigator.GetOrientation: TNavigatorOrientation;
+begin
+  if inherited Kind = dbnHorizontal then
+    Result := orHorizontal
+  else
+    Result := orVertical;
+end;
+
+function TStyledBindNavigator.GetVisibleButtons: TNavigateButtons;
+begin
+  Result := NavBtnsToNavigateButtons(inherited VisibleButtons);
+end;
+
+procedure TStyledBindNavigator.SetOrientation(const Value: TNavigatorOrientation);
+begin
+  if Value = orHorizontal then
+    inherited Kind := dbnHorizontal
+  else
+    inherited Kind := dbnVertical;
+end;
+
+function TStyledBindNavigator.NavigateButtonsToNavBtns(
+  const AValue: TNavigateButtons): TNavButtonSet;
+begin
+  Result := [];
+  if TNavigateButton.nbFirst in AValue then Result := Result + [TNavigateBtn.nbFirst];
+  if TNavigateButton.nbPrior in AValue then Result := Result + [TNavigateBtn.nbPrior];
+  if TNavigateButton.nbNext in AValue then Result := Result + [TNavigateBtn.nbNext];
+  if TNavigateButton.nbLast in AValue then Result := Result + [TNavigateBtn.nbLast];
+  if TNavigateButton.nbInsert in AValue then Result := Result + [TNavigateBtn.nbInsert];
+  if TNavigateButton.nbDelete in AValue then Result := Result + [TNavigateBtn.nbDelete];
+  if TNavigateButton.nbEdit in AValue then Result := Result + [TNavigateBtn.nbEdit];
+  if TNavigateButton.nbPost in AValue then Result := Result + [TNavigateBtn.nbPost];
+  if TNavigateButton.nbCancel in AValue then Result := Result + [TNavigateBtn.nbCancel];
+  if TNavigateButton.nbRefresh in AValue then Result := Result + [TNavigateBtn.nbRefresh];
+  if TNavigateButton.nbApplyUpdates in AValue then Result := Result + [TNavigateBtn.nbApplyUpdates];
+  if TNavigateButton.nbCancelUpdates in AValue then Result := Result + [TNavigateBtn.nbCancelUpdates];
+end;
+
+function TStyledBindNavigator.NavBtnsToNavigateButtons(
+  const AValue: TNavButtonSet): TNavigateButtons;
+begin
+  Result := [];
+  if TNavigateBtn.nbFirst in AValue then Result := Result + [TNavigateButton.nbFirst];
+  if TNavigateBtn.nbPrior in AValue then Result := Result + [TNavigateButton.nbPrior];
+  if TNavigateBtn.nbNext in AValue then Result := Result + [TNavigateButton.nbNext];
+  if TNavigateBtn.nbLast in AValue then Result := Result + [TNavigateButton.nbLast];
+  if TNavigateBtn.nbInsert in AValue then Result := Result + [TNavigateButton.nbInsert];
+  if TNavigateBtn.nbDelete in AValue then Result := Result + [TNavigateButton.nbDelete];
+  if TNavigateBtn.nbEdit in AValue then Result := Result + [TNavigateButton.nbEdit];
+  if TNavigateBtn.nbPost in AValue then Result := Result + [TNavigateButton.nbPost];
+  if TNavigateBtn.nbCancel in AValue then Result := Result + [TNavigateButton.nbCancel];
+  if TNavigateBtn.nbRefresh in AValue then Result := Result + [TNavigateButton.nbRefresh];
+  if TNavigateBtn.nbApplyUpdates in AValue then Result := Result + [TNavigateButton.nbApplyUpdates];
+  if TNavigateBtn.nbCancelUpdates in AValue then Result := Result + [TNavigateButton.nbCancelUpdates];
+end;
+
+function TStyledBindNavigator.NavigateButtonToNavBtn(
+  const AValue: TNavigateButton): TNavigateBtn;
+begin
+  case AValue of
+    TNavigateButton.nbFirst:         Result := TNavigateBtn.nbFirst;
+    TNavigateButton.nbPrior:         Result := TNavigateBtn.nbPrior;
+    TNavigateButton.nbNext:          Result := TNavigateBtn.nbNext;
+    TNavigateButton.nbLast:          Result := TNavigateBtn.nbLast;
+    TNavigateButton.nbInsert:        Result := TNavigateBtn.nbInsert;
+    TNavigateButton.nbDelete:        Result := TNavigateBtn.nbDelete;
+    TNavigateButton.nbEdit:          Result := TNavigateBtn.nbEdit;
+    TNavigateButton.nbPost:          Result := TNavigateBtn.nbPost;
+    TNavigateButton.nbCancel:        Result := TNavigateBtn.nbCancel;
+    TNavigateButton.nbRefresh:       Result := TNavigateBtn.nbRefresh;
+    TNavigateButton.nbApplyUpdates:  Result := TNavigateBtn.nbApplyUpdates;
+    TNavigateButton.nbCancelUpdates: Result := TNavigateBtn.nbCancelUpdates;
+  else
+    Result :=  TNavigateBtn.nbFirst;
+  end;
+end;
+
+function TStyledBindNavigator.NavBtnToNavigateButton(
+  const AValue: TNavigateBtn): TNavigateButton;
+begin
+  case AValue of
+    TNavigateBtn.nbFirst        : Result := TNavigateButton.nbFirst;
+    TNavigateBtn.nbPrior        : Result := TNavigateButton.nbPrior;
+    TNavigateBtn.nbNext         : Result := TNavigateButton.nbNext;
+    TNavigateBtn.nbLast         : Result := TNavigateButton.nbLast;
+    TNavigateBtn.nbInsert       : Result := TNavigateButton.nbInsert;
+    TNavigateBtn.nbDelete       : Result := TNavigateButton.nbDelete;
+    TNavigateBtn.nbEdit         : Result := TNavigateButton.nbEdit;
+    TNavigateBtn.nbPost         : Result := TNavigateButton.nbPost;
+    TNavigateBtn.nbCancel       : Result := TNavigateButton.nbCancel;
+    TNavigateBtn.nbRefresh      : Result := TNavigateButton.nbRefresh;
+    TNavigateBtn.nbApplyUpdates : Result := TNavigateButton.nbApplyUpdates;
+    TNavigateBtn.nbCancelUpdates: Result := TNavigateButton.nbCancelUpdates;
+  else
+    Result :=  TNavigateButton.nbFirst;
+  end;
+end;
+
+procedure TStyledBindNavigator.SetVisible(const Value: TNavigateButtons);
+begin
+  inherited VisibleButtons := NavigateButtonsToNavBtns(Value);
+end;
+
+function TStyledBindNavigator.GetDataSource: TBaseLinkingBindSource;
+begin
+  Result := FController.DataSource as TBaseLinkingBindSource
+end;
+
+function TStyledBindNavigator.GetButton(Index: TNavigateButton): TStyledNavButton;
+begin
+  Result := inherited GetButton(NavigateButtonToNavBtn(Index));
+end;
+
+procedure TStyledBindNavigator.BtnClick(Index: TNavigateButton);
+begin
+  if (DataSource <> nil) then
+  begin
+    if not (csDesigning in ComponentState) and Assigned(BeforeAction) then
+      BeforeAction(Self, Index);
+    FController.ExecuteButton(Index,
+       function: Boolean
+       begin
+          Result := not ConfirmDelete or
+          (MessageDlg(SDeleteRecordQuestion, mtConfirmation,
+          mbOKCancel, 0) <> idCancel);
+       end
+      );
+  end;
+  if not (csDesigning in ComponentState) and Assigned(OnClick) then
+    OnClick(Self, Index);
+end;
+
 initialization
-  TStyledDbNavigator._DefaultStyleDrawType := DEFAULT_STYLEDRAWTYPE;
-  TStyledDbNavigator._DefaultFamily := DEFAULT_CLASSIC_FAMILY;
-  TStyledDbNavigator._DefaultClass := DEFAULT_WINDOWS_CLASS;
-  TStyledDbNavigator._DefaultAppearance := DEFAULT_APPEARANCE;
-  TStyledDbNavigator._DefaultStyleRadius := DEFAULT_RADIUS;
+  TCustomStyledDBNavigator._DefaultStyleDrawType := DEFAULT_STYLEDRAWTYPE;
+  TCustomStyledDBNavigator._DefaultFamily := DEFAULT_CLASSIC_FAMILY;
+  TCustomStyledDBNavigator._DefaultClass := DEFAULT_WINDOWS_CLASS;
+  TCustomStyledDBNavigator._DefaultAppearance := DEFAULT_APPEARANCE;
+  TCustomStyledDBNavigator._DefaultStyleRadius := DEFAULT_RADIUS;
 
 end.
