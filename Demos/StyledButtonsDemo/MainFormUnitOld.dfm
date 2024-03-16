@@ -49,7 +49,6 @@ object MainForm: TMainForm
       PopupMenu = PopupMenu
       TabOrder = 0
       StyleRadius = 10
-      StyleDrawType = btRoundRect
     end
     object StyledButtonSquare: TStyledButton
       Left = 203
@@ -119,7 +118,6 @@ object MainForm: TMainForm
     Top = 70
     Width = 895
     Height = 621
-    ActivePage = tsClassic
     Align = alClient
     Images = ImageList32
     TabOrder = 1
@@ -962,7 +960,7 @@ object MainForm: TMainForm
           StyleClass = 'Amber'
         end
       end
-      object GroupBox1: TGroupBox
+      object IconButtonsGroupBox: TGroupBox
         AlignWithMargins = True
         Left = 3
         Top = 319
@@ -973,9 +971,9 @@ object MainForm: TMainForm
         TabOrder = 6
         object btn_IconHome: TStyledButton
           AlignWithMargins = True
-          Left = 110
+          Left = 107
           Top = 18
-          Width = 48
+          Width = 45
           Height = 45
           Margins.Left = 20
           Margins.Right = 20
@@ -983,6 +981,8 @@ object MainForm: TMainForm
           ImageAlignment = iaCenter
           ImageIndex = 0
           Images = ImageList32
+          NotificationBadge.Color = clFuchsia
+          NotificationBadge.NotificationCount = 100
           TabOrder = 1
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
@@ -993,7 +993,7 @@ object MainForm: TMainForm
           AlignWithMargins = True
           Left = 22
           Top = 18
-          Width = 48
+          Width = 45
           Height = 45
           Margins.Left = 20
           Margins.Right = 20
@@ -1001,6 +1001,7 @@ object MainForm: TMainForm
           ImageAlignment = iaCenter
           ImageIndex = 10
           Images = ImageList32
+          NotificationBadge.CustomText = '!'
           TabOrder = 0
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
@@ -1009,9 +1010,9 @@ object MainForm: TMainForm
         end
         object btn_IconMenu: TStyledButton
           AlignWithMargins = True
-          Left = 198
+          Left = 192
           Top = 18
-          Width = 48
+          Width = 45
           Height = 45
           Margins.Left = 20
           Margins.Right = 20
@@ -1019,24 +1020,28 @@ object MainForm: TMainForm
           ImageAlignment = iaCenter
           ImageIndex = 4
           Images = ImageList32
+          NotificationBadge.NotificationCount = 5
+          NotificationBadge.Size = nbsSmallDot
           TabOrder = 2
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
           StyleClass = 'Amber'
           StyleAppearance = 'Basic'
         end
-        object btn_IconHeart: TStyledButton
+        object btn_trash: TStyledButton
           AlignWithMargins = True
-          Left = 286
+          Left = 362
           Top = 18
-          Width = 48
+          Width = 45
           Height = 45
           Margins.Left = 20
           Margins.Right = 20
           Align = alLeft
           ImageAlignment = iaCenter
-          ImageIndex = 8
+          ImageIndex = 14
           Images = ImageList32
+          NotificationBadge.Color = clTeal
+          NotificationBadge.NotificationCount = 5
           TabOrder = 3
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
@@ -1045,9 +1050,9 @@ object MainForm: TMainForm
         end
         object btn_IconLaunchDisabled: TStyledButton
           AlignWithMargins = True
-          Left = 374
+          Left = 447
           Top = 18
-          Width = 48
+          Width = 45
           Height = 45
           Margins.Left = 20
           Margins.Right = 20
@@ -1059,6 +1064,26 @@ object MainForm: TMainForm
           TabOrder = 4
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
+          StyleAppearance = 'Basic'
+        end
+        object btn_IconHeart: TStyledButton
+          AlignWithMargins = True
+          Left = 277
+          Top = 18
+          Width = 45
+          Height = 45
+          Margins.Left = 20
+          Margins.Right = 20
+          Align = alLeft
+          ImageAlignment = iaCenter
+          ImageIndex = 8
+          Images = ImageList32
+          NotificationBadge.Color = clOlive
+          NotificationBadge.NotificationCount = 12
+          TabOrder = 5
+          StyleDrawType = btEllipse
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Warn'
           StyleAppearance = 'Basic'
         end
       end

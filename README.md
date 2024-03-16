@@ -2,7 +2,7 @@
 
 ## Components similar to Delphi VCL Buttons, Toolbar, DbNavigator and BindNavigator, with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 3.3.2
+### Actual official version: 3.3.3
 
 ## List of available Components:
 | Component | Description |
@@ -106,6 +106,12 @@ You can also use a Family/Class/Appearance of any type, for example:
 TStyledButton.RegisterDefaultRenderingStyle(btRoundRect, BOOTSTRAP_FAMILY, btn_primary, BOOTSTRAP_NORMAL);
 ```
 You can also use [Interposer Unit (Vcl.StyledComponentsHooks.pas)](/wiki/Interposer-Unit-(Vcl.StyledComponentsHooks)) to easily change all Buttons of your application.
+
+***New Notification Badge for buttons***
+
+NOTICE: from version 3.3.3 the new **NotificationBadge** property was added to all of the Styled Buttons.
+
+![NotificationBadge](./Images/NotificationBadge.jpg)
 
 ***New Rounded Button Style***
 
@@ -294,6 +300,10 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+16 Mar 2024: version 3.3.3
+- Added Notification Badge into all Styled Buttons
+- Fixed apply StyleDrawType in component editor
+
 9 Mar 2024: version 3.3.2
 - Added AsVCLComponent property to Buttons to simplify backward compatibility
 - Component Editor redesigned

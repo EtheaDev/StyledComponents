@@ -53,7 +53,7 @@ uses
   ;
 
 const
-  StyledButtonsVersion = '3.3.2';
+  StyledButtonsVersion = '3.3.3';
   DEFAULT_BTN_WIDTH = 75;
   DEFAULT_BTN_HEIGHT = 25;
   DEFAULT_IMAGE_HMARGIN = 8;
@@ -111,6 +111,7 @@ type
     FButtonStyleSelected: TStyledButtonAttributes;
     FButtonStyleHot: TStyledButtonAttributes;
     FButtonStyleDisabled: TStyledButtonAttributes;
+    FNotificationBadge: TNotificationBadgeAttributes;
     FModalResult: TModalResult;
     FMouseInControl: Boolean;
     FState: TButtonState;
@@ -177,6 +178,7 @@ type
     FAllowAllUp: Boolean;
     FGroupIndex: Integer;
     FDown: Boolean;
+
     procedure SetImageMargins(const AValue: TImageMargins);
     procedure SetStyleRadius(const AValue: Integer);
     procedure SetStyleFamily(const AValue: TStyledButtonFamily);
@@ -210,6 +212,8 @@ type
     function GetAttributes(const AMode: TStyledButtonState): TStyledButtonAttributes;
     procedure ImageMarginsChange(Sender: TObject);
     procedure SetImageAlignment(const AValue: TImageAlignment);
+    procedure DrawNotificationBadge(
+      const ACanvas: TCanvas; const ASurfaceRect: TRect);
     procedure DrawBackgroundAndBorder(const ACanvas: TCanvas;
       const AStyleAttribute: TStyledButtonAttributes;
       const AEraseBackground: Boolean);
@@ -226,6 +230,7 @@ type
     procedure SetButtonStyleHot(const AValue: TStyledButtonAttributes);
     procedure SetButtonStyleNormal(const AValue: TStyledButtonAttributes);
     procedure SetButtonStyleDisabled(const AValue: TStyledButtonAttributes);
+    procedure SetNotificationBadge(const AValue: TNotificationBadgeAttributes);
 
     procedure UpdateControlStyle;
     procedure SetWordWrap(const AValue: Boolean);
@@ -348,6 +353,7 @@ type
     function IsStyleNormalStored: Boolean;
     function IsStyleDisabledStored: Boolean;
     function IsStylePressedStored: Boolean;
+    function IsNotificationBadgeStored: Boolean;
     procedure SetButtonStyle(const AStyleFamily: TStyledButtonFamily;
       const AStyleClass: TStyledButtonClass;
       const AStyleAppearance: TStyledButtonAppearance); overload;
@@ -472,6 +478,7 @@ type
     property ButtonStyleSelected: TStyledButtonAttributes read FButtonStyleSelected write SetButtonStyleSelected;
     property ButtonStyleHot: TStyledButtonAttributes read FButtonStyleHot write SetButtonStyleHot;
     property ButtonStyleDisabled: TStyledButtonAttributes read FButtonStyleDisabled write SetButtonStyleDisabled;
+    property NotificationBadge: TNotificationBadgeAttributes read FNotificationBadge write SetNotificationBadge;
 
     property OnDropDownClick: TNotifyEvent read FOnDropDownClick write FOnDropDownClick;
 
@@ -491,6 +498,7 @@ type
     property Height: Integer read GetComponentHeight;
     property Width: Integer read GetComponentWidth;
     property Hint: string read GetHint;
+
     //Owner Control must assign those event-handlers
     property OnClick: TNotifyEvent read FOnClick write FOnClick;
     property ControlFont: TControlFont read FControlFont write FControlFont;
@@ -588,6 +596,7 @@ type
     function IsStyleNormalStored: Boolean;
     function IsStyleDisabledStored: Boolean;
     function IsStylePressedStored: Boolean;
+    function IsNotificationBadgeStored: Boolean;
     function IsImageIndexStored: Boolean;
     {$IFDEF D10_4+}
     function IsImageNameStored: Boolean;
@@ -647,6 +656,8 @@ type
     function GetAsVCLComponent: Boolean;
     procedure SetAsVCLComponent(const AValue: Boolean);
     function GetActiveStyleName: string;
+    function GetNotificationBadge: TNotificationBadgeAttributes;
+    procedure SetNotificationBadge(const AValue: TNotificationBadgeAttributes);
   protected
     procedure SetCursor(const AValue: TCursor); virtual;
     function GetCaption: TCaption; virtual;
@@ -789,6 +800,7 @@ type
     property ButtonStyleSelected: TStyledButtonAttributes read GetButtonStyleSelected write SetButtonStyleSelected stored IsStyleSelectedStored;
     property ButtonStyleHot: TStyledButtonAttributes read GetButtonStyleHot write SetButtonStyleHot stored IsStyleHotStored;
     property ButtonStyleDisabled: TStyledButtonAttributes read GetButtonStyleDisabled write SetButtonStyleDisabled stored IsStyleDisabledStored;
+    property NotificationBadge: TNotificationBadgeAttributes read GetNotificationBadge write SetNotificationBadge stored IsNotificationBadgeStored;
     property OnDropDownClick: TNotifyEvent read GetOnDropDownClick write SetOnDropDownClick;
   end;
 
@@ -809,6 +821,7 @@ type
     property DragMode;
     property Enabled;
     property Font;
+    property NotificationBadge;
     property OnContextPopup;
     property OnDragDrop;
     property OnDragOver;
@@ -908,6 +921,7 @@ type
     property Glyph;
     property Layout;
     property Margin;
+    property NotificationBadge;
     property NumGlyphs;
     property ParentFont;
     property ParentShowHint;
@@ -1040,6 +1054,7 @@ type
     function IsStyleNormalStored: Boolean;
     function IsStyleDisabledStored: Boolean;
     function IsStylePressedStored: Boolean;
+    function IsNotificationBadgeStored: Boolean;
     function IsImageIndexStored: Boolean;
     {$IFDEF D10_4+}
     function IsImageNameStored: Boolean;
@@ -1107,6 +1122,8 @@ type
     function GetAsVCLComponent: Boolean;
     procedure SetAsVCLComponent(const AValue: Boolean);
     function GetActiveStyleName: string;
+    function GetNotificationBadge: TNotificationBadgeAttributes;
+    procedure SetNotificationBadge(const AValue: TNotificationBadgeAttributes);
   protected
     procedure SetCursor(const AValue: TCursor); virtual;
     function CalcImageRect(var ATextRect: TRect;
@@ -1255,6 +1272,7 @@ type
     property ButtonStyleSelected: TStyledButtonAttributes read GetButtonStyleSelected write SetButtonStyleSelected stored IsStyleSelectedStored;
     property ButtonStyleHot: TStyledButtonAttributes read GetButtonStyleHot write SetButtonStyleHot stored IsStyleHotStored;
     property ButtonStyleDisabled: TStyledButtonAttributes read GetButtonStyleDisabled write SetButtonStyleDisabled stored IsStyleDisabledStored;
+    property NotificationBadge: TNotificationBadgeAttributes read GetNotificationBadge write SetNotificationBadge stored IsNotificationBadgeStored;
     property OnDropDownClick: TNotifyEvent read GetOnDropDownClick write SetOnDropDownClick;
 
     //Property for StyledButton
@@ -1303,6 +1321,7 @@ type
     property ImageMargins;
     property Images;
     property ModalResult;
+    property NotificationBadge;
     property ParentBiDiMode;
     property ParentDoubleBuffered default False;
     property ParentFont;
@@ -1407,6 +1426,7 @@ type
     property Layout;
     property Margin;
     property ModalResult;
+    property NotificationBadge;
     property NumGlyphs;
     property Style: TButtonStyle read FStyle write FStyle;
     property Spacing;
@@ -1463,6 +1483,7 @@ implementation
 uses
   System.Types
   , System.RTLConsts
+  , System.StrUtils
   , Vcl.Forms
   {$IFDEF INCLUDE_BootstrapButtonStyles}
   , Vcl.BootstrapButtonStyles
@@ -1504,12 +1525,14 @@ begin
   if not ParentFont then
     ADest.Font.Assign(Self.Font);
   ADest.FFlat := Self.FFlat;
+  ADest.FStyle := Self.FStyle;
   ADest.FStyleRadius := Self.FStyleRadius;
   ADest.FButtonStyleNormal.Assign(Self.FButtonStyleNormal);
   ADest.FButtonStylePressed.Assign(Self.FButtonStylePressed);
   ADest.FButtonStyleSelected.Assign(Self.FButtonStyleSelected);
   ADest.FButtonStyleHot.Assign(Self.FButtonStyleHot);
   ADest.FButtonStyleDisabled.Assign(Self.FButtonStyleDisabled);
+  ADest.FNotificationBadge.Assign(Self.FNotificationBadge);
   ADest.SetButtonStyles(Self.FStyleFamily,
     Self.FStyleClass, Self.FStyleAppearance);
   ADest.FStyleDrawType := Self.FStyleDrawType;
@@ -1520,6 +1543,7 @@ begin
   ADest.FFlat := Self.FFlat;
   ADest.FCaptionAlignment := Self.FCaptionAlignment;
   ADest.FCommandLinkHint := Self.FCommandLinkHint;
+  ADest.FNotificationBadge.Assign(Self.FNotificationBadge);
 
   if Assigned(FImages) then
   begin
@@ -1553,6 +1577,7 @@ begin
     ADest.NumGlyphs := FNumGlyphs;
     ADest.Glyph := FGlyph;
   end;
+  ADest.FCustomDrawType := Self.FCustomDrawType;
 end;
 
 function TStyledButtonRender.AssignAttributes(
@@ -1807,6 +1832,8 @@ begin
   FButtonStyleHot.Name := 'Hot';
   FButtonStyleDisabled := TStyledButtonAttributes.Create(AOwner);
   FButtonStyleDisabled.Name := 'Disabled';
+  FNotificationBadge := TNotificationBadgeAttributes.Create(AOwner);
+  FNotificationBadge.Name := 'NotificationBadge';
   FOwnerControl.ControlStyle := [csOpaque, csCaptureMouse, csClickEvents,
     csSetCaption, csDoubleClicks];
   FImageChangeLink := TChangeLink.Create;
@@ -1928,6 +1955,7 @@ begin
   FreeAndNil(FButtonStyleSelected);
   FreeAndNil(FButtonStyleHot);
   FreeAndNil(FButtonStyleDisabled);
+  FreeAndNil(FNotificationBadge);
   FreeAndNil(FGlyph);
   inherited Destroy;
 end;
@@ -2169,6 +2197,11 @@ begin
     Result := False;
 end;
 
+function TStyledButtonRender.IsNotificationBadgeStored: Boolean;
+begin
+  Result := FNotificationBadge.HasCustomAttributes;
+end;
+
 function TStyledButtonRender.IsStyleDisabledStored: Boolean;
 begin
   Result := FButtonStyleDisabled.HasCustomAttributes;
@@ -2216,7 +2249,8 @@ var
 begin
   //Drawing Caption
   R := ARect;
-  Winapi.Windows.DrawText(ACanvas.Handle, PChar(AText), Length(AText), R, AFlags or DT_CALCRECT);
+  Winapi.Windows.DrawText(ACanvas.Handle, PChar(AText), Length(AText),
+    R, AFlags or DT_CALCRECT);
   case AAlignment of
     taLeftJustify: OffsetRect(R, ASpacing, (ARect.Height - R.Height) div 2);
     taRightJustify: OffsetRect(R, ARect.Width - R.Width - ASpacing, (ARect.Height - R.Height) div 2);
@@ -2226,6 +2260,81 @@ begin
   OldBKMode := SetBkMode(ACanvas.Handle, Winapi.Windows.TRANSPARENT);
   CanvasDrawText(ACanvas, R, AText, AFlags);
   SetBkMode(ACanvas.Handle, OldBKMode);
+end;
+
+procedure TStyledButtonRender.DrawNotificationBadge(
+  const ACanvas: TCanvas; const ASurfaceRect: TRect);
+var
+  LRect: TRect;
+  W, H, LBadgeChars, LBadgeBorderSize: Integer;
+  LBadgeValue: string;
+  LScaleFactor: Single;
+  LFlags: Cardinal;
+begin
+  if not FNotificationBadge.IsVisible then
+    Exit;
+
+  LScaleFactor := GetOwnerScaleFactor;
+  ACanvas.Pen.Style := psClear;
+  ACanvas.Brush.Color := FNotificationBadge.Color;
+  ACanvas.Font.Color := FNotificationBadge.FontColor;
+  ACanvas.Font.Style := [TFontStyle.fsBold];
+
+  //Calculate Badge Size
+  LFlags := DT_NOCLIP or DT_CENTER or DT_VCENTER or DT_CALCRECT;
+  LRect := ASurfaceRect;
+  LBadgeChars := Length(FNotificationBadge.BadgeContent);
+  if FNotificationBadge.CustomText = '' then
+    LBadgeValue := StringOfChar('9', LBadgeChars)
+  else
+    LBadgeValue := FNotificationBadge.CustomText;
+  Winapi.Windows.DrawText(ACanvas.Handle,
+    PChar(LBadgeValue), LBadgeChars, LRect, LFlags);
+  LBadgeValue := FNotificationBadge.BadgeContent;
+
+  //Add Border
+  LBadgeBorderSize := Round(3 * LScaleFactor);
+  InflateRect(LRect, Round(LBadgeBorderSize*2.2), LBadgeBorderSize);
+  if FNotificationBadge.Size = nbsSmallDot then
+  begin
+    //Reduce size of dot based on Font Size
+    H := Round(LRect.Height / 2);
+    W := H;
+  end
+  else
+  begin
+    H := LRect.Height;
+    W := Max(LRect.Width, H);
+  end;
+
+  //Calculate Badge Position
+  if FNotificationBadge.Position in [nbpTopLeft, nbpTopRight] then
+  begin
+    LRect.Top := ASurfaceRect.Top;
+    LRect.Bottom := LRect.Top + H;
+  end
+  else
+  begin
+    LRect.Bottom := ASurfaceRect.Bottom;
+    LRect.Top := LRect.Bottom - H;
+  end;
+  if FNotificationBadge.Position in [nbpTopRight, nbpBottomRight] then
+  begin
+    LRect.Right := ASurfaceRect.Right;
+    LRect.Left := ASurfaceRect.Right - W;
+  end
+  else
+  begin
+    LRect.Left := ASurfaceRect.Left;
+    LRect.Right := ASurfaceRect.Left + W;
+  end;
+  //Draw Badge
+  CanvasDrawshape(ACanvas, LRect, btRounded, 0, False);
+
+  //Draw Badge Content
+  if FNotificationBadge.Size <> nbsSmallDot then
+    DrawText(ACanvas, LBadgeValue, taCenter, 0, LRect,
+      DT_NOCLIP or DT_CENTER or DT_VCENTER);
 end;
 
 procedure TStyledButtonRender.DrawBackgroundAndBorder(
@@ -2240,21 +2349,19 @@ begin
   if AEraseBackground then
     EraseBackground(ACanvas);
 
-  begin
-    LDrawRect := FOwnerControl.ClientRect;
+  LDrawRect := FOwnerControl.ClientRect;
 
-    //Don't draw button border for Flat Buttons
-    if FFlat and not FMouseInControl and not Focused then
-      ACanvas.Pen.Style := psClear;
+  //Don't draw button border for Flat Buttons
+  if FFlat and not FMouseInControl and not Focused then
+    ACanvas.Pen.Style := psClear;
 
-    //Don't draw button face for Transparent Buttons
-    if FTransparent and not FDown and not FMouseInControl and not Focused then
-      ACanvas.Brush.Style := bsClear;
+  //Don't draw button face for Transparent Buttons
+  if FTransparent and not FDown and not FMouseInControl and not Focused then
+    ACanvas.Brush.Style := bsClear;
 
-    //Draw Button Shape
-    CanvasDrawshape(ACanvas, LDrawRect, FStyleDrawType,
-      FStyleRadius*GetOwnerScaleFactor);
-  end;
+  //Draw Button Shape
+  CanvasDrawshape(ACanvas, LDrawRect, FStyleDrawType,
+    FStyleRadius*GetOwnerScaleFactor);
 
   //Draw Bar and Triangle
   if FDropDownRect.Width > 0 then
@@ -2554,12 +2661,10 @@ begin
     if FDropDownRect.Width <> 0 then
       Dec(LSurfaceRect.Right, FDropDownRect.Width);
 
-    if FOwnerControl.AlignWithMargins then
-      InflateRect(LSurfaceRect,
-        -FOwnerControl.Margins.Left-FOwnerControl.Margins.Right,
-        -FOwnerControl.Margins.Top-FOwnerControl.Margins.Bottom);
-
     DrawCaptionAndImage(ACanvas, LSurfaceRect);
+
+    LSurfaceRect := FOwnerControl.ClientRect;
+    DrawNotificationBadge(ACanvas, LSurfaceRect);
   finally
     if LOldParentFont then
       ParentFont := LOldParentFont
@@ -3175,6 +3280,15 @@ begin
   if not SameStyledButtonStyle(FButtonStyleHot, AValue) then
   begin
     FButtonStyleHot := AValue;
+  end;
+end;
+
+procedure TStyledButtonRender.SetNotificationBadge(
+  const AValue: TNotificationBadgeAttributes);
+begin
+  if not SameNotificationBadgeAttributes(FNotificationBadge, AValue) then
+  begin
+    FNotificationBadge := AValue;
   end;
 end;
 
@@ -3839,6 +3953,11 @@ begin
       (FImageIndex <> -1);
 end;
 
+function TCustomStyledGraphicButton.IsNotificationBadgeStored: Boolean;
+begin
+  Result := FRender.IsNotificationBadgeStored;
+end;
+
 function TCustomStyledGraphicButton.IsCustomDrawType: Boolean;
 begin
   Result := FRender.IsCustomDrawType;
@@ -4180,6 +4299,11 @@ begin
   Result := FRender.MouseInControl;
 end;
 
+function TCustomStyledGraphicButton.GetNotificationBadge: TNotificationBadgeAttributes;
+begin
+  Result := FRender.NotificationBadge;
+end;
+
 function TCustomStyledGraphicButton.GetNumGlyphs: TNumGlyphs;
 begin
   Result := FRender.NumGlyphs;
@@ -4203,6 +4327,12 @@ begin
   inherited;
   if LOldValue <> Caption then
     Invalidate;
+end;
+
+procedure TCustomStyledGraphicButton.SetNotificationBadge(
+  const AValue: TNotificationBadgeAttributes);
+begin
+  FRender.NotificationBadge := AValue;
 end;
 
 function TCustomStyledGraphicButton.GetOnDropDownClick: TNotifyEvent;
@@ -4962,6 +5092,11 @@ begin
     Result := not TGraphicButtonActionLink(ActionLink).IsImageIndexLinked;
 end;
 
+function TCustomStyledButton.IsNotificationBadgeStored: Boolean;
+begin
+  Result := FRender.IsNotificationBadgeStored;
+end;
+
 function TCustomStyledButton.IsCustomDrawType: Boolean;
 begin
   Result := FRender.IsCustomDrawType;
@@ -5315,6 +5450,11 @@ begin
   Result := FRender.MouseInControl;
 end;
 
+function TCustomStyledButton.GetNotificationBadge: TNotificationBadgeAttributes;
+begin
+  Result := FRender.NotificationBadge;
+end;
+
 function TCustomStyledButton.GetNumGlyphs: TNumGlyphs;
 begin
   Result := FRender.NumGlyphs;
@@ -5343,6 +5483,12 @@ begin
   inherited;
   if LOldValue <> Caption then
     Invalidate;
+end;
+
+procedure TCustomStyledButton.SetNotificationBadge(
+  const AValue: TNotificationBadgeAttributes);
+begin
+  FRender.NotificationBadge := AValue;
 end;
 
 function TCustomStyledButton.GetOnDropDownClick: TNotifyEvent;
@@ -5740,6 +5886,7 @@ end;
 
 procedure TCustomStyledButton.WMEraseBkGnd(var Message: TWmEraseBkgnd);
 begin
+  inherited;
   { Erase background if we're not doublebuffering or painting to memory. }
   if not FDoubleBuffered or
      (TMessage(Message).wParam = WPARAM(TMessage(Message).lParam)) then

@@ -44,7 +44,6 @@ object MainForm: TMainForm
       Font.Height = -16
       Font.Name = 'Arial'
       Font.Style = []
-      ImageName = 'Basic-Color'
       Images = VirtualImageList32
       ParentFont = False
       PopupMenu = PopupMenu
@@ -58,7 +57,6 @@ object MainForm: TMainForm
       Height = 50
       ImageAlignment = iaCenter
       ImageIndex = 11
-      ImageName = 'launch-white'
       Images = VirtualImageList32
       TabOrder = 1
       OnClick = StyledButtonSquareClick
@@ -72,7 +70,6 @@ object MainForm: TMainForm
       Height = 50
       ImageAlignment = iaCenter
       ImageIndex = 18
-      ImageName = 'home-black'
       Images = VirtualImageList32
       TabOrder = 2
       OnClick = StyledButtonCircularClick
@@ -963,7 +960,7 @@ object MainForm: TMainForm
           StyleClass = 'Amber'
         end
       end
-      object GroupBox1: TGroupBox
+      object IconButtonsGroupBox: TGroupBox
         AlignWithMargins = True
         Left = 3
         Top = 319
@@ -974,17 +971,18 @@ object MainForm: TMainForm
         TabOrder = 6
         object btn_IconHome: TStyledButton
           AlignWithMargins = True
-          Left = 110
+          Left = 107
           Top = 18
-          Width = 48
+          Width = 45
           Height = 45
           Margins.Left = 20
           Margins.Right = 20
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 0
-          ImageName = 'home-deeppurple'
           Images = VirtualImageList32
+          NotificationBadge.Color = clFuchsia
+          NotificationBadge.NotificationCount = 100
           TabOrder = 1
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
@@ -995,15 +993,15 @@ object MainForm: TMainForm
           AlignWithMargins = True
           Left = 22
           Top = 18
-          Width = 48
+          Width = 45
           Height = 45
           Margins.Left = 20
           Margins.Right = 20
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 10
-          ImageName = 'dots-vertical-black'
           Images = VirtualImageList32
+          NotificationBadge.CustomText = '!'
           TabOrder = 0
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
@@ -1012,36 +1010,38 @@ object MainForm: TMainForm
         end
         object btn_IconMenu: TStyledButton
           AlignWithMargins = True
-          Left = 198
+          Left = 192
           Top = 18
-          Width = 48
+          Width = 45
           Height = 45
           Margins.Left = 20
           Margins.Right = 20
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 4
-          ImageName = 'menu-amber'
           Images = VirtualImageList32
+          NotificationBadge.NotificationCount = 5
+          NotificationBadge.Size = nbsSmallDot
           TabOrder = 2
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
           StyleClass = 'Amber'
           StyleAppearance = 'Basic'
         end
-        object btn_IconHeart: TStyledButton
+        object btn_trash: TStyledButton
           AlignWithMargins = True
-          Left = 286
+          Left = 362
           Top = 18
-          Width = 48
+          Width = 45
           Height = 45
           Margins.Left = 20
           Margins.Right = 20
           Align = alLeft
           ImageAlignment = iaCenter
-          ImageIndex = 8
-          ImageName = 'heart'
+          ImageIndex = 14
           Images = VirtualImageList32
+          NotificationBadge.Color = clTeal
+          NotificationBadge.NotificationCount = 5
           TabOrder = 3
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
@@ -1050,9 +1050,9 @@ object MainForm: TMainForm
         end
         object btn_IconLaunchDisabled: TStyledButton
           AlignWithMargins = True
-          Left = 374
+          Left = 447
           Top = 18
-          Width = 48
+          Width = 45
           Height = 45
           Margins.Left = 20
           Margins.Right = 20
@@ -1060,11 +1060,30 @@ object MainForm: TMainForm
           Enabled = False
           ImageAlignment = iaCenter
           ImageIndex = 12
-          ImageName = 'launch-black'
           Images = VirtualImageList32
           TabOrder = 4
           StyleDrawType = btEllipse
           StyleFamily = 'Angular-Light'
+          StyleAppearance = 'Basic'
+        end
+        object btn_IconHeart: TStyledButton
+          AlignWithMargins = True
+          Left = 277
+          Top = 18
+          Width = 45
+          Height = 45
+          Margins.Left = 20
+          Margins.Right = 20
+          Align = alLeft
+          ImageAlignment = iaCenter
+          ImageIndex = 8
+          Images = VirtualImageList32
+          NotificationBadge.Color = clOlive
+          NotificationBadge.NotificationCount = 12
+          TabOrder = 5
+          StyleDrawType = btEllipse
+          StyleFamily = 'Angular-Light'
+          StyleClass = 'Warn'
           StyleAppearance = 'Basic'
         end
       end
@@ -1088,7 +1107,6 @@ object MainForm: TMainForm
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 13
-          ImageName = 'trash-white'
           Images = VirtualImageList32
           TabOrder = 1
           StyleRadius = 8
@@ -1106,7 +1124,6 @@ object MainForm: TMainForm
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 16
-          ImageName = 'bookmark-black'
           Images = VirtualImageList32
           TabOrder = 2
           StyleDrawType = btEllipse
@@ -1124,7 +1141,6 @@ object MainForm: TMainForm
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 17
-          ImageName = 'home-white'
           Images = VirtualImageList32
           TabOrder = 3
           StyleDrawType = btEllipse
@@ -1143,7 +1159,6 @@ object MainForm: TMainForm
           Enabled = False
           ImageAlignment = iaCenter
           ImageIndex = 8
-          ImageName = 'heart'
           Images = VirtualImageList32
           TabOrder = 0
           StyleDrawType = btEllipse
@@ -1710,7 +1725,6 @@ object MainForm: TMainForm
       Caption = 'Show Editor'
       Hint = 'Hint of Action'
       ImageIndex = 22
-      ImageName = 'Basic-Color'
       OnExecute = TestActionExecute
     end
   end

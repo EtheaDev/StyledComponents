@@ -177,12 +177,10 @@ begin
       paTop.Height := SourceButton.Top + AButtonRender.Height + SourceButton.Top;
       AButtonRender.AssignStyleTo(SourceButton.Render);
       SourceButton.Enabled := AButtonRender.Enabled;
-      SourceButton.Caption := AButtonRender.Caption;
-      SourceButton.Hint := AButtonRender.Hint;
       SourceButton.Width := AButtonRender.Width;
       SourceButton.Height := AButtonRender.Height;
-      SourceButton.Flat := AButtonRender.Flat;
-      SourceButton.Style := AButtonRender.Style;
+      SourceButton.Caption := AButtonRender.Caption;
+      SourceButton.Hint := AButtonRender.Hint;
 
       AButtonRender.AssignStyleTo(DestButton.Render);
       DestButton.Enabled := AButtonRender.Enabled;
@@ -190,8 +188,6 @@ begin
       DestButton.Height := AButtonRender.Height;
       DestButton.Caption := AButtonRender.Caption;
       DestButton.Hint := AButtonRender.Hint;
-      DestButton.Flat := AButtonRender.Flat;
-      DestButton.Style := AButtonRender.Style;
 
       Result := ShowModal = mrOk;
       SavedBounds := BoundsRect;
@@ -502,7 +498,8 @@ begin
     [DestButton.StyleFamily, DestButton.StyleClass, DestButton.StyleAppearance]);
 end;
 
-procedure TStyledButtonEditor.BuildButtonsPreview(const AFamily: TStyledButtonFamily;
+procedure TStyledButtonEditor.BuildButtonsPreview(
+  const AFamily: TStyledButtonFamily;
   const AAppearance: TStyledButtonAppearance;
   const AFlowPanel: TFlowPanel);
 var
@@ -534,6 +531,7 @@ var
     LStyledButton.StyleAppearance := AAppearance;
     LStyledButton.OnClick := SelectButtonClick;
     //LStyledButton.OnEnter := ButtonEnter;
+    LStyledButton.Style := TCustomButton.TButtonStyle(StyleComboBox.ItemIndex);
     LStyledButton.StyleDrawType := TStyledButtonDrawType(StyleDrawTypeComboBox.ItemIndex);
     LStyledButton.StyleRadius := RadiusTrackBar.Position;
     LStyledButton.AsVCLComponent := False;

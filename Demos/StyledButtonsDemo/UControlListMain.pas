@@ -32,7 +32,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.BaseImageCollection,
   SVGIconImageCollection, Vcl.VirtualImage, Vcl.ControlList, Vcl.StdCtrls,
-  System.ImageList, Vcl.ImgList, Vcl.VirtualImageList, Vcl.StyledButton;
+  System.ImageList, Vcl.ImgList, Vcl.VirtualImageList, Vcl.StyledButton,
+  Vcl.ButtonStylesAttributes;
 
 type
   TControlListMainForm = class(TForm)
@@ -65,7 +66,6 @@ implementation
 
 uses
   Vcl.BootstrapButtonStyles
-  , Vcl.ButtonStylesAttributes
   ;
 
 procedure TControlListMainForm.ControlListBeforeDrawItem(AIndex: Integer;

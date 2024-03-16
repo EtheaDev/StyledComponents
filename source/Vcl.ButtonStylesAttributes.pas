@@ -53,14 +53,19 @@ uses
 const
   DEFAULT_RADIUS = 6;
   RESOURCE_SHIELD_ICON = 'BUTTON_SHIELD_ADMIN';
+  DEFAULT_MAX_BADGE_VALUE = 99;
 
 resourcestring
   ERROR_FAMILY_NOT_FOUND = 'Styled Button Family "%s" not found';
+  ERROR_NEGATIVE_VALUE = 'Error: Notification Count cannot be negative!';
 
 Type
   //Windows Version
   TWindowsVersion = (wvUndefined, wvWindowsXP, wvWindowsVista, wvWindows7,
     wvWindows8, wvWindows8_1, wvWindows10, wvWindows11);
+
+  TNotificationBadgePosition = (nbpTopRight, nbpTopLeft, nbpBottomRight, nbpBottomLeft);
+  TNotificationBadgeSize = (nbsNormal, nbsSmallDot);
 
   //string typed attributes
   TStyledButtonFamily = string;
@@ -77,6 +82,46 @@ Type
   TButtonFamilies = array of TStyledButtonFamily;
   TButtonClasses = Array of TStyledButtonClass;
   TButtonAppearances = Array of TStyledButtonAppearance;
+
+  TNotificationBadgeAttributes = class(TComponent)
+  private
+    FNotificationCount: Integer;
+    FCustomText: string;
+    FMaxNotifications: Word;
+    FPosition: TNotificationBadgePosition;
+    FSize: TNotificationBadgeSize;
+    FColor: TColor;
+    FFontColor: TColor;
+
+    FOwnerControl: TControl;
+    FOnContentChange: TNotifyEvent;
+    procedure InvalidateControl;
+    procedure SetMaxNotifications(const AValue: Word);
+    procedure SetPosition(const AValue: TNotificationBadgePosition);
+    procedure SetNotificationCount(const AValue: Integer);
+    procedure SetColor(const AValue: TColor);
+    procedure SetFontColor(const AValue: TColor);
+    function GetBadgeContent: string;
+    procedure SetCustomText(const AValue: string);
+    procedure SetSize(const Value: TNotificationBadgeSize);
+    function GetIsVisible: Boolean;
+  public
+    procedure Assign(ASource: TPersistent); override;
+    constructor Create(AOwner: TComponent); override;
+    function HasCustomAttributes: Boolean;
+    property BadgeContent: string read GetBadgeContent;
+    property IsVisible: Boolean read GetIsVisible;
+  published
+    property Color: TColor read FColor write SetColor default clRed;
+    property CustomText: string read FCustomText write SetCustomText;
+    property FontColor: TColor read FFontColor write SetFontColor default clWhite;
+    property NotificationCount: Integer read FNotificationCount write SetNotificationCount default 0;
+    property MaxNotifications: Word read FMaxNotifications write SetMaxNotifications default DEFAULT_MAX_BADGE_VALUE;
+    property Position: TNotificationBadgePosition read FPosition write SetPosition default nbpTopRight;
+    property Size: TNotificationBadgeSize read FSize write SetSize default nbsNormal;
+
+    property OnContentChange: TNotifyEvent read FOnContentChange write FOnContentChange;
+  end;
 
   TStyledButtonAttributes = class(TComponent)
   private
@@ -197,6 +242,7 @@ function HtmlToColor(Color: string): TColor;
 function ColortoGrayscale(AColor : TColor): TColor;
 function ColorIsLight(Color: TColor): Boolean;
 function SameStyledButtonStyle(Style1, Style2: TStyledButtonAttributes): Boolean;
+function SameNotificationBadgeAttributes(Attr1, Attr2: TNotificationBadgeAttributes): Boolean;
 procedure CloneButtonStyle(const ASource: TStyledButtonAttributes;
   var ADest: TStyledButtonAttributes);
 function GetActiveStyleName(const AControl: TControl): string;
@@ -242,7 +288,8 @@ procedure DrawIconFromCommandLinkRes(ACanvas: TCanvas; ARect: TRect;
 procedure DrawRect(ACanvas: TCanvas; var ARect: TRect);
 //draw Button into Canvas
 procedure CanvasDrawShape(const ACanvas: TCanvas; ARect: TRect;
-  const ADrawType: TStyledButtonDrawType; const ACornerRadius: Single);
+  const ADrawType: TStyledButtonDrawType; const ACornerRadius: Single;
+  const APreserveBorderSpace: Boolean = True);
 //draw Text into Canvas
 procedure CanvasDrawText(const ACanvas: TCanvas; ARect: TRect;
   const AText: string; ABiDiModeFlags: LongInt);
@@ -315,6 +362,14 @@ begin
     (Style1.FFontName = Style2.FFontName) and
     (Style1.FButtonColor = Style2.FButtonColor) and
     (Style1.FRadius = Style2.FRadius);
+end;
+
+function SameNotificationBadgeAttributes(Attr1, Attr2: TNotificationBadgeAttributes): Boolean;
+begin
+  Result :=
+    (Attr1.FNotificationCount = Attr2.FNotificationCount) and
+    (Attr1.FMaxNotifications = Attr2.FMaxNotifications) and
+    (Attr1.FPosition = Attr2.FPosition);
 end;
 
 function ColortoGrayscale(AColor : TColor): TColor;
@@ -671,6 +726,153 @@ begin
     Result := LButtonFamily.FCustomAttributes.GetButtonAppearances
   else
     raise Exception.CreateFmt(ERROR_FAMILY_NOT_FOUND,[AFamily]);
+end;
+
+{ TNotificationBadgeAttributes }
+
+procedure TNotificationBadgeAttributes.Assign(ASource: TPersistent);
+var
+  LSource: TNotificationBadgeAttributes;
+begin
+  if ASource is TNotificationBadgeAttributes then
+  begin
+    LSource := TNotificationBadgeAttributes(ASource);
+    NotificationCount := LSource.FNotificationCount;
+    MaxNotifications := LSource.FMaxNotifications;
+    Position := LSource.FPosition;
+    Color := LSource.FColor;
+    FontColor := LSource.FFontColor;
+    Size := LSource.FSize;
+  end
+  else
+    inherited Assign(ASource);
+end;
+
+constructor TNotificationBadgeAttributes.Create(AOwner: TComponent);
+begin
+  inherited;
+  FNotificationCount := 0;
+  FMaxNotifications := DEFAULT_MAX_BADGE_VALUE;
+  FPosition := nbpTopRight;
+  FColor := clRed;
+  FFontColor := clWhite;
+  FSize := nbsNormal;
+  if AOwner is TControl then
+  begin
+    FOwnerControl := TControl(AOwner);
+    SetSubComponent(True);
+  end;
+end;
+
+function TNotificationBadgeAttributes.GetBadgeContent: string;
+begin
+  if (FCustomText <> '')  then
+    Result := FCustomText
+  else
+  begin
+    if FNotificationCount > MaxNotifications then
+      Result := IntToStr(MaxNotifications)+'+'
+    else if FNotificationCount > 0 then
+      Result := IntToStr(FNotificationCount)
+    else
+      Result := '';
+  end;
+end;
+
+function TNotificationBadgeAttributes.GetIsVisible: Boolean;
+begin
+  Result := (FCustomText <> '') or (FNotificationCount > 0);
+end;
+
+function TNotificationBadgeAttributes.HasCustomAttributes: Boolean;
+begin
+  Result := (FNotificationCount <> 0) or
+    (FMaxNotifications <> DEFAULT_MAX_BADGE_VALUE) or
+    (FPosition <> nbpTopRight) or
+    (FColor <> clRed) or
+    (FFontColor <> clWhite) or
+    (FSize <> nbsNormal) or
+    (FCustomText <> '');
+end;
+
+procedure TNotificationBadgeAttributes.InvalidateControl;
+begin
+  if Assigned(FOwnerControl) then
+    FOwnerControl.Invalidate;
+end;
+
+procedure TNotificationBadgeAttributes.SetMaxNotifications(const AValue: Word);
+begin
+  if FMaxNotifications <> AValue then
+  begin
+    FMaxNotifications := AValue;
+    if IsVisible then
+      InvalidateControl;
+  end;
+end;
+
+procedure TNotificationBadgeAttributes.SetPosition(const AValue: TNotificationBadgePosition);
+begin
+  if FPosition <> AValue then
+  begin
+    FPosition := AValue;
+    if IsVisible then
+      InvalidateControl;
+  end;
+end;
+
+procedure TNotificationBadgeAttributes.SetSize(
+  const Value: TNotificationBadgeSize);
+begin
+  if FSize <> Value then
+  begin
+    FSize := Value;
+    InvalidateControl;
+  end;
+end;
+
+procedure TNotificationBadgeAttributes.SetCustomText(const AValue: string);
+begin
+  if FCustomText <> AValue then
+  begin
+    FCustomText := AValue;
+    if Assigned(FOnContentChange) then
+      FOnContentChange(Self);
+    InvalidateControl;
+  end;
+end;
+
+procedure TNotificationBadgeAttributes.SetColor(const AValue: TColor);
+begin
+  if FColor <> AValue then
+  begin
+    FColor := AValue;
+    if IsVisible then
+      InvalidateControl;
+  end;
+end;
+
+procedure TNotificationBadgeAttributes.SetNotificationCount(const AValue: Integer);
+begin
+  if AValue < 0 then
+    raise Exception.Create(ERROR_NEGATIVE_VALUE);
+  if FNotificationCount <> AValue then
+  begin
+    FNotificationCount := AValue;
+    if Assigned(FOnContentChange) then
+      FOnContentChange(Self);
+    InvalidateControl;
+  end;
+end;
+
+procedure TNotificationBadgeAttributes.SetFontColor(const AValue: TColor);
+begin
+  if FFontColor <> AValue then
+  begin
+    FFontColor := AValue;
+    if IsVisible then
+      InvalidateControl;
+  end;
 end;
 
 { TStyledButtonAttributes }
@@ -1377,11 +1579,18 @@ begin
   end
   else
   begin
-    GetStyleAttributes(AVCLStyleName, LThemeAttribute);
-    if LThemeAttribute.ThemeType = ttLight then
+    if ACanvas.Font.Color = clWhite then
+      LResName := 'CMD_LINK_ARROW_WHITE'
+    else if ACanvas.Font.Color = clBlack then
       LResName := 'CMD_LINK_ARROW_BLACK'
     else
-      LResName := 'CMD_LINK_ARROW_WHITE';
+    begin
+      GetStyleAttributes(AVCLStyleName, LThemeAttribute);
+      if LThemeAttribute.ThemeType = ttLight then
+        LResName := 'CMD_LINK_ARROW_BLACK'
+      else
+        LResName := 'CMD_LINK_ARROW_WHITE';
+    end;
   end;
   {$IFDEF D10_4+}
   LImage := TWicImage.Create;
@@ -1649,7 +1858,8 @@ end;
 
 {$ifdef GDIPlusSupport}
 procedure CanvasDrawShape(const ACanvas: TCanvas; ARect: TRect;
-  const ADrawType: TStyledButtonDrawType; const ACornerRadius: Single);
+  const ADrawType: TStyledButtonDrawType; const ACornerRadius: Single;
+  const APreserveBorderSpace: Boolean = True);
 var
   LGraphics: TGPGraphics;
   LPen: TGPPen;
@@ -1697,7 +1907,10 @@ begin
     else if (ADrawType in [btRounded, btRoundRect]) then
     begin
       //Reduce canvas to draw a rounded rectangle of Pen Width
-      GPInflateRectF(LRect, LBorderWidth);
+      if APreserveBorderSpace then
+        GPInflateRectF(LRect, LBorderWidth)
+      else
+        GPInflateRectF(LRect, 1);
       if ADrawType = btRoundRect then
         LCornerRadius := ACornerRadius //Drawing a Rounded Rect
       else
@@ -1729,14 +1942,16 @@ begin
 end;
 {$else}
 procedure CanvasDrawShape(const ACanvas: TCanvas; ARect: TRect;
-  const ADrawType: TStyledButtonDrawType; const ACornerRadius: Single);
+  const ADrawType: TStyledButtonDrawType; const ACornerRadius: Single;
+  const APreserveBorderSpace: Boolean = True);
 var
   LCornerRadius, LBorderWidth: Integer;
 begin
   LBorderWidth := ACanvas.Pen.Width;
   if ADrawType in [btRounded, btRoundRect] then
   begin
-    AdjustCanvasRect(ACanvas, ARect, False);
+    if APreserveBorderSpace then
+      AdjustCanvasRect(ACanvas, ARect, False);
     if ADrawType = btRoundRect then
       LCornerRadius := Round(ACornerRadius*2) //Drawing a Rounded Rect
     else

@@ -125,11 +125,12 @@ type
     btn_FlatWarn: TStyledButton;
     btn_FlatDisabled: TStyledButton;
     btn_FlatAccent: TStyledButton;
-    GroupBox1: TGroupBox;
+    IconButtonsGroupBox: TGroupBox;
     btn_IconHome: TStyledButton;
     btn_IconDots: TStyledButton;
     btn_IconMenu: TStyledButton;
     btn_IconHeart: TStyledButton;
+    btn_trash: TStyledButton;
     btn_IconLaunchDisabled: TStyledButton;
     GroupBox2: TGroupBox;
     btn_FABTrash: TStyledButton;
@@ -288,6 +289,10 @@ end;
 procedure TMainForm.TestActionExecute(Sender: TObject);
 begin
   EditStyledButton(ShowEditButton);
+  ShowEditButton.Hint := Format('%s/%s/%s',
+    [ShowEditButton.StyleFamily,
+    ShowEditButton.StyleClass,
+    ShowEditButton.StyleAppearance]);
 end;
 
 procedure TMainForm.LinkLabelLinkClick(Sender: TObject;
