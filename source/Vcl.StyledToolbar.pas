@@ -123,8 +123,7 @@ type
     procedure Click; override;
     procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
   published
-
-    property ActiveStyleName;
+    //property ActiveStyleName;
     property Action;
     property Align;
     property AllowAllUp default False;
@@ -334,6 +333,7 @@ type
     procedure AlignControls(AControl: TControl; var Rect: TRect); override;
     procedure AdjustSize; override;
     function GetStyledToolButtonClass: TStyledToolButtonClass; virtual;
+    procedure Loaded; override;
   public
     class procedure RegisterDefaultRenderingStyle(
       const ADrawType: TStyledButtonDrawType;
@@ -388,7 +388,7 @@ type
     property Enabled;
     property Flat: Boolean read FFlat write SetFlat default True;
     property Font;
-    property Height default 32;
+    property Height;
     property HideClippedButtons: Boolean read FHideClippedButtons write SetHideClippedButtons default False;
     property Images: TCustomImageList read FImages write SetImages;
     property Indent: Integer read GetIndent write SetIndent default 0;
@@ -463,6 +463,7 @@ const
   DEFAULT_SEP_WIDTH = 8;
   DEFAULT_TOOLBUTTON_WIDTH = 23;
   DEFAULT_TOOLBUTTON_HEIGHT = 22;
+  DEFAULT_IMAGE_HMARGIN = 8;
 
 { TStyledToolButton }
 
@@ -1279,6 +1280,12 @@ end;
 function TStyledToolbar.IsStoredStyleFamily: Boolean;
 begin
   Result := FStyleFamily <> DEFAULT_CLASSIC_FAMILY;
+end;
+
+procedure TStyledToolbar.Loaded;
+begin
+  inherited;
+  ResizeButtons;
 end;
 
 function TStyledToolbar.FindButtonFromAccel(Accel: Word): TStyledToolButton;

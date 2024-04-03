@@ -511,6 +511,7 @@ const
   WHITE_IMAGE_COLLECTION = 'NAVW_';
   BLACK_IMAGE_COLLECTION = 'NAVB_';
   VERTICAL_ICON = '_VERT';
+  DEFAULT_IMAGE_MARGIN = 4;
 
 { TStyledDBNavigator }
 
@@ -1829,10 +1830,10 @@ begin
     begin
       inherited ImageAlignment := FImageAlignment;
       case FImageAlignment of
-        iaLeft: inherited ImageMargins.Left := DEFAULT_IMAGE_VMARGIN;
-        iaRight: inherited ImageMargins.Right := DEFAULT_IMAGE_VMARGIN;
-        iaTop: inherited ImageMargins.Top := DEFAULT_IMAGE_VMARGIN;
-        iaBottom: inherited ImageMargins.Bottom := DEFAULT_IMAGE_VMARGIN;
+        iaLeft: inherited ImageMargins.Left := DEFAULT_IMAGE_MARGIN;
+        iaRight: inherited ImageMargins.Right := DEFAULT_IMAGE_MARGIN;
+        iaTop: inherited ImageMargins.Top := DEFAULT_IMAGE_MARGIN;
+        iaBottom: inherited ImageMargins.Bottom := DEFAULT_IMAGE_MARGIN;
       end;
     end
     else

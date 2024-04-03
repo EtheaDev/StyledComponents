@@ -53,11 +53,7 @@ uses
   ;
 
 const
-  StyledButtonsVersion = '3.3.3';
-  DEFAULT_BTN_WIDTH = 75;
-  DEFAULT_BTN_HEIGHT = 25;
-  DEFAULT_IMAGE_HMARGIN = 8;
-  DEFAULT_IMAGE_VMARGIN = 4;
+  StyledButtonsVersion = '3.4.0';
 
 resourcestring
   ERROR_SETTING_BUTTON_STYLE = 'Error setting Button Style: %s/%s/%s not available';
@@ -232,12 +228,10 @@ type
     procedure SetButtonStyleDisabled(const AValue: TStyledButtonAttributes);
     procedure SetNotificationBadge(const AValue: TNotificationBadgeAttributes);
 
-    procedure UpdateControlStyle;
     procedure SetWordWrap(const AValue: Boolean);
     procedure SetStyleApplied(const AValue: Boolean);
     function GetKind: TBitBtnKind;
     procedure SetKind(const AValue: TBitBtnKind);
-    function BitBtnCaptions(Kind: TBitBtnKind): string;
     function UpdateStyleUsingModalResult: boolean;
     procedure SetDropDownMenu(const AValue: TPopupMenu);
     procedure SetStyle(const AValue: TCustomButton.TButtonStyle);
@@ -286,6 +280,7 @@ type
   protected
     FCustomDrawType: Boolean;
     FUseButtonLayout: Boolean;
+    function BitBtnCaptions(Kind: TBitBtnKind): string;
     procedure Invalidate; virtual;
     function GetOwnerScaleFactor: Single;
     function HasTransparentParts: Boolean;
@@ -1391,6 +1386,8 @@ type
   TStyledBitBtn = class(TCustomStyledButton)
   private
     FStyle: TButtonStyle;
+  protected
+    function IsCaptionStored: Boolean; override;
   public
     constructor Create(AOwner: TComponent); override;
   published
@@ -1498,6 +1495,10 @@ uses
   ;
 
 const
+  DEFAULT_BTN_WIDTH = 75;
+  DEFAULT_BTN_HEIGHT = 25;
+  DEFAULT_IMAGE_HMARGIN = 8;
+  DEFAULT_IMAGE_VMARGIN = 4;
   DefaultBitBtnGlyphSize = 18;
   BitBtnModalResults: array[TBitBtnKind] of TModalResult = (
     0, mrOk, mrCancel, 0, mrYes, mrNo, 0, mrAbort, mrRetry, mrIgnore,
@@ -1724,11 +1725,6 @@ begin
   Invalidate;
 end;
 
-procedure TStyledButtonRender.UpdateControlStyle;
-begin
-  ApplyButtonStyle;
-end;
-
 function TStyledButtonRender.UpdateCount: Integer;
 begin
   Result := FUpdateCount;
@@ -1737,8 +1733,7 @@ end;
 procedure TStyledButtonRender.CMStyleChanged(var Message: TMessage);
 begin
   inherited;
-  UpdateControlStyle;
-  Invalidate;
+  ApplyButtonStyle;
 end;
 
 procedure TStyledButtonRender.Click(AKeyPressed: Boolean);
@@ -2700,7 +2695,6 @@ begin
   ACanvas.Pen.Width := Round(Result.BorderWidth{$IFDEF D10_3+}*FOwnerControl.ScaleFactor{$ENDIF});
   ACanvas.Pen.Color := Result.BorderColor;
   ACanvas.Brush.Style := Result.BrushStyle;
-  //if  ACanvas.Brush.Style <> bsClear then
   if Result.ButtonDrawStyle <> btnClear then
     ACanvas.Brush.Color := Result.ButtonColor;
   ACanvas.Font := Font;
@@ -3167,7 +3161,6 @@ begin
     //Force style of the button as defined into Family
     StyleFamilyUpdateAttributesByModalResult(FModalResult,
       FStyleFamily, FStyleClass, FStyleAppearance);
-    ApplyButtonStyle;
     StyleApplied := ApplyButtonStyle;
   end
   else
@@ -6005,6 +5998,11 @@ constructor TStyledBitBtn.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FRender.FUseButtonLayout := True;
+end;
+
+function TStyledBitBtn.IsCaptionStored: Boolean;
+begin
+  Result := AnsiCompareStr(Caption, FRender.BitBtnCaptions(FRender.Kind)) <> 0;
 end;
 
 initialization

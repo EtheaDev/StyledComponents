@@ -2,17 +2,18 @@
 
 ## Components similar to Delphi VCL Buttons, Toolbar, DbNavigator and BindNavigator, with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 3.3.3
+### Actual official version: 3.4.0
 
 ## List of available Components:
 | Component | Description |
 | - | - |
-| ![OK_BUTTON_GRAPH_128.png](./Images/OK_GRAPH_BUTTON_128.png) | **TStyledGraphicButton** is a "pure" Graphic Button with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) with support of ImageList, Action and full configuration of five states: Normal, Pressed, Selected, Hot and Disabled. You can use it also into a TVirtualList component.|
-| ![OK_BUTTON_128.png](./Images/OK_BUTTON_128.png) | **TStyledButton** is classic "button control" with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) with support of ImageList, Action and full configuration of five states: Normal, Pressed, Selected, Hot and Disabled, plus Focus and TabStop support. You can easily replace all of your TButton components.|
-| ![TOOL_BAR_128.png](./Images/TOOL_BAR_128.png) | **TStyledToolbar** is a Toolbar that uses StyledToolButton, with full customizable of every button style and full control over the size of the buttons, also when Captions are visible. The width and height of the StyledToolButtons inside, do not depends on Caption size, as in classic TToolBar.|
-| ![StyledDbNavigator_128.png](./Images/StyledDbNavigator_128.png) | **TStyledDbNavigator** is a special "DbNavigator" component, with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color), plus Button captions and better "move" icons in vertical mode. |
-| ![StyledBindNavigator_128.png](./Images/StyledBindNavigator_128.png) | **TStyledBindNavigator** is a special "BindNavigator" component, with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color), plus Button captions and better "move" icons in vertical mode. |
-| ![StyledTaskDialog_128.png](./Images/StyledTaskDialog_128.png) | **TStyledTaskDialog** is a special "TaskDialog" component (to replace MessageDlg and TaskDlg) with custom Button Captions and Icons. Using a special Form you can show a full customizable Dialog. Using Skia4Delpghi you can show animated dialogs!|
+| ![TStyledGraphicButton](./Images/OK_GRAPH_BUTTON_128.png) | **TStyledGraphicButton** is a "pure" Graphic Button with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) with support of ImageList, Action and full configuration of five states: Normal, Pressed, Selected, Hot and Disabled. You can use it also into a TVirtualList component.|
+| ![TStyledButton](./Images/OK_BUTTON_128.png) | **TStyledButton** is classic "button control" with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) with support of ImageList, Action and full configuration of five states: Normal, Pressed, Selected, Hot and Disabled, plus Focus and TabStop support. You can easily replace all of your TButton components.|
+| ![TStyledToolbar](./Images/TOOL_BAR_128.png) | **TStyledToolbar** is a Toolbar that uses StyledToolButton, with full customizable of every button style and full control over the size of the buttons, also when Captions are visible. The width and height of the StyledToolButtons inside, do not depends on Caption size, as in classic TToolBar.|
+| ![TStyledDbNavigator](./Images/StyledDbNavigator_128.png) | **TStyledDbNavigator** is a special "DbNavigator" component, with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color), plus Button captions and better "move" icons in vertical mode. |
+| ![TStyledBindNavigator](./Images/StyledBindNavigator_128.png) | **TStyledBindNavigator** is a special "BindNavigator" component, with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color), plus Button captions and better "move" icons in vertical mode. |
+| ![TStyledButtonGroup](./Images/BUTTON_GROUP_128.png) | **TStyledButtonGroup** is a special "ButtonGroup" component with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) plus ImagePosition, CaptionAlignment and Flat properties, for adding more controls to the appeareance of Buttons.|
+| ![TStyledTaskDialog](./Images/StyledTaskDialog_128.png) | **TStyledTaskDialog** is a special "TaskDialog" component (to replace MessageDlg and TaskDlg) with custom Button Captions and Icons. Using a special Form you can show a full customizable Dialog. Using Skia4Delpghi you can show animated dialogs!|
 
 ---
 
@@ -225,6 +226,24 @@ The major differences are:
 
 ---
 
+## Description of StyledButtonGroup ##
+
+TStyledButtonGroup shows a list of buttons with flow or full-size layout, like a classic TButtonGroup.
+You can define StylesFamily/StyleClass/StyleAppearance for every buttons at component level or change the Style on a single TStyledGrpButtonItem.
+
+TStyledButtonGroup inherits from TButtonGroup, so you can continue to use as the VCL component.
+
+![StyledButtonGroupDemo.jpg](./Images/StyledButtonGroupDemo.jpg)
+
+The major differences are:
+- The possibility to use a custom style for each button.
+- The possibility to specify Flat buttons.
+- The Buttons caption can be aligned also at center or right.
+- The Buttons icons can be positioned left, top, bottom, right, center.
+- Additional Spacing and ImageMargins to control exact position of the Buttons icon and the Caption.
+
+---
+
 ## Description of StyledTaskDialog ##
 
 **TStyledTaskDialog** is designed to expand message/task dialog functionalities, fully customizable and also animation.
@@ -300,6 +319,13 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+3 Apr 2024: version 3.4.0
+- Added StyledButtonGroup Component
+- Added StyledButtonGroup Demo
+- Fixed Registration of some Components/Properties into IDE
+- Fixed TStyledBitBtn.Caption Stored in dfm as TBitBtn
+- Fixed ResizeButtons after loading StyledToolBar
+
 16 Mar 2024: version 3.3.3
 - Added Notification Badge into all Styled Buttons
 - Fixed apply StyleDrawType in component editor

@@ -43,6 +43,7 @@ uses
   , Vcl.StyledButton
   , Vcl.StyledToolbar
   , Vcl.StyledDbNavigator
+  , Vcl.StyledButtonGroup
   , Vcl.ButtonStylesAttributes
   ;
 
@@ -89,6 +90,15 @@ Type
   TStyledNavigatorComponentEditor = class (TComponentEditor)
   private
     function GetDbNavigator: TCustomStyledDbNavigator;
+  public
+    function GetVerbCount: Integer; override;
+    function GetVerb(Index: Integer): string; override;
+    procedure ExecuteVerb(Index: Integer); override;
+  end;
+
+  TStyledButtonGroupComponentEditor = class (TComponentEditor)
+  private
+    function GetButtonGroup: TStyledButtonGroup;
   public
     function GetVerbCount: Integer; override;
     function GetVerb(Index: Integer): string; override;
@@ -142,6 +152,7 @@ uses
   , Vcl.StyledButtonEditorUnit
   , Vcl.StyledCmpStrUtils
   , Vcl.DbCtrls
+  , Vcl.ButtonGroup
   , System.SysUtils
   , System.Contnrs
   , System.UITypes
@@ -162,8 +173,14 @@ begin
     LFamily := TCustomStyledButton(AComponent).StyleFamily
   else if AComponent is TStyledToolbar then
     LFamily := TStyledToolbar(AComponent).StyleFamily
-  else if AComponent is TStyledDbNavigator then
-    LFamily := TCustomStyledDbNavigator(AComponent).StyleFamily;
+  else if AComponent is TStyledToolButton then
+    LFamily := TStyledToolButton(AComponent).StyleFamily
+  else if AComponent is TCustomStyledDbNavigator then
+    LFamily := TCustomStyledDbNavigator(AComponent).StyleFamily
+  else if AComponent is TStyledButtonGroup then
+    LFamily := TStyledButtonGroup(AComponent).StyleFamily
+  else if AComponent is TStyledGrpButtonItem then
+    LFamily := TStyledGrpButtonItem(AComponent).StyleFamily;
   if LFamily <> '' then
   begin
     Result := True;
@@ -447,6 +464,70 @@ begin
   Result := 2;
 end;
 
+{ TStyledButtonGroupComponentEditor }
+
+procedure TStyledButtonGroupComponentEditor.ExecuteVerb(Index: Integer);
+var
+  LButtonGroup: TStyledbuttonGroup;
+  LButton: TStyledButton;
+begin
+  if Index = 0 then
+  begin
+    LButtonGroup := GetButtonGroup;
+    LButton := TStyledButton.CreateStyled(LButtonGroup,
+      LButtonGroup.StyleFamily, LButtonGroup.StyleClass, LButtonGroup.StyleAppearance,
+      LButtonGroup.StyleDrawType, False);
+    LButton.StyleDrawType := LButtonGroup.StyleDrawType;
+    LButton.StyleRadius := LButtonGroup.StyleRadius;
+    try
+      LButton.StyleRadius := LButtonGroup.StyleRadius;
+      LButton.SetBounds(0, 0, LButtonGroup.ButtonWidth, LButtonGroup.ButtonHeight);
+      if gboShowCaptions in LButtonGroup.ButtonOptions then
+      begin
+        LButton.Name := Designer.UniqueName('Button');
+        LButton.Caption := 'Button';
+      end;
+      if EditStyledButton(LButton) then
+      begin
+        LButtonGroup.SetButtonGroupStyle(LButton.StyleFamily,
+          LButton.StyleClass, LButton.StyleAppearance);
+        LButtonGroup.StyleRadius := LButton.StyleRadius;
+        LButtonGroup.StyleDrawType := LButton.StyleDrawType;
+        LButtonGroup.Invalidate;
+        Designer.Modified;
+      end;
+    finally
+      LButton.Free;
+    end;
+  end
+  else if Index = 1 then
+  ShellExecute(0, 'open',
+    PChar(GetProjectURL), nil, nil, SW_SHOWNORMAL);
+end;
+
+function TStyledButtonGroupComponentEditor.GetButtonGroup: TStyledButtonGroup;
+var
+  LComponent: TPersistent;
+begin
+  Result := nil;
+  LComponent := GetComponent;
+  if LComponent is TStyledButtonGroup then
+    Result := TStyledButtonGroup(LComponent);
+end;
+
+function TStyledButtonGroupComponentEditor.GetVerb(Index: Integer): string;
+begin
+  if Index = 0 then
+    Result := 'Styled ButtonGroup Editor...'
+  else if Index = 1 then
+    Result := 'Project page on GitHub...';
+end;
+
+function TStyledButtonGroupComponentEditor.GetVerbCount: Integer;
+begin
+  Result := 2;
+end;
+
 { TImageIndexPropertyEditor }
 
 function TImageIndexPropertyEditor.GetImageListAt(Index: Integer): TCustomImageList;
@@ -600,7 +681,8 @@ end;
 
 procedure Register;
 begin
-  Classes.RegisterClass(TStyledToolButton);
+  Classes.RegisterClasses(
+    [TStyledToolButton]);
 
   RegisterComponents('Styled Components',
     [TStyledGraphicButton,
@@ -610,7 +692,8 @@ begin
      TStyledToolbar,
      TStyledTaskDialog,
      TStyledDbNavigator,
-     TStyledBindNavigator]);
+     TStyledBindNavigator,
+     TStyledButtonGroup]);
 
   //Property Editor for StyleFamily
   RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
@@ -624,35 +707,59 @@ begin
   RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
     TStyledToolbar, 'StyleFamily', TStyledFamilyPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+    TStyledToolbutton, 'StyleFamily', TStyledFamilyPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
     TStyledDbNavigator, 'StyleFamily', TStyledFamilyPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+    TStyledBindNavigator, 'StyleFamily', TStyledFamilyPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+    TStyledButtonGroup, 'StyleFamily', TStyledFamilyPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+    TStyledGrpButtonItem, 'StyleFamily', TStyledFamilyPropertyEditor);
 
   //Property Editor for StyleClass
   RegisterPropertyEditor(TypeInfo(TStyledButtonClass),
     TStyledGraphicButton, 'StyleClass', TStyledClassPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStyledButtonClass),
     TStyledSpeedButton, 'StyleClass', TStyledClassPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+  RegisterPropertyEditor(TypeInfo(TStyledButtonClass),
     TStyledButton, 'StyleClass', TStyledClassPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+  RegisterPropertyEditor(TypeInfo(TStyledButtonClass),
     TStyledBitBtn, 'StyleClass', TStyledClassPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+  RegisterPropertyEditor(TypeInfo(TStyledButtonClass),
     TStyledToolbar, 'StyleClass', TStyledClassPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+  RegisterPropertyEditor(TypeInfo(TStyledButtonClass),
+    TStyledToolButton, 'StyleClass', TStyledClassPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonClass),
     TStyledDbNavigator, 'StyleClass', TStyledClassPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonClass),
+    TStyledBindNavigator, 'StyleClass', TStyledClassPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonClass),
+    TStyledButtonGroup, 'StyleClass', TStyledClassPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonClass),
+    TStyledGrpButtonItem, 'StyleClass', TStyledClassPropertyEditor);
 
   //Property Editor for StyleAppearance
   RegisterPropertyEditor(TypeInfo(TStyledButtonAppearance),
     TStyledGraphicButton, 'StyleAppearance', TStyledAppearancePropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStyledButtonAppearance),
     TStyledSpeedButton, 'StyleAppearance', TStyledAppearancePropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+  RegisterPropertyEditor(TypeInfo(TStyledButtonAppearance),
     TStyledButton, 'StyleAppearance', TStyledAppearancePropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+  RegisterPropertyEditor(TypeInfo(TStyledButtonAppearance),
     TStyledBitBtn, 'StyleAppearance', TStyledAppearancePropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+  RegisterPropertyEditor(TypeInfo(TStyledButtonAppearance),
     TStyledToolbar, 'StyleAppearance', TStyledAppearancePropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+  RegisterPropertyEditor(TypeInfo(TStyledButtonAppearance),
+    TStyledToolButton, 'StyleAppearance', TStyledAppearancePropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonAppearance),
     TStyledDbNavigator, 'StyleAppearance', TStyledAppearancePropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonAppearance),
+    TStyledBindNavigator, 'StyleAppearance', TStyledAppearancePropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonAppearance),
+    TStyledButtonGroup, 'StyleAppearance', TStyledAppearancePropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonAppearance),
+    TStyledGrpButtonItem, 'StyleAppearance', TStyledAppearancePropertyEditor);
 
   //Property Editor for ImageIndex
   RegisterPropertyEditor(TypeInfo(System.UITypes.TImageIndex),
@@ -713,13 +820,18 @@ begin
   RegisterComponentEditor(TStyledToolbar, TStyledToolbarComponentEditor);
   RegisterComponentEditor(TStyledDbNavigator, TStyledNavigatorComponentEditor);
   RegisterComponentEditor(TStyledBindNavigator, TStyledNavigatorComponentEditor);
+  RegisterComponentEditor(TStyledButtonGroup, TStyledButtonGroupComponentEditor);
 
   //To auto add units
-  RegisterSelectionEditor(TCustomStyledGraphicButton, TStyledComponentSelection);
-  RegisterSelectionEditor(TCustomStyledButton, TStyledComponentSelection);
-  RegisterSelectionEditor(TStyledDbNavigator, TStyledComponentSelection);
+  RegisterSelectionEditor(TStyledGraphicButton, TStyledComponentSelection);
+  RegisterSelectionEditor(TStyledSpeedButton, TStyledComponentSelection);
+  RegisterSelectionEditor(TStyledButton, TStyledComponentSelection);
+  RegisterSelectionEditor(TStyledBitBtn, TStyledComponentSelection);
   RegisterSelectionEditor(TStyledToolbar, TStyledComponentSelection);
   RegisterSelectionEditor(TStyledTaskDialog, TStyledComponentSelection);
+  RegisterSelectionEditor(TStyledDbNavigator, TStyledComponentSelection);
+  RegisterSelectionEditor(TStyledBindNavigator, TStyledComponentSelection);
+  RegisterSelectionEditor(TStyledButtonGroup, TStyledComponentSelection);
 end;
 
 end.

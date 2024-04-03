@@ -1380,7 +1380,7 @@ begin
           Inc(IX, AImageMargins.Left);
           Inc(IY, AImageMargins.Top);
           Dec(IY, AImageMargins.Bottom);
-          Inc(ATextRect.Left, IX + IW + AImageMargins.Right);
+          ATextRect.Left := IX + IW + AImageMargins.Right;
         end;
       iaRight:
         begin
@@ -1398,7 +1398,7 @@ begin
           Dec(IX, AImageMargins.Right);
           IY := Round(ATextRect.Top + (2*AScale));
           Inc(IY, AImageMargins.Top);
-          Inc(ATextRect.Top, IY + IH + AImageMargins.Bottom);
+          ATextRect.Top := IY + IH + AImageMargins.Bottom;
         end;
       iaBottom:
         begin

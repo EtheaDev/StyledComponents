@@ -34,6 +34,7 @@ uses
   Vcl.StyledButton
   , Vcl.StyledDbNavigator
   , Vcl.StyledToolbar
+  , Vcl.StyledButtonGroup
   ;
 
 type
@@ -54,6 +55,12 @@ type
 
   //Interposer Class for TToolbar -> TStyledToolbar
   TToolbar = class(TStyledToolbar) end;
+
+  //Interposer Class for TToolbutton -> TStyledToolButton
+  TToolbutton = class(TStyledToolbutton) end;
+
+  //Interposer Class for TButtonGroup -> TStyledButtonGroup
+  TButtonGroup = class(TStyledButtonGroup) end;
 
 implementation
 

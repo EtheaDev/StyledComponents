@@ -30,6 +30,7 @@ package StyledComponents;
 {$R '..\StyledTaskDialog.dcr'}
 {$R '..\StyledToolbar.dcr'}
 {$R '..\StyledDbNavigator.dcr'}
+{$R '..\StyledButtonGroup.dcr'}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -81,7 +82,8 @@ contains
   Vcl.StyledTaskDialogStdUnit in '..\..\source\Vcl.StyledTaskDialogStdUnit.pas',
   Vcl.StyledTaskDialogFormUnit in '..\..\source\Vcl.StyledTaskDialogFormUnit.pas' {StyledTaskDialogForm},
   Vcl.StyledToolbar in '..\..\source\Vcl.StyledToolbar.pas',
-  Vcl.StyledDbNavigator in '..\..\source\Vcl.StyledDbNavigator.pas';
+  Vcl.StyledDbNavigator in '..\..\source\Vcl.StyledDbNavigator.pas',
+  Vcl.StyledButtonGroup in '..\..\source\Vcl.StyledButtonGroup.pas';
 
 end.
 
