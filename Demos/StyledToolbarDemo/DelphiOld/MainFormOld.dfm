@@ -2,25 +2,23 @@ object fmMain: TfmMain
   Left = 0
   Top = 0
   Caption = 'StyledToolbar Test'
-  ClientHeight = 534
-  ClientWidth = 741
+  ClientHeight = 533
+  ClientWidth = 737
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = True
   ShowHint = True
   OnClick = ToolButtonclick
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 15
   object ToolBar: TToolBar
     AlignWithMargins = True
     Left = 3
     Top = 69
-    Width = 735
+    Width = 731
     Height = 64
     AutoSize = True
     ButtonHeight = 62
@@ -33,6 +31,7 @@ object fmMain: TfmMain
     TabStop = True
     OnClick = ToolBarClick
     OnMouseEnter = ToolBarMouseEnter
+    ExplicitWidth = 735
     object ToolButton2: TToolButton
       Left = 0
       Top = 0
@@ -122,7 +121,7 @@ object fmMain: TfmMain
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 735
+    Width = 731
     Height = 60
     ButtonHeight = 60
     ButtonWidth = 77
@@ -142,18 +141,19 @@ object fmMain: TfmMain
     OnClick = ToolBarClick
     OnMouseEnter = StyledToolbarMouseEnter
     StyleRadius = 30
+    ExplicitWidth = 735
     object StyledToolButton1: TStyledToolButton
       Left = 0
       Top = 0
+      AllowAllUp = True
+      Down = True
       OnClick = ToolButtonclick
       Caption = 'Open'
       ImageIndex = 11
-      Style = tbsCheck
       StyleFamily = 'Bootstrap'
       StyleClass = 'Warning'
-      AllowAllUp = True
-      Down = True
       Grouped = True
+      Style = tbsCheck
     end
     object StyledToolButton2: TStyledToolButton
       Left = 77
@@ -161,11 +161,11 @@ object fmMain: TfmMain
       OnClick = ToolButtonclick
       Caption = 'Home'
       ImageIndex = 0
-      Style = tbsCheck
       StyleFamily = 'Angular-Light'
       StyleClass = 'Amber'
       StyleAppearance = 'Flat'
       Grouped = True
+      Style = tbsCheck
     end
     object SSep1: TStyledToolButton
       Left = 154
@@ -175,12 +175,12 @@ object fmMain: TfmMain
     object StyledToolButton3: TStyledToolButton
       Left = 162
       Top = 0
+      Down = True
       OnClick = ToolButtonclick
       Caption = 'Like'
       ImageIndex = 8
-      Style = tbsCheck
-      Down = True
       Grouped = True
+      Style = tbsCheck
     end
     object StyledToolButton5: TStyledToolButton
       Left = 239
@@ -189,9 +189,9 @@ object fmMain: TfmMain
       StyleElements = [seFont, seBorder]
       Caption = 'Options'
       ImageIndex = 9
-      Style = tbsCheck
       StyleClass = 'Amakrits'
       Grouped = True
+      Style = tbsCheck
     end
     object StyledToolButton6: TStyledToolButton
       Left = 316
@@ -201,14 +201,13 @@ object fmMain: TfmMain
     object StyledToolButton4: TStyledToolButton
       Left = 324
       Top = 0
-      Width = 77
       OnClick = ToolButtonclick
       StyleElements = [seFont, seBorder]
       Caption = 'Menu'
       DropDownMenu = PopupMenu
       ImageIndex = 5
-      Style = tbsDropDown
       StyleClass = 'Emerald'
+      Style = tbsDropDown
     end
     object Edit2: TEdit
       AlignWithMargins = True
@@ -229,11 +228,13 @@ object fmMain: TfmMain
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 423
-    Width = 741
+    Top = 422
+    Width = 737
     Height = 78
     Align = alBottom
     TabOrder = 2
+    ExplicitTop = 423
+    ExplicitWidth = 741
     object LeftPanel: TPanel
       Left = 1
       Top = 1
@@ -335,19 +336,24 @@ object fmMain: TfmMain
   end
   object ClientPanel: TPanel
     Left = 0
-    Top = 137
-    Width = 741
-    Height = 287
+    Top = 136
+    Width = 737
+    Height = 286
     Align = alClient
     TabOrder = 3
+    ExplicitTop = 137
+    ExplicitWidth = 741
+    ExplicitHeight = 287
   end
   object Panel1: TPanel
     Left = 0
-    Top = 501
-    Width = 741
+    Top = 500
+    Width = 737
     Height = 33
     Align = alBottom
     TabOrder = 4
+    ExplicitTop = 501
+    ExplicitWidth = 741
     object StyleLabel: TLabel
       Left = 11
       Top = 9
@@ -397,7 +403,7 @@ object fmMain: TfmMain
     Left = 476
     Top = 274
     Bitmap = {
-      494C01011800B000A00020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01011800B000040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000080000000E0000000010020000000000000C0
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

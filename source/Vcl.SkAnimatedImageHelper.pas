@@ -1,12 +1,12 @@
 {******************************************************************************}
 {                                                                              }
-{       SkAnimatedImageHelper: an helper class for TSkAnimatedImage            }
+{  SkAnimatedImageHelper: an helper class for TSkAnimatedImage                 }
 {                                                                              }
-{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
-{       Author: Carlo Barazzetta                                               }
-{       Contributors:                                                          }
+{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Author: Carlo Barazzetta                                                    }
+{  Contributors:                                                               }
 {                                                                              }
-{       https://github.com/EtheaDev/StyledComponents                           }
+{  https://github.com/EtheaDev/StyledComponents                                }
 {                                                                              }
 {******************************************************************************}
 {                                                                              }

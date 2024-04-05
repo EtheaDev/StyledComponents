@@ -1,13 +1,13 @@
 {******************************************************************************}
 {                                                                              }
-{       StyledButtonsDemo: a Demo to show StyledButtons                        }
-{       with different Familes (Classic, Bootstrap and Angular                 }
+{  StyledButtonsDemo: a Demo to show StyledButtons                             }
+{  with different Familes (Classic, Bootstrap and Angular                      }
 {                                                                              }
-{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
-{       Author: Carlo Barazzetta                                               }
-{       Contributors:                                                          }
+{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Author: Carlo Barazzetta                                                    }
+{  Contributors:                                                               }
 {                                                                              }
-{       https://github.com/EtheaDev/StyledComponents                           }
+{  https://github.com/EtheaDev/StyledComponents                                }
 {                                                                              }
 {******************************************************************************}
 {                                                                              }

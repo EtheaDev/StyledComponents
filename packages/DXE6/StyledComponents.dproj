@@ -96,6 +96,7 @@
         <DCCReference Include="..\StyledToolbar.dcr"/>
         <DCCReference Include="..\StyledDbNavigator.dcr"/>
         <DCCReference Include="..\StyledButtonGroup.dcr"/>
+        <DCCReference Include="..\StyledCategoryButtons.dcr"/>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="vclimg.dcp"/>
@@ -120,6 +121,7 @@
         <DCCReference Include="..\..\source\Vcl.StyledToolbar.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledDbNavigator.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledButtonGroup.pas"/>
+        <DCCReference Include="..\..\source\Vcl.StyledCategoryButtons.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

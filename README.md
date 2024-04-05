@@ -1,8 +1,8 @@
 ﻿# Delphi VCL StyledComponents [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 
-## Components similar to Delphi VCL Buttons, Toolbar, DbNavigator and BindNavigator, with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
+## Components similar to Delphi VCL Buttons, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 3.4.0
+### Actual official version: 3.4.1
 
 ## List of available Components:
 | Component | Description |
@@ -12,7 +12,8 @@
 | ![TStyledToolbar](./Images/TOOL_BAR_128.png) | **TStyledToolbar** is a Toolbar that uses StyledToolButton, with full customizable of every button style and full control over the size of the buttons, also when Captions are visible. The width and height of the StyledToolButtons inside, do not depends on Caption size, as in classic TToolBar.|
 | ![TStyledDbNavigator](./Images/StyledDbNavigator_128.png) | **TStyledDbNavigator** is a special "DbNavigator" component, with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color), plus Button captions and better "move" icons in vertical mode. |
 | ![TStyledBindNavigator](./Images/StyledBindNavigator_128.png) | **TStyledBindNavigator** is a special "BindNavigator" component, with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color), plus Button captions and better "move" icons in vertical mode. |
-| ![TStyledButtonGroup](./Images/BUTTON_GROUP_128.png) | **TStyledButtonGroup** is a special "ButtonGroup" component with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) plus ImagePosition, CaptionAlignment and Flat properties, for adding more controls to the appeareance of Buttons.|
+| ![TStyledButtonGroup](./Images/BUTTON_GROUP_128.png) | **TStyledButtonGroup** is a special "ButtonGroup" component with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) plus ImagePosition, CaptionAlignment and Flat properties, for adding more controls to the appearance of Buttons.|
+| ![TStyledCategoryButtons](./Images/CATEGORY_BUTTONS_128.png) | **TStyledCategoryButtons** is a special "CategoryButtons" component with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) plus ImagePosition, CaptionAlignment and Flat properties, for adding more controls to the appearance of Buttons.|
 | ![TStyledTaskDialog](./Images/StyledTaskDialog_128.png) | **TStyledTaskDialog** is a special "TaskDialog" component (to replace MessageDlg and TaskDlg) with custom Button Captions and Icons. Using a special Form you can show a full customizable Dialog. Using Skia4Delpghi you can show animated dialogs!|
 
 ---
@@ -226,20 +227,25 @@ The major differences are:
 
 ---
 
-## Description of StyledButtonGroup ##
+## Description of StyledButtonGroup and StyledCategoryButtons ##
 
-TStyledButtonGroup shows a list of buttons with flow or full-size layout, like a classic TButtonGroup.
-You can define StylesFamily/StyleClass/StyleAppearance for every buttons at component level or change the Style on a single TStyledGrpButtonItem.
+TStyledButtonGroup and TStyledCategoryButtons shows a list of buttons with flow or full-size layout, like a classic TButtonGroup or TCategoryButtons.
+You can define StylesFamily/StyleClass/StyleAppearance for every buttons at component level or change the Style on a single "Button" Item.
 
-TStyledButtonGroup inherits from TButtonGroup, so you can continue to use as the VCL component.
+TStyledButtonGroup inherits from TButtonGroup, so you can continue to use it as the VCL component as showed in the Demo:
 
 ![StyledButtonGroupDemo.jpg](./Images/StyledButtonGroupDemo.jpg)
 
+TStyledCategoryButtons inherits from TCategoryButtons, so you can continue to use it as the VCL component  as showed in the Demo:
+
+![StyledCategoryButtonsDemo.jpg](./Images/StyledCategoryButtonsDemo.jpg)
+
 The major differences are:
-- The possibility to use a custom style for each button.
-- The possibility to specify Flat buttons.
+- You can define a custom style for every buttons in the "Group" or "Categories"
+- You can use a custom style for each button.
+- You can specify Flat buttons.
 - The Buttons caption can be aligned also at center or right.
-- The Buttons icons can be positioned left, top, bottom, right, center.
+- The Buttons icons can be aligned left, top, bottom, right, center.
 - Additional Spacing and ImageMargins to control exact position of the Buttons icon and the Caption.
 
 ---
@@ -319,6 +325,11 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+5 Apr 2024: version 3.4.1
+- Added StyledCategoryButtons Component
+- Added StyledCategoryButtons Demo
+- Fixed size of sample Button in Component Editor for StyledButtonGroup
+
 3 Apr 2024: version 3.4.0
 - Added StyledButtonGroup Component
 - Added StyledButtonGroup Demo

@@ -1,13 +1,13 @@
 {******************************************************************************}
 {                                                                              }
-{       StyledAnimatedComponents: a set of Styled VCL Component                }
-{       with animations                                                                       }
+{  StyledAnimatedComponents: a set of Styled VCL Component                     }
+{  with animations                                                             }
 {                                                                              }
-{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
-{       Author: Carlo Barazzetta                                               }
-{       Contributors:                                                          }
+{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Author: Carlo Barazzetta                                                    }
+{  Contributors:                                                               }
 {                                                                              }
-{       https://github.com/EtheaDev/StyledComponents                           }
+{  https://github.com/EtheaDev/StyledComponents                                }
 {                                                                              }
 {******************************************************************************}
 unit Vcl.StyledAnimatedComponentsRegister;

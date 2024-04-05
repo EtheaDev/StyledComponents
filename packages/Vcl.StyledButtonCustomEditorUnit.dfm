@@ -2,8 +2,8 @@ object StyledButtonCustomEditor: TStyledButtonCustomEditor
   Left = 0
   Top = 0
   Caption = 'Styled Button Attributes Editor %s - Copyright Ethea S.r.l.'
-  ClientHeight = 532
-  ClientWidth = 854
+  ClientHeight = 531
+  ClientWidth = 850
   Color = clBtnFace
   Constraints.MinHeight = 300
   Constraints.MinWidth = 400
@@ -12,71 +12,69 @@ object StyledButtonCustomEditor: TStyledButtonCustomEditor
   Font.Height = -11
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = True
   ShowHint = True
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object BottomPanel: TPanel
     Left = 0
-    Top = 494
-    Width = 935
+    Top = 493
+    Width = 850
     Height = 38
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 2
     DesignSize = (
-      854
+      850
       38)
     object OKButton: TStyledButton
-      Left = 561
+      Left = 553
       Top = 6
       Width = 85
       Height = 25
       Anchors = [akTop, akRight]
-      OnClick = OKButtonClick
       Caption = 'OK'
       Default = True
       ModalResult = 1
       TabOrder = 0
+      OnClick = OKButtonClick
     end
     object ApplyButton: TStyledButton
-      Left = 744
+      Left = 736
       Top = 6
       Width = 85
       Height = 25
       Anchors = [akTop, akRight]
-      OnClick = ApplyButtonClick
       Caption = '&Apply'
       TabOrder = 2
+      OnClick = ApplyButtonClick
     end
     object CancelButton: TStyledButton
-      Left = 653
+      Left = 645
       Top = 6
       Width = 85
       Height = 25
       Anchors = [akTop, akRight]
-      Caption = 'Cancel'
       Cancel = True
+      Caption = 'Cancel'
       ModalResult = 2
       TabOrder = 1
     end
     object HelpButton: TStyledButton
-      Left = 836
+      Left = 828
       Top = 6
       Width = 85
       Height = 25
       Anchors = [akTop, akRight]
-      OnClick = HelpButtonClick
       Caption = '&Help'
       TabOrder = 3
+      OnClick = HelpButtonClick
     end
   end
   object paTop: TPanel
     Left = 0
     Top = 0
-    Width = 935
+    Width = 850
     Height = 101
     Align = alTop
     TabOrder = 0
@@ -127,7 +125,7 @@ object StyledButtonCustomEditor: TStyledButtonCustomEditor
     AlignWithMargins = True
     Left = 3
     Top = 104
-    Width = 929
+    Width = 844
     Height = 59
     Align = alTop
     BevelOuter = bvNone
@@ -199,8 +197,8 @@ object StyledButtonCustomEditor: TStyledButtonCustomEditor
   object TabControl: TTabControl
     Left = 0
     Top = 166
-    Width = 854
-    Height = 328
+    Width = 850
+    Height = 327
     Align = alClient
     TabHeight = 32
     TabOrder = 3
@@ -215,15 +213,13 @@ object StyledButtonCustomEditor: TStyledButtonCustomEditor
       AlignWithMargins = True
       Left = 7
       Top = 41
-      Width = 840
-      Height = 280
+      Width = 836
+      Height = 279
       Align = alClient
       BevelOuter = bvNone
       BorderStyle = bsNone
       ParentBackground = True
       TabOrder = 0
-      ExplicitWidth = 921
-      ExplicitHeight = 288
     end
   end
 end

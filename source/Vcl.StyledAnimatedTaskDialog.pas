@@ -1,13 +1,13 @@
 {******************************************************************************}
 {                                                                              }
-{       StyledAnimatedTaskDialog: a Task Dialog Component with StyleButtons    }
-{       and animations using Skia4Delphi                                       }
+{  StyledAnimatedTaskDialog: a Task Dialog Component with StyleButtons         }
+{  and animations using Skia4Delphi                                            }
 {                                                                              }
-{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
-{       Author: Carlo Barazzetta                                               }
-{       Contributors:                                                          }
+{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Author: Carlo Barazzetta                                                    }
+{  Contributors:                                                               }
 {                                                                              }
-{       https://github.com/EtheaDev/StyledComponents                           }
+{  https://github.com/EtheaDev/StyledComponents                                }
 {                                                                              }
 {******************************************************************************}
 {                                                                              }

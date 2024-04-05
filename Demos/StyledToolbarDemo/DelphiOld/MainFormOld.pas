@@ -1,13 +1,13 @@
 {******************************************************************************}
 {                                                                              }
-{       TStyledToolbar Test                                                    }
-{       Comparison TStyledToolbar with TToolBar                                }
+{  TStyledToolbar Test                                                         }
+{  Comparison TStyledToolbar with TToolBar                                     }
 {                                                                              }
-{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
-{       Author: Carlo Barazzetta                                               }
-{       Contributors:                                                          }
+{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Author: Carlo Barazzetta                                                    }
+{  Contributors:                                                               }
 {                                                                              }
-{       https://github.com/EtheaDev/StyledComponents                           }
+{  https://github.com/EtheaDev/StyledComponents                                }
 {                                                                              }
 {******************************************************************************}
 {                                                                              }
@@ -33,7 +33,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ButtonStylesAttributes,
   Vcl.StandardButtonStyles, Vcl.AngularButtonStyles, Vcl.BootstrapButtonStyles, Vcl.ColorButtonStyles,
   Vcl.StyledButton, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnMan,
-  Vcl.ActnCtrls, Vcl.ImgList, Vcl.StdCtrls, Vcl.StyledToolbar, Vcl.Menus;
+  Vcl.ActnCtrls, Vcl.ImgList, Vcl.StdCtrls, Vcl.StyledToolbar, Vcl.Menus,
+  System.ImageList;
 
 const
   //Params to check

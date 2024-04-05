@@ -2,8 +2,8 @@ object fmMain: TfmMain
   Left = 0
   Top = 0
   Caption = 'StyledButtonGroup Test'
-  ClientHeight = 534
-  ClientWidth = 817
+  ClientHeight = 533
+  ClientWidth = 813
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,8 +15,8 @@ object fmMain: TfmMain
   TextHeight = 15
   object BottomPanel: TPanel
     Left = 0
-    Top = 423
-    Width = 817
+    Top = 422
+    Width = 813
     Height = 78
     Align = alBottom
     TabOrder = 0
@@ -56,6 +56,7 @@ object fmMain: TfmMain
       BevelOuter = bvNone
       TabOrder = 1
       Visible = False
+      ExplicitWidth = 651
       object WidthLabel: TLabel
         Left = 20
         Top = 15
@@ -153,8 +154,8 @@ object fmMain: TfmMain
   object ClientPanel: TPanel
     Left = 137
     Top = 0
-    Width = 680
-    Height = 423
+    Width = 676
+    Height = 422
     Align = alClient
     TabOrder = 1
     object StyledButtonGroup: TStyledButtonGroup
@@ -182,7 +183,10 @@ object fmMain: TfmMain
           ImageName = 'menu-Blue-grey'
         end>
       TabOrder = 0
+      OnButtonClicked = ButtonGroupButtonClicked
       StyleDrawType = btRounded
+      ExplicitLeft = -5
+      ExplicitTop = 2
     end
     object StyledButtonGroupBootstrap: TStyledButtonGroup
       Left = 138
@@ -215,14 +219,16 @@ object fmMain: TfmMain
           StyleAppearance = 'Normal'
         end>
       TabOrder = 1
+      OnButtonClicked = ButtonGroupButtonClicked
       StyleDrawType = btRounded
       StyleFamily = 'Bootstrap'
+      ExplicitHeight = 420
     end
   end
   object Panel1: TPanel
     Left = 0
-    Top = 501
-    Width = 817
+    Top = 500
+    Width = 813
     Height = 33
     Align = alBottom
     TabOrder = 2
@@ -247,7 +253,7 @@ object fmMain: TfmMain
     Left = 0
     Top = 0
     Width = 137
-    Height = 423
+    Height = 422
     Align = alLeft
     ButtonHeight = 40
     ButtonWidth = 100
@@ -269,30 +275,6 @@ object fmMain: TfmMain
       end>
     TabOrder = 3
     OnButtonClicked = ButtonGroupButtonClicked
-  end
-  object PopupMenu: TPopupMenu
-    Left = 525
-    Top = 275
-    object New1: TMenuItem
-      Caption = '&New'
-      OnClick = PopUpMenuClick
-    end
-    object Open1: TMenuItem
-      Caption = '&Open...'
-      OnClick = PopUpMenuClick
-    end
-    object Save1: TMenuItem
-      Caption = '&Save'
-      OnClick = PopUpMenuClick
-    end
-    object SaveAs1: TMenuItem
-      Caption = 'Save &As...'
-      OnClick = PopUpMenuClick
-    end
-    object Exit1: TMenuItem
-      Caption = 'E&xit'
-      OnClick = PopUpMenuClick
-    end
   end
   object VirtualImageList: TVirtualImageList
     Images = <

@@ -5,11 +5,11 @@
 {   TStyledSpeedButton: a "styled" Button Component similar to TSpeedButton    }
 {   TStyledBitBtn: a "styled" Button Component similar to TBitBtn              }
 {                                                                              }
-{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
-{       Author: Carlo Barazzetta                                               }
-{       Contributors:                                                          }
+{   Copyright (c) 2022-2024 (Ethea S.r.l.)                                     }
+{   Author: Carlo Barazzetta                                                   }
+{   Contributors:                                                              }
 {                                                                              }
-{       https://github.com/EtheaDev/StyledComponents                           }
+{   https://github.com/EtheaDev/StyledComponents                               }
 {                                                                              }
 {******************************************************************************}
 {                                                                              }
@@ -53,7 +53,7 @@ uses
   ;
 
 const
-  StyledButtonsVersion = '3.4.0';
+  StyledButtonsVersion = '3.4.1';
 
 resourcestring
   ERROR_SETTING_BUTTON_STYLE = 'Error setting Button Style: %s/%s/%s not available';

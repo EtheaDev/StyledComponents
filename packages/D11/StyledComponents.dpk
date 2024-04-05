@@ -31,6 +31,7 @@ package StyledComponents;
 {$R '..\StyledToolbar.dcr'}
 {$R '..\StyledDbNavigator.dcr'}
 {$R '..\StyledButtonGroup.dcr'}
+{$R '..\StyledCategoryButtons.dcr'}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -82,7 +83,8 @@ contains
   Vcl.StyledTaskDialogFormUnit in '..\..\source\Vcl.StyledTaskDialogFormUnit.pas' {StyledTaskDialogForm},
   Vcl.StyledToolbar in '..\..\source\Vcl.StyledToolbar.pas',
   Vcl.StyledDbNavigator in '..\..\source\Vcl.StyledDbNavigator.pas',
-  Vcl.StyledButtonGroup in '..\..\source\Vcl.StyledButtonGroup.pas';
+  Vcl.StyledButtonGroup in '..\..\source\Vcl.StyledButtonGroup.pas',
+  Vcl.StyledCategoryButtons in '..\..\source\Vcl.StyledCategoryButtons.pas';
 
 end.
 

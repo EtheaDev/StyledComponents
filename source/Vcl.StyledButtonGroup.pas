@@ -1,13 +1,13 @@
 {******************************************************************************}
 {                                                                              }
-{       StyledButtonGroup: a Styled ButtonGroup with TStyledGrpButtonItem      }
-{       Based on TButtonGroup and TStyledButton                                }
+{  StyledButtonGroup: a Styled ButtonGroup with TStyledGrpButtonItem           }
+{  Based on TButtonGroup and TStyledButton                                     }
 {                                                                              }
-{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
-{       Author: Carlo Barazzetta                                               }
-{       Contributors:                                                          }
+{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Author: Carlo Barazzetta                                                    }
+{  Contributors:                                                               }
 {                                                                              }
-{       https://github.com/EtheaDev/StyledComponents                           }
+{  https://github.com/EtheaDev/StyledComponents                                }
 {                                                                              }
 {******************************************************************************}
 {                                                                              }
@@ -67,7 +67,7 @@ type
   TStyledGrpButtonItems = class;
   TStyledGrpButtonItemsClass = class of TGrpButtonItems;
 
-  TButtonProc = reference to procedure (Button: TStyledGrpButtonItem);
+  TGrpButtonProc = reference to procedure (Button: TStyledGrpButtonItem);
 
   TStyledGrpButtonItems = class(TGrpButtonItems)
   private
@@ -168,7 +168,7 @@ type
     function AsVCLStyle: Boolean;
     function GetAsVCLComponent: Boolean;
     procedure SetAsVCLComponent(const AValue: Boolean);
-    procedure ProcessButtons(AButtonProc: TButtonProc);
+    procedure ProcessButtons(AButtonProc: TGrpButtonProc);
     procedure SetButtonStyleDisabled(const AValue: TStyledButtonAttributes);
     procedure SetButtonStyleHot(const AValue: TStyledButtonAttributes);
     procedure SetButtonStyleNormal(const AValue: TStyledButtonAttributes);
@@ -1080,7 +1080,7 @@ begin
   StyleClass := AStyleClass;
   StyleAppearance := AStyleAppearance;
   if not ApplyButtonGroupStyle then
-    raise EStyledButtonError.CreateFmt(ERROR_SETTING_BUTTONGROUP_STYLE,
+    raise EStyledButtonGroupError.CreateFmt(ERROR_SETTING_BUTTONGROUP_STYLE,
       [AStyleFamily, AStyleClass, AStyleAppearance]);
 end;
 
@@ -1252,7 +1252,7 @@ begin
 end;
 
 procedure TStyledButtonGroup.ProcessButtons(
-  AButtonProc: TButtonProc);
+  AButtonProc: TGrpButtonProc);
 var
   I: Integer;
   LButton: TStyledGrpButtonItem;
@@ -1372,7 +1372,7 @@ begin
   FStyleClass := AStyleClass;
   FStyleAppearance := AStyleAppearance;
   if not ApplyButtonStyle then
-    raise EStyledButtonError.CreateFmt(ERROR_SETTING_BUTTON_STYLE,
+    raise EStyledButtonGroupError.CreateFmt(ERROR_SETTING_BUTTON_STYLE,
       [AStyleFamily, AStyleClass, AStyleAppearance]);
 end;
 

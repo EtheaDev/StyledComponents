@@ -2,8 +2,8 @@ object fmMain: TfmMain
   Left = 0
   Top = 0
   Caption = 'StyledToolbar Test'
-  ClientHeight = 534
-  ClientWidth = 741
+  ClientHeight = 533
+  ClientWidth = 737
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,7 +18,7 @@ object fmMain: TfmMain
     AlignWithMargins = True
     Left = 3
     Top = 71
-    Width = 735
+    Width = 731
     Height = 68
     AutoSize = True
     ButtonHeight = 66
@@ -31,6 +31,7 @@ object fmMain: TfmMain
     TabStop = True
     OnClick = ToolBarClick
     OnMouseEnter = ToolBarMouseEnter
+    ExplicitWidth = 735
     object ToolButton2: TToolButton
       Left = 0
       Top = 0
@@ -127,7 +128,7 @@ object fmMain: TfmMain
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 735
+    Width = 731
     Height = 62
     ButtonHeight = 60
     ButtonWidth = 77
@@ -147,6 +148,7 @@ object fmMain: TfmMain
     OnClick = ToolBarClick
     OnMouseEnter = StyledToolbarMouseEnter
     StyleRadius = 30
+    ExplicitWidth = 735
     object StyledToolButton1: TStyledToolButton
       Left = 0
       Top = 0
@@ -156,10 +158,10 @@ object fmMain: TfmMain
       Caption = 'Open'
       ImageIndex = 11
       ImageName = 'launch-white'
-      Style = tbsCheck
       StyleFamily = 'Bootstrap'
       StyleClass = 'Warning'
       Grouped = True
+      Style = tbsCheck
     end
     object StyledToolButton2: TStyledToolButton
       Left = 77
@@ -168,17 +170,16 @@ object fmMain: TfmMain
       Caption = 'Home'
       ImageIndex = 0
       ImageName = 'home-deeppurple'
-      Style = tbsCheck
       StyleFamily = 'Angular-Light'
       StyleClass = 'Amber'
       StyleAppearance = 'Flat'
       Grouped = True
+      Style = tbsCheck
     end
     object SSep1: TStyledToolButton
       Left = 154
       Top = 0
       Style = tbsSeparator
-      StyleClass = 'Windows'
     end
     object StyledToolButton3: TStyledToolButton
       Left = 162
@@ -187,9 +188,8 @@ object fmMain: TfmMain
       Caption = 'Like'
       ImageIndex = 8
       ImageName = 'heart'
-      Style = tbsCheck
-      StyleClass = 'Windows'
       Grouped = True
+      Style = tbsCheck
     end
     object StyledToolButton5: TStyledToolButton
       Left = 239
@@ -199,20 +199,18 @@ object fmMain: TfmMain
       Caption = 'Options'
       ImageIndex = 9
       ImageName = 'dots-vertical-white'
-      Style = tbsCheck
       StyleClass = 'Aqua Graphite'
       Grouped = True
+      Style = tbsCheck
     end
     object StyledToolButton6: TStyledToolButton
       Left = 316
       Top = 0
       Style = tbsSeparator
-      StyleClass = 'Windows'
     end
     object StyledToolButton4: TStyledToolButton
       Left = 324
       Top = 0
-      Width = 77
       OnClick = ToolButtonclick
       StyleElements = [seFont, seBorder]
       Caption = 'Menu'
@@ -220,7 +218,6 @@ object fmMain: TfmMain
       ImageIndex = 5
       ImageName = 'menu-pink'
       Style = tbsDropDown
-      StyleClass = 'Windows'
     end
     object Edit2: TEdit
       AlignWithMargins = True
@@ -238,16 +235,17 @@ object fmMain: TfmMain
       Caption = 'Recycle Bin'
       ImageIndex = 14
       ImageName = 'trash-black'
-      StyleClass = 'Windows'
     end
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 423
-    Width = 741
+    Top = 422
+    Width = 737
     Height = 78
     Align = alBottom
     TabOrder = 2
+    ExplicitTop = 423
+    ExplicitWidth = 741
     object LeftPanel: TPanel
       Left = 1
       Top = 1
@@ -350,18 +348,22 @@ object fmMain: TfmMain
   object ClientPanel: TPanel
     Left = 0
     Top = 142
-    Width = 741
-    Height = 281
+    Width = 737
+    Height = 280
     Align = alClient
     TabOrder = 3
+    ExplicitWidth = 741
+    ExplicitHeight = 281
   end
   object Panel1: TPanel
     Left = 0
-    Top = 501
-    Width = 741
+    Top = 500
+    Width = 737
     Height = 33
     Align = alBottom
     TabOrder = 4
+    ExplicitTop = 501
+    ExplicitWidth = 741
     object StyleLabel: TLabel
       Left = 11
       Top = 9

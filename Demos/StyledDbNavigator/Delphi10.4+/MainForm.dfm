@@ -2,8 +2,8 @@ object fmMain: TfmMain
   Left = 0
   Top = 0
   Caption = 'Styled DbNavigator Test'
-  ClientHeight = 533
-  ClientWidth = 737
+  ClientHeight = 532
+  ClientWidth = 733
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -16,11 +16,13 @@ object fmMain: TfmMain
   TextHeight = 15
   object BottomPanel: TPanel
     Left = 0
-    Top = 421
-    Width = 737
+    Top = 420
+    Width = 733
     Height = 79
     Align = alBottom
     TabOrder = 0
+    ExplicitTop = 419
+    ExplicitWidth = 729
     object LeftPanel: TPanel
       Left = 1
       Top = 1
@@ -54,12 +56,13 @@ object fmMain: TfmMain
     object BottomClientPanel: TPanel
       Left = 185
       Top = 1
-      Width = 551
+      Width = 547
       Height = 77
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
       Visible = False
+      ExplicitWidth = 543
       object WidthLabel: TLabel
         Left = 20
         Top = 15
@@ -136,11 +139,13 @@ object fmMain: TfmMain
     Height = 220
     Align = alClient
     TabOrder = 1
+    ExplicitWidth = 729
+    ExplicitHeight = 219
     object DBGrid1: TDBGrid
       Left = 1
       Top = 1
-      Width = 735
-      Height = 219
+      Width = 731
+      Height = 218
       Align = alClient
       DataSource = DataSource
       TabOrder = 0
@@ -158,6 +163,8 @@ object fmMain: TfmMain
     Height = 33
     Align = alBottom
     TabOrder = 2
+    ExplicitTop = 498
+    ExplicitWidth = 729
     object StyleLabel: TLabel
       Left = 11
       Top = 9
@@ -184,16 +191,18 @@ object fmMain: TfmMain
     VisibleButtons = [nbInsert, nbDelete, nbEdit, nbPost, nbCancel, nbRefresh, nbApplyUpdates, nbCancelUpdates]
     Align = alTop
     TabOrder = 3
+    ExplicitWidth = 729
   end
   object StyledDBNavigator: TStyledDbNavigator
     Left = 0
-    Top = 94
+    Top = 100
     Width = 733
     Height = 50
     Align = alTop
     DataSource = DataSource
     TabOrder = 6
     VisibleButtons = [nbInsert, nbDelete, nbEdit, nbPost, nbCancel, nbRefresh, nbApplyUpdates, nbCancelUpdates]
+    ExplicitWidth = 729
   end
   object StyledBindNavigator: TStyledBindNavigator
     Left = 0
@@ -205,6 +214,7 @@ object fmMain: TfmMain
     Flat = True
     TabOrder = 4
     VisibleButtons = [nbInsert, nbDelete, nbEdit, nbPost, nbCancel, nbRefresh, nbApplyUpdates, nbCancelUpdates]
+    ExplicitWidth = 729
   end
   object BindNavigator: TBindNavigator
     Left = 0
@@ -217,498 +227,7 @@ object fmMain: TfmMain
     Flat = True
     Orientation = orHorizontal
     TabOrder = 5
-  end
-  object TVirtualImageList
-    AutoFill = True
-    Images = <
-      item
-        CollectionIndex = 0
-        CollectionName = 'SNB_FIRST'
-        Name = 'SNB_FIRST'
-      end
-      item
-        CollectionIndex = 1
-        CollectionName = 'NAVB_FIRST'
-        Name = 'NAVB_FIRST'
-      end
-      item
-        CollectionIndex = 2
-        CollectionName = 'NAVW_FIRST'
-        Name = 'NAVW_FIRST'
-      end
-      item
-        CollectionIndex = 3
-        CollectionName = 'SNB_PRIOR'
-        Name = 'SNB_PRIOR'
-      end
-      item
-        CollectionIndex = 4
-        CollectionName = 'NAVB_PRIOR'
-        Name = 'NAVB_PRIOR'
-      end
-      item
-        CollectionIndex = 5
-        CollectionName = 'NAVW_PRIOR'
-        Name = 'NAVW_PRIOR'
-      end
-      item
-        CollectionIndex = 6
-        CollectionName = 'SNB_NEXT'
-        Name = 'SNB_NEXT'
-      end
-      item
-        CollectionIndex = 7
-        CollectionName = 'NAVB_NEXT'
-        Name = 'NAVB_NEXT'
-      end
-      item
-        CollectionIndex = 8
-        CollectionName = 'NAVW_NEXT'
-        Name = 'NAVW_NEXT'
-      end
-      item
-        CollectionIndex = 9
-        CollectionName = 'SNB_LAST'
-        Name = 'SNB_LAST'
-      end
-      item
-        CollectionIndex = 10
-        CollectionName = 'NAVB_LAST'
-        Name = 'NAVB_LAST'
-      end
-      item
-        CollectionIndex = 11
-        CollectionName = 'NAVW_LAST'
-        Name = 'NAVW_LAST'
-      end
-      item
-        CollectionIndex = 12
-        CollectionName = 'SNB_INSERT'
-        Name = 'SNB_INSERT'
-      end
-      item
-        CollectionIndex = 13
-        CollectionName = 'NAVB_INSERT'
-        Name = 'NAVB_INSERT'
-      end
-      item
-        CollectionIndex = 14
-        CollectionName = 'NAVW_INSERT'
-        Name = 'NAVW_INSERT'
-      end
-      item
-        CollectionIndex = 15
-        CollectionName = 'SNB_DELETE'
-        Name = 'SNB_DELETE'
-      end
-      item
-        CollectionIndex = 16
-        CollectionName = 'NAVB_DELETE'
-        Name = 'NAVB_DELETE'
-      end
-      item
-        CollectionIndex = 17
-        CollectionName = 'NAVW_DELETE'
-        Name = 'NAVW_DELETE'
-      end
-      item
-        CollectionIndex = 18
-        CollectionName = 'SNB_EDIT'
-        Name = 'SNB_EDIT'
-      end
-      item
-        CollectionIndex = 19
-        CollectionName = 'NAVB_EDIT'
-        Name = 'NAVB_EDIT'
-      end
-      item
-        CollectionIndex = 20
-        CollectionName = 'NAVW_EDIT'
-        Name = 'NAVW_EDIT'
-      end
-      item
-        CollectionIndex = 21
-        CollectionName = 'SNB_POST'
-        Name = 'SNB_POST'
-      end
-      item
-        CollectionIndex = 22
-        CollectionName = 'NAVB_POST'
-        Name = 'NAVB_POST'
-      end
-      item
-        CollectionIndex = 23
-        CollectionName = 'NAVW_POST'
-        Name = 'NAVW_POST'
-      end
-      item
-        CollectionIndex = 24
-        CollectionName = 'SNB_CANCEL'
-        Name = 'SNB_CANCEL'
-      end
-      item
-        CollectionIndex = 25
-        CollectionName = 'NAVB_CANCEL'
-        Name = 'NAVB_CANCEL'
-      end
-      item
-        CollectionIndex = 26
-        CollectionName = 'NAVW_CANCEL'
-        Name = 'NAVW_CANCEL'
-      end
-      item
-        CollectionIndex = 27
-        CollectionName = 'SNB_REFRESH'
-        Name = 'SNB_REFRESH'
-      end
-      item
-        CollectionIndex = 28
-        CollectionName = 'NAVB_REFRESH'
-        Name = 'NAVB_REFRESH'
-      end
-      item
-        CollectionIndex = 29
-        CollectionName = 'NAVW_REFRESH'
-        Name = 'NAVW_REFRESH'
-      end
-      item
-        CollectionIndex = 30
-        CollectionName = 'SNB_APPLYUPDATES'
-        Name = 'SNB_APPLYUPDATES'
-      end
-      item
-        CollectionIndex = 31
-        CollectionName = 'NAVB_APPLYUPDATES'
-        Name = 'NAVB_APPLYUPDATES'
-      end
-      item
-        CollectionIndex = 32
-        CollectionName = 'NAVW_APPLYUPDATES'
-        Name = 'NAVW_APPLYUPDATES'
-      end
-      item
-        CollectionIndex = 33
-        CollectionName = 'SNB_CANCELUPDATES'
-        Name = 'SNB_CANCELUPDATES'
-      end
-      item
-        CollectionIndex = 34
-        CollectionName = 'NAVB_CANCELUPDATES'
-        Name = 'NAVB_CANCELUPDATES'
-      end
-      item
-        CollectionIndex = 35
-        CollectionName = 'NAVW_CANCELUPDATES'
-        Name = 'NAVW_CANCELUPDATES'
-      end
-      item
-        CollectionIndex = 36
-        CollectionName = 'SNB_FIRST_VERT'
-        Name = 'SNB_FIRST_VERT'
-      end
-      item
-        CollectionIndex = 37
-        CollectionName = 'NAVB_FIRST_VERT'
-        Name = 'NAVB_FIRST_VERT'
-      end
-      item
-        CollectionIndex = 38
-        CollectionName = 'NAVW_FIRST_VERT'
-        Name = 'NAVW_FIRST_VERT'
-      end
-      item
-        CollectionIndex = 39
-        CollectionName = 'SNB_PRIOR_VERT'
-        Name = 'SNB_PRIOR_VERT'
-      end
-      item
-        CollectionIndex = 40
-        CollectionName = 'NAVB_PRIOR_VERT'
-        Name = 'NAVB_PRIOR_VERT'
-      end
-      item
-        CollectionIndex = 41
-        CollectionName = 'NAVW_PRIOR_VERT'
-        Name = 'NAVW_PRIOR_VERT'
-      end
-      item
-        CollectionIndex = 42
-        CollectionName = 'SNB_NEXT_VERT'
-        Name = 'SNB_NEXT_VERT'
-      end
-      item
-        CollectionIndex = 43
-        CollectionName = 'NAVB_NEXT_VERT'
-        Name = 'NAVB_NEXT_VERT'
-      end
-      item
-        CollectionIndex = 44
-        CollectionName = 'NAVW_NEXT_VERT'
-        Name = 'NAVW_NEXT_VERT'
-      end
-      item
-        CollectionIndex = 45
-        CollectionName = 'SNB_LAST_VERT'
-        Name = 'SNB_LAST_VERT'
-      end
-      item
-        CollectionIndex = 46
-        CollectionName = 'NAVB_LAST_VERT'
-        Name = 'NAVB_LAST_VERT'
-      end
-      item
-        CollectionIndex = 47
-        CollectionName = 'NAVW_LAST_VERT'
-        Name = 'NAVW_LAST_VERT'
-      end>
-    Width = 15
-    Height = 15
-  end
-  object TVirtualImageList
-    AutoFill = True
-    Images = <
-      item
-        CollectionIndex = 0
-        CollectionName = 'SNB_FIRST'
-        Name = 'SNB_FIRST'
-      end
-      item
-        CollectionIndex = 1
-        CollectionName = 'NAVB_FIRST'
-        Name = 'NAVB_FIRST'
-      end
-      item
-        CollectionIndex = 2
-        CollectionName = 'NAVW_FIRST'
-        Name = 'NAVW_FIRST'
-      end
-      item
-        CollectionIndex = 3
-        CollectionName = 'SNB_PRIOR'
-        Name = 'SNB_PRIOR'
-      end
-      item
-        CollectionIndex = 4
-        CollectionName = 'NAVB_PRIOR'
-        Name = 'NAVB_PRIOR'
-      end
-      item
-        CollectionIndex = 5
-        CollectionName = 'NAVW_PRIOR'
-        Name = 'NAVW_PRIOR'
-      end
-      item
-        CollectionIndex = 6
-        CollectionName = 'SNB_NEXT'
-        Name = 'SNB_NEXT'
-      end
-      item
-        CollectionIndex = 7
-        CollectionName = 'NAVB_NEXT'
-        Name = 'NAVB_NEXT'
-      end
-      item
-        CollectionIndex = 8
-        CollectionName = 'NAVW_NEXT'
-        Name = 'NAVW_NEXT'
-      end
-      item
-        CollectionIndex = 9
-        CollectionName = 'SNB_LAST'
-        Name = 'SNB_LAST'
-      end
-      item
-        CollectionIndex = 10
-        CollectionName = 'NAVB_LAST'
-        Name = 'NAVB_LAST'
-      end
-      item
-        CollectionIndex = 11
-        CollectionName = 'NAVW_LAST'
-        Name = 'NAVW_LAST'
-      end
-      item
-        CollectionIndex = 12
-        CollectionName = 'SNB_INSERT'
-        Name = 'SNB_INSERT'
-      end
-      item
-        CollectionIndex = 13
-        CollectionName = 'NAVB_INSERT'
-        Name = 'NAVB_INSERT'
-      end
-      item
-        CollectionIndex = 14
-        CollectionName = 'NAVW_INSERT'
-        Name = 'NAVW_INSERT'
-      end
-      item
-        CollectionIndex = 15
-        CollectionName = 'SNB_DELETE'
-        Name = 'SNB_DELETE'
-      end
-      item
-        CollectionIndex = 16
-        CollectionName = 'NAVB_DELETE'
-        Name = 'NAVB_DELETE'
-      end
-      item
-        CollectionIndex = 17
-        CollectionName = 'NAVW_DELETE'
-        Name = 'NAVW_DELETE'
-      end
-      item
-        CollectionIndex = 18
-        CollectionName = 'SNB_EDIT'
-        Name = 'SNB_EDIT'
-      end
-      item
-        CollectionIndex = 19
-        CollectionName = 'NAVB_EDIT'
-        Name = 'NAVB_EDIT'
-      end
-      item
-        CollectionIndex = 20
-        CollectionName = 'NAVW_EDIT'
-        Name = 'NAVW_EDIT'
-      end
-      item
-        CollectionIndex = 21
-        CollectionName = 'SNB_POST'
-        Name = 'SNB_POST'
-      end
-      item
-        CollectionIndex = 22
-        CollectionName = 'NAVB_POST'
-        Name = 'NAVB_POST'
-      end
-      item
-        CollectionIndex = 23
-        CollectionName = 'NAVW_POST'
-        Name = 'NAVW_POST'
-      end
-      item
-        CollectionIndex = 24
-        CollectionName = 'SNB_CANCEL'
-        Name = 'SNB_CANCEL'
-      end
-      item
-        CollectionIndex = 25
-        CollectionName = 'NAVB_CANCEL'
-        Name = 'NAVB_CANCEL'
-      end
-      item
-        CollectionIndex = 26
-        CollectionName = 'NAVW_CANCEL'
-        Name = 'NAVW_CANCEL'
-      end
-      item
-        CollectionIndex = 27
-        CollectionName = 'SNB_REFRESH'
-        Name = 'SNB_REFRESH'
-      end
-      item
-        CollectionIndex = 28
-        CollectionName = 'NAVB_REFRESH'
-        Name = 'NAVB_REFRESH'
-      end
-      item
-        CollectionIndex = 29
-        CollectionName = 'NAVW_REFRESH'
-        Name = 'NAVW_REFRESH'
-      end
-      item
-        CollectionIndex = 30
-        CollectionName = 'SNB_APPLYUPDATES'
-        Name = 'SNB_APPLYUPDATES'
-      end
-      item
-        CollectionIndex = 31
-        CollectionName = 'NAVB_APPLYUPDATES'
-        Name = 'NAVB_APPLYUPDATES'
-      end
-      item
-        CollectionIndex = 32
-        CollectionName = 'NAVW_APPLYUPDATES'
-        Name = 'NAVW_APPLYUPDATES'
-      end
-      item
-        CollectionIndex = 33
-        CollectionName = 'SNB_CANCELUPDATES'
-        Name = 'SNB_CANCELUPDATES'
-      end
-      item
-        CollectionIndex = 34
-        CollectionName = 'NAVB_CANCELUPDATES'
-        Name = 'NAVB_CANCELUPDATES'
-      end
-      item
-        CollectionIndex = 35
-        CollectionName = 'NAVW_CANCELUPDATES'
-        Name = 'NAVW_CANCELUPDATES'
-      end
-      item
-        CollectionIndex = 36
-        CollectionName = 'SNB_FIRST_VERT'
-        Name = 'SNB_FIRST_VERT'
-      end
-      item
-        CollectionIndex = 37
-        CollectionName = 'NAVB_FIRST_VERT'
-        Name = 'NAVB_FIRST_VERT'
-      end
-      item
-        CollectionIndex = 38
-        CollectionName = 'NAVW_FIRST_VERT'
-        Name = 'NAVW_FIRST_VERT'
-      end
-      item
-        CollectionIndex = 39
-        CollectionName = 'SNB_PRIOR_VERT'
-        Name = 'SNB_PRIOR_VERT'
-      end
-      item
-        CollectionIndex = 40
-        CollectionName = 'NAVB_PRIOR_VERT'
-        Name = 'NAVB_PRIOR_VERT'
-      end
-      item
-        CollectionIndex = 41
-        CollectionName = 'NAVW_PRIOR_VERT'
-        Name = 'NAVW_PRIOR_VERT'
-      end
-      item
-        CollectionIndex = 42
-        CollectionName = 'SNB_NEXT_VERT'
-        Name = 'SNB_NEXT_VERT'
-      end
-      item
-        CollectionIndex = 43
-        CollectionName = 'NAVB_NEXT_VERT'
-        Name = 'NAVB_NEXT_VERT'
-      end
-      item
-        CollectionIndex = 44
-        CollectionName = 'NAVW_NEXT_VERT'
-        Name = 'NAVW_NEXT_VERT'
-      end
-      item
-        CollectionIndex = 45
-        CollectionName = 'SNB_LAST_VERT'
-        Name = 'SNB_LAST_VERT'
-      end
-      item
-        CollectionIndex = 46
-        CollectionName = 'NAVB_LAST_VERT'
-        Name = 'NAVB_LAST_VERT'
-      end
-      item
-        CollectionIndex = 47
-        CollectionName = 'NAVW_LAST_VERT'
-        Name = 'NAVW_LAST_VERT'
-      end>
-    Width = 15
-    Height = 15
+    ExplicitWidth = 729
   end
   object PopupMenu: TPopupMenu
     Left = 525

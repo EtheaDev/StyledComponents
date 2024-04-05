@@ -1,13 +1,13 @@
 {******************************************************************************}
 {                                                                              }
-{       Main form used by two examples:                                        }
-{       StyledTaskDialogDemo and AnimatedTaskDialogDemo                        }
+{  Main form used by two examples:                                             }
+{  StyledTaskDialogDemo and AnimatedTaskDialogDemo                             }
 {                                                                              }
-{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
-{       Author: Carlo Barazzetta                                               }
-{       Contributors:                                                          }
+{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Author: Carlo Barazzetta                                                    }
+{  Contributors:                                                               }
 {                                                                              }
-{       https://github.com/EtheaDev/StyledComponents                           }
+{  https://github.com/EtheaDev/StyledComponents                                }
 {                                                                              }
 {******************************************************************************}
 {                                                                              }
@@ -31,7 +31,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ExtCtrls, Grids, DBGrids, DB, DBClient, StdCtrls, DBCtrls,
-  Vcl.CheckLst, Vcl.StyledTaskDialog, UITypes;
+  Vcl.CheckLst, Vcl.StyledTaskDialog, UITypes, Vcl.ButtonStylesAttributes;
 
 {$WARN SYMBOL_PLATFORM OFF}
 type

@@ -1,12 +1,12 @@
 {******************************************************************************}
 {                                                                              }
-{       StyledComponents Library                                               }
+{  StyledComponents Library                                                    }
 {                                                                              }
-{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
-{       Author: Carlo Barazzetta                                               }
-{       Contributors:                                                          }
+{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Author: Carlo Barazzetta                                                    }
+{  Contributors:                                                               }
 {                                                                              }
-{       https://github.com/EtheaDev/StyledComponents                           }
+{  https://github.com/EtheaDev/StyledComponents                                }
 {                                                                              }
 {******************************************************************************}
 {                                                                              }
@@ -29,7 +29,8 @@ interface
 
 uses
   Vcl.StyledButton, Vcl.Imaging.pngimage, Vcl.ExtCtrls, Vcl.Controls,
-  System.Classes, Vcl.StdCtrls, Vcl.Forms, Vcl.Graphics;
+  System.Classes, Vcl.StdCtrls, Vcl.Forms, Vcl.Graphics,
+  Vcl.ButtonStylesAttributes;
 
 type
   TfmAbout = class(TForm)

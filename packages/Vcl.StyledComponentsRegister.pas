@@ -1,12 +1,12 @@
 {******************************************************************************}
 {                                                                              }
-{       StyledComponents: a set of Styled VCL Component                        }
+{  StyledComponents: a set of Styled VCL Component                             }
 {                                                                              }
-{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
-{       Author: Carlo Barazzetta                                               }
-{       Contributors:                                                          }
+{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Author: Carlo Barazzetta                                                    }
+{  Contributors:                                                               }
 {                                                                              }
-{       https://github.com/EtheaDev/StyledComponents                           }
+{  https://github.com/EtheaDev/StyledComponents                                }
 {                                                                              }
 {******************************************************************************}
 {                                                                              }
@@ -44,6 +44,7 @@ uses
   , Vcl.StyledToolbar
   , Vcl.StyledDbNavigator
   , Vcl.StyledButtonGroup
+  , Vcl.StyledCategoryButtons
   , Vcl.ButtonStylesAttributes
   ;
 
@@ -105,6 +106,15 @@ Type
     procedure ExecuteVerb(Index: Integer); override;
   end;
 
+  TStyledCategoryButtonsComponentEditor = class (TComponentEditor)
+  private
+    function GetCategoryButtons: TStyledCategoryButtons;
+  public
+    function GetVerbCount: Integer; override;
+    function GetVerb(Index: Integer): string; override;
+    procedure ExecuteVerb(Index: Integer); override;
+  end;
+
   TStyledComponentSelection = class (TSelectionEditor, ISelectionEditor)
   public
     procedure RequiresUnits(Proc: TGetStrProc); override;
@@ -153,6 +163,7 @@ uses
   , Vcl.StyledCmpStrUtils
   , Vcl.DbCtrls
   , Vcl.ButtonGroup
+  , Vcl.CategoryButtons
   , System.SysUtils
   , System.Contnrs
   , System.UITypes
@@ -180,7 +191,11 @@ begin
   else if AComponent is TStyledButtonGroup then
     LFamily := TStyledButtonGroup(AComponent).StyleFamily
   else if AComponent is TStyledGrpButtonItem then
-    LFamily := TStyledGrpButtonItem(AComponent).StyleFamily;
+    LFamily := TStyledGrpButtonItem(AComponent).StyleFamily
+  else if AComponent is TStyledCategoryButtons then
+    LFamily := TStyledCategoryButtons(AComponent).StyleFamily
+  else if AComponent is TStyledButtonItem then
+    LFamily := TStyledButtonItem(AComponent).StyleFamily;
   if LFamily <> '' then
   begin
     Result := True;
@@ -470,6 +485,7 @@ procedure TStyledButtonGroupComponentEditor.ExecuteVerb(Index: Integer);
 var
   LButtonGroup: TStyledbuttonGroup;
   LButton: TStyledButton;
+  LButtonWidth: Integer;
 begin
   if Index = 0 then
   begin
@@ -481,7 +497,11 @@ begin
     LButton.StyleRadius := LButtonGroup.StyleRadius;
     try
       LButton.StyleRadius := LButtonGroup.StyleRadius;
-      LButton.SetBounds(0, 0, LButtonGroup.ButtonWidth, LButtonGroup.ButtonHeight);
+      if gboFullSize in LButtonGroup.ButtonOptions then
+        LButtonWidth := LButtonGroup.Width
+      else
+        LButtonWidth := LButtonGroup.ButtonWidth;
+      LButton.SetBounds(0, 0, LButtonWidth, LButtonGroup.ButtonHeight);
       if gboShowCaptions in LButtonGroup.ButtonOptions then
       begin
         LButton.Name := Designer.UniqueName('Button');
@@ -524,6 +544,75 @@ begin
 end;
 
 function TStyledButtonGroupComponentEditor.GetVerbCount: Integer;
+begin
+  Result := 2;
+end;
+
+{ TStyledCategoryButtonsComponentEditor }
+
+procedure TStyledCategoryButtonsComponentEditor.ExecuteVerb(Index: Integer);
+var
+  LCategoryButtons: TStyledCategoryButtons;
+  LButton: TStyledButton;
+  LButtonWidth: Integer;
+begin
+  if Index = 0 then
+  begin
+    LCategoryButtons := GetCategoryButtons;
+    LButton := TStyledButton.CreateStyled(LCategoryButtons,
+      LCategoryButtons.StyleFamily, LCategoryButtons.StyleClass, LCategoryButtons.StyleAppearance,
+      LCategoryButtons.StyleDrawType, False);
+    LButton.StyleDrawType := LCategoryButtons.StyleDrawType;
+    LButton.StyleRadius := LCategoryButtons.StyleRadius;
+    try
+      LButton.StyleRadius := LCategoryButtons.StyleRadius;
+      if boFullSize in LCategoryButtons.ButtonOptions then
+        LButtonWidth := LCategoryButtons.Width
+      else
+        LButtonWidth := LCategoryButtons.ButtonWidth;
+      LButton.SetBounds(0, 0, LButtonWidth, LCategoryButtons.ButtonHeight);
+      if boShowCaptions in LCategoryButtons.ButtonOptions then
+      begin
+        LButton.Name := Designer.UniqueName('Button');
+        LButton.Caption := 'Button';
+      end;
+      if EditStyledButton(LButton) then
+      begin
+        LCategoryButtons.SetCategoryButtonsStyle(LButton.StyleFamily,
+          LButton.StyleClass, LButton.StyleAppearance);
+        LCategoryButtons.StyleRadius := LButton.StyleRadius;
+        LCategoryButtons.StyleDrawType := LButton.StyleDrawType;
+        LCategoryButtons.Invalidate;
+        Designer.Modified;
+      end;
+    finally
+      LButton.Free;
+    end;
+  end
+  else if Index = 1 then
+  ShellExecute(0, 'open',
+    PChar(GetProjectURL), nil, nil, SW_SHOWNORMAL);
+end;
+
+function TStyledCategoryButtonsComponentEditor.GetCategoryButtons: TStyledCategoryButtons;
+var
+  LComponent: TPersistent;
+begin
+  Result := nil;
+  LComponent := GetComponent;
+  if LComponent is TStyledCategoryButtons then
+    Result := TStyledCategoryButtons(LComponent);
+end;
+
+function TStyledCategoryButtonsComponentEditor.GetVerb(Index: Integer): string;
+begin
+  if Index = 0 then
+    Result := 'Styled CategoryButtons Editor...'
+  else if Index = 1 then
+    Result := 'Project page on GitHub...';
+end;
+
+function TStyledCategoryButtonsComponentEditor.GetVerbCount: Integer;
 begin
   Result := 2;
 end;
@@ -693,7 +782,8 @@ begin
      TStyledTaskDialog,
      TStyledDbNavigator,
      TStyledBindNavigator,
-     TStyledButtonGroup]);
+     TStyledButtonGroup,
+     TStyledCategoryButtons]);
 
   //Property Editor for StyleFamily
   RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
@@ -716,6 +806,10 @@ begin
     TStyledButtonGroup, 'StyleFamily', TStyledFamilyPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
     TStyledGrpButtonItem, 'StyleFamily', TStyledFamilyPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+    TStyledCategoryButtons, 'StyleFamily', TStyledFamilyPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+    TStyledButtonItem, 'StyleFamily', TStyledFamilyPropertyEditor);
 
   //Property Editor for StyleClass
   RegisterPropertyEditor(TypeInfo(TStyledButtonClass),
@@ -738,6 +832,10 @@ begin
     TStyledButtonGroup, 'StyleClass', TStyledClassPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStyledButtonClass),
     TStyledGrpButtonItem, 'StyleClass', TStyledClassPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonClass),
+    TStyledCategoryButtons, 'StyleClass', TStyledClassPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonClass),
+    TStyledButtonItem, 'StyleClass', TStyledClassPropertyEditor);
 
   //Property Editor for StyleAppearance
   RegisterPropertyEditor(TypeInfo(TStyledButtonAppearance),
@@ -760,6 +858,10 @@ begin
     TStyledButtonGroup, 'StyleAppearance', TStyledAppearancePropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStyledButtonAppearance),
     TStyledGrpButtonItem, 'StyleAppearance', TStyledAppearancePropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonAppearance),
+    TStyledCategoryButtons, 'StyleAppearance', TStyledAppearancePropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonAppearance),
+    TStyledButtonItem, 'StyleAppearance', TStyledAppearancePropertyEditor);
 
   //Property Editor for ImageIndex
   RegisterPropertyEditor(TypeInfo(System.UITypes.TImageIndex),
@@ -821,6 +923,7 @@ begin
   RegisterComponentEditor(TStyledDbNavigator, TStyledNavigatorComponentEditor);
   RegisterComponentEditor(TStyledBindNavigator, TStyledNavigatorComponentEditor);
   RegisterComponentEditor(TStyledButtonGroup, TStyledButtonGroupComponentEditor);
+  RegisterComponentEditor(TStyledCategoryButtons, TStyledCategoryButtonsComponentEditor);
 
   //To auto add units
   RegisterSelectionEditor(TStyledGraphicButton, TStyledComponentSelection);
@@ -832,6 +935,7 @@ begin
   RegisterSelectionEditor(TStyledDbNavigator, TStyledComponentSelection);
   RegisterSelectionEditor(TStyledBindNavigator, TStyledComponentSelection);
   RegisterSelectionEditor(TStyledButtonGroup, TStyledComponentSelection);
+  RegisterSelectionEditor(TStyledCategoryButtons, TStyledComponentSelection);
 end;
 
 end.

@@ -166,10 +166,10 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Margins.Top = 4
       Margins.Bottom = 4
       Align = alRight
-      OnClick = ButtonClick
       Caption = 'Yes'
       ModalResult = 6
       TabOrder = 0
+      OnClick = ButtonClick
     end
     object NoButton: TStyledButton
       AlignWithMargins = True
@@ -180,10 +180,10 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Margins.Top = 4
       Margins.Bottom = 4
       Align = alRight
-      OnClick = ButtonClick
       Caption = 'No'
       ModalResult = 7
       TabOrder = 1
+      OnClick = ButtonClick
     end
     object OKButton: TStyledButton
       AlignWithMargins = True
@@ -194,10 +194,10 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Margins.Top = 4
       Margins.Bottom = 4
       Align = alRight
-      OnClick = ButtonClick
       Caption = 'OK'
       ModalResult = 1
       TabOrder = 2
+      OnClick = ButtonClick
     end
     object CancelButton: TStyledButton
       AlignWithMargins = True
@@ -208,10 +208,10 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Margins.Top = 4
       Margins.Bottom = 4
       Align = alRight
-      OnClick = ButtonClick
       Caption = 'Cancel'
       ModalResult = 2
       TabOrder = 3
+      OnClick = ButtonClick
     end
     object AbortButton: TStyledButton
       AlignWithMargins = True
@@ -222,10 +222,10 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Margins.Top = 4
       Margins.Bottom = 4
       Align = alRight
-      OnClick = ButtonClick
       Caption = 'Abort'
       ModalResult = 3
       TabOrder = 4
+      OnClick = ButtonClick
     end
     object RetryButton: TStyledButton
       AlignWithMargins = True
@@ -236,10 +236,10 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Margins.Top = 4
       Margins.Bottom = 4
       Align = alRight
-      OnClick = ButtonClick
       Caption = 'Retry'
       ModalResult = 4
       TabOrder = 5
+      OnClick = ButtonClick
     end
     object IgnoreButton: TStyledButton
       AlignWithMargins = True
@@ -250,10 +250,10 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Margins.Top = 4
       Margins.Bottom = 4
       Align = alRight
-      OnClick = ButtonClick
       Caption = 'Ignore'
       ModalResult = 5
       TabOrder = 6
+      OnClick = ButtonClick
     end
     object AllButton: TStyledButton
       AlignWithMargins = True
@@ -264,10 +264,10 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Margins.Top = 4
       Margins.Bottom = 4
       Align = alRight
-      OnClick = ButtonClick
       Caption = 'All'
       ModalResult = 12
       TabOrder = 7
+      OnClick = ButtonClick
     end
     object NoToAllButton: TStyledButton
       AlignWithMargins = True
@@ -278,10 +278,10 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Margins.Top = 4
       Margins.Bottom = 4
       Align = alRight
-      OnClick = ButtonClick
       Caption = 'No to All'
       ModalResult = 13
       TabOrder = 8
+      OnClick = ButtonClick
     end
     object YesToAllButton: TStyledButton
       AlignWithMargins = True
@@ -292,10 +292,10 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Margins.Top = 4
       Margins.Bottom = 4
       Align = alRight
-      OnClick = ButtonClick
       Caption = 'Yes to All'
       ModalResult = 14
       TabOrder = 9
+      OnClick = ButtonClick
     end
     object HelpButton: TStyledButton
       AlignWithMargins = True
@@ -306,10 +306,10 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Margins.Top = 4
       Margins.Bottom = 4
       Align = alRight
-      OnClick = HelpButtonClick
       Caption = 'Help'
       ModalResult = 9
       TabOrder = 10
+      OnClick = HelpButtonClick
     end
     object CloseButton: TStyledButton
       AlignWithMargins = True
@@ -320,10 +320,10 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Margins.Top = 4
       Margins.Bottom = 4
       Align = alRight
-      OnClick = ButtonClick
       Caption = 'Close'
       ModalResult = 8
       TabOrder = 11
+      OnClick = ButtonClick
     end
   end
 end

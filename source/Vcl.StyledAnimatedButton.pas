@@ -1,13 +1,13 @@
 {******************************************************************************}
 {                                                                              }
-{       TStyledAnimatedButton: a StyledButton with "animated icon"             }
-{       using a Skia TSkAnimatedImage component                                }
+{  TStyledAnimatedButton: a StyledButton with "animated icon"                  }
+{  using a Skia TSkAnimatedImage component                                     }
 {                                                                              }
-{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
-{       Author: Carlo Barazzetta                                               }
-{       Contributors:                                                          }
+{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Author: Carlo Barazzetta                                                    }
+{  Contributors:                                                               }
 {                                                                              }
-{       https://github.com/EtheaDev/StyledComponents                           }
+{  https://github.com/EtheaDev/StyledComponents                                }
 {                                                                              }
 {******************************************************************************}
 {                                                                              }

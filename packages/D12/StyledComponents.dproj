@@ -23,6 +23,11 @@
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64x' and '$(Base)'=='true') or '$(Base_Win64x)'!=''">
+        <Base_Win64x>true</Base_Win64x>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_1)'!=''">
         <Cfg_1>true</Cfg_1>
         <CfgParent>Base</CfgParent>
@@ -65,6 +70,9 @@
         <BT_BuildType>Debug</BT_BuildType>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <BT_BuildType>Debug</BT_BuildType>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win64x)'!=''">
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
         <BT_BuildType>Debug</BT_BuildType>
     </PropertyGroup>
@@ -96,6 +104,7 @@
         <DCCReference Include="..\StyledToolbar.dcr"/>
         <DCCReference Include="..\StyledDbNavigator.dcr"/>
         <DCCReference Include="..\StyledButtonGroup.dcr"/>
+        <DCCReference Include="..\StyledCategoryButtons.dcr"/>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="vclimg.dcp"/>
@@ -114,11 +123,11 @@
         <DCCReference Include="..\..\source\Vcl.StyledTaskDialogStdUnit.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledTaskDialogFormUnit.pas">
             <Form>StyledTaskDialogForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\..\source\Vcl.StyledToolbar.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledDbNavigator.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledButtonGroup.pas"/>
+        <DCCReference Include="..\..\source\Vcl.StyledCategoryButtons.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -140,10 +149,13 @@
                     <Source Name="MainSource">StyledComponents.dpk</Source>
                 </Source>
                 <Excluded_Packages/>
+                <WelcomePageFile Path="..\..\README.htm"/>
+                <WelcomePageFolder/>
             </Delphi.Personality>
             <Platforms>
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">True</Platform>
+                <Platform value="Win64x">False</Platform>
             </Platforms>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>

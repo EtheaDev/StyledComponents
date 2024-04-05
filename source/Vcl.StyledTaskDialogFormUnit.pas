@@ -1,12 +1,12 @@
 {******************************************************************************}
 {                                                                              }
-{       StyledTaskDialogForm: a Task Dialog Form with StyleButtons             }
+{  StyledTaskDialogForm: a Task Dialog Form with StyleButtons                  }
 {                                                                              }
-{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
-{       Author: Carlo Barazzetta                                               }
-{       Contributors:                                                          }
+{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Author: Carlo Barazzetta                                                    }
+{  Contributors:                                                               }
 {                                                                              }
-{       https://github.com/EtheaDev/StyledComponents                           }
+{  https://github.com/EtheaDev/StyledComponents                                }
 {                                                                              }
 {******************************************************************************}
 {                                                                              }

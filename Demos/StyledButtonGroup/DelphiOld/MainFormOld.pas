@@ -1,13 +1,13 @@
 {******************************************************************************}
 {                                                                              }
-{       TStyledButtonGroup Demo                                                }
-{       Comparison TStyledButtonGroup with TButtonGroup                        }
+{  TStyledButtonGroup Demo                                                     }
+{  Comparison TStyledButtonGroup with TButtonGroup                             }
 {                                                                              }
-{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
-{       Author: Carlo Barazzetta                                               }
-{       Contributors:                                                          }
+{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Author: Carlo Barazzetta                                                    }
+{  Contributors:                                                               }
 {                                                                              }
-{       https://github.com/EtheaDev/StyledComponents                           }
+{  https://github.com/EtheaDev/StyledComponents                                }
 {                                                                              }
 {******************************************************************************}
 {                                                                              }
@@ -59,12 +59,6 @@ type
     tbHeight: TTrackBar;
     ShowCaptionCheckBox: TCheckBox;
     FullSizeCheckBox: TCheckBox;
-    PopupMenu: TPopupMenu;
-    New1: TMenuItem;
-    Open1: TMenuItem;
-    Save1: TMenuItem;
-    SaveAs1: TMenuItem;
-    Exit1: TMenuItem;
     Panel1: TPanel;
     cbChangeStyle: TComboBox;
     StyleLabel: TLabel;
@@ -79,7 +73,6 @@ type
     procedure FormCreate(Sender: TObject);
     procedure CreateButtonClick(Sender: TObject);
     procedure UpdateButtonGroups(Sender: TObject);
-    procedure PopUpMenuClick(Sender: TObject);
     procedure cbChangeStyleSelect(Sender: TObject);
     procedure ButtonGroupButtonClicked(Sender: TObject; Index: Integer);
     procedure cbCaptionAlignmentSelect(Sender: TObject);
@@ -219,8 +212,6 @@ begin
 end;
 
 procedure TfmMain.CreateButtonGroups;
-var
-  LButton: TGrpButtonItem;
 begin
   //Create Standard ButtonGroup
   CreateButtonGroup;
@@ -256,11 +247,6 @@ begin
   BuildCaptionAligmentList;
   BuildImageAlignment;
   ShowCaptionCheckBox.Checked := BUTTONGROUP_SHOW_CAPTIONS;
-end;
-
-procedure TfmMain.PopUpMenuClick(Sender: TObject);
-begin
-  ShowMessage((Sender as TMenuItem).Caption);
 end;
 
 procedure TfmMain.ButtonGroupButtonClicked(Sender: TObject; Index: Integer);

@@ -1,13 +1,13 @@
 {******************************************************************************}
 {                                                                              }
-{       Standard Button Family: implementation of "standard" Family            }
-{       attributes for StyledButton similar to VCL Styled Buttons              }
+{  Standard Button Family: implementation of "standard" Family                 }
+{  attributes for StyledButton similar to VCL Styled Buttons                   }
 {                                                                              }
-{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
-{       Author: Carlo Barazzetta                                               }
-{       Contributors: Ariel Montes                                             }
+{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Author: Carlo Barazzetta                                                    }
+{  Contributors: Ariel Montes                                                  }
 {                                                                              }
-{       https://github.com/EtheaDev/StyledComponents                           }
+{  https://github.com/EtheaDev/StyledComponents                                }
 {                                                                              }
 {******************************************************************************}
 {                                                                              }

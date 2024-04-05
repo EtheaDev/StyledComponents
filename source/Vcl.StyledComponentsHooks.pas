@@ -1,13 +1,13 @@
 {******************************************************************************}
 {                                                                              }
-{       StyledComponentsHooks: an interposer Unit to use Styled Components     }
-{       using Standard Delphi Controls Class Names                             }
+{  StyledComponentsHooks: an interposer Unit to use Styled Components          }
+{  using Standard Delphi Controls Class Names                                  }
 {                                                                              }
-{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
-{       Author: Carlo Barazzetta                                               }
-{       Contributors:                                                          }
+{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Author: Carlo Barazzetta                                                    }
+{  Contributors:                                                               }
 {                                                                              }
-{       https://github.com/EtheaDev/StyledComponents                           }
+{  https://github.com/EtheaDev/StyledComponents                                }
 {                                                                              }
 {******************************************************************************}
 {                                                                              }
@@ -35,6 +35,7 @@ uses
   , Vcl.StyledDbNavigator
   , Vcl.StyledToolbar
   , Vcl.StyledButtonGroup
+  , Vcl.StyledCategoryButtons
   ;
 
 type
@@ -61,6 +62,9 @@ type
 
   //Interposer Class for TButtonGroup -> TStyledButtonGroup
   TButtonGroup = class(TStyledButtonGroup) end;
+
+  //Interposer Class for TCategoryButtons -> TStyledCategoryButtons
+  TCategoryButtons = class(TStyledCategoryButtons) end;
 
 implementation
 

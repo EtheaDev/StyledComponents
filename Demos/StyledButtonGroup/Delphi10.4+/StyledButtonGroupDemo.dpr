@@ -45,7 +45,7 @@ begin
   //Example to define a default Rendering Style for Styled Buttons
   //TStyledButtonGroup.RegisterDefaultRenderingStyle(btRounded);
 
-  Application.CreateForm(TfmMain, fmMain);
   Application.CreateForm(TdmResources, dmResources);
+  Application.CreateForm(TfmMain, fmMain);
   Application.Run;
 end.

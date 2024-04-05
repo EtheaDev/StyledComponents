@@ -266,31 +266,8 @@ object fmMain: TfmMain
     TabOrder = 3
     OnButtonClicked = ButtonGroupButtonClicked
   end
-  object PopupMenu: TPopupMenu
-    Left = 525
-    Top = 275
-    object New1: TMenuItem
-      Caption = '&New'
-      OnClick = PopUpMenuClick
-    end
-    object Open1: TMenuItem
-      Caption = '&Open...'
-      OnClick = PopUpMenuClick
-    end
-    object Save1: TMenuItem
-      Caption = '&Save'
-      OnClick = PopUpMenuClick
-    end
-    object SaveAs1: TMenuItem
-      Caption = 'Save &As...'
-      OnClick = PopUpMenuClick
-    end
-    object Exit1: TMenuItem
-      Caption = 'E&xit'
-      OnClick = PopUpMenuClick
-    end
-  end
   object ActionList: TActionList
+    Images = ImageList32
     Left = 472
     Top = 168
     object acFileOpen: TFileOpen
@@ -309,7 +286,7 @@ object fmMain: TfmMain
     Left = 476
     Top = 274
     Bitmap = {
-      494C01011800B000A40020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01011800B000AC0020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000080000000E0000000010020000000000000C0
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

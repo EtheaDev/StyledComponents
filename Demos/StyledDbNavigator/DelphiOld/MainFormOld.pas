@@ -1,13 +1,13 @@
 {******************************************************************************}
 {                                                                              }
-{       TStyledDbNavigator and TStyledBindNavigator Test                       }
-{       Compared to TDbNavigator and TBindNavigator                            }
+{  TStyledDbNavigator and TStyledBindNavigator Test                            }
+{  Compared to TDbNavigator and TBindNavigator                                 }
 {                                                                              }
-{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
-{       Author: Carlo Barazzetta                                               }
-{       Contributors:                                                          }
+{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Author: Carlo Barazzetta                                                    }
+{  Contributors:                                                               }
 {                                                                              }
-{       https://github.com/EtheaDev/StyledComponents                           }
+{  https://github.com/EtheaDev/StyledComponents                                }
 {                                                                              }
 {******************************************************************************}
 {                                                                              }
@@ -38,7 +38,8 @@ uses
   Data.Bind.Components, Data.Bind.DBScope, Vcl.Bind.Navigator,
   Vcl.StyledButton, Vcl.ButtonStylesAttributes,
   Vcl.StandardButtonStyles, Vcl.AngularButtonStyles,
-  Vcl.BootstrapButtonStyles, Vcl.ColorButtonStyles, Vcl.StyledDbNavigator;
+  Vcl.BootstrapButtonStyles, Vcl.ColorButtonStyles, Vcl.StyledDbNavigator,
+  System.ImageList, Vcl.VirtualImageList;
 
 const
   //Params to check
