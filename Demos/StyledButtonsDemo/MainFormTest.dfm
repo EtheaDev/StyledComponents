@@ -2,7 +2,7 @@ object TestMainForm: TTestMainForm
   Left = 0
   Top = 0
   Caption = 'Styled Button Test (c) Copyright Ethea S.r.l.'
-  ClientHeight = 641
+  ClientHeight = 681
   ClientWidth = 988
   Color = clWindow
   Font.Charset = DEFAULT_CHARSET
@@ -19,7 +19,7 @@ object TestMainForm: TTestMainForm
   object TopPanel: TPanel
     Left = 0
     Top = 0
-    Width = 984
+    Width = 988
     Height = 65
     Align = alTop
     Color = clGray
@@ -119,17 +119,19 @@ object TestMainForm: TTestMainForm
     Left = 0
     Top = 65
     Width = 489
-    Height = 575
+    Height = 616
     Align = alLeft
     TabOrder = 1
+    ExplicitHeight = 576
     object LeftScrollBox: TScrollBox
       Left = 1
       Top = 25
       Width = 487
-      Height = 549
+      Height = 590
       Align = alClient
       TabOrder = 0
       OnMouseWheel = ScrollBoxMouseWheel
+      ExplicitHeight = 550
     end
     object Panel1: TPanel
       Left = 1
@@ -144,23 +146,25 @@ object TestMainForm: TTestMainForm
   object RightPanel: TPanel
     Left = 489
     Top = 65
-    Width = 495
-    Height = 575
+    Width = 499
+    Height = 616
     Align = alClient
     TabOrder = 2
+    ExplicitHeight = 576
     object RightScrollBox: TScrollBox
       Left = 1
       Top = 25
-      Width = 493
-      Height = 549
+      Width = 497
+      Height = 590
       Align = alClient
       TabOrder = 0
       OnMouseWheel = ScrollBoxMouseWheel
+      ExplicitHeight = 550
     end
     object TopRightPanel: TPanel
       Left = 1
       Top = 1
-      Width = 493
+      Width = 497
       Height = 24
       Align = alTop
       Caption = 

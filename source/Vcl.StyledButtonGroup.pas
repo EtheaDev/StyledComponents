@@ -823,9 +823,6 @@ begin
       FButtonStyleSelected,
       FButtonStyleHot,
       FButtonStyleDisabled);
-
-    if not FCustomDrawType then
-      FStyleDrawType := FButtonStyleNormal.DrawType;
   end;
   StyleClass := LStyleClass;
   StyleAppearance := LStyleAppearance;
@@ -930,9 +927,6 @@ begin
       FButtonStyleSelected,
       FButtonStyleHot,
       FButtonStyleDisabled);
-
-    if not FCustomDrawType then
-      FStyleDrawType := FButtonStyleNormal.DrawType;
   end;
   Invalidate;
 end;

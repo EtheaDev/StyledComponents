@@ -99,6 +99,8 @@ type
     function GetWrap: Boolean;
     procedure SetWrap(const AValue: Boolean);
     procedure UpdateGroupIndex;
+    function GetStyleDrawType: TStyledButtonDrawType;
+    procedure SetStyleDrawType(const AValue: TStyledButtonDrawType);
   protected
     FToolBar: TStyledToolBar;
     function GetCaption: TCaption; override;
@@ -190,7 +192,7 @@ type
     property Tag;
     //StyledComponents Attributes
     property StyleRadius stored IsCustomRadius;
-    property StyleDrawType stored IsCustomDrawType;
+    property StyleDrawType: TStyledButtonDrawType read GetStyleDrawType write SetStyleDrawType stored IsCustomDrawType;
     property StyleFamily stored IsStoredStyleFamily;
     property StyleClass stored IsStoredStyleClass;
     property StyleAppearance stored IsStoredStyleAppearance;
@@ -562,6 +564,11 @@ begin
     Result := FToolBar.FButtons.IndexOf(Self)
   else
     Result := -1;
+end;
+
+function TStyledToolButton.GetStyleDrawType: TStyledButtonDrawType;
+begin
+  Result := inherited StyleDrawType;
 end;
 
 function TStyledToolButton.GetText: TCaption;
@@ -944,9 +951,17 @@ begin
     if IsSeparator <> WasSeparator then
     begin
       Width := DEFAULT_SEP_WIDTH;
+      StyleDrawType := StyleDrawType;
     end;
     UpdateButtonContent;
   end;
+end;
+
+procedure TStyledToolButton.SetStyleDrawType(
+  const AValue: TStyledButtonDrawType);
+begin
+  if not IsSeparator then
+    inherited StyleDrawType := AValue;
 end;
 
 procedure TStyledToolButton.SetToolBar(AToolBar: TStyledToolBar);
@@ -1640,13 +1655,6 @@ begin
         LAttributesOther,
         LAttributesOther,
         LAttributesOther);
-(*
-      if not FCustomDrawType then
-      begin
-        FStyleDrawType := LAttributesNormal.DrawType;
-        FCustomDrawType := False;
-      end;
-*)
     finally
       LAttributesNormal.Free;
       LAttributesOther.Free;

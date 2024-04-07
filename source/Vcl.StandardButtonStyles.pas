@@ -607,6 +607,18 @@ begin
     RegisterThemeAttributes('Zircon SE',ttLight,clBlack,clBlack,
       htmlToColor('#e5e8e9'),htmlToColor('#a0d4de'),
       htmlToColor('#e5e8e9'),htmlToColor('#a0d4de'),btRoundRect);
+    RegisterThemeAttributes('Windows11 Impressive Dark',ttDark,clWhite,clWhite,
+      htmlToColor('#3F506D'),htmlToColor('#5172EF'),
+      htmlToColor('#3F506D'),htmlToColor('#5172EF'),btRoundRect);
+    RegisterThemeAttributes('Windows11 Impressive Dark SE',ttDark,clWhite,clWhite,
+      htmlToColor('#3F506D'),htmlToColor('#5172EF'),
+      htmlToColor('#3F506D'),htmlToColor('#5172EF'),btRoundRect);
+    RegisterThemeAttributes('Windows11 Impressive Light',ttLight,clBlack,clWhite,
+      htmlToColor('#CAD4E6'),htmlToColor('#5172EF'),
+      htmlToColor('#CAD4E6'),htmlToColor('#5172EF'),btRoundRect);
+    RegisterThemeAttributes('Windows11 Impressive Light SE',ttLight,clBlack,clWhite,
+      htmlToColor('#CAD4E6'),htmlToColor('#5172EF'),
+      htmlToColor('#CAD4E6'),htmlToColor('#5172EF'),btRoundRect);
   end;
 
   //IDE Styled
