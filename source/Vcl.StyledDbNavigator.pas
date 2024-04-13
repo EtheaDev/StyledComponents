@@ -167,7 +167,7 @@ type
     FButtonImages: TVirtualImageList;
 
     //Internal ImageList and Collection for standard images
-    FButtonsImageCollection: TImageCollection;
+    class var FButtonsImageCollection: TImageCollection;
     class constructor Create;
     class destructor Destroy;
 
