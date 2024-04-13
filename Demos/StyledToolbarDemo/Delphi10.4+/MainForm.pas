@@ -42,7 +42,7 @@ const
   SHOW_CAPTIONS = True;
   BUTTON_WIDTH = 60;
   BUTTON_HEIGHT = 60;
-  TOOLBAR_AUTOSIZE = True;
+  TOOLBAR_AUTOSIZE = False;
 
 type
   TfmMain = class(TForm)
@@ -190,7 +190,7 @@ begin
   FStyledToolBar.ButtonWidth := BUTTON_WIDTH;
   FStyledToolBar.ButtonHeight := BUTTON_HEIGHT;
   if not FStyledToolBar.AutoSize then
-    FStyledToolBar.Height := BUTTON_HEIGHT;
+    FStyledToolBar.Height := Round(BUTTON_HEIGHT * ScaleFactor);
   FStyledToolBar.OnClick := ToolBarClick;
 end;
 
@@ -208,7 +208,7 @@ begin
   FToolBar.ButtonWidth := BUTTON_WIDTH;
   FToolBar.ButtonHeight := BUTTON_HEIGHT;
   if not FToolBar.AutoSize then
-    FToolBar.Height := BUTTON_HEIGHT;
+    FToolBar.Height := Round(BUTTON_HEIGHT * ScaleFactor);
   FToolBar.OnClick := ToolBarClick;
 end;
 
@@ -299,8 +299,8 @@ begin
   begin
     FStyledToolBar.Flat := FlatCheckBox.Checked;
     FStyledToolBar.ShowCaptions := ShowCaptionCheckBox.Checked;
-    FStyledToolBar.ButtonWidth := tbWidth.Position;
-    FStyledToolBar.ButtonHeight := tbHeight.Position;
+    FStyledToolBar.ButtonWidth := Round(tbWidth.Position * ScaleFactor);
+    FStyledToolBar.ButtonHeight := Round(tbHeight.Position * ScaleFactor);
     FStyledToolBar.List := ListCheckBox.Checked;
   end;
   if Assigned(FToolBar) then

@@ -53,7 +53,7 @@ uses
   ;
 
 const
-  StyledButtonsVersion = '3.4.1';
+  StyledButtonsVersion = '3.4.3';
 
 resourcestring
   ERROR_SETTING_BUTTON_STYLE = 'Error setting Button Style: %s/%s/%s not available';
@@ -514,12 +514,14 @@ type
     {$IFDEF D10_4+}
     FImageName: TImageName;
     {$ENDIF}
-    class var _DefaultStyleDrawType: TStyledButtonDrawType;
-    class var _UseCustomDrawType: Boolean;
-    class var _DefaultFamily: TStyledButtonFamily;
-    class var _DefaultClass: TStyledButtonClass;
-    class var _DefaultAppearance: TStyledButtonAppearance;
-    class var _DefaultStyleRadius: Integer;
+
+    class var
+    _DefaultStyleDrawType: TStyledButtonDrawType;
+     _UseCustomDrawType: Boolean;
+     _DefaultFamily: TStyledButtonFamily;
+     _DefaultClass: TStyledButtonClass;
+     _DefaultAppearance: TStyledButtonAppearance;
+     _DefaultStyleRadius: Integer;
 
     //Event Handlers passed to Render
     procedure ControlFont(var AValue: TFont);
@@ -968,12 +970,13 @@ type
     {$IFDEF D10_4+}
     FImageName: TImageName;
     {$ENDIF}
-    class var _DefaultStyleDrawType: TStyledButtonDrawType;
-    class var _UseCustomDrawType: Boolean;
-    class var _DefaultFamily: TStyledButtonFamily;
-    class var _DefaultClass: TStyledButtonClass;
-    class var _DefaultAppearance: TStyledButtonAppearance;
-    class var _DefaultStyleRadius: Integer;
+    class var
+    _DefaultStyleDrawType: TStyledButtonDrawType;
+    _UseCustomDrawType: Boolean;
+    _DefaultFamily: TStyledButtonFamily;
+    _DefaultClass: TStyledButtonClass;
+    _DefaultAppearance: TStyledButtonAppearance;
+    _DefaultStyleRadius: Integer;
 
     //Event Handlers passed to Render
     procedure ControlFont(var AValue: TFont);

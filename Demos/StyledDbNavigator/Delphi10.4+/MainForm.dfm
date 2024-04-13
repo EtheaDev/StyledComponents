@@ -21,8 +21,6 @@ object fmMain: TfmMain
     Height = 79
     Align = alBottom
     TabOrder = 0
-    ExplicitTop = 419
-    ExplicitWidth = 729
     object LeftPanel: TPanel
       Left = 1
       Top = 1
@@ -62,7 +60,6 @@ object fmMain: TfmMain
       BevelOuter = bvNone
       TabOrder = 1
       Visible = False
-      ExplicitWidth = 543
       object WidthLabel: TLabel
         Left = 20
         Top = 15
@@ -139,8 +136,6 @@ object fmMain: TfmMain
     Height = 220
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 729
-    ExplicitHeight = 219
     object DBGrid1: TDBGrid
       Left = 1
       Top = 1
@@ -163,8 +158,6 @@ object fmMain: TfmMain
     Height = 33
     Align = alBottom
     TabOrder = 2
-    ExplicitTop = 498
-    ExplicitWidth = 729
     object StyleLabel: TLabel
       Left = 11
       Top = 9
@@ -191,7 +184,6 @@ object fmMain: TfmMain
     VisibleButtons = [nbInsert, nbDelete, nbEdit, nbPost, nbCancel, nbRefresh, nbApplyUpdates, nbCancelUpdates]
     Align = alTop
     TabOrder = 3
-    ExplicitWidth = 729
   end
   object StyledDBNavigator: TStyledDbNavigator
     Left = 0
@@ -202,7 +194,6 @@ object fmMain: TfmMain
     DataSource = DataSource
     TabOrder = 6
     VisibleButtons = [nbInsert, nbDelete, nbEdit, nbPost, nbCancel, nbRefresh, nbApplyUpdates, nbCancelUpdates]
-    ExplicitWidth = 729
   end
   object StyledBindNavigator: TStyledBindNavigator
     Left = 0
@@ -214,7 +205,6 @@ object fmMain: TfmMain
     Flat = True
     TabOrder = 4
     VisibleButtons = [nbInsert, nbDelete, nbEdit, nbPost, nbCancel, nbRefresh, nbApplyUpdates, nbCancelUpdates]
-    ExplicitWidth = 729
   end
   object BindNavigator: TBindNavigator
     Left = 0
@@ -227,7 +217,6 @@ object fmMain: TfmMain
     Flat = True
     Orientation = orHorizontal
     TabOrder = 5
-    ExplicitWidth = 729
   end
   object PopupMenu: TPopupMenu
     Left = 525

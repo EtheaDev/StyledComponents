@@ -31,7 +31,6 @@ object fmMain: TfmMain
     TabStop = True
     OnClick = ToolBarClick
     OnMouseEnter = ToolBarMouseEnter
-    ExplicitWidth = 735
     object ToolButton2: TToolButton
       Left = 0
       Top = 0
@@ -134,21 +133,13 @@ object fmMain: TfmMain
     ButtonWidth = 77
     Caption = 'StyledToolBar Caption'
     Flat = False
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -12
-    Font.Name = 'Segoe UI'
-    Font.Style = []
     Images = VirtualImageList
     Indent = 3
-    ParentFont = False
     ShowCaptions = True
     TabOrder = 0
-    Wrapable = False
     OnClick = ToolBarClick
     OnMouseEnter = StyledToolbarMouseEnter
     StyleRadius = 30
-    ExplicitWidth = 735
     object StyledToolButton1: TStyledToolButton
       Left = 0
       Top = 0
@@ -221,7 +212,7 @@ object fmMain: TfmMain
     end
     object Edit2: TEdit
       AlignWithMargins = True
-      Left = 404
+      Left = 416
       Top = 3
       Width = 120
       Height = 23
@@ -229,7 +220,7 @@ object fmMain: TfmMain
       Text = 'Edit2'
     end
     object StyledToolButton7: TStyledToolButton
-      Left = 527
+      Left = 539
       Top = 0
       OnClick = ToolButtonclick
       Caption = 'Recycle Bin'
@@ -244,8 +235,6 @@ object fmMain: TfmMain
     Height = 78
     Align = alBottom
     TabOrder = 2
-    ExplicitTop = 423
-    ExplicitWidth = 741
     object LeftPanel: TPanel
       Left = 1
       Top = 1
@@ -270,7 +259,7 @@ object fmMain: TfmMain
     object BottomClientPanel: TPanel
       Left = 123
       Top = 1
-      Width = 617
+      Width = 613
       Height = 76
       Align = alClient
       BevelOuter = bvNone
@@ -352,8 +341,6 @@ object fmMain: TfmMain
     Height = 280
     Align = alClient
     TabOrder = 3
-    ExplicitWidth = 741
-    ExplicitHeight = 281
   end
   object Panel1: TPanel
     Left = 0
@@ -362,8 +349,6 @@ object fmMain: TfmMain
     Height = 33
     Align = alBottom
     TabOrder = 4
-    ExplicitTop = 501
-    ExplicitWidth = 741
     object StyleLabel: TLabel
       Left = 11
       Top = 9

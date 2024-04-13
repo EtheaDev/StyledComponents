@@ -33,8 +33,7 @@ uses
   Vcl.StyledDbNavigator,
   Vcl.BootstrapButtonStyles,
   Vcl.ButtonStylesAttributes,
-  MainForm in 'MainForm.pas' {fmMain},
-  DResources in 'DResources.pas' {dmResources: TDataModule};
+  MainForm in 'MainForm.pas' {fmMain};
 
 {$R *.res}
 
@@ -49,6 +48,5 @@ begin
   //  BOOTSTRAP_FAMILY, btn_warning, BOOTSTRAP_NORMAL, 20);
 
   Application.CreateForm(TfmMain, fmMain);
-  Application.CreateForm(TdmResources, dmResources);
   Application.Run;
 end.

@@ -252,15 +252,16 @@ type
     FStyleAppearance: TStyledButtonAppearance;
     FCustomDrawType: Boolean;
     FStyleApplied: Boolean;
-    FDisableAlign: Boolean;
+    FDisableButtonAlign: Integer;
     FOnToolButtonClick: TNotifyEvent;
 
-    class var _DefaultStyleDrawType: TStyledButtonDrawType;
-    class var _UseCustomDrawType: Boolean;
-    class var _DefaultFamily: TStyledButtonFamily;
-    class var _DefaultClass: TStyledButtonClass;
-    class var _DefaultAppearance: TStyledButtonAppearance;
-    class var _DefaultStyleRadius: Integer;
+    class var
+    _DefaultStyleDrawType: TStyledButtonDrawType;
+    _UseCustomDrawType: Boolean;
+    _DefaultFamily: TStyledButtonFamily;
+    _DefaultClass: TStyledButtonClass;
+    _DefaultAppearance: TStyledButtonAppearance;
+    _DefaultStyleRadius: Integer;
 
     function ControlsWidth: Integer;
     function ControlsHeight: Integer;
@@ -320,7 +321,13 @@ type
     function GetAutoWrap: Boolean;
     function GetAutoSize: Boolean;
     procedure SetTransparent(const AValue: Boolean);
+    function GetDisableButtonAlign: Boolean;
+    procedure SetDisableButtonAlign(const AValue: Boolean);
+    property DisableButtonAlign: Boolean read GetDisableButtonAlign write SetDisableButtonAlign;
   protected
+    {$IFDEF D10_1+}
+    procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
+    {$ENDIF}
     procedure SetAutoSize(AValue: Boolean); override;
     procedure Notification(AComponent: TComponent; AOperation: TOperation); override;
     function TrackMenu(Button: TStyledToolButton): Boolean; dynamic;
@@ -462,7 +469,7 @@ uses
   ;
 
 const
-  DEFAULT_SEP_WIDTH = 8;
+  DEFAULT_SEP_WIDTH = 6;
   DEFAULT_TOOLBUTTON_WIDTH = 23;
   DEFAULT_TOOLBUTTON_HEIGHT = 22;
   DEFAULT_IMAGE_HMARGIN = 8;
@@ -990,7 +997,7 @@ begin
   if (csLoading in ComponentState) and (AComponent is TStyledToolBar) then
   begin
     if IsSeparator then
-      W := Width else
+      W := DEFAULT_SEP_WIDTH else
       W := TStyledToolBar(AComponent).ButtonWidth;
     SetBounds(Left, Top, W, TStyledToolBar(AComponent).ButtonHeight);
   end;
@@ -1012,6 +1019,16 @@ begin
   FInMenuLoop := False;
   FCaptureChangeCancels := False;
 end;
+
+{$IFDEF D10_1+}
+procedure TStyledToolbar.ChangeScale(M, D: Integer; isDpiChange: Boolean);
+begin
+  FButtonWidth := MulDiv(FButtonWidth, M, D);
+  FButtonHeight := MulDiv(FButtonHeight, M, D);
+  inherited ChangeScale(M, D, isDpiChange);
+end;
+{$ENDIF}
+
 
 procedure TStyledToolbar.ClearButtons;
 var
@@ -1384,6 +1401,14 @@ begin
   end;
 end;
 
+procedure TStyledToolbar.SetDisableButtonAlign(const AValue: Boolean);
+begin
+  if AValue then
+    Inc(FDisableButtonAlign)
+  else
+    Dec(FDisableButtonAlign);
+end;
+
 procedure TStyledToolbar.SetDisabledImages(const AValue: TCustomImageList);
 begin
   if FDisabledImages <> AValue then
@@ -1606,7 +1631,7 @@ var
   I: Integer;
   LButton, LSourceButton, LTargetButton: TStyledToolButton;
 begin
-  if (AControl is TStyledToolButton) and not FDisableAlign then
+  if (AControl is TStyledToolButton) and not DisableButtonAlign then
   begin
     //Move Button selected in new position
     LSourceButton := TStyledToolButton(AControl);
@@ -1840,6 +1865,11 @@ begin
   end;
 end;
 
+function TStyledToolbar.GetDisableButtonAlign: Boolean;
+begin
+  Result := FDisableButtonAlign > 0;
+end;
+
 function TStyledToolbar.GetEdgeBorders: TEdgeBorders;
 
 begin
@@ -1896,7 +1926,7 @@ begin
   if (csLoading in ComponentState) then
     Exit;
 
-  FDisableAlign := True;
+  DisableButtonAlign := True;
   try
     if (FButtonHeight <> 0) and (FButtonWidth <> 0) and
       (FUpdateCount = 0) then
@@ -1926,7 +1956,7 @@ begin
       end;
     end;
   finally
-    FDisableAlign := False;
+    DisableButtonAlign := False;
   end;
 end;
 
@@ -2093,7 +2123,7 @@ var
   LLastControl: TControl;
 begin
   Result := False;
-  FDisableAlign := True;
+  DisableButtonAlign := True;
   try
     if Assigned(FOnCustomizeNewButton) then
     begin
@@ -2130,7 +2160,7 @@ begin
       end;
     end;
   finally
-    FDisableAlign := False;
+    DisableButtonAlign := False;
   end;
 end;
 

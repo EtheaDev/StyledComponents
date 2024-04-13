@@ -143,7 +143,8 @@ begin
   FStyledDbNavigator.Kind := DBNAV_KIND;
   FStyledDbNavigator.Height := DBNAV_HEIGHT;
   FStyledDbNavigator.Width := DBNAV_WIDTH;
-  FStyledDbNavigator.VisibleButtons := [TNavigateBtn.nbFirst, TNavigateBtn.nbPrior, TNavigateBtn.nbNext, TNavigateBtn.nbLast];
+  FStyledDbNavigator.VisibleButtons :=
+    [TNavigateBtn.nbFirst, TNavigateBtn.nbPrior, TNavigateBtn.nbNext, TNavigateBtn.nbLast];
   FStyledDbNavigator.DataSource := DataSource;
   FStyledDbNavigator.Parent := Self;
 end;
@@ -198,7 +199,7 @@ end;
 procedure TfmMain.CreateDbNavigators;
 begin
   //Create Standard DbNavigator
-  //CreateDbNavigator;
+  CreateDbNavigator;
 
   //Create Styled DbNavigator
   CreateStyledDbNavigator;
@@ -231,41 +232,45 @@ begin
 end;
 
 procedure TfmMain.UpdateDbNav(Sender: TObject);
+var
+  LWidth, LHeight: Integer;
 begin
+  LWidth := Round(tbWidth.Position * ScaleFactor);
+  LHeight := Round(tbHeight.Position * ScaleFactor);
   if Assigned(FStyledDbNavigator) then
   begin
     FStyledDbNavigator.Flat := FlatCheckBox.Checked;
     FStyledDbNavigator.ShowCaptions := ShowCaptionsCheckBox.Checked;
-    FStyledDbNavigator.Height := tbHeight.Position;
-    FStyledDbNavigator.Width := tbWidth.Position;
+    FStyledDbNavigator.Height := LWidth;
+    FStyledDbNavigator.Width := LWidth;
   end;
   if Assigned(FStyledBindNavigator) then
   begin
     FStyledBindNavigator.Flat := FlatCheckBox.Checked;
     FStyledBindNavigator.ShowCaptions := ShowCaptionsCheckBox.Checked;
-    FStyledBindNavigator.Height := tbHeight.Position;
-    FStyledBindNavigator.Width := tbWidth.Position;
+    FStyledBindNavigator.Height := LWidth;
+    FStyledBindNavigator.Width := LWidth;
   end;
   if Assigned(FDbNavigator) then
   begin
     FDbNavigator.Flat := FlatCheckBox.Checked;
-    FDbNavigator.Width := tbWidth.Position;
-    FDbNavigator.Height := tbHeight.Position;
+    FDbNavigator.Width := LWidth;
+    FDbNavigator.Height := LHeight;
   end;
   DbNavigator.Flat := FlatCheckBox.Checked;
-  DbNavigator.Width := tbWidth.Position;
-  DbNavigator.Height := tbHeight.Position;
+  DbNavigator.Width := LWidth;
+  DbNavigator.Height := LHeight;
   BindNavigator.Flat := FlatCheckBox.Checked;
-  BindNavigator.Width := tbWidth.Position;
-  BindNavigator.Height := tbHeight.Position;
+  BindNavigator.Width := LWidth;
+  BindNavigator.Height := LHeight;
   StyledDbNavigator.Flat := FlatCheckBox.Checked;
   StyledDbNavigator.ShowCaptions := ShowCaptionsCheckBox.Checked;
-  StyledDbNavigator.Height := tbHeight.Position;
-  StyledDbNavigator.Width := tbWidth.Position;
+  StyledDbNavigator.Height := LHeight;
+  StyledDbNavigator.Width := LWidth;
   StyledBindNavigator.Flat := FlatCheckBox.Checked;
   StyledBindNavigator.ShowCaptions := ShowCaptionsCheckBox.Checked;
-  StyledBindNavigator.Height := tbHeight.Position;
-  StyledBindNavigator.Width := tbWidth.Position;
+  StyledBindNavigator.Height := LHeight;
+  StyledBindNavigator.Width := LWidth;
 end;
 
 procedure TfmMain.BuildStyleList;
