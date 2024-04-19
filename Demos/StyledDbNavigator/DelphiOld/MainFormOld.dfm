@@ -134,8 +134,8 @@ object fmMain: TfmMain
   object ClientPanel: TPanel
     Left = 0
     Top = 200
-    Width = 733
-    Height = 220
+    Width = 737
+    Height = 221
     Align = alClient
     TabOrder = 1
     object DBGrid1: TDBGrid
@@ -155,8 +155,8 @@ object fmMain: TfmMain
   end
   object Panel1: TPanel
     Left = 0
-    Top = 499
-    Width = 733
+    Top = 500
+    Width = 737
     Height = 33
     Align = alBottom
     TabOrder = 2
@@ -180,7 +180,7 @@ object fmMain: TfmMain
   object DBNavigator: TDBNavigator
     Left = 0
     Top = 0
-    Width = 733
+    Width = 737
     Height = 50
     DataSource = DataSource
     VisibleButtons = [nbInsert, nbDelete, nbEdit, nbPost, nbCancel, nbRefresh, nbApplyUpdates, nbCancelUpdates]
@@ -189,8 +189,8 @@ object fmMain: TfmMain
   end
   object StyledDBNavigator: TStyledDbNavigator
     Left = 0
-    Top = 94
-    Width = 733
+    Top = 100
+    Width = 737
     Height = 50
     Align = alTop
     DataSource = DataSource
@@ -200,7 +200,7 @@ object fmMain: TfmMain
   object StyledBindNavigator: TStyledBindNavigator
     Left = 0
     Top = 150
-    Width = 733
+    Width = 737
     Height = 50
     Align = alTop
     DataSource = BindSourceDB
@@ -211,7 +211,7 @@ object fmMain: TfmMain
   object BindNavigator: TBindNavigator
     Left = 0
     Top = 50
-    Width = 733
+    Width = 737
     Height = 50
     DataSource = BindSourceDB
     VisibleButtons = [nbInsert, nbDelete, nbEdit, nbPost, nbCancel, nbRefresh, nbApplyUpdates, nbCancelUpdates]
@@ -245,6 +245,11 @@ object fmMain: TfmMain
     end
   end
   object ClientDataSet: TClientDataSet
+    Active = True
+    Aggregates = <>
+    Params = <>
+    Left = 152
+    Top = 192
     Data = {
       60F100009619E0BD01000000180000000900E803000003000000183002494404
       0001001200010007535542545950450200490008004175746F696E63000A4375
@@ -2178,11 +2183,6 @@ object fmMain: TfmMain
       064D617374657200000000D071F3400100000004004000E80300000D00000007
       00000000003848A8BACC420044D1A75F40CB420456697361000000000038E840
       01000000}
-    Active = True
-    Aggregates = <>
-    Params = <>
-    Left = 152
-    Top = 192
     object ClientDataSetID: TAutoIncField
       FieldName = 'ID'
       ReadOnly = True
@@ -2234,7 +2234,7 @@ object fmMain: TfmMain
     Left = 476
     Top = 274
     Bitmap = {
-      494C01010C00B000080020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01010C00B0000C0020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000008000000001002000000000000000
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

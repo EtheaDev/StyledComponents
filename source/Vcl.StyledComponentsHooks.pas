@@ -66,6 +66,9 @@ type
   //Interposer Class for TCategoryButtons -> TStyledCategoryButtons
   TCategoryButtons = class(TStyledCategoryButtons) end;
 
+  //Interposer Class for TButtonCategory -> TStyledButtonCategory
+  TButtonCategory = class(TStyledButtonCategory) end;
+
 implementation
 
 end.

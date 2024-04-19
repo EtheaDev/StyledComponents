@@ -53,7 +53,7 @@ uses
   ;
 
 const
-  StyledButtonsVersion = '3.4.3';
+  StyledButtonsVersion = '3.4.4';
 
 resourcestring
   ERROR_SETTING_BUTTON_STYLE = 'Error setting Button Style: %s/%s/%s not available';
@@ -300,6 +300,8 @@ type
     function CalcImageRect(const ASurfaceRect: TRect;
       const AImageWidth, AImageHeight: Integer): TRect;
     procedure InternalCopyImage(Image: TBitmap; ImageList: TCustomImageList; Index: Integer);
+    function GetInternalImage(out AImageList: TCustomImageList;
+      out AImageIndex: Integer): Boolean;
   public
     function GetImageSize(out AWidth, AHeight: Integer;
       out AImageList: TCustomImageList; out AImageIndex: Integer): Boolean; virtual;
@@ -2035,6 +2037,21 @@ begin
 end;
 
 function TStyledButtonRender.GetImage(out AImageList: TCustomImageList;
+  out AImageIndex: Integer): Boolean;
+begin
+  if (FOwnerControl is TCustomStyledButton) then
+    Result := TCustomStyledButton(FOwnerControl).GetImage(AImageList, AImageIndex)
+  else if (FOwnerControl is TCustomStyledGraphicButton) then
+    Result := TCustomStyledGraphicButton(FOwnerControl).GetImage(AImageList, AImageIndex)
+  else
+  begin
+    AImageList := nil;
+    AImageIndex := -1;
+    Result := False;
+  end;
+end;
+
+function TStyledButtonRender.GetInternalImage(out AImageList: TCustomImageList;
   out AImageIndex: Integer): Boolean;
 begin
   case ButtonState of
@@ -4101,7 +4118,7 @@ end;
 function TCustomStyledGraphicButton.GetImage(out AImageList: TCustomImageList;
   out AImageIndex: Integer): Boolean;
 begin
-  Result := FRender.GetImage(AImageList, AImageIndex);
+  Result := FRender.GetInternalImage(AImageList, AImageIndex);
 end;
 
 function TCustomStyledGraphicButton.GetImageAlignment: TImageAlignment;
@@ -5192,7 +5209,7 @@ end;
 function TCustomStyledButton.GetImage(out AImageList: TCustomImageList;
   out AImageIndex: Integer): Boolean;
 begin
-  Result := FRender.GetImage(AImageList, AImageIndex);
+  Result := FRender.GetInternalImage(AImageList, AImageIndex);
 end;
 
 function TCustomStyledButton.GetImageAlignment: TImageAlignment;

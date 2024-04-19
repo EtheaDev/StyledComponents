@@ -79,10 +79,13 @@ type
   TStyledButtonCategories = class(TButtonCategories)
   private
     function GetStyledCategoryButtons: TStyledCategoryButtons;
+    function GetItem(Index: Integer): TStyledButtonCategory;
+    procedure SetItem(Index: Integer; const AValue: TStyledButtonCategory);
   public
     constructor Create(const CategoryButtons: TCategoryButtons); override;
     function Add: TStyledButtonCategory;
     property CategoryButtons: TStyledCategoryButtons read GetStyledCategoryButtons;
+    property Items[Index: Integer]: TStyledButtonCategory read GetItem write SetItem; default;
   end;
 
   TStyledButtonItem = class(TButtonItem)
@@ -1420,6 +1423,17 @@ end;
 constructor TStyledButtonCategories.Create(const CategoryButtons: TCategoryButtons);
 begin
   inherited Create(CategoryButtons);
+end;
+
+function TStyledButtonCategories.GetItem(Index: Integer): TStyledButtonCategory;
+begin
+  Result := inherited GetItem(Index) as TStyledButtonCategory;
+end;
+
+procedure TStyledButtonCategories.SetItem(Index: Integer;
+  const AValue: TStyledButtonCategory);
+begin
+  inherited SetItem(Index, AValue);
 end;
 
 function TStyledButtonCategories.GetStyledCategoryButtons: TStyledCategoryButtons;

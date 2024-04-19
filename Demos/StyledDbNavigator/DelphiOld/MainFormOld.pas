@@ -38,8 +38,7 @@ uses
   Data.Bind.Components, Data.Bind.DBScope, Vcl.Bind.Navigator,
   Vcl.StyledButton, Vcl.ButtonStylesAttributes,
   Vcl.StandardButtonStyles, Vcl.AngularButtonStyles,
-  Vcl.BootstrapButtonStyles, Vcl.ColorButtonStyles, Vcl.StyledDbNavigator,
-  System.ImageList, Vcl.VirtualImageList;
+  Vcl.BootstrapButtonStyles, Vcl.ColorButtonStyles, Vcl.StyledDbNavigator;
 
 const
   //Params to check
