@@ -69,6 +69,7 @@ type
 
   TGrpButtonProc = reference to procedure (Button: TStyledGrpButtonItem);
 
+  { TStyledGrpButtonItems }
   TStyledGrpButtonItems = class(TGrpButtonItems)
   private
     function GetStyledButtonGroup: TStyledButtonGroup;
@@ -78,6 +79,7 @@ type
     property ButtonGroup: TStyledButtonGroup read GetStyledButtonGroup;
   end;
 
+  { TStyledGrpButtonItem }
   TStyledGrpButtonItem = class(TGrpButtonItem)
   private
     //Styled Attributes
@@ -115,7 +117,8 @@ type
     property StyleAppearance: TStyledButtonAppearance read FStyleAppearance write SetStyleAppearance stored IsStoredStyle;
   end;
 
-
+  { TStyledButtonGroup }
+  [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledButtonGroup = class(TButtonGroup)
   private
     //StyledButton Attributes

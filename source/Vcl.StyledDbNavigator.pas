@@ -92,7 +92,6 @@ type
   TNavigatorOrientation = (orHorizontal, orVertical);
 
   { TStyledNavButton }
-
   TStyledNavButton = class(TStyledGraphicButton)
   private
     FIndex: TNavigateBtn;
@@ -124,7 +123,6 @@ type
   end;
 
   { TCustomStyledDBNavigator }
-
   TCustomStyledDBNavigator = class(TCustomPanel)
   private
     //Standard support as TDbNavigator
@@ -323,6 +321,8 @@ type
     property StyleAppearance: TStyledButtonAppearance read FStyleAppearance write SetStyleAppearance stored IsStoredStyleAppearance;
   end;
 
+  { TStyledDBNavigator }
+  [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledDBNavigator = class (TCustomStyledDBNavigator)
   private
     FDataLink: TStyledNavDataLink;
@@ -412,7 +412,7 @@ type
   end;
 
   { TStyledBindNavigator }
-
+  [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledBindNavigator = class(TCustomStyledDbNavigator, IBindNavigator)
   private
     FController: TBindNavigatorController;

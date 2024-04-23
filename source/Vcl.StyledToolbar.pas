@@ -64,6 +64,7 @@ type
   TButtonProc = reference to procedure (Button: TStyledToolButton);
   TControlProc = reference to procedure (Control: TControl);
 
+  { TStyledToolButton }
   TStyledToolButton = class(TCustomStyledGraphicButton)
   private
     FAutoSize: Boolean;
@@ -221,6 +222,8 @@ type
   TSTBButtonEvent = procedure(Sender: TStyledToolbar;
     AButton: TCustomStyledGraphicButton) of object;
 
+  { TStyledToolbar }
+  [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledToolbar = class(TCustomFlowPanel)
   private
     //Private variable of Properties

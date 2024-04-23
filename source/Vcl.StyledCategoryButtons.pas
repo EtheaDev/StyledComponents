@@ -71,11 +71,13 @@ type
 
   TButtonProc = reference to procedure (Button: TStyledButtonItem);
 
+  { TStyledButtonCategory }
   TStyledButtonCategory = class(TButtonCategory)
   public
     constructor Create(Collection: TCollection); override;
   end;
 
+  { TStyledButtonCategories }
   TStyledButtonCategories = class(TButtonCategories)
   private
     function GetStyledCategoryButtons: TStyledCategoryButtons;
@@ -88,6 +90,7 @@ type
     property Items[Index: Integer]: TStyledButtonCategory read GetItem write SetItem; default;
   end;
 
+  { TStyledButtonItem }
   TStyledButtonItem = class(TButtonItem)
   private
     FCollection: TButtonCollection;
@@ -128,6 +131,8 @@ type
   end;
 
 
+  { TStyledCategoryButtons }
+  [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledCategoryButtons = class(TCategoryButtons)
   private
     //StyledButton Attributes

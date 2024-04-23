@@ -54,6 +54,7 @@ type
   TAutoAnimationType = (AnimateOnMouseOver, AnimateOnClick, AnimateAlways, AnimateOnFocus);
   TAutoAnimationTypes = set of TAutoAnimationType;
 
+  { TStyledAnimatedButtonRender }
   TStyledAnimatedButtonRender = class(TStyledButtonRender)
   private
     FAnimationHeight: Integer;
@@ -87,6 +88,8 @@ type
     property AutoSizeAnimationMargin: Integer read FAutoSizeAnimationMargin write SetAutoSizeAnimationMargin;
   end;
 
+  { TStyledAnimatedButton }
+  [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledAnimatedButton = class(TStyledButton)
   strict private
     FSkAnimatedImage: TSkAnimatedImage;

@@ -54,6 +54,9 @@ type
 {$WARN SYMBOL_PLATFORM OFF}
 { TaskDialog based message dialog; requires Windows Vista or later }
 type
+
+  { TStyledTaskDialog }
+  [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledTaskDialog = class(TTaskDialog)
   private
     FHelpFile: string;

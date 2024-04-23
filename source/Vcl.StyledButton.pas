@@ -53,7 +53,7 @@ uses
   ;
 
 const
-  StyledButtonsVersion = '3.4.4';
+  StyledButtonsVersion = '3.4.5';
 
 resourcestring
   ERROR_SETTING_BUTTON_STYLE = 'Error setting Button Style: %s/%s/%s not available';
@@ -67,6 +67,7 @@ type
   TStyledButtonRender = class;
   TStyledButtonRenderClass = class of TStyledButtonRender;
 
+  { TGraphicButtonActionLink }
   TGraphicButtonActionLink = class(TControlActionLink)
   strict private
     function ClientRender: TStyledButtonRender;
@@ -96,6 +97,7 @@ type
   TSetParentFont = procedure (const AParentFont: Boolean) of Object;
   TGetParentFont = function: Boolean of Object;
 
+  { TStyledButtonRender }
   TStyledButtonRender = class(TObject)
   strict private
     FOwnerControl: TControl;
@@ -262,6 +264,7 @@ type
     procedure SetNumGlyphs(const AValue: TNumGlyphs);
     procedure SetFlat(const AValue: Boolean);
   private
+    FShowCaption: Boolean;
     procedure SetState(const AValue: TButtonState);
     function GetMouseInControl: Boolean;
     function GetHasCustomAttributes: Boolean;
@@ -276,6 +279,7 @@ type
     procedure SetAllowAllUp(const AValue: Boolean);
     procedure SetDown(const AValue: Boolean);
     procedure SetGroupIndex(const AValue: Integer);
+    procedure SetShowCaption(const AValue: Boolean);
     procedure UpAllButtons;
   protected
     FCustomDrawType: Boolean;
@@ -413,6 +417,7 @@ type
     property StyleApplied: Boolean read FStyleApplied write SetStyleApplied;
     property Caption: TCaption read GetText write SetText;
     property CaptionAlignment: TAlignment read FCaptionAlignment write SetCaptionAlignment;
+    property ShowCaption: Boolean read FShowCaption write SetShowCaption default True;
     property CommandLinkHint: string read FCommandLinkHint write SetCommandLinkHint;
     property Default: Boolean read FDefault write FDefault;
     property ElevationRequired: Boolean read FElevationRequired write SetElevationRequired;
@@ -509,6 +514,7 @@ type
   TStyledSpeedButton = class;
   TStyledBitBtn = class;
 
+  { TCustomStyledGraphicButton }
   TCustomStyledGraphicButton = class(TGraphicControl)
   private
     FRender: TStyledButtonRender;
@@ -657,6 +663,8 @@ type
     function GetActiveStyleName: string;
     function GetNotificationBadge: TNotificationBadgeAttributes;
     procedure SetNotificationBadge(const AValue: TNotificationBadgeAttributes);
+    function GetShowCaption: Boolean;
+    procedure SetShowCaption(const AValue: Boolean);
   protected
     procedure SetCursor(const AValue: TCursor); virtual;
     function GetCaption: TCaption; virtual;
@@ -754,6 +762,7 @@ type
     property StyleElements stored IsStoredStyleElements;
     property Caption: TCaption read GetText write SetText stored IsCaptionStored;
     property CaptionAlignment: TAlignment read GetCaptionAlignment write SetCaptionAlignment Stored IsCaptionAlignmentStored;
+    property ShowCaption: Boolean read GetShowCaption write SetShowCaption default True;
     property CommandLinkHint: string read GetCommandLinkHint write SetCommandLinkHint;
     property Cursor: TCursor read GetCursor write SetCursor default crHandPoint;
     property ImageAlignment: TImageAlignment read GetImageAlignment write SetImageAlignment default iaLeft;
@@ -803,6 +812,8 @@ type
     property OnDropDownClick: TNotifyEvent read GetOnDropDownClick write SetOnDropDownClick;
   end;
 
+  { TStyledGraphicButton }
+  [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledGraphicButton = class(TCustomStyledGraphicButton)
   published
     property ActiveStyleName;
@@ -848,6 +859,7 @@ type
     property Visible;
     property Caption;
     property CaptionAlignment;
+    property ShowCaption;
     property CommandLinkHint;
     property ImageAlignment;
     property DisabledImageIndex;
@@ -888,6 +900,8 @@ type
     property OnDropDownClick;
   end;
 
+  { TStyledSpeedButton }
+  [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledSpeedButton = class(TCustomStyledGraphicButton)
   public
     constructor Create(AOwner: TComponent); override;
@@ -907,6 +921,7 @@ type
     property DisabledImageName;
     {$ENDIF}
     property Caption;
+    property ShowCaption;
     property Enabled;
     {$IFDEF D10_4+}
     property HotImageIndex;
@@ -963,6 +978,7 @@ type
     property ButtonStyleDisabled;
   end;
 
+  { TCustomStyledButton }
   TCustomStyledButton = class(TCustomControl)
   private
     FPaintBuffer: TBitmap;
@@ -1124,6 +1140,8 @@ type
     function GetActiveStyleName: string;
     function GetNotificationBadge: TNotificationBadgeAttributes;
     procedure SetNotificationBadge(const AValue: TNotificationBadgeAttributes);
+    function GetShowCaption: Boolean;
+    procedure SetShowCaption(const AValue: Boolean);
   protected
     procedure SetCursor(const AValue: TCursor); virtual;
     function CalcImageRect(var ATextRect: TRect;
@@ -1228,6 +1246,7 @@ type
     property TabStop default True;
     property Caption: TCaption read GetText write SetText stored IsCaptionStored;
     property CaptionAlignment: TAlignment read GetCaptionAlignment write SetCaptionAlignment  Stored IsCaptionAlignmentStored;
+    property ShowCaption: Boolean read GetShowCaption write SetShowCaption default True;
     property CommandLinkHint: string read GetCommandLinkHint write SetCommandLinkHint;
     property Cursor: TCursor read GetCursor write SetCursor default crHandPoint;
     property Default: Boolean read GetDefault write SetDefault default False;
@@ -1281,6 +1300,8 @@ type
     property OnKeyUp;
   end;
 
+  { TStyledButton }
+  [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledButton = class(TCustomStyledButton)
   published
     property ActiveStyleName;
@@ -1292,6 +1313,7 @@ type
     property Cancel;
     property Caption;
     property CaptionAlignment;
+    property ShowCaption;
     property CommandLinkHint;
     property Constraints;
     property Cursor default crHandPoint;
@@ -1388,6 +1410,8 @@ type
     property ButtonStyleDisabled;
   end;
 
+  { TStyledBitBtn }
+  [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledBitBtn = class(TCustomStyledButton)
   private
     FStyle: TButtonStyle;
@@ -1403,6 +1427,7 @@ type
     property BiDiMode;
     property Cancel;
     property Caption;
+    property ShowCaption;
     property Constraints;
     property Cursor default crHandPoint;
     property Default;
@@ -1795,6 +1820,7 @@ begin
   FNumGlyphs := 1;
   FCaptionAlignment := TAlignment.taCenter;
   FFlat := False;
+  FShowCaption := True;
   //Owner Control "link"
   FOwnerControl := AOwner;
   if (FOwnerControl is TCustomStyledButton) then
@@ -2524,7 +2550,12 @@ var
   LImageWidth, LImageHeight: Integer;
   LUseImageList: Boolean;
   LGlyphPos: TPoint;
+  LCaption: TCaption;
 begin
+  if FShowCaption then
+    LCaption := Caption
+  else
+    LCaption := '';
   case FCaptionAlignment of
     taLeftJustify: LTextFlags := DT_NOCLIP or DT_LEFT or DT_VCENTER;
     taRightJustify: LTextFlags := DT_NOCLIP or DT_RIGHT or DT_VCENTER;
@@ -2542,7 +2573,7 @@ begin
   if FUseButtonLayout then
   begin
     //Calculate LTextRect and LImageRect using Margin, Spacing and ButtonLayout
-    CalcImageAndTextRect(ACanvas, Caption, ASurfaceRect,
+    CalcImageAndTextRect(ACanvas, LCaption, ASurfaceRect,
       TPoint.Create(0,0), LGlyphPos, LTextRect,
       LImageWidth, LImageHeight, FButtonLayout, FMargin, FSpacing, LTextFlags);
     LImageRect.Left := LGlyphPos.X;
@@ -2554,7 +2585,7 @@ begin
   begin
     if Style = bsCommandLink then
     begin
-      CalcImageAndTextRect(ASurfaceRect, Caption, LTextRect, LImageRect,
+      CalcImageAndTextRect(ASurfaceRect, LCaption, LTextRect, LImageRect,
         LImageWidth, LImageHeight, FImageAlignment, FImageMargins, GetOwnerScaleFactor);
       if Assigned(Images) then
       begin
@@ -2583,7 +2614,7 @@ begin
     else
     begin
       //Calculate LTextRect and LImageRect using ImageMargins and ImageAlignment
-      CalcImageAndTextRect(ASurfaceRect, Caption, LTextRect, LImageRect,
+      CalcImageAndTextRect(ASurfaceRect, LCaption, LTextRect, LImageRect,
         LImageWidth, LImageHeight, FImageAlignment, FImageMargins, GetOwnerScaleFactor);
     end;
   end;
@@ -2621,12 +2652,12 @@ begin
       ACanvas.Font.Color := HtmlToColor('#0279D7'); //Windows Blue color
     //Calculate TextRect: WordWrap, centered
     LTextFlags := DT_NOCLIP or DT_VCENTER or DT_WORDBREAK;
-    Winapi.Windows.DrawText(ACanvas.Handle, PChar(Caption),
-      Length(Caption), LTextRect, LTextFlags or DT_CALCRECT);
+    Winapi.Windows.DrawText(ACanvas.Handle, PChar(LCaption),
+      Length(LCaption), LTextRect, LTextFlags or DT_CALCRECT);
     //WordWrap but not vertical centerer: fixed top
     LTextFlags := DT_NOCLIP or DT_WORDBREAK;
     LTextRect.Top := Round(28*GetOwnerScaleFactor);
-    DrawText(ACanvas, Caption, taLeftJustify, 0, LTextRect, LTextFlags);
+    DrawText(ACanvas, LCaption, taLeftJustify, 0, LTextRect, LTextFlags);
     if FCommandLinkHint <> '' then
     begin
       ACanvas.Font.Height := Round(-11*GetOwnerScaleFactor);
@@ -2645,7 +2676,7 @@ begin
     end;
   end
   else
-    DrawText(ACanvas, Caption, FCaptionAlignment, FSpacing, LTextRect, LTextFlags);
+    DrawText(ACanvas, LCaption, FCaptionAlignment, FSpacing, LTextRect, LTextFlags);
 end;
 
 procedure TStyledButtonRender.DrawButton(const ACanvas: TCanvas;
@@ -3350,6 +3381,15 @@ begin
     {$IFDEF D10_4+}
     UpdateImageName(AValue, FSelectedImageName);
     {$ENDIF}
+  end;
+end;
+
+procedure TStyledButtonRender.SetShowCaption(const AValue: Boolean);
+begin
+  if FShowCaption <> AValue then
+  begin
+    FShowCaption := AValue;
+    Invalidate;
   end;
 end;
 
@@ -4467,6 +4507,11 @@ begin
   Result := FRender.SelectedImageIndex;
 end;
 
+function TCustomStyledGraphicButton.GetShowCaption: Boolean;
+begin
+  Result := FRender.ShowCaption;
+end;
+
 function TCustomStyledGraphicButton.GetSpacing: Integer;
 begin
   Result := FRender.Spacing;
@@ -4480,6 +4525,11 @@ end;
 procedure TCustomStyledGraphicButton.SetSelectedImageIndex(const AValue: TImageIndex);
 begin
   FRender.SelectedImageIndex := AValue;
+end;
+
+procedure TCustomStyledGraphicButton.SetShowCaption(const AValue: Boolean);
+begin
+  FRender.ShowCaption := AValue;
 end;
 
 procedure TCustomStyledGraphicButton.SetSpacing(const AValue: Integer);
@@ -5618,6 +5668,11 @@ begin
   Result := FRender.SelectedImageIndex;
 end;
 
+function TCustomStyledButton.GetShowCaption: Boolean;
+begin
+  Result := FRender.ShowCaption;
+end;
+
 function TCustomStyledButton.GetSpacing: Integer;
 begin
   Result := FRender.Spacing;
@@ -5631,6 +5686,11 @@ end;
 procedure TCustomStyledButton.SetSelectedImageIndex(const AValue: TImageIndex);
 begin
   FRender.SelectedImageIndex := AValue;
+end;
+
+procedure TCustomStyledButton.SetShowCaption(const AValue: Boolean);
+begin
+  FRender.ShowCaption := AValue;
 end;
 
 procedure TCustomStyledButton.SetSpacing(const AValue: Integer);
