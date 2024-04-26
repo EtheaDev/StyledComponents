@@ -84,6 +84,7 @@ type
   private
     //Styled Attributes
     FStyleRadius: Integer;
+    FStyleRoundedCorners: TRoundedCorners;
     FStyleDrawType: TStyledButtonDrawType;
     FStyleFamily: TStyledButtonFamily;
     FStyleClass: TStyledButtonClass;
@@ -91,6 +92,7 @@ type
     FStyleApplied: Boolean;
     procedure InvalidateOwner;
     function IsCustomDrawType: Boolean;
+    function IsCustomRoundedCorners: Boolean;
     function IsCustomRadius: Boolean;
     function IsStoredStyle: Boolean;
     procedure SetStyleFamily(const AValue: TStyledButtonFamily);
@@ -98,6 +100,7 @@ type
     procedure SetStyleAppearance(const AValue: TStyledButtonAppearance);
     procedure SetStyleDrawType(const AValue: TStyledButtonDrawType);
     procedure SetStyleRadius(const AValue: Integer);
+    procedure SetStyleRoundedCorners(const AValue: TRoundedCorners);
     function GetStyledButtonGroup: TStyledButtonGroup;
     function ApplyButtonStyle: Boolean;
     procedure LoadDefaultStyles;
@@ -112,6 +115,7 @@ type
     //StyledComponents Attributes
     property StyleRadius: Integer read FStyleRadius write SetStyleRadius stored IsCustomRadius;
     property StyleDrawType: TStyledButtonDrawType read FStyleDrawType write SetStyleDrawType stored IsCustomDrawType;
+    property StyleRoundedCorners: TRoundedCorners read FStyleRoundedCorners write SetStyleRoundedCorners stored IsCustomRoundedCorners;
     property StyleFamily: TStyledButtonFamily read FStyleFamily write SetStyleFamily stored IsStoredStyle;
     property StyleClass: TStyledButtonClass read FStyleClass write SetStyleClass stored IsStoredStyle;
     property StyleAppearance: TStyledButtonAppearance read FStyleAppearance write SetStyleAppearance stored IsStoredStyle;
@@ -131,6 +135,7 @@ type
     //Styled Attributes
     FStyleRadius: Integer;
     FStyleDrawType: TStyledButtonDrawType;
+    FStyleRoundedCorners: TRoundedCorners;
     FStyleFamily: TStyledButtonFamily;
     FStyleClass: TStyledButtonClass;
     FStyleAppearance: TStyledButtonAppearance;
@@ -155,6 +160,7 @@ type
 
     procedure ImageMarginsChange(Sender: TObject);
     function IsCustomDrawType: Boolean;
+    function IsCustomRoundedCorners: Boolean;
     function IsCustomRadius: Boolean;
     function ImageMarginsStored: Boolean;
     function IsStoredStyleAppearance: Boolean;
@@ -165,6 +171,7 @@ type
     procedure SetStyleDrawType(const AValue: TStyledButtonDrawType);
     procedure SetStyleFamily(const AValue: TStyledButtonFamily);
     procedure SetStyleRadius(const AValue: Integer);
+    procedure SetStyleRoundedCorners(const AValue: TRoundedCorners);
     function ApplyButtonGroupStyle: Boolean;
     procedure SetStyleApplied(const AValue: Boolean);
     function ApplyButtonStyle: Boolean;
@@ -185,7 +192,7 @@ type
     procedure DrawBackgroundAndBorder(const ACanvas: TCanvas;
       const ADrawRect, ADropDownRect: TRect;
       const AStyleDrawType: TStyledButtonDrawType;
-      const AStyleRadius: Single);
+      const ARadius: Single; const ARoundedCorners: TRoundedCorners);
     procedure DrawCaptionAndImage(const ACanvas: TCanvas; const ASurfaceRect: TRect;
       const ACaption: TCaption; const AImageIndex: Integer);
     procedure SetCaptionAlignment(const AValue: TAlignment);
@@ -263,6 +270,7 @@ type
     //StyledComponents Attributes
     property StyleRadius: Integer read FStyleRadius write SetStyleRadius stored IsCustomRadius;
     property StyleDrawType: TStyledButtonDrawType read FStyleDrawType write SetStyleDrawType stored IsCustomDrawType;
+    property StyleRoundedCorners: TRoundedCorners read FStyleRoundedCorners write SetStyleRoundedCorners stored IsCustomRoundedCorners;
     property StyleFamily: TStyledButtonFamily read FStyleFamily write SetStyleFamily stored IsStoredStyleFamily;
     property StyleClass: TStyledButtonClass read FStyleClass write SetStyleClass stored IsStoredStyleClass;
     property StyleAppearance: TStyledButtonAppearance read FStyleAppearance write SetStyleAppearance stored IsStoredStyleAppearance;
@@ -313,6 +321,7 @@ begin
 
   FStyleDrawType := _DefaultStyleDrawType;
   FStyleRadius := _DefaultStyleRadius;
+  FStyleRoundedCorners := ALL_ROUNDED_CORNERS;
   FStyleFamily := AFamily;
   FStyleClass := AClass;
   FStyleAppearance := AAppearance;
@@ -351,7 +360,7 @@ end;
 procedure TStyledButtonGroup.DrawBackgroundAndBorder(
   const ACanvas: TCanvas; const ADrawRect, ADropDownRect: TRect;
   const AStyleDrawType: TStyledButtonDrawType;
-  const AStyleRadius: Single);
+  const ARadius: Single; const ARoundedCorners: TRoundedCorners);
 var
   LButtonOffset: Integer;
   LDropDownRect: TRect;
@@ -361,7 +370,7 @@ begin
   LDropDownRect := ADropDownRect;
   //Draw Button Shape
   CanvasDrawshape(ACanvas, ADrawRect, AStyleDrawType,
-    AStyleRadius*LScaleFactor);
+    ARadius*LScaleFactor, ARoundedCorners);
 
   //Draw Bar and Triangle
   if LDropDownRect.Width > 0 then
@@ -540,6 +549,7 @@ var
   LOldFontStyle: TFontStyles;
   LOldParentFont: boolean;
   LOldBrushStyle: TBrushStyle;
+  LOldPenWidth: Integer;
   LStyle: TCustomStyleServices;
   LState: TStyledButtonState;
   LDetails: TThemedElementDetails;
@@ -556,106 +566,105 @@ begin
   else
   begin
     if Assigned(OnBeforeDrawButton) then
-      OnBeforeDrawButton(Self, AIndex, Canvas, ARect, AState);
+      OnBeforeDrawButton(Self, AIndex, ACanvas, ARect, AState);
 
-  LState := StyledButtonState(AIndex, AState);
+    LState := StyledButtonState(AIndex, AState);
 
-  LOldParentFont := ParentFont;
-  LOldFontName := Font.Name;
-  LOldFontColor := Font.Color;
-  LOldFontStyle := Font.Style;
-  LOldBrushStyle := ACanvas.Brush.Style;
-  try
-    GetDrawingStyle(ACanvas, LState, LButtonItem);
+    LOldParentFont := ParentFont;
+    LOldFontName := ACanvas.Font.Name;
+    LOldFontColor := ACanvas.Font.Color;
+    LOldFontStyle := ACanvas.Font.Style;
+    LOldBrushStyle := ACanvas.Brush.Style;
+    LOldPenWidth := ACanvas.Pen.Width;
+    try
+      GetDrawingStyle(ACanvas, LState, LButtonItem);
 
-    //At the moment, no DropDown for Buttons
-    LDropDownRect := TRect.Create(0,0,0,0);
+      //At the moment, no DropDown for Buttons
+      LDropDownRect := TRect.Create(0,0,0,0);
 
-    if FFlat then
-    begin
-      LStyle := StyleServices{$IFDEF D10_4+}(Self){$ENDIF};
-      if (LState in [bsmDisabled, bsmNormal]) and IsStyleEnabled then
+      if FFlat then
       begin
-        if (bdsSelected in AState) or (bdsDown in AState) then
-          LDetails := LStyle.GetElementDetails(tcbButtonSelected)
-        else if bdsHot in AState then
-          LDetails := LStyle.GetElementDetails(tcbButtonHot)
-        else
-          LDetails := LStyle.GetElementDetails(tcbButtonNormal);
+        LStyle := StyleServices{$IFDEF D10_4+}(Self){$ENDIF};
+        if (LState in [bsmDisabled, bsmNormal]) and IsStyleEnabled then
+        begin
+          if (bdsSelected in AState) or (bdsDown in AState) then
+            LDetails := LStyle.GetElementDetails(tcbButtonSelected)
+          else if bdsHot in AState then
+            LDetails := LStyle.GetElementDetails(tcbButtonHot)
+          else
+            LDetails := LStyle.GetElementDetails(tcbButtonNormal);
 
-        if not (IsCustomStyleActive and not (seFont in StyleElements)) and
-           LStyle.GetElementColor(LDetails, ecTextColor, LColor) and (LColor <> clNone) then
-          ACanvas.Font.Color := LColor;
+          if not (IsCustomStyleActive and not (seFont in StyleElements)) and
+             LStyle.GetElementColor(LDetails, ecTextColor, LColor) and (LColor <> clNone) then
+            ACanvas.Font.Color := LColor;
+        end;
+
+        //Don't draw button Face for Flat Normal/disabled Button
+        if LState in [bsmDisabled, bsmNormal] then
+          ACanvas.Brush.Style := bsClear;
       end;
 
-      //Don't draw button Face for Flat Normal/disabled Button
-      if LState in [bsmDisabled, bsmNormal] then
-        ACanvas.Brush.Style := bsClear;
-    end;
+      DrawBackgroundAndBorder(ACanvas, ARect, LDropDownRect,
+        LButtonItem.StyleDrawType, LButtonItem.StyleRadius, LButtonItem.StyleRoundedCorners);
 
-    DrawBackgroundAndBorder(ACanvas, ARect, LDropDownRect,
-      LButtonItem.StyleDrawType, LButtonItem.StyleRadius);
+      LSurfaceRect := ARect;
+      if LDropDownRect.Width <> 0 then
+        Dec(LSurfaceRect.Right, LDropDownRect.Width);
 
-    LSurfaceRect := ARect;
-    if LDropDownRect.Width <> 0 then
-      Dec(LSurfaceRect.Right, LDropDownRect.Width);
+      DrawCaptionAndImage(ACanvas, LSurfaceRect, LButtonItem.Caption,
+        LButtonItem.ImageIndex);
 
-    DrawCaptionAndImage(ACanvas, LSurfaceRect, LButtonItem.Caption,
-      LButtonItem.ImageIndex);
+      { Draw the icon - prefer the event }
+      if Assigned(OnDrawIcon) then
+        OnDrawIcon(Self, AIndex, ACanvas, LSurfaceRect, AState, FSpacing);
 
-    { Draw the icon - prefer the event }
-    if Assigned(OnDrawIcon) then
-      OnDrawIcon(Self, AIndex, Canvas, LSurfaceRect, AState, FSpacing);
+      LSurfaceRect := ClientRect;
+      //DrawNotificationBadge(ACanvas, LSurfaceRect);
+  (*
+      { Show insert indications }
+      if [bdsInsertLeft, bdsInsertTop, bdsInsertRight, bdsInsertBottom] * State <> [] then
+      begin
+        ACanvas.Brush.Color := GetShadowColor(EdgeColor);
+        InsertIndication := Rect;
+        if bdsInsertLeft in State then
+        begin
+          Dec(InsertIndication.Left, 2);
+          InsertIndication.Right := InsertIndication.Left + 2;
+        end
+        else if bdsInsertTop in State then
+        begin
+          Dec(InsertIndication.Top);
+          InsertIndication.Bottom := InsertIndication.Top + 2;
+        end
+        else if bdsInsertRight in State then
+        begin
+          Inc(InsertIndication.Right, 2);
+          InsertIndication.Left := InsertIndication.Right - 2;
+        end
+        else if bdsInsertBottom in State then
+        begin
+          Inc(InsertIndication.Bottom);
+          InsertIndication.Top := InsertIndication.Bottom - 2;
+        end;
+        ACanvas.FillRect(InsertIndication);
+        ACanvas.Brush.Color := FillColor;
+      end;
+  *)
 
-    LSurfaceRect := ClientRect;
-    //DrawNotificationBadge(ACanvas, LSurfaceRect);
-  finally
-    if LOldParentFont then
-      ParentFont := LOldParentFont
-    else
-    begin
-      Font.Name := LOldFontName;
-      Font.Color := LOldFontColor;
-      Font.Style := LOldFontStyle;
+      if Assigned(OnAfterDrawButton) then
+        OnAfterDrawButton(Self, AIndex, Canvas, ARect, AState);
+    finally
+      //Restore original values
+      ACanvas.Font.Name := LOldFontName;
+      ACanvas.Font.Color := LOldFontColor;
+      ACanvas.Font.Style := LOldFontStyle;
       ACanvas.Brush.Style := LOldBrushStyle;
+      ACanvas.Pen.Width := LOldPenWidth;
+      //ACanvas.Brush.Color := Color;
+      if LOldParentFont then
+        ParentFont := LOldParentFont;
     end;
   end;
-
-(*
-    { Show insert indications }
-    if [bdsInsertLeft, bdsInsertTop, bdsInsertRight, bdsInsertBottom] * State <> [] then
-    begin
-      Canvas.Brush.Color := GetShadowColor(EdgeColor);
-      InsertIndication := Rect;
-      if bdsInsertLeft in State then
-      begin
-        Dec(InsertIndication.Left, 2);
-        InsertIndication.Right := InsertIndication.Left + 2;
-      end
-      else if bdsInsertTop in State then
-      begin
-        Dec(InsertIndication.Top);
-        InsertIndication.Bottom := InsertIndication.Top + 2;
-      end
-      else if bdsInsertRight in State then
-      begin
-        Inc(InsertIndication.Right, 2);
-        InsertIndication.Left := InsertIndication.Right - 2;
-      end
-      else if bdsInsertBottom in State then
-      begin
-        Inc(InsertIndication.Bottom);
-        InsertIndication.Top := InsertIndication.Bottom - 2;
-      end;
-      Canvas.FillRect(InsertIndication);
-      Canvas.Brush.Color := FillColor;
-    end;
-*)
-
-    if Assigned(OnAfterDrawButton) then
-      OnAfterDrawButton(Self, AIndex, Canvas, ARect, AState);
-  end;
-  Canvas.Brush.Color := Color; { Restore the original color }
 end;
 
 procedure TStyledButtonGroup.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
@@ -718,6 +727,11 @@ end;
 function TStyledButtonGroup.IsCustomDrawType: Boolean;
 begin
   Result := FCustomDrawType;
+end;
+
+function TStyledButtonGroup.IsCustomRoundedCorners: Boolean;
+begin
+  Result := StyleRoundedCorners <> ALL_ROUNDED_CORNERS;
 end;
 
 function TStyledButtonGroup.IsCustomRadius: Boolean;
@@ -843,6 +857,7 @@ begin
     FStyleClass := TStyledButtonGroup(Source).FStyleClass;
     FStyleAppearance := TStyledButtonGroup(Source).FStyleAppearance;
     FStyleRadius := TStyledButtonGroup(Source).FStyleRadius;
+    FStyleRoundedCorners := TStyledButtonGroup(Source).FStyleRoundedCorners;
     FStyleDrawType := TStyledButtonGroup(Source).FStyleDrawType;
     Invalidate;
   end;
@@ -1065,6 +1080,22 @@ begin
           ABtn.StyleRadius := AValue;
       end);
     FStyleRadius := AValue;
+    StyleApplied := ApplyButtonGroupStyle;
+  end;
+end;
+
+procedure TStyledButtonGroup.SetStyleRoundedCorners(
+  const AValue: TRoundedCorners);
+begin
+  if FStyleRoundedCorners <> AValue then
+  begin
+    ProcessButtons(
+      procedure (ABtn: TStyledGrpButtonItem)
+      begin
+        if ABtn.StyleRoundedCorners = FStyleRoundedCorners then
+          ABtn.StyleRoundedCorners := AValue;
+      end);
+    FStyleRoundedCorners := AValue;
     StyleApplied := ApplyButtonGroupStyle;
   end;
 end;
@@ -1295,6 +1326,7 @@ begin
     FStyleClass := ButtonGroup.StyleClass;
     FStyleAppearance := ButtonGroup.StyleAppearance;
     FStyleRadius := ButtonGroup.StyleRadius;
+    FStyleRoundedCorners := ButtonGroup.StyleRoundedCorners;
     FStyleDrawType := ButtonGroup.StyleDrawType;
   end;
 end;
@@ -1304,6 +1336,7 @@ begin
   inherited;
   FStyleDrawType := TStyledButtonGroup._DefaultStyleDrawType;
   FStyleRadius := TStyledButtonGroup._DefaultStyleRadius;
+  FStyleRoundedCorners := ALL_ROUNDED_CORNERS;
   LoadDefaultStyles;
 end;
 
@@ -1323,17 +1356,26 @@ end;
 
 function TStyledGrpButtonItem.IsCustomDrawType: Boolean;
 begin
-  Result := FStyleDrawType <> ButtonGroup.FStyleDrawType;
+  Result := Assigned(ButtonGroup) and
+    (FStyleDrawType <> ButtonGroup.FStyleDrawType);
+end;
+
+function TStyledGrpButtonItem.IsCustomRoundedCorners: Boolean;
+begin
+  Result := Assigned(ButtonGroup) and
+    (FStyleRoundedCorners <> ButtonGroup.FStyleRoundedCorners);
 end;
 
 function TStyledGrpButtonItem.IsCustomRadius: Boolean;
 begin
-  Result := FStyleRadius <> ButtonGroup.FStyleRadius;
+  Result := Assigned(ButtonGroup) and
+    (FStyleRadius <> ButtonGroup.FStyleRadius);
 end;
 
 function TStyledGrpButtonItem.IsStoredStyle: Boolean;
 begin
-  Result := (FStyleFamily <> ButtonGroup.FStyleFamily) or
+  Result := Assigned(ButtonGroup) and
+    (FStyleFamily <> ButtonGroup.FStyleFamily) or
     (FStyleClass <> ButtonGroup.FStyleClass) or
     (FStyleAppearance <> ButtonGroup.FStyleAppearance);
 end;
@@ -1393,6 +1435,7 @@ begin
     FStyleDrawType := AValue;
     InvalidateOwner;
   end;
+  ApplyButtonStyle;
 end;
 
 procedure TStyledGrpButtonItem.SetStyleRadius(const AValue: Integer);
@@ -1402,6 +1445,17 @@ begin
     FStyleRadius := AValue;
     InvalidateOwner;
   end;
+  ApplyButtonStyle;
+end;
+
+procedure TStyledGrpButtonItem.SetStyleRoundedCorners(const AValue: TRoundedCorners);
+begin
+  if FStyleRoundedCorners <> AValue then
+  begin
+    FStyleRoundedCorners := AValue;
+    InvalidateOwner;
+  end;
+  ApplyButtonStyle;
 end;
 
 { TStyledGrpButtonItems }

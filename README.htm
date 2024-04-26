@@ -31,7 +31,7 @@ td{
 </style>
 <h1>Delphi VCL StyledComponents <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg" alt="License"/></a></h1>
 <h2>Components similar to Delphi VCL Buttons, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!</h2>
-<h3>Actual official version: 3.4.5</h3>
+<h3>Actual official version: 3.5.0</h3>
 <h2>List of available Components:</h2>
 <table>
   <tr>
@@ -154,6 +154,9 @@ td{
 <pre><code class="Pascal">TStyledButton.RegisterDefaultRenderingStyle(btRoundRect, BOOTSTRAP_FAMILY, btn_primary, BOOTSTRAP_NORMAL);
 </code></pre>
 <p>You can also use <a href="/wiki/Interposer-Unit-(Vcl.StyledComponentsHooks)">Interposer Unit (Vcl.StyledComponentsHooks.pas)</a> to easily change all Buttons of your application.</p>
+<p><strong><em>New RoundedCorners options</em></strong></p>
+<p>NOTICE: from version 3.5.0 the new <strong>RoundedCorners</strong> property was added to all of the Styled Buttons, to enable/disable Rounding drawing, as showed in this example:</p>
+<p><img src="./Images/StyledRoundedCornersExamples.jpg" alt="RoundedCorners"/></p>
 <p><strong><em>New Notification Badge for buttons</em></strong></p>
 <p>NOTICE: from version 3.3.3 the new <strong>NotificationBadge</strong> property was added to all of the Styled Buttons.</p>
 <p><img src="./Images/NotificationBadge.jpg" alt="NotificationBadge"/></p>
@@ -217,6 +220,9 @@ td{
 <p><strong>Demos\StyledAnimatedButtonsDemo\DelphiXE7+\AnimatedButtonsTest.dpr</strong></p>
 <p>A simple demo to show StyledAnimatedButton and StyledAnimatedTaskDialog (available from Delphi XE7+ using Skia4Delphi)</p>
 <p><img src="./Images/StyledAnimatedButtonsDemo.jpg" alt="StyledAnimatedButtonsDemo.jpg"/></p>
+<p><strong>Demos\RoundedCornersDemo\DelphiXXX\StyledRoundedCornersExamples.dpr</strong></p>
+<p>A simple demo to show StyledRoundedCorners options applied to many Styled Components</p>
+<p><img src="./Images/StyledRoundedCornersDemo.jpg" alt="StyledRoundedCornersDemo.jpg"/></p>
 <hr />
 <h2>Description of StyledToolBar</h2>
 <p>TStyledToolbar (and TStyledToolButtons) shows a Toolbar like a classic TToolbar but with the same Style attributes that can be assigned to Styled Graphic Buttons.</p>
@@ -298,6 +304,15 @@ TaskDialog -> StyledTaskDialog</p>
 <p><img src="./Images/SupportingDelphi.jpg" alt="Delphi Support"/></p>
 <p>Related links: <a href="https://www.embarcadero.com">embarcadero.com</a> - <a href="https://learndelphi.org">learndelphi.org</a></p>
 <h3>RELEASE NOTES</h3>
+<p>26 Apr 2024: version 3.5.0</p>
+<ul>
+<li>Added RoundedCorners options for StyledButtons, StyledButtonGroup, StyledCategoryButtons and StyleToolButton</li>
+<li>Update Component Editor for RoundedCorners options</li>
+<li>Added RondedCorners Examples and Demo projects</li>
+<li>Added AllowAllUp, GroupIndex and Down property also to TStyledButton</li>
+<li>Fixed Drawing Caption for TStyledToolButton and TStyledNavButton</li>
+<li>Added Gradient&hellip; properties and DrawingStyle, to StyledToolbar for backward compatibility</li>
+</ul>
 <p>23 Apr 2024: version 3.4.5</p>
 <ul>
 <li>Enabled components into IDE using 64Bit Windows Platform</li>

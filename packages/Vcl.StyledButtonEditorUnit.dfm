@@ -39,10 +39,10 @@ object StyledButtonEditor: TStyledButtonEditor
       935
       38)
     object OKButton: TStyledButton
-      Left = 557
-      Top = 6
+      Left = 565
+      Top = 4
       Width = 85
-      Height = 25
+      Height = 29
       Anchors = [akTop, akRight]
       Caption = 'OK'
       Default = True
@@ -51,20 +51,20 @@ object StyledButtonEditor: TStyledButtonEditor
       OnClick = OKButtonClick
     end
     object ApplyButton: TStyledButton
-      Left = 740
-      Top = 6
+      Left = 747
+      Top = 4
       Width = 85
-      Height = 25
+      Height = 29
       Anchors = [akTop, akRight]
       Caption = '&Apply'
       TabOrder = 2
       OnClick = ApplyButtonClick
     end
     object CancelButton: TStyledButton
-      Left = 649
-      Top = 6
+      Left = 656
+      Top = 4
       Width = 85
-      Height = 25
+      Height = 29
       Anchors = [akTop, akRight]
       Cancel = True
       Caption = 'Cancel'
@@ -72,10 +72,10 @@ object StyledButtonEditor: TStyledButtonEditor
       TabOrder = 1
     end
     object HelpButton: TStyledButton
-      Left = 832
-      Top = 6
+      Left = 839
+      Top = 4
       Width = 85
-      Height = 25
+      Height = 29
       Anchors = [akTop, akRight]
       Caption = '&Help'
       TabOrder = 3
@@ -170,24 +170,17 @@ object StyledButtonEditor: TStyledButtonEditor
     object AttributesGroupBox: TGroupBox
       Left = 0
       Top = 0
-      Width = 929
+      Width = 449
       Height = 67
-      Align = alClient
+      Align = alLeft
       Caption = 'Button Attributes'
       TabOrder = 0
       object StyleDrawTypeLabel: TLabel
         Left = 294
         Top = 21
-        Width = 77
+        Width = 56
         Height = 13
-        Caption = 'StyleDrawType:'
-      end
-      object StyleRadiusLabel: TLabel
-        Left = 455
-        Top = 21
-        Width = 69
-        Height = 13
-        Caption = 'StyledRadius:'
+        Caption = 'Draw Type:'
       end
       object StyleLabel: TLabel
         Left = 143
@@ -214,17 +207,6 @@ object StyledButtonEditor: TStyledButtonEditor
         TabOrder = 4
         OnSelect = StyleComboBoxSelect
       end
-      object RadiusTrackBar: TTrackBar
-        Left = 445
-        Top = 34
-        Width = 225
-        Height = 24
-        Max = 30
-        Min = 1
-        Position = 1
-        TabOrder = 5
-        OnChange = RadiusTrackBarChange
-      end
       object FlatButtonCheckBox: TCheckBox
         Left = 9
         Top = 23
@@ -232,7 +214,7 @@ object StyledButtonEditor: TStyledButtonEditor
         Height = 17
         Caption = 'Flat'
         TabOrder = 0
-        OnClick = FlatButtonCheckBoxClick
+        OnClick = CheckBoxClick
       end
       object AsVCLComponentCheckBox: TCheckBox
         Left = 9
@@ -253,6 +235,78 @@ object StyledButtonEditor: TStyledButtonEditor
         OnSelect = StyleComboBoxSelect
       end
     end
+    object RoundedCornersGroupBox: TGroupBox
+      Left = 690
+      Top = 0
+      Width = 239
+      Height = 67
+      Align = alClient
+      Caption = 'Rounded Corners'
+      TabOrder = 2
+      object TopRightCheckBox: TCheckBox
+        Left = 112
+        Top = 23
+        Width = 100
+        Height = 17
+        Caption = 'Top Right'
+        TabOrder = 1
+        OnClick = RoundedCheckBoxClick
+      end
+      object TopLeftCheckBox: TCheckBox
+        Left = 9
+        Top = 23
+        Width = 100
+        Height = 17
+        Caption = 'Top Left'
+        TabOrder = 0
+        OnClick = RoundedCheckBoxClick
+      end
+      object BottomLeftCheckBox: TCheckBox
+        Left = 9
+        Top = 46
+        Width = 100
+        Height = 17
+        Caption = 'Bottom Left'
+        TabOrder = 2
+        OnClick = RoundedCheckBoxClick
+      end
+      object BottomRightCheckBox: TCheckBox
+        Left = 112
+        Top = 46
+        Width = 100
+        Height = 17
+        Caption = 'Bottom Right'
+        TabOrder = 3
+        OnClick = RoundedCheckBoxClick
+      end
+    end
+    object CornerRadiusGroupBox: TGroupBox
+      Left = 449
+      Top = 0
+      Width = 241
+      Height = 67
+      Align = alLeft
+      Caption = 'Border Radius'
+      TabOrder = 1
+      object StyleRadiusLabel: TLabel
+        Left = 14
+        Top = 21
+        Width = 38
+        Height = 13
+        Caption = 'Radius:'
+      end
+      object RadiusTrackBar: TTrackBar
+        Left = 5
+        Top = 35
+        Width = 225
+        Height = 24
+        Max = 30
+        Min = 1
+        Position = 1
+        TabOrder = 0
+        OnChange = RadiusTrackBarChange
+      end
+    end
   end
   object ImageList: TImageList
     ColorDepth = cd32Bit
@@ -261,7 +315,7 @@ object StyledButtonEditor: TStyledButtonEditor
     Left = 432
     Top = 280
     Bitmap = {
-      494C010106000800040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010106000800100020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000004000000001002000000000000080
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000111010

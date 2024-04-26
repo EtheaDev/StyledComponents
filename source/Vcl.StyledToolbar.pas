@@ -44,6 +44,8 @@ uses
   , Vcl.Controls
   , Vcl.ActnList
   , Vcl.Menus
+  , Vcl.Graphics
+  , Vcl.GraphUtil
   , Winapi.Messages
   , Winapi.Windows
   , Vcl.StyledButton
@@ -76,6 +78,7 @@ type
     FMenuItem: TMenuItem;
     function IsStoredFlat: Boolean;
     function IsCustomRadius: Boolean;
+    function IsCustomRoundedCorners: Boolean;
     function IsCustomDrawType: Boolean;
     function IsStoredStyleFamily: Boolean;
     function IsStoredStyleAppearance: Boolean;
@@ -104,7 +107,7 @@ type
     procedure SetStyleDrawType(const AValue: TStyledButtonDrawType);
   protected
     FToolBar: TStyledToolBar;
-    function GetCaption: TCaption; override;
+    function GetCaptionToDraw: TCaption; override;
     procedure SetCaption(const AValue: TCaption); override;
     function IsStoredStyleClass: Boolean; override;
     function IsEnabledStored: Boolean; override;
@@ -193,6 +196,7 @@ type
     property Tag;
     //StyledComponents Attributes
     property StyleRadius stored IsCustomRadius;
+    property StyleRoundedCorners stored IsCustomRoundedCorners;
     property StyleDrawType: TStyledButtonDrawType read GetStyleDrawType write SetStyleDrawType stored IsCustomDrawType;
     property StyleFamily stored IsStoredStyleFamily;
     property StyleClass stored IsStoredStyleClass;
@@ -246,6 +250,13 @@ type
     FCaptureChangeCancels: Boolean;
     FInMenuLoop: Boolean;
     FAutoSize: Boolean;
+
+    //Properties ignores (only for backward compatibility)
+    FGradientDrawingOptions: TTBGradientDrawingOptions;
+    FGradientDirection: TGradientDirection;
+    FDrawingStyle: TTBDrawingStyle;
+    FGradientEndColor: TColor;
+    FGradientStartColor: TColor;
 
     //Styled Attributes
     FStyleRadius: Integer;
@@ -326,6 +337,7 @@ type
     procedure SetTransparent(const AValue: Boolean);
     function GetDisableButtonAlign: Boolean;
     procedure SetDisableButtonAlign(const AValue: Boolean);
+    function IsGradientEndColorStored: Boolean;
     property DisableButtonAlign: Boolean read GetDisableButtonAlign write SetDisableButtonAlign;
   protected
     {$IFDEF D10_1+}
@@ -448,6 +460,12 @@ type
     property OnStartDrag;
     property OnUnDock;
 
+    //Properties ignores (only for backward compatibility)
+    property GradientDrawingOptions: TTBGradientDrawingOptions read FGradientDrawingOptions write FGradientDrawingOptions default [gdoHotTrack, gdoGradient];
+    property GradientDirection: TGradientDirection read FGradientDirection write FGradientDirection default gdVertical;
+    property DrawingStyle: TTBDrawingStyle read FDrawingStyle write FDrawingStyle default TTBDrawingStyle.dsNormal;
+    property GradientEndColor: TColor read FGradientEndColor write FGradientEndColor stored IsGradientEndColorStored;
+    property GradientStartColor: TColor read FGradientStartColor write FGradientStartColor default clWindow;
 
     //StyledComponents Attributes
     property StyleRadius: Integer read FStyleRadius write SetStyleRadius stored IsCustomRadius;
@@ -534,7 +552,7 @@ begin
     Result := inherited GetButtonState;
 end;
 
-function TStyledToolButton.GetCaption: TCaption;
+function TStyledToolButton.GetCaptionToDraw: TCaption;
 begin
   if Assigned(FToolBar) and not FToolBar.ShowCaptions then
     Result := ''
@@ -716,22 +734,22 @@ begin
       if not FToolbar.List then
       begin
         inherited ImageAlignment := FImageAlignment;
-        inherited ImageMargins.Left := 0;
-        inherited ImageMargins.Right := 0;
+        //inherited ImageMargins.Left := 0;
+        //inherited ImageMargins.Right := 0;
       end
       else
       begin
         if IsRightToLeft then
         begin
           inherited ImageAlignment := iaRight;
-          inherited ImageMargins.Right := DEFAULT_IMAGE_HMARGIN;
-          inherited ImageMargins.Left := 0;
+          //inherited ImageMargins.Right := DEFAULT_IMAGE_HMARGIN;
+          //inherited ImageMargins.Left := 0;
         end
         else
         begin
           inherited ImageAlignment := iaLeft;
-          inherited ImageMargins.Left := DEFAULT_IMAGE_HMARGIN;
-          inherited ImageMargins.Right := 0;
+          //inherited ImageMargins.Left := DEFAULT_IMAGE_HMARGIN;
+          //inherited ImageMargins.Right := 0;
         end;
       end;
     end
@@ -874,6 +892,11 @@ begin
     else
       Result := StyleRadius <> DEFAULT_RADIUS;
   end;
+end;
+
+function TStyledToolButton.IsCustomRoundedCorners: Boolean;
+begin
+  Result := StyleRoundedCorners <> ALL_ROUNDED_CORNERS;
 end;
 
 function TStyledToolButton.IsCustomDrawType: Boolean;
@@ -1101,6 +1124,11 @@ begin
   //FHotImageChangeLink := TChangeLink.Create;
   //FHotImageChangeLink.OnChange := HotImageListChange;
 
+  FGradientDrawingOptions := [gdoHotTrack,gdoGradient];
+  FGradientDirection := gdVertical;
+  FDrawingStyle := TTBDrawingStyle.dsNormal;
+  FGradientEndColor := GetShadowColor(clBtnFace, -25);
+  FGradientStartColor := clWindow;
   FStyleDrawType := _DefaultStyleDrawType;
   FStyleRadius := _DefaultStyleRadius;
   FStyleFamily := AFamily;
@@ -1283,6 +1311,11 @@ end;
 function TStyledToolbar.IsCustomRadius: Boolean;
 begin
   Result := StyleRadius <> DEFAULT_RADIUS;
+end;
+
+function TStyledToolbar.IsGradientEndColorStored: Boolean;
+begin
+  Result := FGradientEndColor <> GetShadowColor(clBtnFace, -25);
 end;
 
 function TStyledToolbar.IsStoredStyleAppearance: Boolean;

@@ -2,7 +2,7 @@
 
 ## Components similar to Delphi VCL Buttons, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 3.4.5
+### Actual official version: 3.5.0
 
 ## List of available Components:
 | Component | Description |
@@ -109,6 +109,12 @@ TStyledButton.RegisterDefaultRenderingStyle(btRoundRect, BOOTSTRAP_FAMILY, btn_p
 ```
 You can also use [Interposer Unit (Vcl.StyledComponentsHooks.pas)](/wiki/Interposer-Unit-(Vcl.StyledComponentsHooks)) to easily change all Buttons of your application.
 
+***New RoundedCorners options***
+
+NOTICE: from version 3.5.0 the new **RoundedCorners** property was added to all of the Styled Buttons, to enable/disable Rounding drawing, as showed in this example:
+
+![RoundedCorners](./Images/StyledRoundedCornersExamples.jpg)
+
 ***New Notification Badge for buttons***
 
 NOTICE: from version 3.3.3 the new **NotificationBadge** property was added to all of the Styled Buttons.
@@ -189,6 +195,12 @@ A simple demo to show how StyledButton with "Classic" Family is compatible with 
 A simple demo to show StyledAnimatedButton and StyledAnimatedTaskDialog (available from Delphi XE7+ using Skia4Delphi)
 
 ![StyledAnimatedButtonsDemo.jpg](./Images/StyledAnimatedButtonsDemo.jpg)
+
+**Demos\RoundedCornersDemo\DelphiXXX\StyledRoundedCornersExamples.dpr**
+
+A simple demo to show StyledRoundedCorners options applied to many Styled Components
+
+![StyledRoundedCornersDemo.jpg](./Images/StyledRoundedCornersDemo.jpg)
 
 ---
 
@@ -325,6 +337,14 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+26 Apr 2024: version 3.5.0
+- Added RoundedCorners options for StyledButtons, StyledButtonGroup, StyledCategoryButtons and StyleToolButton
+- Update Component Editor for RoundedCorners options
+- Added RondedCorners Examples and Demo projects
+- Added AllowAllUp, GroupIndex and Down property also to TStyledButton
+- Fixed Drawing Caption for TStyledToolButton and TStyledNavButton
+- Added Gradient... properties and DrawingStyle, to StyledToolbar for backward compatibility
+
 23 Apr 2024: version 3.4.5
 - Enabled components into IDE using 64Bit Windows Platform
 - Added ShowCaption property (default true) to StyledButtons

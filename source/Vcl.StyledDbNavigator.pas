@@ -105,7 +105,7 @@ type
     function IsImageAlignmentStored: Boolean;
     procedure SetImageAlignment(const AValue: TImageAlignment);
   protected
-    function GetCaption: TCaption; override;
+    function GetCaptionToDraw: TCaption; override;
     procedure SetCaption(const AValue: TCaption); override;
     procedure Paint; override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
@@ -1768,7 +1768,7 @@ begin
   inherited Destroy;
 end;
 
-function TStyledNavButton.GetCaption: TCaption;
+function TStyledNavButton.GetCaptionToDraw: TCaption;
 begin
   if Assigned(FDbNavigator) and not FDbNavigator.ShowCaptions then
     Result := ''

@@ -493,10 +493,10 @@ begin
     LButton := TStyledButton.CreateStyled(LButtonGroup,
       LButtonGroup.StyleFamily, LButtonGroup.StyleClass, LButtonGroup.StyleAppearance,
       LButtonGroup.StyleDrawType, False);
-    LButton.StyleDrawType := LButtonGroup.StyleDrawType;
-    LButton.StyleRadius := LButtonGroup.StyleRadius;
     try
       LButton.StyleRadius := LButtonGroup.StyleRadius;
+      LButton.StyleRoundedCorners := LButtonGroup.StyleRoundedCorners;
+      LButton.StyleDrawType := LButtonGroup.StyleDrawType;
       if gboFullSize in LButtonGroup.ButtonOptions then
         LButtonWidth := LButtonGroup.Width
       else
@@ -512,6 +512,7 @@ begin
         LButtonGroup.SetButtonGroupStyle(LButton.StyleFamily,
           LButton.StyleClass, LButton.StyleAppearance);
         LButtonGroup.StyleRadius := LButton.StyleRadius;
+        LButtonGroup.StyleRoundedCorners := LButton.StyleRoundedCorners;
         LButtonGroup.StyleDrawType := LButton.StyleDrawType;
         LButtonGroup.Invalidate;
         Designer.Modified;
@@ -562,10 +563,10 @@ begin
     LButton := TStyledButton.CreateStyled(LCategoryButtons,
       LCategoryButtons.StyleFamily, LCategoryButtons.StyleClass, LCategoryButtons.StyleAppearance,
       LCategoryButtons.StyleDrawType, False);
-    LButton.StyleDrawType := LCategoryButtons.StyleDrawType;
-    LButton.StyleRadius := LCategoryButtons.StyleRadius;
     try
       LButton.StyleRadius := LCategoryButtons.StyleRadius;
+      LButton.StyleRoundedCorners := LCategoryButtons.StyleRoundedCorners;
+      LButton.StyleDrawType := LCategoryButtons.StyleDrawType;
       if boFullSize in LCategoryButtons.ButtonOptions then
         LButtonWidth := LCategoryButtons.Width
       else
@@ -581,6 +582,7 @@ begin
         LCategoryButtons.SetCategoryButtonsStyle(LButton.StyleFamily,
           LButton.StyleClass, LButton.StyleAppearance);
         LCategoryButtons.StyleRadius := LButton.StyleRadius;
+        LCategoryButtons.StyleRoundedCorners := LButton.StyleRoundedCorners;
         LCategoryButtons.StyleDrawType := LButton.StyleDrawType;
         LCategoryButtons.Invalidate;
         Designer.Modified;

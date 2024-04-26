@@ -44,6 +44,7 @@ object fmMain: TfmMain
         TabOrder = 0
         StyleElements = [seFont, seBorder]
         OnClick = CreateButtonClick
+        StyleDrawType = btRounded
         StyleClass = 'Windows10'
       end
     end

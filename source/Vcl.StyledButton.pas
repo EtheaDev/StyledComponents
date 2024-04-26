@@ -53,7 +53,7 @@ uses
   ;
 
 const
-  StyledButtonsVersion = '3.4.5';
+  StyledButtonsVersion = '3.5.0';
 
 resourcestring
   ERROR_SETTING_BUTTON_STYLE = 'Error setting Button Style: %s/%s/%s not available';
@@ -116,6 +116,7 @@ type
     FImageMargins: TImageMargins;
 
     FStyleRadius: Integer;
+    FStyleRoundedCorners: TRoundedCorners;
     FStyleDrawType: TStyledButtonDrawType;
     FStyleFamily: TStyledButtonFamily;
     FStyleClass: TStyledButtonClass;
@@ -179,6 +180,7 @@ type
 
     procedure SetImageMargins(const AValue: TImageMargins);
     procedure SetStyleRadius(const AValue: Integer);
+    procedure SetStyleRoundedCorners(const AValue: TRoundedCorners);
     procedure SetStyleFamily(const AValue: TStyledButtonFamily);
     procedure SetStyleClass(const AValue: TStyledButtonClass);
     procedure SetStyleAppearance(const AValue: TStyledButtonAppearance);
@@ -457,7 +459,7 @@ type
     property Margin: Integer read FMargin write SetMargin default -1;
     property Spacing: Integer read FSpacing write SetSpacing default 4;
 
-    //Property used by TStyledSpeedButton
+    //Property used by TStyledButton, TStyledGraphicButton and TStyledSpeedButton
     property AllowAllUp: Boolean read FAllowAllUp write SetAllowAllUp;
     property GroupIndex: Integer read FGroupIndex write SetGroupIndex;
     property Down: Boolean read FDown write SetDown;
@@ -467,6 +469,7 @@ type
 
     //StyledComponents Attributes
     property StyleRadius: Integer read FStyleRadius write SetStyleRadius;
+    property StyleRoundedCorners: TRoundedCorners read FStyleRoundedCorners write SetStyleRoundedCorners default ALL_ROUNDED_CORNERS;
     property StyleDrawType: TStyledButtonDrawType read FStyleDrawType write SetStyleDrawType;
     property StyleFamily: TStyledButtonFamily read FStyleFamily write SetStyleFamily;
     property StyleClass: TStyledButtonClass read FStyleClass write SetStyleClass;
@@ -541,6 +544,8 @@ type
     function IsCustomRadius: Boolean;
     function GetStyleRadius: Integer;
     procedure SetStyleRadius(const AValue: Integer);
+    function GetStyleRoundedCorners: TRoundedCorners;
+    procedure SetStyleRoundedCorners(const AValue: TRoundedCorners);
     function ImageMarginsStored: Boolean;
     function IsStoredStyleFamily: Boolean;
     function IsStoredStyleAppearance: Boolean;
@@ -667,7 +672,8 @@ type
     procedure SetShowCaption(const AValue: Boolean);
   protected
     procedure SetCursor(const AValue: TCursor); virtual;
-    function GetCaption: TCaption; virtual;
+    function GetCaption: TCaption;
+    function GetCaptionToDraw: TCaption; virtual;
     procedure SetCaption(const AValue: TCaption); virtual;
     function GetButtonState: TStyledButtonState; virtual;
     function GetImage(out AImageList: TCustomImageList;
@@ -694,14 +700,6 @@ type
     procedure SetStyleName(const AValue: string); override;
     {$ENDIF}
     function GetRenderClass: TStyledButtonRenderClass; virtual;
-    (*
-    constructor InternalCreateStyled(AOwner: TComponent;
-      const AFamily: TStyledButtonFamily;
-      const AClass: TStyledButtonClass;
-      const AAppearance: TStyledButtonAppearance;
-      const ADrawType: TStyledButtonDrawType;
-      const AUseCustomDrawType: Boolean); virtual;
-    *)
   public
     class procedure RegisterDefaultRenderingStyle(
       const ADrawType: TStyledButtonDrawType;
@@ -789,13 +787,13 @@ type
     property ModalResult: TModalResult read GetModalResult write SetModalResult default mrNone;
     //Style as TSpeedButton
     property Style: TCustomButton.TButtonStyle read GetStyle write SetStyle default TCustomButton.TButtonStyle.bsPushButton;
-
-    //Property used by TStyledSpeedButton
+    //Property used by TStyledButton, TStyledGraphicButton and TStyledSpeedButton
     property AllowAllUp: Boolean read GetAllowAllUp write SetAllowAllUp default False;
     property GroupIndex: Integer read GetGroupIndex write SetGroupIndex default 0;
     property Down: Boolean read GetDown write SetDown stored IsCheckedStored default False;
     //StyledComponents Attributes
     property StyleRadius: Integer read GetStyleRadius write SetStyleRadius stored IsCustomRadius default DEFAULT_RADIUS;
+    property StyleRoundedCorners: TRoundedCorners read GetStyleRoundedCorners write SetStyleRoundedCorners default ALL_ROUNDED_CORNERS;
     property StyleDrawType: TStyledButtonDrawType read GetStyleDrawType write SetStyleDrawType stored IsCustomDrawType;
     property StyleFamily: TStyledButtonFamily read GetStyleFamily write SetStyleFamily stored IsStoredStyleFamily;
     property StyleClass: TStyledButtonClass read GetStyleClass write SetStyleClass stored IsStoredStyleClass;
@@ -887,6 +885,7 @@ type
     property Tag;
     //StyledComponents Attributes
     property StyleRadius;
+    property StyleRoundedCorners;
     property StyleDrawType;
     property StyleFamily;
     property StyleClass;
@@ -967,6 +966,7 @@ type
     property OnMouseUp;
     //StyledComponents Attributes
     property StyleRadius;
+    property StyleRoundedCorners;
     property StyleDrawType;
     property StyleFamily;
     property StyleClass;
@@ -1006,6 +1006,8 @@ type
     function IsCustomRadius: Boolean;
     function GetStyleRadius: Integer;
     procedure SetStyleRadius(const AValue: Integer);
+    function GetStyleRoundedCorners: TRoundedCorners;
+    procedure SetStyleRoundedCorners(const AValue: TRoundedCorners);
     function ImageMarginsStored: Boolean;
     function IsStoredStyleFamily: Boolean;
     function IsStoredStyleAppearance: Boolean;
@@ -1142,11 +1144,19 @@ type
     procedure SetNotificationBadge(const AValue: TNotificationBadgeAttributes);
     function GetShowCaption: Boolean;
     procedure SetShowCaption(const AValue: Boolean);
+    function GetAllowAllUp: Boolean;
+    function GetDown: Boolean;
+    function GetGroupIndex: Integer;
+    function IsCheckedStored: Boolean;
+    procedure SetAllowAllUp(const AValue: Boolean);
+    procedure SetDown(const AValue: Boolean);
+    procedure SetGroupIndex(const AValue: Integer);
   protected
     procedure SetCursor(const AValue: TCursor); virtual;
     function CalcImageRect(var ATextRect: TRect;
       const AImageWidth, AImageHeight: Integer): TRect; virtual;
-    function GetCaption: TCaption; virtual;
+    function GetCaption: TCaption;
+    function GetCaptionToDraw: TCaption; virtual;
     procedure SetCaption(const AValue: TCaption); virtual;
     function GetButtonState: TStyledButtonState; virtual;
     function GetImage(out AImageList: TCustomImageList;
@@ -1174,14 +1184,6 @@ type
     //for StyledButton
     procedure CreateWnd; override;
     function GetRenderClass: TStyledButtonRenderClass; virtual;
-    (*
-    constructor InternalCreateStyled(AOwner: TComponent;
-      const AFamily: TStyledButtonFamily;
-      const AClass: TStyledButtonClass;
-      const AAppearance: TStyledButtonAppearance;
-      const ADrawType: TStyledButtonDrawType;
-      const AUseCustomDrawType: Boolean); virtual;
-    *)
   public
     class procedure RegisterDefaultRenderingStyle(
       const ADrawType: TStyledButtonDrawType;
@@ -1278,8 +1280,13 @@ type
     property ModalResult: TModalResult read GetModalResult write SetModalResult default mrNone;
     //Style as TButton
     property Style: TCustomButton.TButtonStyle read GetStyle write SetStyle default TCustomButton.TButtonStyle.bsPushButton;
+    //Property used by TStyledButton, TStyledGraphicButton and TStyledSpeedButton
+    property AllowAllUp: Boolean read GetAllowAllUp write SetAllowAllUp default False;
+    property GroupIndex: Integer read GetGroupIndex write SetGroupIndex default 0;
+    property Down: Boolean read GetDown write SetDown stored IsCheckedStored default False;
     //StyledComponents Attributes
     property StyleRadius: Integer read GetStyleRadius write SetStyleRadius stored IsCustomRadius default DEFAULT_RADIUS;
+    property StyleRoundedCorners: TRoundedCorners read GetStyleRoundedCorners write SetStyleRoundedCorners default ALL_ROUNDED_CORNERS;
     property StyleDrawType: TStyledButtonDrawType read GetStyleDrawType write SetStyleDrawType stored IsCustomDrawType;
     property StyleFamily: TStyledButtonFamily read GetStyleFamily write SetStyleFamily stored IsStoredStyleFamily;
     property StyleClass: TStyledButtonClass read GetStyleClass write SetStyleClass stored IsStoredStyleClass;
@@ -1307,6 +1314,9 @@ type
     property ActiveStyleName;
     property Action;
     property Align;
+    property AllowAllUp;
+    property GroupIndex;
+    property Down;
     property Anchors;
     property AsVCLComponent stored False;
     property BiDiMode;
@@ -1399,6 +1409,7 @@ type
 
     //StyledComponents Attributes
     property StyleRadius;
+    property StyleRoundedCorners;
     property StyleDrawType;
     property StyleFamily;
     property StyleClass;
@@ -1485,6 +1496,7 @@ type
 
     //StyledComponents Attributes
     property StyleRadius;
+    property StyleRoundedCorners;
     property StyleDrawType;
     property StyleFamily;
     property StyleClass;
@@ -1558,6 +1570,7 @@ begin
   ADest.FFlat := Self.FFlat;
   ADest.FStyle := Self.FStyle;
   ADest.FStyleRadius := Self.FStyleRadius;
+  ADest.FStyleRoundedCorners := Self.FStyleRoundedCorners;
   ADest.FButtonStyleNormal.Assign(Self.FButtonStyleNormal);
   ADest.FButtonStylePressed.Assign(Self.FButtonStylePressed);
   ADest.FButtonStyleSelected.Assign(Self.FButtonStyleSelected);
@@ -1877,6 +1890,7 @@ begin
   FStyleDrawType := ADrawType;
   FCustomDrawType := AUseCustomDrawType;
   FStyleRadius := DEFAULT_RADIUS;
+  FStyleRoundedCorners := ALL_ROUNDED_CORNERS;
   FStyleFamily := AFamily;
   FStyleAppearance := AAppearance;
   //Call the Setter of StyleClass!
@@ -2370,7 +2384,7 @@ begin
     LRect.Right := ASurfaceRect.Left + W;
   end;
   //Draw Badge
-  CanvasDrawshape(ACanvas, LRect, btRounded, 0, False);
+  CanvasDrawshape(ACanvas, LRect, btRounded, 0, ALL_ROUNDED_CORNERS, False);
 
   //Draw Badge Content
   if FNotificationBadge.Size <> nbsSmallDot then
@@ -2402,7 +2416,7 @@ begin
 
   //Draw Button Shape
   CanvasDrawshape(ACanvas, LDrawRect, FStyleDrawType,
-    FStyleRadius*GetOwnerScaleFactor);
+    FStyleRadius*GetOwnerScaleFactor, FStyleRoundedCorners);
 
   //Draw Bar and Triangle
   if FDropDownRect.Width > 0 then
@@ -3048,7 +3062,8 @@ var
   LParent: TWinControl;
   LControl: TControl;
   I: Integer;
-  LButton: TCustomStyledGraphicButton;
+  LGraphicButton: TCustomStyledGraphicButton;
+  LButton: TCustomStyledButton;
 begin
   LParent := FOwnerControl.Parent;
   for I := 0 to LParent.ControlCount -1 do
@@ -3056,7 +3071,17 @@ begin
     LControl := LParent.Controls[I];
     if LControl is TCustomStyledGraphicButton then
     begin
-      LButton := TCustomStyledGraphicButton(LControl);
+      LGraphicButton := TCustomStyledGraphicButton(LControl);
+      if LGraphicButton.Down and (LGraphicButton <> FOwnerControl) and
+        (LGraphicButton.GroupIndex = GroupIndex) then
+      begin
+        LGraphicButton.Down := False;
+        Break;
+      end;
+    end;
+    if LControl is TCustomStyledButton then
+    begin
+      LButton := TCustomStyledButton(LControl);
       if LButton.Down and (LButton <> FOwnerControl) and
         (LButton.GroupIndex = GroupIndex) then
       begin
@@ -3348,6 +3373,15 @@ begin
     if AValue <= 0 then
       raise EReadError.create(SInvalidProperty);
     FStyleRadius := AValue;
+    Invalidate;
+  end;
+end;
+
+procedure TStyledButtonRender.SetStyleRoundedCorners(const AValue: TRoundedCorners);
+begin
+  if FStyleRoundedCorners <> AValue then
+  begin
+    FStyleRoundedCorners := AValue;
     Invalidate;
   end;
 end;
@@ -3885,7 +3919,7 @@ begin
   inherited Create(AOwner);
   FImageIndex := -1;
   FRender := GetRenderClass.CreateStyled(Self,
-    ControlClick, ControlFont, GetCaption, SetCaption,
+    ControlClick, ControlFont, GetCaptionToDraw, SetCaption,
       GetParentFont, SetParentFont,
       AFamily, AClass, AAppearance,
       _DefaultStyleDrawType, _UseCustomDrawType);
@@ -3907,7 +3941,7 @@ begin
   inherited Create(AOwner);
   FImageIndex := -1;
   FRender := GetRenderClass.CreateStyled(Self,
-    ControlClick, ControlFont, GetCaption, SetCaption,
+    ControlClick, ControlFont, GetCaptionToDraw, SetCaption,
       GetParentFont, SetParentFont,
       AFamily, AClass, AAppearance,
       ADrawType, AUseCustomDrawType);
@@ -4497,9 +4531,20 @@ begin
   Result := FRender.StyleRadius;
 end;
 
+function TCustomStyledGraphicButton.GetStyleRoundedCorners: TRoundedCorners;
+begin
+  Result := FRender.StyleRoundedCorners;
+end;
+
 procedure TCustomStyledGraphicButton.SetStyleRadius(const AValue: Integer);
 begin
   FRender.StyleRadius := AValue;
+end;
+
+procedure TCustomStyledGraphicButton.SetStyleRoundedCorners(
+  const AValue: TRoundedCorners);
+begin
+  FRender.StyleRoundedCorners := AValue;
 end;
 
 function TCustomStyledGraphicButton.GetSelectedImageIndex: TImageIndex;
@@ -4683,6 +4728,11 @@ begin
 end;
 
 function TCustomStyledGraphicButton.GetCaption: TCaption;
+begin
+  Result := inherited Caption;
+end;
+
+function TCustomStyledGraphicButton.GetCaptionToDraw: TCaption;
 begin
   Result := inherited Caption;
 end;
@@ -5027,7 +5077,7 @@ begin
   ParentColor := False;
   FImageIndex := -1;
   FRender := GetRenderClass.CreateStyled(Self,
-    ControlClick, ControlFont, GetCaption, SetCaption,
+    ControlClick, ControlFont, GetCaptionToDraw, SetCaption,
       GetParentFont, SetParentFont,
       AFamily, AClass, AAppearance,
       _DefaultStyleDrawType, _UseCustomDrawType);
@@ -5044,7 +5094,7 @@ begin
   ParentColor := False;
   FImageIndex := -1;
   FRender := GetRenderClass.CreateStyled(Self,
-    ControlClick, ControlFont, GetCaption, SetCaption,
+    ControlClick, ControlFont, GetCaptionToDraw, SetCaption,
       GetParentFont, SetParentFont,
       AFamily, AClass, AAppearance,
       ADrawType, AUseCustomDrawType);
@@ -5137,6 +5187,15 @@ begin
     Result := Caption <> ''
   else
     Result := not TGraphicButtonActionLink(ActionLink).IsCaptionLinked;
+end;
+
+function TCustomStyledButton.IsCheckedStored: Boolean;
+begin
+  if (ActionLink = nil) then
+    Result := FRender.Down
+  else
+    Result := not TGraphicButtonActionLink(ActionLink).IsCheckedLinked and
+      (FRender.Down);
 end;
 
 function TCustomStyledButton.IsEnabledStored: Boolean;
@@ -5403,6 +5462,11 @@ begin
   Result := FRender.ActiveStyleName;
 end;
 
+function TCustomStyledButton.GetAllowAllUp: Boolean;
+begin
+  Result := FRender.AllowAllUp;
+end;
+
 function TCustomStyledButton.GetAsVCLComponent: Boolean;
 begin
   Result := FRender.AsVCLComponent;
@@ -5413,9 +5477,19 @@ begin
   Result := FRender.DisabledImages;
 end;
 
+function TCustomStyledButton.GetDown: Boolean;
+begin
+  Result := FRender.Down;
+end;
+
 procedure TCustomStyledButton.SetDisabledImages(const AValue: TCustomImageList);
 begin
   FRender.DisabledImages := AValue;
+end;
+
+procedure TCustomStyledButton.SetDown(const AValue: Boolean);
+begin
+  FRender.Down := AValue;
 end;
 
 function TCustomStyledButton.GetDropDownMenu: TPopupMenu;
@@ -5438,9 +5512,19 @@ begin
   Result := FRender.Glyph;
 end;
 
+function TCustomStyledButton.GetGroupIndex: Integer;
+begin
+  Result := FRender.GroupIndex;
+end;
+
 procedure TCustomStyledButton.SetGlyph(const AValue: TBitmap);
 begin
   FRender.Glyph := AValue;
+end;
+
+procedure TCustomStyledButton.SetGroupIndex(const AValue: Integer);
+begin
+  FRender.GroupIndex := AValue;
 end;
 
 procedure TCustomStyledButton.SetDropDownMenu(const AValue: TPopupMenu);
@@ -5592,6 +5676,11 @@ begin
   FRender.SetButtonStyle(AStyleFamily, AStyleClass, AStyleAppearance);
 end;
 
+procedure TCustomStyledButton.SetAllowAllUp(const AValue: Boolean);
+begin
+  FRender.AllowAllUp := AValue;
+end;
+
 procedure TCustomStyledButton.SetAsVCLComponent(const AValue: Boolean);
 begin
   FRender.AsVCLComponent := AValue;
@@ -5658,9 +5747,20 @@ begin
   Result := FRender.StyleRadius;
 end;
 
+function TCustomStyledButton.GetStyleRoundedCorners: TRoundedCorners;
+begin
+  Result := FRender.StyleRoundedCorners;
+end;
+
 procedure TCustomStyledButton.SetStyleRadius(const AValue: Integer);
 begin
   FRender.StyleRadius := AValue;
+end;
+
+procedure TCustomStyledButton.SetStyleRoundedCorners(
+  const AValue: TRoundedCorners);
+begin
+  FRender.StyleRoundedCorners := AValue;
 end;
 
 function TCustomStyledButton.GetSelectedImageIndex: TImageIndex;
@@ -5839,6 +5939,11 @@ begin
 end;
 
 function TCustomStyledButton.GetCaption: TCaption;
+begin
+  Result := inherited Caption;
+end;
+
+function TCustomStyledButton.GetCaptionToDraw: TCaption;
 begin
   Result := inherited Caption;
 end;

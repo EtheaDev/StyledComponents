@@ -145,10 +145,10 @@ object fmMain: TfmMain
       Top = 0
       AllowAllUp = True
       Down = True
-      OnClick = ToolButtonclick
       Caption = 'Open'
       ImageIndex = 11
       ImageName = 'launch-white'
+      StyleRoundedCorners = [rcTopLeft, rcBottomLeft]
       StyleFamily = 'Bootstrap'
       StyleClass = 'Warning'
       Grouped = True
@@ -157,23 +157,23 @@ object fmMain: TfmMain
     object StyledToolButton2: TStyledToolButton
       Left = 77
       Top = 0
-      OnClick = ToolButtonclick
       Caption = 'Home'
       ImageIndex = 0
       ImageName = 'home-deeppurple'
-      StyleFamily = 'Angular-Light'
-      StyleClass = 'Amber'
-      StyleAppearance = 'Flat'
+      StyleRoundedCorners = [rcTopRight, rcBottomRight]
+      StyleFamily = 'Bootstrap'
+      StyleClass = 'Info'
       Grouped = True
       Style = tbsCheck
     end
     object SSep1: TStyledToolButton
       Left = 154
       Top = 0
+      StyleDrawType = btRect
       Style = tbsSeparator
     end
     object StyledToolButton3: TStyledToolButton
-      Left = 162
+      Left = 160
       Top = 0
       OnClick = ToolButtonclick
       Caption = 'Like'
@@ -183,7 +183,7 @@ object fmMain: TfmMain
       Style = tbsCheck
     end
     object StyledToolButton5: TStyledToolButton
-      Left = 239
+      Left = 237
       Top = 0
       OnClick = ToolButtonclick
       StyleElements = [seFont, seBorder]
@@ -195,12 +195,13 @@ object fmMain: TfmMain
       Style = tbsCheck
     end
     object StyledToolButton6: TStyledToolButton
-      Left = 316
+      Left = 314
       Top = 0
+      StyleDrawType = btRect
       Style = tbsSeparator
     end
     object StyledToolButton4: TStyledToolButton
-      Left = 324
+      Left = 320
       Top = 0
       OnClick = ToolButtonclick
       StyleElements = [seFont, seBorder]
@@ -212,7 +213,7 @@ object fmMain: TfmMain
     end
     object Edit2: TEdit
       AlignWithMargins = True
-      Left = 416
+      Left = 412
       Top = 3
       Width = 120
       Height = 23
@@ -220,7 +221,7 @@ object fmMain: TfmMain
       Text = 'Edit2'
     end
     object StyledToolButton7: TStyledToolButton
-      Left = 539
+      Left = 535
       Top = 0
       OnClick = ToolButtonclick
       Caption = 'Recycle Bin'

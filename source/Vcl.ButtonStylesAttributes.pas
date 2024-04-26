@@ -75,6 +75,12 @@ Type
 
   //Type of border
   TStyledButtonDrawType = (btRoundRect, btRounded, btRect, btEllipse);
+  TRoundedCorner = (rcTopLeft, rcTopRight, rcBottomRight, rcBottomLeft);
+  TRoundedCorners = set of TRoundedCorner;
+const
+  ALL_ROUNDED_CORNERS = [rcTopLeft, rcTopRight, rcBottomLeft, rcBottomRight];
+
+Type
   //Type of Draw for Border
   TBorderDrawStyle = (brdClear, brdSolid); //similar to Pen.psClear and Pen.psSolid
   TButtonDrawStyle = (btnClear, btnSolid); //similar to Brush.bsClear and Brush.bsSolid
@@ -136,6 +142,7 @@ Type
     FCustomFontStyle: TFontStyles;
     FCustomButtonColor: TColor;
     FCustomRadius: Integer;
+    FCustomRoundedCorners: TRoundedCorners;
 
     //Default Values retrieved by Family/Class/Appearance
     FDrawType: TStyledButtonDrawType;
@@ -148,6 +155,7 @@ Type
     FFontName: TFontName;
     FButtonColor: TColor;
     FRadius: Integer;
+    FRoundedCorners: TRoundedCorners;
 
     FOwnerControl: TControl;
     FHasCustomDrawType: Boolean;
@@ -159,6 +167,7 @@ Type
     FHasCustomFontStyle: Boolean;
     FHasCustomButtonColor: Boolean;
     FHasCustomRadius: Boolean;
+    FHasCustomRoundedCorners: Boolean;
 
     procedure InvalidateControl;
     procedure SetBorderColor(const AValue: TColor);
@@ -170,6 +179,7 @@ Type
     procedure SetFontColor(const AValue: TColor);
     procedure SetFontStyle(const AValue: TFontStyles);
     procedure SetRadius(const AValue: Integer);
+    procedure SetRoundedCorners(const AValue: TRoundedCorners);
     function GetBorderColor: TColor;
     function GetBorderDrawStyle: TBorderDrawStyle;
     function GetBorderWidth: Integer;
@@ -179,6 +189,7 @@ Type
     function GetFontColor: TColor;
     function GetFontStyle: TFontStyles;
     function GetRadius: Integer;
+    function GetRoundedCorners: TRoundedCorners;
     procedure SetCustomAttributes(const Value: Boolean);
   public
     constructor Create(AOwner: TComponent); override;
@@ -197,6 +208,7 @@ Type
     property HasCustomFontStyle: Boolean read FHasCustomFontStyle;
     property HasCustomButtonColor: Boolean read FHasCustomButtonColor;
     property HasCustomRadius: Boolean read FHasCustomRadius;
+    property HasCustomRoundedCorners: Boolean read FHasCustomRoundedCorners;
   published
     property DrawType: TStyledButtonDrawType read GetDrawType write SetDrawType stored FHasCustomDrawType;
     property BorderWidth: Integer read GetBorderWidth write SetBorderWidth stored FHasCustomBorderWidth;
@@ -207,6 +219,7 @@ Type
     property FontStyle: TFontStyles read GetFontStyle write SetFontStyle stored FHasCustomFontStyle;
     property ButtonColor: TColor read GetButtonColor write SetButtonColor stored FHasCustomButtonColor;
     property Radius: Integer read GetRadius write SetRadius stored FHasCustomRadius;
+    property RoundedCorners: TRoundedCorners read GetRoundedCorners write SetRoundedCorners stored FHasCustomRoundedCorners;
     property UseCustomAttributes: Boolean read HasCustomAttributes write SetCustomAttributes stored False;
   end;
 
@@ -290,6 +303,7 @@ procedure DrawRect(ACanvas: TCanvas; var ARect: TRect);
 //draw Button into Canvas
 procedure CanvasDrawShape(const ACanvas: TCanvas; ARect: TRect;
   const ADrawType: TStyledButtonDrawType; const ACornerRadius: Single;
+  const ARoundedCorners: TRoundedCorners;
   const APreserveBorderSpace: Boolean = True);
 //draw Text into Canvas
 procedure CanvasDrawText(const ACanvas: TCanvas; ARect: TRect;
@@ -362,7 +376,8 @@ begin
     (Style1.FFontStyle = Style2.FFontStyle) and
     (Style1.FFontName = Style2.FFontName) and
     (Style1.FButtonColor = Style2.FButtonColor) and
-    (Style1.FRadius = Style2.FRadius);
+    (Style1.FRadius = Style2.FRadius) and
+    (Style1.FRoundedCorners = Style2.FRoundedCorners);
 end;
 
 function SameNotificationBadgeAttributes(Attr1, Attr2: TNotificationBadgeAttributes): Boolean;
@@ -438,6 +453,7 @@ begin
   ADest.FFontColor := ASource.FFontColor;
   ADest.FButtonColor := ASource.FButtonColor;
   ADest.FRadius := ASource.FRadius;
+  ADest.FRoundedCorners := ASource.FRoundedCorners;
 
   ADest.FCustomDrawType := ASource.FCustomDrawType;
   ADest.FCustomBorderWidth := ASource.FCustomBorderWidth;
@@ -448,6 +464,7 @@ begin
   ADest.FCustomFontColor := ASource.FCustomFontColor;
   ADest.FCustomButtonColor := ASource.FCustomButtonColor;
   ADest.FCustomRadius := ASource.FCustomRadius;
+  ADest.FCustomRoundedCorners := ASource.FCustomRoundedCorners;
 
   ADest.FHasCustomDrawType := ASource.FHasCustomDrawType;
   ADest.FHasCustomBorderWidth := ASource.FHasCustomBorderWidth;
@@ -458,6 +475,7 @@ begin
   ADest.FHasCustomFontColor := ASource.FHasCustomFontColor;
   ADest.FHasCustomButtonColor := ASource.FHasCustomButtonColor;
   ADest.FHasCustomRadius := ASource.FHasCustomRadius;
+  ADest.FHasCustomRoundedCorners := ASource.FHasCustomRoundedCorners;
 end;
 
 function GetActiveStyleName(const AControl: TControl): string;
@@ -897,7 +915,8 @@ begin
     FHasCustomFontColor or
     FHasCustomFontStyle or
     FHasCustomButtonColor or
-    FHasCustomRadius;
+    FHasCustomRadius or
+    FHasCustomRoundedCorners;
 end;
 
 function TStyledButtonAttributes.PenStyle: TPenStyle;
@@ -920,6 +939,7 @@ begin
   FHasCustomFontStyle := False;
   FHasCustomButtonColor := False;
   FHasCustomRadius := False;
+  FHasCustomRoundedCorners := False;
 end;
 
 procedure TStyledButtonAttributes.Assign(ASource: TPersistent);
@@ -949,6 +969,7 @@ begin
   FCustomFontStyle := ASource.FCustomFontStyle;
   FCustomButtonColor := ASource.FCustomButtonColor;
   FCustomRadius := ASource.FCustomRadius;
+  FCustomRoundedCorners := ASource.FCustomRoundedCorners;
 *)
   //Assign internal variable
   FDrawType := ASource.FDrawType;
@@ -960,6 +981,7 @@ begin
   FFontStyle := ASource.FFontStyle;
   FButtonColor := ASource.FButtonColor;
   FRadius := ASource.FRadius;
+  FRoundedCorners := ASource.FRoundedCorners;
   Result := True;
 end;
 
@@ -976,6 +998,7 @@ constructor TStyledButtonAttributes.Create(AOwner: TComponent);
 begin
   inherited;
   FRadius := DEFAULT_RADIUS;
+  FRoundedCorners := ALL_ROUNDED_CORNERS;
   FBorderDrawStyle := brdSolid;
   FButtonDrawStyle := btnSolid;
 
@@ -1056,6 +1079,14 @@ begin
     Result := FRadius
   else
     Result := FCustomRadius;
+end;
+
+function TStyledButtonAttributes.GetRoundedCorners: TRoundedCorners;
+begin
+  if not HasCustomRoundedCorners then
+    Result := FRoundedCorners
+  else
+    Result := FCustomRoundedCorners;
 end;
 
 procedure TStyledButtonAttributes.InvalidateControl;
@@ -1271,6 +1302,29 @@ begin
   end;
 end;
 
+procedure TStyledButtonAttributes.SetRoundedCorners(const AValue: TRoundedCorners);
+begin
+  if Assigned(FOwnerControl) then
+  begin
+    //Setting a Custom property value
+    if FCustomRoundedCorners <> AValue then
+    begin
+      FCustomRoundedCorners := AValue;
+      FHasCustomRoundedCorners := FCustomRoundedCorners <> FRoundedCorners;
+      InvalidateControl;
+    end
+  end
+  else
+  begin
+    //Setting a property using StyleFamily, StyleClass and StyleAppearance
+    if FRoundedCorners <> AValue then
+    begin
+      FRoundedCorners := AValue;
+      InvalidateControl;
+    end;
+  end;
+end;
+
 procedure AdjustCanvasRect(const ACanvas: TCanvas;
   var ARect: TRect; ADrawingRect: Boolean);
 var
@@ -1308,7 +1362,8 @@ begin
 end;
 
 {$ifdef GDIPlusSupport}
-function GetRoundRectangle(ARectangle: TGPRectF;
+(*
+function GetRoundedPath(ARectangle: TGPRectF;
   ARadius: Single): TGPGraphicsPath;
 var
   LPath : TGPGraphicsPath;
@@ -1326,6 +1381,50 @@ begin
   LPath.AddArc(l + w - d, t, d, d, 270, 90); // topright
   LPath.AddArc(l + w - d, t + h - d, d, d, 0, 90); // bottomright
   LPath.AddArc(l, t + h - d, d, d, 90, 90); // bottomleft
+
+  LPath.CloseFigure();
+  result := LPath;
+end;
+*)
+function GetRoundedCornersPath(ARectangle: TGPRectF;
+  ARadius: Single; ARoundedCorners: TRoundedCorners): TGPGraphicsPath;
+const
+  d0 = 0.0001;
+var
+  LPath : TGPGraphicsPath;
+  l, t, w, h, d : Single;
+begin
+  LPath := TGPGraphicsPath.Create;
+  l := ARectangle.X;
+  t := ARectangle.Y;
+  w := ARectangle.Width;
+  h := ARectangle.Height;
+  d := ARadius / 2;
+
+  // topleft
+  if rcTopLeft in ARoundedCorners then
+    LPath.AddArc(l, t, d, d, 180, 90)
+  else
+    LPath.AddArc(l, t, d0, d0, 180, 90);
+
+  // topright
+  if rcTopRight in ARoundedCorners then
+    LPath.AddArc(l + w - d, t, d, d, 270, 90)
+  else
+    LPath.AddArc(l + w - d0, t, d0, d0, 270, 90);
+
+  // bottomright
+  if rcBottomRight in ARoundedCorners then
+    LPath.AddArc(l + w - d, t + h - d, d, d, 0, 90)
+  else
+    LPath.AddArc(l + w - d0, t + h - d0, d0, d0, 0, 90);
+
+  // bottomleft
+  if rcBottomLeft in ARoundedCorners then
+    LPath.AddArc(l, t + h - d, d, d, 90, 90)
+  else
+    LPath.AddArc(l, t + h - d0, d0, d0, 90, 90);
+
   LPath.CloseFigure();
   result := LPath;
 end;
@@ -1860,6 +1959,7 @@ end;
 {$ifdef GDIPlusSupport}
 procedure CanvasDrawShape(const ACanvas: TCanvas; ARect: TRect;
   const ADrawType: TStyledButtonDrawType; const ACornerRadius: Single;
+  const ARoundedCorners: TRoundedCorners;
   const APreserveBorderSpace: Boolean = True);
 var
   LGraphics: TGPGraphics;
@@ -1916,7 +2016,7 @@ begin
         LCornerRadius := ACornerRadius //Drawing a Rounded Rect
       else
         LCornerRadius := LRect.Height - LBorderWidth; //Drawing a Rounded Button
-      LPath := GetRoundRectangle(LRect, LCornerRadius*2);
+      LPath := GetRoundedCornersPath(LRect, LCornerRadius*2, ARoundedCorners);
       if ACanvas.Brush.Style = bsSolid then
       begin
         LBrush := TGPSolidBrush.Create(LButtonColor);

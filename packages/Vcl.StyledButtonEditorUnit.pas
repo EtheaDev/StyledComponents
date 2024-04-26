@@ -71,16 +71,22 @@ type
     AttributesPanel: TPanel;
     AttributesGroupBox: TGroupBox;
     StyleDrawTypeLabel: TLabel;
-    StyleRadiusLabel: TLabel;
     EnabledCheckBox: TCheckBox;
     StyleDrawTypeComboBox: TComboBox;
-    RadiusTrackBar: TTrackBar;
     ImageList: TImageList;
     ScrollBox: TScrollBox;
     FlatButtonCheckBox: TCheckBox;
     AsVCLComponentCheckBox: TCheckBox;
     StyleLabel: TLabel;
     StyleComboBox: TComboBox;
+    RoundedCornersGroupBox: TGroupBox;
+    TopRightCheckBox: TCheckBox;
+    TopLeftCheckBox: TCheckBox;
+    BottomLeftCheckBox: TCheckBox;
+    BottomRightCheckBox: TCheckBox;
+    CornerRadiusGroupBox: TGroupBox;
+    RadiusTrackBar: TTrackBar;
+    StyleRadiusLabel: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure OKButtonClick(Sender: TObject);
     procedure ApplyButtonClick(Sender: TObject);
@@ -92,8 +98,9 @@ type
     procedure EnabledCheckBoxClick(Sender: TObject);
     procedure DestButtonClick(Sender: TObject);
     procedure RadiusTrackBarChange(Sender: TObject);
-    procedure FlatButtonCheckBoxClick(Sender: TObject);
+    procedure CheckBoxClick(Sender: TObject);
     procedure AsVCLComponentCheckBoxClick(Sender: TObject);
+    procedure RoundedCheckBoxClick(Sender: TObject);
   private
     FUpdating: Boolean;
     FFamilyBuilt: TStyledButtonFamily;
@@ -111,10 +118,13 @@ type
     //procedure ButtonEnter(Sender: TObject);
     procedure UpdateSizeGUI;
     procedure FlowPanelResize(Sender: TObject);
+    function GetRoundedCorners: TRoundedCorners;
+    procedure SetRoundedCorners(const AValue: TRoundedCorners);
   protected
     procedure Loaded; override;
   public
     property CustomStyleDrawType: Boolean read FCustomStyleDrawType;
+    property RoundedCorners: TRoundedCorners read GetRoundedCorners write SetRoundedCorners;
   end;
 
 function EditStyledButton(const AButton: TControl): Boolean; overload;
@@ -400,7 +410,9 @@ begin
     EnabledCheckBox.Checked := SourceButton.Enabled;
     AsVCLComponentCheckBox.Checked := SourceButton.AsVCLComponent;
     RadiusTrackBar.Position := SourceButton.StyleRadius;
+    RoundedCorners := SourceButton.StyleRoundedCorners;
     FlatButtonCheckBox.Checked := SourceButton.Flat;
+
 
     UpdateDestFromGUI;
   finally
@@ -429,6 +441,27 @@ begin
     SetBounds(SavedBounds.Left, SavedBounds.Top, SavedBounds.Width, SavedBounds.Height);
 end;
 
+function TStyledButtonEditor.GetRoundedCorners: TRoundedCorners;
+begin
+  Result := [];
+  if TopLeftCheckBox.Checked then
+    Result := Result + [TRoundedCorner.rcTopLeft];
+  if TopRightCheckBox.Checked then
+    Result := Result + [TRoundedCorner.rcTopRight];
+  if BottomRightCheckBox.Checked then
+    Result := Result + [TRoundedCorner.rcBottomRight];
+  if BottomLeftCheckBox.Checked then
+    Result := Result + [TRoundedCorner.rcBottomLeft];
+end;
+
+procedure TStyledButtonEditor.SetRoundedCorners(const AValue: TRoundedCorners);
+begin
+  TopLeftCheckBox.Checked := TRoundedCorner.rcTopLeft in AValue;
+  TopRightCheckBox.Checked := TRoundedCorner.rcTopRight in AValue;
+  BottomRightCheckBox.Checked := TRoundedCorner.rcBottomRight in AValue;
+  BottomLeftCheckBox.Checked := TRoundedCorner.rcBottomLeft in AValue;
+end;
+
 procedure TStyledButtonEditor.HelpButtonClick(Sender: TObject);
 begin
   ShellExecute(handle, 'open',
@@ -453,6 +486,14 @@ end;
 procedure TStyledButtonEditor.RadiusTrackBarChange(Sender: TObject);
 begin
   DestButton.StyleRadius := RadiusTrackBar.Position;
+  DestButton.StyleRoundedCorners := RoundedCorners;
+  UpdateDestFromGUI;
+  FFamilyBuilt := '';
+  TabControlChange(TabControl);
+end;
+
+procedure TStyledButtonEditor.RoundedCheckBoxClick(Sender: TObject);
+begin
   UpdateDestFromGUI;
   FFamilyBuilt := '';
   TabControlChange(TabControl);
@@ -476,15 +517,13 @@ begin
 end;
 
 procedure TStyledButtonEditor.UpdateDestFromGUI;
-var
-  LRoundRect: Boolean;
 begin
   DestButton.Style := TCustomButton.TButtonStyle(StyleComboBox.ItemIndex);
   DestButton.StyleDrawType := TStyledButtonDrawType(StyleDrawTypeComboBox.ItemIndex);
-  LRoundRect := DestButton.StyleDrawType = btRoundRect;
   DestButton.StyleRadius := RadiusTrackBar.Position;
-  StyleRadiusLabel.Visible := LRoundRect;
-  RadiusTrackBar.Visible := LRoundRect;
+  CornerRadiusGroupBox.Visible := DestButton.StyleDrawType = btRoundRect;
+  RoundedCornersGroupBox.Visible := DestButton.StyleDrawType in [btRoundRect, btRounded];
+  DestButton.StyleRoundedCorners := RoundedCorners;
   DestButton.Enabled := EnabledCheckBox.Checked;
   SourceButton.Hint := ActualGroupBox.Caption;
   DestButton.Hint := NewGroupBox.Caption;
@@ -534,6 +573,7 @@ var
     LStyledButton.Style := TCustomButton.TButtonStyle(StyleComboBox.ItemIndex);
     LStyledButton.StyleDrawType := TStyledButtonDrawType(StyleDrawTypeComboBox.ItemIndex);
     LStyledButton.StyleRadius := RadiusTrackBar.Position;
+    LStyledButton.StyleRoundedCorners := RoundedCorners;
     LStyledButton.AsVCLComponent := False;
     LStyledButton.Parent := AParent;
   end;
@@ -560,7 +600,7 @@ begin
   End;
 end;
 
-procedure TStyledButtonEditor.FlatButtonCheckBoxClick(Sender: TObject);
+procedure TStyledButtonEditor.CheckBoxClick(Sender: TObject);
 begin
   UpdateDestFromGUI;
 end;
