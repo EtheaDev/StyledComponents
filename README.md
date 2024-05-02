@@ -4,6 +4,32 @@
 
 ### Actual official version: 3.5.0
 
+StyledComponents is a library of VCL components for Delphi (32 and 64 bit) that allow you to overcome the limits imposed by standard VCL components, maintaining 100% compatibility of the properties.
+
+You can easily use them, as a replacement for the standard ones, as well as to provide new features.
+
+The main limitations of the buttons and components of the VCL are the shape and color, defined by the operating system.
+
+With **StyledComponents** you can overcome these limits in a simple way. You can:
+- Control the shape of the button
+- Control button and border color (without limits) for every button state.
+- Use "families" of predefined styles as in the WEB environment (e.g. Angular or Bootstrap)
+- Adapt to the colors of the VCL styles, keeping the shape of the button consistent
+- The appearance is identical in “Windows” mode or by applying VCL styles to the application
+
+…all available from the Delphi XE6 version (which allows the use of GDI+, used for button drawing).
+
+Additionally, the different StyledComponents add functionality not found in standard components, such as:
+
+- Down, AllowUp and GroupIndex to use them in "group"
+- Caption alignment (left, centered, right)
+- Presence of Captions (with alignment) and customizable icons via ImageList in TStyledDBNavigator and TStyledBindNavigator
+- Ability to change icon position and caption alignment in TStyledButtonGroup and TStyledCategoryButtons
+- Possibility to also define the appearance of the individual buttons of the TStyledToolbar, TStyledButtonGroup and TStyledCategoryButtons components.
+- Use animated icons with TStyledAnimatedButton
+
+…finally, a component for Dialogs is available, completely customizable, which uses custom images or animations and StyledButtons within it, to be 100% consistent with the rest of the application.
+
 ## List of available Components:
 | Component | Description |
 | - | - |
