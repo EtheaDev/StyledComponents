@@ -43,14 +43,15 @@ With three values, you can select predefined ready styles for button color, bord
 - **StyleRadius**: used for btRoundRect DrawType
 
 ### New properties:
-Additionally, the different StyledComponents add functionality not found in standard components, such as:
+StyledComponents offers more options then standard components, such as:
 
 - Down, AllowUp and GroupIndex to use them in "group"
 - Caption alignment (left, centered, right)
 - Presence of Captions (with alignment) and customizable icons via ImageList in TStyledDBNavigator and TStyledBindNavigator
 - Ability to change icon position and caption alignment in TStyledButtonGroup and TStyledCategoryButtons
-- Possibility to also define the appearance of the individual buttons of the TStyledToolbar, TStyledButtonGroup and TStyledCategoryButtons components.
-- Use animated icons with TStyledAnimatedButton
+- Different appearance for buttons Items of TStyledToolbar, TStyledButtonGroup and TStyledCategoryButtons
+- Notification Badge for all StyledButtons
+- Animated icons using, TStyledAnimatedButton
 
 …finally, a component for Dialogs is available, completely customizable, which uses custom images or animations and StyledButtons within it, to be 100% consistent with the rest of the application.
 
@@ -172,6 +173,8 @@ NOTICE: from version 3.5.0 the new **RoundedCorners** property was added to all 
 NOTICE: from version 3.3.3 the new **NotificationBadge** property was added to all of the Styled Buttons.
 
 ![NotificationBadge](./Images/NotificationBadge.jpg)
+
+Read [Notification Badge guide](/wiki/Notification-Badge-guide) to explorer how it works...
 
 ***New Rounded Button Style***
 
