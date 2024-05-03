@@ -34,7 +34,8 @@ With three values, you can select predefined ready styles for button color, bord
 
 ### Shape attributes:
 - **StyleDrawType**
-`btRoundRect (default)`|`btRect`|`btRounded`|`btEllipse`|
+
+|`btRoundRect (default)`|`btRect`|`btRounded`|`btEllipse`|
 | :-- | :-- | :-- | :-- |
 |![RoundRect](./Images/Classic_Normal_Windows_btRoundRect.png)|![Classic_Normal_Windows_btRect](./Images/Classic_Normal_Windows_btRect.png)|![Rounded](./Images/Classic_Normal_Windows_btRounded.png)|![Ellipse](./Images/Classic_Normal_Windows_btEllipse.png)|
 
