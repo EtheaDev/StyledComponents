@@ -35,7 +35,6 @@ uses
   , System.Classes
   , WinApi.Windows
   , Vcl.StyledTaskDialog
-  , Skia.Vcl.StyledTaskDialogAnimatedUnit //to register StyledTaskDialogAnimatedUnit
   ;
 
 //{$WARN SYMBOL_PLATFORM OFF}
@@ -47,6 +46,10 @@ type
   end;
 
 implementation
+
+uses
+  Skia.Vcl.StyledTaskDialogAnimatedUnit //to register StyledTaskDialogAnimatedUnit
+  ;
 
 initialization
 

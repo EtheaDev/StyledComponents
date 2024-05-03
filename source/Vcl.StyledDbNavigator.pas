@@ -184,6 +184,7 @@ type
     _DefaultClass: TStyledButtonClass;
     _DefaultAppearance: TStyledButtonAppearance;
     _DefaultStyleRadius: Integer;
+    _DefaultCursor: TCursor;
 
     procedure ImageListChange(Sender: TObject);
     procedure DisabledImageListChange(Sender: TObject);
@@ -246,12 +247,14 @@ type
     procedure SetButtonGlyph(Index: TNavigateBtn); virtual;
     {$ENDIF}
   public
+    procedure Assign(Source: TPersistent); override;
     class procedure RegisterDefaultRenderingStyle(
       const ADrawType: TStyledButtonDrawType;
       const AFamily: TStyledButtonFamily = DEFAULT_CLASSIC_FAMILY;
       const AClass: TStyledButtonClass = DEFAULT_WINDOWS_CLASS;
       const AAppearance: TStyledButtonAppearance = DEFAULT_APPEARANCE;
-      const AStyleRadius: Integer = DEFAULT_RADIUS); virtual;
+      const AStyleRadius: Integer = DEFAULT_RADIUS;
+      const ACursor: TCursor = DEFAULT_CURSOR); virtual;
     //Styled constructor
     constructor CreateStyled(AOwner: TComponent;
       const AFamily: TStyledButtonFamily;
@@ -354,6 +357,7 @@ type
     property ConfirmDelete;
     property Constraints;
     property Ctl3D;
+    property Cursor default DEFAULT_CURSOR;
     property DataSource: TDataSource read GetDataSource write SetDataSource;
     property DragCursor;
     property DragKind;
@@ -452,6 +456,7 @@ type
     property ConfirmDelete;
     property Constraints;
     property Ctl3D;
+    property Cursor default DEFAULT_CURSOR;
     property DataSource: TBaseLinkingBindSource read GetDataSource write SetDataSource;
     property DragCursor;
     property DragKind;
@@ -610,6 +615,7 @@ begin
   FStyleFamily := AFamily;
   FStyleClass := AClass;
   FStyleAppearance := AAppearance;
+  Cursor := _DefaultCursor;
 
   InitButtons;
   InitHints;
@@ -827,7 +833,7 @@ end;
 class procedure TCustomStyledDBNavigator.RegisterDefaultRenderingStyle(
   const ADrawType: TStyledButtonDrawType; const AFamily: TStyledButtonFamily;
   const AClass: TStyledButtonClass; const AAppearance: TStyledButtonAppearance;
-  const AStyleRadius: Integer);
+  const AStyleRadius: Integer; const ACursor: TCursor);
 begin
   _DefaultStyleDrawType := ADrawType;
   _UseCustomDrawType := True;
@@ -835,6 +841,7 @@ begin
   _DefaultClass := AClass;
   _DefaultAppearance := AAppearance;
   _DefaultStyleRadius := AStyleRadius;
+  _DefaultCursor := ACursor;
 end;
 
 procedure TCustomStyledDBNavigator.InitButtons;
@@ -1439,6 +1446,29 @@ begin
   end;
 end;
 
+procedure TCustomStyledDBNavigator.Assign(Source: TPersistent);
+var
+  LNavigator: TCustomStyledDBNavigator;
+begin
+  inherited Assign(Source);
+  if Source is TCustomStyledDBNavigator then
+  begin
+    LNavigator := TCustomStyledDBNavigator(Source);
+    FFlat := LNavigator.FFlat;
+    FKind := LNavigator.FKind;
+    FConfirmDelete := LNavigator.FConfirmDelete;
+    DisabledImages := LNavigator.FDisabledImages;
+    Images :=  LNavigator.FImages;
+    FShowCaptions := LNavigator.FShowCaptions;
+    FStyleRadius := LNavigator.FStyleRadius;
+    FStyleDrawType := LNavigator.FStyleDrawType;
+    FStyleFamily := LNavigator.FStyleFamily;
+    FStyleClass := LNavigator.FStyleClass;
+    FStyleAppearance := LNavigator.FStyleAppearance;
+    Invalidate;
+  end;
+end;
+
 function TCustomStyledDBNavigator.AsVCLStyle: Boolean;
 begin
   Result := (StyleFamily = DEFAULT_CLASSIC_FAMILY) and
@@ -1751,6 +1781,7 @@ begin
       FDbNavigator._DefaultFamily, FDbNavigator._DefaultClass,
       FDbNavigator._DefaultAppearance,
       FDbNavigator._DefaultStyleDrawType,
+      FDbNavigator._DefaultCursor,
       FDbNavigator._UseCustomDrawType);
     StyleRadius := FDbNavigator.StyleRadius;
     ControlStyle := [csCaptureMouse, csDoubleClicks, csSetCaption, csOpaque];
@@ -2152,5 +2183,6 @@ initialization
   TCustomStyledDBNavigator._DefaultClass := DEFAULT_WINDOWS_CLASS;
   TCustomStyledDBNavigator._DefaultAppearance := DEFAULT_APPEARANCE;
   TCustomStyledDBNavigator._DefaultStyleRadius := DEFAULT_RADIUS;
+  TCustomStyledDBNavigator._DefaultCursor := DEFAULT_CURSOR;
 
 end.

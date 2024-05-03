@@ -6,12 +6,13 @@
         <DCC_DependencyCheckOutputName>CBTaskDialogTest.exe</DCC_DependencyCheckOutputName>
         <MainSource>StyledTaskDialogDemo.dpr</MainSource>
         <FrameworkType>VCL</FrameworkType>
-        <ProjectVersion>20.0</ProjectVersion>
+        <ProjectVersion>20.1</ProjectVersion>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Application</AppType>
+        <ProjectName Condition="'$(ProjectName)'==''">StyledTaskDialogDemo</ProjectName>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
         <Base>true</Base>

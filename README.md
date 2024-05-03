@@ -2,9 +2,12 @@
 
 ## Components similar to Delphi VCL Buttons, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 3.5.0
+### Actual official version: 3.5.1
 
-StyledComponents is a library of VCL components for Delphi (32 and 64 bit) that allow you to overcome the limits imposed by standard VCL components, maintaining 100% compatibility of the properties.
+---
+## A brief description
+
+**StyledComponents** is a set of VCL components for Delphi (32 and 64 bit) that allow you to overcome the limits imposed by standard VCL components, maintaining 100% compatibility of the properties.
 
 You can easily use them, as a replacement for the standard ones, as well as to provide new features.
 
@@ -19,6 +22,26 @@ With **StyledComponents** you can overcome these limits in a simple way. You can
 
 …all available from the Delphi XE6 version (which allows the use of GDI+, used for button drawing).
 
+## The most important properties
+
+using only few properties you can setup your Button in a very simple way.
+
+### Color attributes:
+With three values, you can select predefined ready styles for button color, border and font color:
+- **StyleFamily**: the "Family" of a Style (eg.Classic or Bootstrap or Angular)
+- **StyleClass**: a collection of predefined button style of the selected Family
+- **Style Appearance**: eg.Normal or Outline
+
+### Shape attributes:
+- **StyleDrawType**
+`btRoundRect (default)`|`btRect`|`btRounded`|`btEllipse`|
+| :-- | :-- | :-- | :-- |
+|![RoundRect](./Images/Classic_Normal_Windows_btRoundRect.png)|![Classic_Normal_Windows_btRect](./Images/Classic_Normal_Windows_btRect.png)|![Rounded](./Images/Classic_Normal_Windows_btRounded.png)|![Ellipse](./Images/Classic_Normal_Windows_btEllipse.png)|
+
+- **StyleRoundedCorners**: used for RoundRect and Rounded DrawType
+- **StyleRadius**: used for btRoundRect DrawType
+
+### New properties:
 Additionally, the different StyledComponents add functionality not found in standard components, such as:
 
 - Down, AllowUp and GroupIndex to use them in "group"
@@ -29,6 +52,8 @@ Additionally, the different StyledComponents add functionality not found in stan
 - Use animated icons with TStyledAnimatedButton
 
 …finally, a component for Dialogs is available, completely customizable, which uses custom images or animations and StyledButtons within it, to be 100% consistent with the rest of the application.
+
+Notice: by default the cursor for all Styled Buttons is crHandPoint.
 
 ## List of available Components:
 | Component | Description |
@@ -148,22 +173,6 @@ NOTICE: from version 3.3.3 the new **NotificationBadge** property was added to a
 ![NotificationBadge](./Images/NotificationBadge.jpg)
 
 ***New Rounded Button Style***
-
-NOTICE: from Version 3.2 the new **StyleDrawType: btRoundRect** (the new default) has been added.
-
-The "old default" btRounded is now used to show "full-rounded" button (as in new Chrome Refresh 2023 UI), but is not the default.
-
-_Before 3.2 version_
-
-StyleDrawType<br>`btRounded (default)`|StyleDrawType<br>`btRect`|StyleDrawType<br>`btEllipse`|
-| :-- | :-- | :-- |
-|![RoundRect](./Images/Classic_Normal_Windows_btRoundRect.png)|![btRect](./Images/Classic_Normal_Windows_btRect.png)|![Ellipse](./Images/Classic_Normal_Windows_btEllipse.png)|
-
-_From 3.2 version_
-
-StyleDrawType<br>`btRoundRect (default)`|StyleDrawType<br>`btRect`|StyleDrawType<br>`btRounded`|StyleDrawType<br>`btEllipse`|
-| :-- | :-- | :-- | :-- |
-|![RoundRect](./Images/Classic_Normal_Windows_btRoundRect.png)|![Classic_Normal_Windows_btRect](./Images/Classic_Normal_Windows_btRect.png)|![Rounded](./Images/Classic_Normal_Windows_btRounded.png)|![Ellipse](./Images/Classic_Normal_Windows_btEllipse.png)|
 
 _Be careful with your existing dfm and code files: if you have stored StyleDrawType = btRounded you must change it with btRoundRect, or remove it, because is the default value._
 
@@ -363,6 +372,12 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+03 Mag 2024: version 3.5.1
+- Added AlphaBlendValue for StyledTaskDialogs
+- Added Assign method for StyledToolbar and StyledDbNavigator
+- Added option to change default Cursor
+- Updated documentation
+
 26 Apr 2024: version 3.5.0
 - Added RoundedCorners options for StyledButtons, StyledButtonGroup, StyledCategoryButtons and StyleToolButton
 - Update Component Editor for RoundedCorners options

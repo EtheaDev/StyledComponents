@@ -170,6 +170,7 @@ type
     _DefaultClass: TStyledButtonClass;
     _DefaultAppearance: TStyledButtonAppearance;
     _DefaultStyleRadius: Integer;
+    _DefaultButtonsCursor: TCursor;
 
     procedure ImageMarginsChange(Sender: TObject);
     function IsCustomDrawType: Boolean;
@@ -250,7 +251,8 @@ type
       const AFamily: TStyledButtonFamily = DEFAULT_CLASSIC_FAMILY;
       const AClass: TStyledButtonClass = DEFAULT_WINDOWS_CLASS;
       const AAppearance: TStyledButtonAppearance = DEFAULT_APPEARANCE;
-      const AStyleRadius: Integer = DEFAULT_RADIUS); virtual;
+      const AStyleRadius: Integer = DEFAULT_RADIUS;
+      const AButtonsCursor: TCursor = DEFAULT_CURSOR); virtual;
     procedure SetCategoryButtonsStyle(const AStyleFamily: TStyledButtonFamily;
       const AStyleClass: TStyledButtonClass;
       const AStyleAppearance: TStyledButtonAppearance);
@@ -265,7 +267,7 @@ type
     property AsVCLComponent: Boolean read GetAsVCLComponent write SetAsVCLComponent stored False;
     property StyleApplied: Boolean read FStyleApplied write SetStyleApplied;
   published
-    property ButtonsCursor: TCursor read FButtonsCursor write FButtonsCursor default crHandPoint;
+    property ButtonsCursor: TCursor read FButtonsCursor write FButtonsCursor default DEFAULT_CURSOR;
     property Cursor: TCursor read FCursor write SetCursor default crDefault;
     property CaptionAlignment: TAlignment read FCaptionAlignment write SetCaptionAlignment default taLeftJustify;
     property Categories: TStyledButtonCategories read GetButtonCategories write SetButtonCategories;
@@ -317,7 +319,7 @@ begin
   FSpacing := 4;
   FFlat := False;
   FImageAlignment := iaLeft;
-  FButtonsCursor := crHandPoint;
+  FButtonsCursor := _DefaultButtonsCursor;
   FImageMargins := TImageMargins.Create;
   FImageMargins.Left := 2;
   FImageMargins.OnChange := ImageMarginsChange;
@@ -790,7 +792,7 @@ end;
 class procedure TStyledCategoryButtons.RegisterDefaultRenderingStyle(
   const ADrawType: TStyledButtonDrawType; const AFamily: TStyledButtonFamily;
   const AClass: TStyledButtonClass; const AAppearance: TStyledButtonAppearance;
-  const AStyleRadius: Integer);
+  const AStyleRadius: Integer; const AButtonsCursor: TCursor);
 begin
   _DefaultStyleDrawType := ADrawType;
   _UseCustomDrawType := True;
@@ -798,6 +800,7 @@ begin
   _DefaultClass := AClass;
   _DefaultAppearance := AAppearance;
   _DefaultStyleRadius := AStyleRadius;
+  _DefaultButtonsCursor := AButtonsCursor;
 end;
 
 function TStyledCategoryButtons.ApplyButtonStyle: Boolean;
@@ -850,6 +853,7 @@ begin
     FStyleRadius := TStyledCategoryButtons(Source).FStyleRadius;
     FStyleRoundedCorners := TStyledCategoryButtons(Source).FStyleRoundedCorners;
     FStyleDrawType := TStyledCategoryButtons(Source).FStyleDrawType;
+    FButtonsCursor := TStyledCategoryButtons(Source).FButtonsCursor;
     Invalidate;
   end;
 end;
@@ -1504,5 +1508,6 @@ initialization
   TStyledCategoryButtons._DefaultClass := DEFAULT_WINDOWS_CLASS;
   TStyledCategoryButtons._DefaultAppearance := DEFAULT_APPEARANCE;
   TStyledCategoryButtons._DefaultStyleRadius := DEFAULT_RADIUS;
+  TStyledCategoryButtons._DefaultButtonsCursor := DEFAULT_CURSOR;
 
 end.

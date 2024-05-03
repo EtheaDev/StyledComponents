@@ -39,6 +39,7 @@ const
   DEFAULT_WINDOWS_CLASS = 'Windows';
   DEFAULT_APPEARANCE = 'Normal';
   OUTLINE_APPEARANCE = 'Outline';
+  DEFAULT_CURSOR = crHandPoint;
   STD_BORDER_WIDTH = 2;
 
 Type

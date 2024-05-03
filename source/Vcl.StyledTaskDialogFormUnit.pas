@@ -55,7 +55,7 @@ type
   TTaskDialogLauncherHandler = class(TInterfacedObject, ITaskDialogLauncher)
     function DoExecute(ParentWnd: HWND;
       const ADialogType: TMsgDlgType;
-      const ATaskDialog: TCustomTaskDialog;
+      const ATaskDialog: TStyledTaskDialog;
       const ADialogBtnFamily: TStyledButtonFamily): Boolean;
   end;
 
@@ -165,6 +165,7 @@ type
     property OnVerificationClicked: TNotifyEvent read FOnVerificationClicked write FOnVerificationClicked;
 *)
   protected
+    class function CanUseAnimations: Boolean; virtual; abstract;
     procedure UpdateCustomIcons;
     procedure Loaded; override;
     procedure LoadImage(const AImageIndex: TImageIndex;
@@ -207,25 +208,29 @@ uses
   ;
 
 var
-  DialogLauncher: ITaskDialogLauncher;
-  TaskDialogFormClass: TStyledTaskDialogFormClass;
-  DlgButtonClasses: TButtonClasses;
+  _DialogLauncher: ITaskDialogLauncher;
+  _AnimatedTaskDialogFormClass, _TaskDialogFormClass: TStyledTaskDialogFormClass;
+  _DlgButtonClasses: TButtonClasses;
 
 procedure RegisterTaskDialogFormClass(AFormClass: TStyledTaskDialogFormClass);
 begin
-  TaskDialogFormClass := AFormClass;
+  if AFormClass.CanUseAnimations then
+    _AnimatedTaskDialogFormClass := AFormClass
+  else
+    _TaskDialogFormClass := AFormClass;
   UseStyledDialogForm(True);
 end;
 
 procedure UnregisterTaskDialogFormClass;
 begin
-  TaskDialogFormClass := nil;
+  _AnimatedTaskDialogFormClass := nil;
+  _TaskDialogFormClass := nil;
 end;
 
 procedure UseStyledDialogForm(const AActivate: Boolean);
 begin
   if AActivate then
-    RegisterCustomExecute(DialogLauncher)
+    RegisterCustomExecute(_DialogLauncher)
   else
     UnregisterCustomExecute;
 end;
@@ -714,19 +719,24 @@ end;
 
 function TTaskDialogLauncherHandler.DoExecute(ParentWnd: HWND;
   const ADialogType: TMsgDlgType;
-  const ATaskDialog: TCustomTaskDialog;
+  const ATaskDialog: TStyledTaskDialog;
   const ADialogBtnFamily: TStyledButtonFamily): Boolean;
 var
   LForm: TStyledTaskDialogForm;
   LFont: TFont;
   LDlgBtnFamily: TStyledButtonFamily;
 begin
-  LForm := TaskDialogFormClass.Create(nil);
+  if Assigned(_AnimatedTaskDialogFormClass) then
+    LForm := _AnimatedTaskDialogFormClass.Create(nil)
+  else
+    LForm := _TaskDialogFormClass.Create(nil);
   try
     LForm.FTaskDialog := ATaskDialog;
     LForm.FDialogType := ADialogType;
     LForm.FDialogBtnFamily := ADialogBtnFamily;
     LFont := GetDialogFont;
+    LForm.AlphaBlendValue := GetDialogAlphaBlendValue;
+    LForm.AlphaBlend := LForm.AlphaBlendValue <> DEFAULT_ALPHABLEND;
     LDlgBtnFamily := GetDialogBtnFamily;
     if Assigned(LFont) then
       LForm.SetDialogFont(LFont)
@@ -741,12 +751,12 @@ begin
 end;
 
 initialization
-  TaskDialogFormClass := TStyledTaskDialogForm;
+  _TaskDialogFormClass := TStyledTaskDialogForm;
   //Create handler for execute custom TaskDialog Form
-  DialogLauncher := TTaskDialogLauncherHandler.Create;
+  _DialogLauncher := TTaskDialogLauncherHandler.Create;
   //Register the handler
-  RegisterCustomExecute(DialogLauncher);
+  RegisterCustomExecute(_DialogLauncher);
   //Init default Dialog buttons Styles
-  SetLength(DlgButtonClasses, Ord(TMsgDlgBtn.mbClose)+1);
+  SetLength(_DlgButtonClasses, Ord(TMsgDlgBtn.mbClose)+1);
 
 end.

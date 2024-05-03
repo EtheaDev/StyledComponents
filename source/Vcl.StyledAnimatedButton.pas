@@ -81,6 +81,7 @@ type
       const AClass: TStyledButtonClass;
       const AAppearance: TStyledButtonAppearance;
       const ADrawType: TStyledButtonDrawType;
+      const ACursor: TCursor;
       const AUseCustomDrawType: Boolean); override;
     property AnimationHeight: Integer read FAnimationHeight write SetAnimationHeight;
     property AnimationWidth: Integer read FAnimationWidth write SetAnimationWidth;
@@ -190,7 +191,8 @@ constructor TStyledAnimatedButtonRender.CreateStyled(AOwner: TControl;
   const AGetParentFont: TGetParentFont; const ASetParentFont: TSetParentFont;
   const AFamily: TStyledButtonFamily; const AClass: TStyledButtonClass;
   const AAppearance: TStyledButtonAppearance;
-  const ADrawType: TStyledButtonDrawType; const AUseCustomDrawType: Boolean);
+  const ADrawType: TStyledButtonDrawType;
+  const ACursor: TCursor; const AUseCustomDrawType: Boolean);
 begin
   inherited;
   AnimationHeight := DEFAULT_ANIM_SIZE;

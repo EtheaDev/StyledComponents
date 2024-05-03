@@ -46,6 +46,7 @@ uses
   , Vcl.StyledButtonGroup
   , Vcl.StyledCategoryButtons
   , Vcl.ButtonStylesAttributes
+  , Vcl.StyledTaskDialog
   ;
 
 Type
@@ -69,7 +70,7 @@ Type
     procedure GetValues(Proc: TGetStrProc); override;
   end;
 
-  TStyledButtonComponentEditor = class (TComponentEditor)
+  TStyledButtonComponentEditor = class(TComponentEditor)
   private
     function GetButton: TControl;
   public
@@ -79,7 +80,7 @@ Type
     procedure Edit; override;
   end;
 
-  TStyledToolbarComponentEditor = class (TComponentEditor)
+  TStyledToolbarComponentEditor = class(TComponentEditor)
   private
     function GetToolbar: TStyledToolbar;
   public
@@ -88,7 +89,7 @@ Type
     procedure ExecuteVerb(Index: Integer); override;
   end;
 
-  TStyledNavigatorComponentEditor = class (TComponentEditor)
+  TStyledNavigatorComponentEditor = class(TComponentEditor)
   private
     function GetDbNavigator: TCustomStyledDbNavigator;
   public
@@ -97,7 +98,7 @@ Type
     procedure ExecuteVerb(Index: Integer); override;
   end;
 
-  TStyledButtonGroupComponentEditor = class (TComponentEditor)
+  TStyledButtonGroupComponentEditor = class(TComponentEditor)
   private
     function GetButtonGroup: TStyledButtonGroup;
   public
@@ -106,9 +107,18 @@ Type
     procedure ExecuteVerb(Index: Integer); override;
   end;
 
-  TStyledCategoryButtonsComponentEditor = class (TComponentEditor)
+  TStyledCategoryButtonsComponentEditor = class(TComponentEditor)
   private
     function GetCategoryButtons: TStyledCategoryButtons;
+  public
+    function GetVerbCount: Integer; override;
+    function GetVerb(Index: Integer): string; override;
+    procedure ExecuteVerb(Index: Integer); override;
+  end;
+
+  TStyledTaskDialogComponentEditor = class(TComponentEditor)
+  private
+    function GetTaskDialog: TStyledTaskDialog;
   public
     function GetVerbCount: Integer; override;
     function GetVerb(Index: Integer): string; override;
@@ -155,8 +165,7 @@ procedure Register;
 implementation
 
 uses
-  Vcl.StyledTaskDialog
-  , Vcl.StandardButtonStyles
+  Vcl.StandardButtonStyles
   , Vcl.BootstrapButtonStyles
   , Vcl.AngularButtonStyles
   , Vcl.StyledButtonEditorUnit
@@ -492,7 +501,7 @@ begin
     LButtonGroup := GetButtonGroup;
     LButton := TStyledButton.CreateStyled(LButtonGroup,
       LButtonGroup.StyleFamily, LButtonGroup.StyleClass, LButtonGroup.StyleAppearance,
-      LButtonGroup.StyleDrawType, False);
+      LButtonGroup.StyleDrawType, LButtonGroup.ButtonsCursor, False);
     try
       LButton.StyleRadius := LButtonGroup.StyleRadius;
       LButton.StyleRoundedCorners := LButtonGroup.StyleRoundedCorners;
@@ -562,7 +571,7 @@ begin
     LCategoryButtons := GetCategoryButtons;
     LButton := TStyledButton.CreateStyled(LCategoryButtons,
       LCategoryButtons.StyleFamily, LCategoryButtons.StyleClass, LCategoryButtons.StyleAppearance,
-      LCategoryButtons.StyleDrawType, False);
+      LCategoryButtons.StyleDrawType, LCategoryButtons.ButtonsCursor, False);
     try
       LButton.StyleRadius := LCategoryButtons.StyleRadius;
       LButton.StyleRoundedCorners := LCategoryButtons.StyleRoundedCorners;
@@ -615,6 +624,46 @@ begin
 end;
 
 function TStyledCategoryButtonsComponentEditor.GetVerbCount: Integer;
+begin
+  Result := 2;
+end;
+
+{ TStyledTaskDialogComponentEditor }
+
+procedure TStyledTaskDialogComponentEditor.ExecuteVerb(Index: Integer);
+var
+  LTaskDialog: TStyledTaskDialog;
+begin
+  if Index = 0 then
+  begin
+    LTaskDialog := GetTaskDialog;
+    if Assigned(LTaskDialog) then
+      LTaskDialog.Execute;
+  end
+  else if Index = 1 then
+  ShellExecute(0, 'open',
+    PChar(GetProjectURL), nil, nil, SW_SHOWNORMAL);
+end;
+
+function TStyledTaskDialogComponentEditor.GetTaskDialog: TStyledTaskDialog;
+var
+  LComponent: TPersistent;
+begin
+  Result := nil;
+  LComponent := GetComponent;
+  if LComponent is TStyledTaskDialog then
+    Result := TStyledTaskDialog(LComponent);
+end;
+
+function TStyledTaskDialogComponentEditor.GetVerb(Index: Integer): string;
+begin
+  if Index = 0 then
+    Result := 'Test Dialog...'
+  else if Index = 1 then
+    Result := 'Project page on GitHub...';
+end;
+
+function TStyledTaskDialogComponentEditor.GetVerbCount: Integer;
 begin
   Result := 2;
 end;
@@ -787,6 +836,9 @@ begin
      TStyledButtonGroup,
      TStyledCategoryButtons]);
 
+  RegisterPropertyEditor(TypeInfo(string),
+    TStyledTaskDialog, 'Caption', TStringProperty);
+
   //Property Editor for StyleFamily
   RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
     TStyledGraphicButton, 'StyleFamily', TStyledFamilyPropertyEditor);
@@ -921,11 +973,14 @@ begin
   RegisterComponentEditor(TStyledButton, TStyledButtonComponentEditor);
   RegisterComponentEditor(TStyledBitBtn, TStyledButtonComponentEditor);
   RegisterComponentEditor(TStyledToolButton, TStyledButtonComponentEditor);
+
+  //Register custom Components editors
   RegisterComponentEditor(TStyledToolbar, TStyledToolbarComponentEditor);
   RegisterComponentEditor(TStyledDbNavigator, TStyledNavigatorComponentEditor);
   RegisterComponentEditor(TStyledBindNavigator, TStyledNavigatorComponentEditor);
   RegisterComponentEditor(TStyledButtonGroup, TStyledButtonGroupComponentEditor);
   RegisterComponentEditor(TStyledCategoryButtons, TStyledCategoryButtonsComponentEditor);
+  RegisterComponentEditor(TStyledTaskDialog, TStyledTaskDialogComponentEditor);
 
   //To auto add units
   RegisterSelectionEditor(TStyledGraphicButton, TStyledComponentSelection);

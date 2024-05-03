@@ -47,6 +47,7 @@ uses
   , Vcl.ButtonStylesAttributes
   , Vcl.AngularButtonStyles
   , Vcl.ColorButtonStyles
+  , Vcl.StyledTaskDialog
   , Vcl.StyledTaskDialogFormUnit
   , Vcl.ExtCtrls
   , Vcl.StdCtrls
@@ -56,10 +57,11 @@ uses
   ;
 
 type
-  TStyledTaskDialogAnimated = class(TStyledTaskDialogForm)
+  TStyledTaskDialogAnimatedForm = class(TStyledTaskDialogForm)
     SkAnimatedImage: TSkAnimatedImage;
   private
   protected
+    class function CanUseAnimations: Boolean; override;
     procedure LoadImage(const AImageIndex: TImageIndex; AImageName: string); override;
   public
   end;
@@ -71,14 +73,19 @@ implementation
 uses
   Vcl.Themes;
 
-procedure TStyledTaskDialogAnimated.LoadImage(
+class function TStyledTaskDialogAnimatedForm.CanUseAnimations: Boolean;
+begin
+  Result := True;
+end;
+
+procedure TStyledTaskDialogAnimatedForm.LoadImage(
   const AImageIndex: TImageIndex; AImageName: string);
 var
   LStream: TResourceStream;
   LImageName: string;
 begin
   //Using ..\Animations\Animations.rc file compiled into Animations.RES file
-  LImageName := UpperCase(Format('LOTTIE_%s',[AImageName]));
+  LImageName := UpperCase('LOTTIE_'+AImageName);
   LStream := TResourceStream.Create(HInstance, LImageName, RT_RCDATA);
   try
     SkAnimatedImage.LoadFromStream(LStream);
@@ -90,6 +97,6 @@ begin
 end;
 
 initialization
-  RegisterTaskDialogFormClass(TStyledTaskDialogAnimated);
+  RegisterTaskDialogFormClass(TStyledTaskDialogAnimatedForm);
 
 end.

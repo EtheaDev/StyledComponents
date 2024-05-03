@@ -51,7 +51,8 @@ uses
   , Vcl.StandardButtonStyles
   , Vcl.BootstrapButtonStyles
   , Vcl.AngularButtonStyles
-  , Vcl.ColorButtonStyles;
+  , Vcl.ColorButtonStyles
+  ;
 
 type
   TStyledTaskDialogStd = class(TStyledTaskDialogForm)
@@ -59,6 +60,7 @@ type
     Image: TImage;
   private
   protected
+    class function CanUseAnimations: Boolean; override;
     procedure LoadImage(const AImageIndex: TImageIndex; AImageName: string); override;
   public
   end;
@@ -69,6 +71,11 @@ implementation
 
 uses
   Vcl.Themes;
+
+class function TStyledTaskDialogStd.CanUseAnimations: Boolean;
+begin
+  Result := False;
+end;
 
 procedure TStyledTaskDialogStd.LoadImage(
   const AImageIndex: TImageIndex; AImageName: string);

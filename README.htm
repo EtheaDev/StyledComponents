@@ -31,7 +31,65 @@ td{
 </style>
 <h1>Delphi VCL StyledComponents <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg" alt="License"/></a></h1>
 <h2>Components similar to Delphi VCL Buttons, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!</h2>
-<h3>Actual official version: 3.5.0</h3>
+<h3>Actual official version: 3.5.1</h3>
+<hr />
+<h2>A brief description</h2>
+<p><strong>StyledComponents</strong> is a set of VCL components for Delphi (32 and 64 bit) that allow you to overcome the limits imposed by standard VCL components, maintaining 100% compatibility of the properties.</p>
+<p>You can easily use them, as a replacement for the standard ones, as well as to provide new features.</p>
+<p>The main limitations of the buttons and components of the VCL are the shape and color, defined by the operating system.</p>
+<p>With <strong>StyledComponents</strong> you can overcome these limits in a simple way. You can:</p>
+<ul>
+<li>Control the shape of the button</li>
+<li>Control button and border color (without limits) for every button state.</li>
+<li>Use &ldquo;families&rdquo; of predefined styles as in the WEB environment (e.g. Angular or Bootstrap)</li>
+<li>Adapt to the colors of the VCL styles, keeping the shape of the button consistent</li>
+<li>The appearance is identical in “Windows” mode or by applying VCL styles to the application</li>
+</ul>
+<p>…all available from the Delphi XE6 version (which allows the use of GDI+, used for button drawing).</p>
+<h2>The most important properties</h2>
+<p>using only few properties you can setup your Button in a very simple way.</p>
+<h3>Color attributes:</h3>
+<p>With three values, you can select predefined ready styles for button color, border and font color:</p>
+<ul>
+<li><strong>StyleFamily</strong>: the &ldquo;Family&rdquo; of a Style (eg.Classic or Bootstrap or Angular)</li>
+<li><strong>StyleClass</strong>: a collection of predefined button style of the selected Family</li>
+<li><strong>Style Appearance</strong>: eg.Normal or Outline</li>
+</ul>
+<h3>Shape attributes:</h3>
+<ul>
+<li><p><strong>StyleDrawType</strong></p>
+<table>
+  <tr>
+    <th align="left"><code>btRoundRect (default)</code></th>
+    <th align="left"><code>btRect</code></th>
+    <th align="left"><code>btRounded</code></th>
+    <th align="left"><code>btEllipse</code></th>
+  </tr>
+  <tr>
+    <td align="left"><img src="./Images/Classic_Normal_Windows_btRoundRect.png" alt="RoundRect"/></td>
+    <td align="left"><img src="./Images/Classic_Normal_Windows_btRect.png" alt="Classic_Normal_Windows_btRect"/></td>
+    <td align="left"><img src="./Images/Classic_Normal_Windows_btRounded.png" alt="Rounded"/></td>
+    <td align="left"><img src="./Images/Classic_Normal_Windows_btEllipse.png" alt="Ellipse"/></td>
+  </tr>
+</table>
+</li>
+<li><p><strong>StyleRoundedCorners</strong>: used for RoundRect and Rounded DrawType</p>
+</li>
+<li><p><strong>StyleRadius</strong>: used for btRoundRect DrawType</p>
+</li>
+</ul>
+<h3>New properties:</h3>
+<p>Additionally, the different StyledComponents add functionality not found in standard components, such as:</p>
+<ul>
+<li>Down, AllowUp and GroupIndex to use them in &ldquo;group&rdquo;</li>
+<li>Caption alignment (left, centered, right)</li>
+<li>Presence of Captions (with alignment) and customizable icons via ImageList in TStyledDBNavigator and TStyledBindNavigator</li>
+<li>Ability to change icon position and caption alignment in TStyledButtonGroup and TStyledCategoryButtons</li>
+<li>Possibility to also define the appearance of the individual buttons of the TStyledToolbar, TStyledButtonGroup and TStyledCategoryButtons components.</li>
+<li>Use animated icons with TStyledAnimatedButton</li>
+</ul>
+<p>…finally, a component for Dialogs is available, completely customizable, which uses custom images or animations and StyledButtons within it, to be 100% consistent with the rest of the application.</p>
+<p>Notice: by default the cursor for all Styled Buttons is crHandPoint.</p>
 <h2>List of available Components:</h2>
 <table>
   <tr>
@@ -161,36 +219,6 @@ td{
 <p>NOTICE: from version 3.3.3 the new <strong>NotificationBadge</strong> property was added to all of the Styled Buttons.</p>
 <p><img src="./Images/NotificationBadge.jpg" alt="NotificationBadge"/></p>
 <p><strong><em>New Rounded Button Style</em></strong></p>
-<p>NOTICE: from Version 3.2 the new <strong>StyleDrawType: btRoundRect</strong> (the new default) has been added.</p>
-<p>The &ldquo;old default&rdquo; btRounded is now used to show &ldquo;full-rounded&rdquo; button (as in new Chrome Refresh 2023 UI), but is not the default.</p>
-<p><em>Before 3.2 version</em></p>
-<table>
-  <tr>
-    <th align="left">StyleDrawType<br><code>btRounded (default)</code></th>
-    <th align="left">StyleDrawType<br><code>btRect</code></th>
-    <th align="left">StyleDrawType<br><code>btEllipse</code></th>
-  </tr>
-  <tr>
-    <td align="left"><img src="./Images/Classic_Normal_Windows_btRoundRect.png" alt="RoundRect"/></td>
-    <td align="left"><img src="./Images/Classic_Normal_Windows_btRect.png" alt="btRect"/></td>
-    <td align="left"><img src="./Images/Classic_Normal_Windows_btEllipse.png" alt="Ellipse"/></td>
-  </tr>
-</table>
-<p><em>From 3.2 version</em></p>
-<table>
-  <tr>
-    <th align="left">StyleDrawType<br><code>btRoundRect (default)</code></th>
-    <th align="left">StyleDrawType<br><code>btRect</code></th>
-    <th align="left">StyleDrawType<br><code>btRounded</code></th>
-    <th align="left">StyleDrawType<br><code>btEllipse</code></th>
-  </tr>
-  <tr>
-    <td align="left"><img src="./Images/Classic_Normal_Windows_btRoundRect.png" alt="RoundRect"/></td>
-    <td align="left"><img src="./Images/Classic_Normal_Windows_btRect.png" alt="Classic_Normal_Windows_btRect"/></td>
-    <td align="left"><img src="./Images/Classic_Normal_Windows_btRounded.png" alt="Rounded"/></td>
-    <td align="left"><img src="./Images/Classic_Normal_Windows_btEllipse.png" alt="Ellipse"/></td>
-  </tr>
-</table>
 <p><em>Be careful with your existing dfm and code files: if you have stored StyleDrawType = btRounded you must change it with btRoundRect, or remove it, because is the default value.</em></p>
 <p><em>In this picture the new &ldquo;full-rounded&rdquo; Style introduced in 3.2 version, in &ldquo;VCL-Styled&rdquo; Style Demo</em></p>
 <h2><img src="./Images/RoundedButtons.jpg" alt="RoundedButtons.jpg"/></h2>
@@ -304,6 +332,13 @@ TaskDialog -> StyledTaskDialog</p>
 <p><img src="./Images/SupportingDelphi.jpg" alt="Delphi Support"/></p>
 <p>Related links: <a href="https://www.embarcadero.com">embarcadero.com</a> - <a href="https://learndelphi.org">learndelphi.org</a></p>
 <h3>RELEASE NOTES</h3>
+<p>03 Mag 2024: version 3.5.1</p>
+<ul>
+<li>Added AlphaBlendValue for StyledTaskDialogs</li>
+<li>Added Assign method for StyledToolbar and StyledDbNavigator</li>
+<li>Added option to change default Cursor</li>
+<li>Updated documentation</li>
+</ul>
 <p>26 Apr 2024: version 3.5.0</p>
 <ul>
 <li>Added RoundedCorners options for StyledButtons, StyledButtonGroup, StyledCategoryButtons and StyleToolButton</li>

@@ -1,5 +1,5 @@
-inherited StyledTaskDialogAnimated: TStyledTaskDialogAnimated
-  Caption = 'StyledTaskDialogAnimated'
+inherited StyledTaskDialogAnimatedForm: TStyledTaskDialogAnimatedForm
+  Caption = 'StyledTaskDialogAnimatedForm'
   TextHeight = 15
   inherited CenterPanel: TPanel
     inherited ImagePanel: TPanel

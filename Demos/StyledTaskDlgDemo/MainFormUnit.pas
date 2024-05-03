@@ -31,7 +31,8 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ExtCtrls, Grids, DBGrids, DB, DBClient, StdCtrls, DBCtrls,
-  Vcl.CheckLst, Vcl.StyledTaskDialog, UITypes, Vcl.ButtonStylesAttributes;
+  Vcl.CheckLst, Vcl.StyledTaskDialog, UITypes, Vcl.ButtonStylesAttributes,
+  Vcl.Samples.Spin;
 
 {$WARN SYMBOL_PLATFORM OFF}
 type
@@ -75,6 +76,8 @@ type
     Label2: TLabel;
     gbResult: TGroupBox;
     MRLabel: TLabel;
+    AlphaBlendSpinEdit: TSpinEdit;
+    AlphaLabel: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure ShowDlg(Sender: TObject);
     procedure RaiseError(Sender: TObject);
@@ -87,9 +90,11 @@ type
     procedure cbChangeStyleSelect(Sender: TObject);
     procedure FamilyComboBoxSelect(Sender: TObject);
     procedure RaiseDatabaseError(Sender: TObject);
+    procedure AlphaBlendSpinEditChange(Sender: TObject);
   private
     procedure ShowSelection(const AModalResult: TModalResult);
     procedure BuildStyleList;
+    procedure InitializeDialogs;
   protected
     procedure Loaded; override;
   public
@@ -108,8 +113,12 @@ uses
   , Vcl.Themes
   , Vcl.StyledCmpMessages
   , Vcl.StyledCmpStrUtils
-  , Vcl.ButtonStylesAttributes
   , Vcl.StyledTaskDialogFormUnit;
+
+procedure TMainForm.AlphaBlendSpinEditChange(Sender: TObject);
+begin
+  InitializeDialogs;
+end;
 
 procedure TMainForm.BuildStyleList;
 var
@@ -144,15 +153,21 @@ begin
 //  UseStyledDialogForm(cbUseStyledDialog.Checked)
 end;
 
+procedure TMainForm.InitializeDialogs;
+begin
+  InitializeStyledTaskDialogs(True, Screen.MessageFont,
+    FamilyComboBox.Text, AlphaBlendSpinEdit.Value);
+end;
+
 procedure TMainForm.FamilyComboBoxSelect(Sender: TObject);
 begin
-  InitializeStyledTaskDialogs(True, Screen.MessageFont, FamilyComboBox.Text);
+  InitializeDialogs;
 end;
 
 procedure TMainForm.FontComboBoxSelect(Sender: TObject);
 begin
   Screen.MessageFont.Name := FontComboBox.Text;
-  InitializeStyledTaskDialogs(True, Screen.MessageFont, FamilyComboBox.Text);
+  InitializeDialogs;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);

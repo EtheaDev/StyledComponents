@@ -53,7 +53,7 @@ uses
   ;
 
 const
-  StyledButtonsVersion = '3.5.0';
+  StyledButtonsVersion = '3.5.1';
 
 resourcestring
   ERROR_SETTING_BUTTON_STYLE = 'Error setting Button Style: %s/%s/%s not available';
@@ -177,6 +177,7 @@ type
     FAllowAllUp: Boolean;
     FGroupIndex: Integer;
     FDown: Boolean;
+    FShowCaption: Boolean;
 
     procedure SetImageMargins(const AValue: TImageMargins);
     procedure SetStyleRadius(const AValue: Integer);
@@ -265,8 +266,6 @@ type
     function GetNumGlyphs: TNumGlyphs;
     procedure SetNumGlyphs(const AValue: TNumGlyphs);
     procedure SetFlat(const AValue: Boolean);
-  private
-    FShowCaption: Boolean;
     procedure SetState(const AValue: TButtonState);
     function GetMouseInControl: Boolean;
     function GetHasCustomAttributes: Boolean;
@@ -402,6 +401,7 @@ type
       const AClass: TStyledButtonClass;
       const AAppearance: TStyledButtonAppearance;
       const ADrawType: TStyledButtonDrawType;
+      const ACursor: TCursor;
       const AUseCustomDrawType: Boolean); virtual;
     constructor Create(AOwner: TControl;
       const AOnClick: TNotifyEvent;
@@ -528,11 +528,12 @@ type
 
     class var
     _DefaultStyleDrawType: TStyledButtonDrawType;
-     _UseCustomDrawType: Boolean;
-     _DefaultFamily: TStyledButtonFamily;
-     _DefaultClass: TStyledButtonClass;
-     _DefaultAppearance: TStyledButtonAppearance;
-     _DefaultStyleRadius: Integer;
+    _UseCustomDrawType: Boolean;
+    _DefaultFamily: TStyledButtonFamily;
+    _DefaultClass: TStyledButtonClass;
+    _DefaultAppearance: TStyledButtonAppearance;
+    _DefaultStyleRadius: Integer;
+    _DefaultCursor: TCursor;
 
     //Event Handlers passed to Render
     procedure ControlFont(var AValue: TFont);
@@ -706,7 +707,8 @@ type
       const AFamily: TStyledButtonFamily = DEFAULT_CLASSIC_FAMILY;
       const AClass: TStyledButtonClass = DEFAULT_WINDOWS_CLASS;
       const AAppearance: TStyledButtonAppearance = DEFAULT_APPEARANCE;
-      const AStyleRadius: Integer = DEFAULT_RADIUS); virtual;
+      const AStyleRadius: Integer = DEFAULT_RADIUS;
+      const ACursor: TCursor = DEFAULT_CURSOR); virtual;
     function GetRescalingButton: Boolean;
     procedure SetRescalingButton(const AValue: Boolean);
     function GetSplitButtonWidth: Integer;
@@ -741,6 +743,7 @@ type
       const AClass: TStyledButtonClass;
       const AAppearance: TStyledButtonAppearance;
       const ADrawType: TStyledButtonDrawType;
+      const ACursor: TCursor;
       const AUseCustomDrawType: Boolean); overload; virtual;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -762,7 +765,7 @@ type
     property CaptionAlignment: TAlignment read GetCaptionAlignment write SetCaptionAlignment Stored IsCaptionAlignmentStored;
     property ShowCaption: Boolean read GetShowCaption write SetShowCaption default True;
     property CommandLinkHint: string read GetCommandLinkHint write SetCommandLinkHint;
-    property Cursor: TCursor read GetCursor write SetCursor default crHandPoint;
+    property Cursor: TCursor read GetCursor write SetCursor default DEFAULT_CURSOR;
     property ImageAlignment: TImageAlignment read GetImageAlignment write SetImageAlignment default iaLeft;
     property DisabledImageIndex: TImageIndex read GetDisabledImageIndex write SetDisabledImageIndex default -1;
     property DisabledImages: TCustomImageList read GetDisabledImages write SetDisabledImages;
@@ -821,7 +824,7 @@ type
     property Anchors;
     property AsVCLComponent stored False;
     property Constraints;
-    property Cursor default crHandPoint;
+    property Cursor default DEFAULT_CURSOR;
     property GroupIndex;
     property Down;
     property DragCursor;
@@ -912,7 +915,7 @@ type
     property AsVCLComponent stored False;
     property BiDiMode;
     property Constraints;
-    property Cursor default crHandPoint;
+    property Cursor default DEFAULT_CURSOR;
     property GroupIndex;
     property Down;
     property DisabledImageIndex;
@@ -995,6 +998,7 @@ type
     _DefaultClass: TStyledButtonClass;
     _DefaultAppearance: TStyledButtonAppearance;
     _DefaultStyleRadius: Integer;
+    _DefaultCursor: TCursor;
 
     //Event Handlers passed to Render
     procedure ControlFont(var AValue: TFont);
@@ -1190,7 +1194,8 @@ type
       const AFamily: TStyledButtonFamily = DEFAULT_CLASSIC_FAMILY;
       const AClass: TStyledButtonClass = DEFAULT_WINDOWS_CLASS;
       const AAppearance: TStyledButtonAppearance = DEFAULT_APPEARANCE;
-      const AStyleRadius: Integer = DEFAULT_RADIUS); virtual;
+      const AStyleRadius: Integer = DEFAULT_RADIUS;
+      const ACursor: TCursor = DEFAULT_CURSOR); virtual;
     function GetRescalingButton: Boolean;
     procedure SetRescalingButton(const AValue: Boolean);
     function GetSplitButtonWidth: Integer;
@@ -1224,6 +1229,7 @@ type
       const AClass: TStyledButtonClass;
       const AAppearance: TStyledButtonAppearance;
       const ADrawType: TStyledButtonDrawType;
+      const ACursor: TCursor;
       const AUseCustomDrawType: Boolean); overload; virtual;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -1250,7 +1256,7 @@ type
     property CaptionAlignment: TAlignment read GetCaptionAlignment write SetCaptionAlignment  Stored IsCaptionAlignmentStored;
     property ShowCaption: Boolean read GetShowCaption write SetShowCaption default True;
     property CommandLinkHint: string read GetCommandLinkHint write SetCommandLinkHint;
-    property Cursor: TCursor read GetCursor write SetCursor default crHandPoint;
+    property Cursor: TCursor read GetCursor write SetCursor default DEFAULT_CURSOR;
     property Default: Boolean read GetDefault write SetDefault default False;
     property Cancel: Boolean read GetCancel write SetCancel default False;
     property ImageAlignment: TImageAlignment read GetImageAlignment write SetImageAlignment default iaLeft;
@@ -1326,7 +1332,7 @@ type
     property ShowCaption;
     property CommandLinkHint;
     property Constraints;
-    property Cursor default crHandPoint;
+    property Cursor default DEFAULT_CURSOR;
     property Default;
     property DisabledImageIndex;
     {$IFDEF D10_4+}
@@ -1440,7 +1446,7 @@ type
     property Caption;
     property ShowCaption;
     property Constraints;
-    property Cursor default crHandPoint;
+    property Cursor default DEFAULT_CURSOR;
     property Default;
     {$IFDEF D10_4+}
     property DisabledImageIndex;
@@ -1823,6 +1829,7 @@ constructor TStyledButtonRender.CreateStyled(AOwner: TControl;
   const AClass: TStyledButtonClass;
   const AAppearance: TStyledButtonAppearance;
   const ADrawType: TStyledButtonDrawType;
+  const ACursor: TCursor;
   const AUseCustomDrawType: Boolean);
 begin
   Assert(Assigned(AOwner));
@@ -1882,7 +1889,7 @@ begin
   FImageMargins.OnChange := ImageMarginsChange;
   FImageAlignment := iaLeft;
   FCustomDrawType := False;
-  FOwnerControl.Cursor := crHandPoint;
+  FOwnerControl.Cursor := ACursor;
   ParentFont := true;
   FOwnerControl.Width := DEFAULT_BTN_WIDTH;
   FOwnerControl.Height := DEFAULT_BTN_HEIGHT;
@@ -1916,6 +1923,7 @@ begin
     DEFAULT_WINDOWS_CLASS,
     DEFAULT_APPEARANCE,
     DEFAULT_STYLEDRAWTYPE,
+    DEFAULT_CURSOR,
     False);
 end;
 
@@ -3823,14 +3831,13 @@ begin
   begin
     LDest := TCustomStyledGraphicButton(ADest);
     FRender.AssignStyleTo(LDest.Render);
+    LDest.Cursor := Self.Cursor;
     LDest.Hint := Self.Hint;
     LDest.Visible := Self.Visible;
     LDest.Caption := Self.Caption;
     LDest.ModalResult := Self.ModalResult;
     LDest.Tag := Self.Tag;
     LDest.Enabled := Self.Enabled;
-    LDest.Hint := Self.Hint;
-    LDest.Visible := Self.Visible;
     LDest.Down := Self.Down;
     LDest.AllowAllUp := Self.AllowAllUp;
   end;
@@ -3922,7 +3929,7 @@ begin
     ControlClick, ControlFont, GetCaptionToDraw, SetCaption,
       GetParentFont, SetParentFont,
       AFamily, AClass, AAppearance,
-      _DefaultStyleDrawType, _UseCustomDrawType);
+      _DefaultStyleDrawType, _DefaultCursor, _UseCustomDrawType);
 end;
 
 constructor TCustomStyledGraphicButton.Create(AOwner: TComponent);
@@ -3936,7 +3943,9 @@ end;
 constructor TCustomStyledGraphicButton.CreateStyled(AOwner: TComponent;
   const AFamily: TStyledButtonFamily; const AClass: TStyledButtonClass;
   const AAppearance: TStyledButtonAppearance;
-  const ADrawType: TStyledButtonDrawType; const AUseCustomDrawType: Boolean);
+  const ADrawType: TStyledButtonDrawType;
+  const ACursor: TCursor;
+  const AUseCustomDrawType: Boolean);
 begin
   inherited Create(AOwner);
   FImageIndex := -1;
@@ -3944,7 +3953,7 @@ begin
     ControlClick, ControlFont, GetCaptionToDraw, SetCaption,
       GetParentFont, SetParentFont,
       AFamily, AClass, AAppearance,
-      ADrawType, AUseCustomDrawType);
+      ADrawType, ACursor, AUseCustomDrawType);
 end;
 
 procedure TCustomStyledGraphicButton.ActionChange(Sender: TObject; CheckDefaults: Boolean);
@@ -3993,18 +4002,6 @@ function TCustomStyledGraphicButton.ImageMarginsStored: Boolean;
 begin
   Result := not FRender.IsDefaultImageMargins;
 end;
-
-(*
-constructor TCustomStyledGraphicButton.InternalCreateStyled(AOwner: TComponent;
-  const AFamily: TStyledButtonFamily; const AClass: TStyledButtonClass;
-  const AAppearance: TStyledButtonAppearance;
-  const ADrawType: TStyledButtonDrawType; const AUseCustomDrawType: Boolean);
-begin
-  _DefaultStyleDrawType := ADrawType;
-  _UseCustomDrawType := AUseCustomDrawType;
-  CreateStyled(AOwner, AFamily, AClass, AAppearance);
-end;
-*)
 
 function TCustomStyledGraphicButton.IsCaptionStored: Boolean;
 begin
@@ -4153,7 +4150,7 @@ end;
 class procedure TCustomStyledGraphicButton.RegisterDefaultRenderingStyle(
   const ADrawType: TStyledButtonDrawType; const AFamily: TStyledButtonFamily;
   const AClass: TStyledButtonClass; const AAppearance: TStyledButtonAppearance;
-  const AStyleRadius: Integer);
+  const AStyleRadius: Integer; const ACursor: TCursor);
 begin
   _DefaultStyleDrawType := ADrawType;
   _UseCustomDrawType := True;
@@ -4161,6 +4158,7 @@ begin
   _DefaultClass := AClass;
   _DefaultAppearance := AAppearance;
   _DefaultStyleRadius := AStyleRadius;
+  _DefaultCursor := ACursor;
 end;
 
 function TCustomStyledGraphicButton.GetRenderClass: TStyledButtonRenderClass;
@@ -4995,14 +4993,13 @@ begin
   begin
     LDest := TCustomStyledButton(ADest);
     FRender.AssignStyleTo(LDest.Render);
+    LDest.Cursor := Self.Cursor;
     LDest.Hint := Self.Hint;
     LDest.Visible := Self.Visible;
     LDest.Caption := Self.Caption;
     LDest.ModalResult := Self.ModalResult;
     LDest.Tag := Self.Tag;
     LDest.Enabled := Self.Enabled;
-    LDest.Hint := Self.Hint;
-    LDest.Visible := Self.Visible;
     LDest.TabStop := Self.TabStop;
   end;
   end;
@@ -5080,14 +5077,14 @@ begin
     ControlClick, ControlFont, GetCaptionToDraw, SetCaption,
       GetParentFont, SetParentFont,
       AFamily, AClass, AAppearance,
-      _DefaultStyleDrawType, _UseCustomDrawType);
+      _DefaultStyleDrawType, _DefaultCursor, _UseCustomDrawType);
   TabStop := True;
 end;
 
 constructor TCustomStyledButton.CreateStyled(AOwner: TComponent;
   const AFamily: TStyledButtonFamily; const AClass: TStyledButtonClass;
-  const AAppearance: TStyledButtonAppearance;
-  const ADrawType: TStyledButtonDrawType; const AUseCustomDrawType: Boolean);
+  const AAppearance: TStyledButtonAppearance; const ADrawType: TStyledButtonDrawType;
+  const ACursor: TCursor; const AUseCustomDrawType: Boolean);
 begin
   inherited Create(AOwner);
   DoubleBuffered := True;
@@ -5097,7 +5094,7 @@ begin
     ControlClick, ControlFont, GetCaptionToDraw, SetCaption,
       GetParentFont, SetParentFont,
       AFamily, AClass, AAppearance,
-      ADrawType, AUseCustomDrawType);
+      ADrawType, ACursor, AUseCustomDrawType);
   TabStop := True;
 end;
 
@@ -5163,18 +5160,6 @@ function TCustomStyledButton.ImageMarginsStored: Boolean;
 begin
   Result := not FRender.IsDefaultImageMargins;
 end;
-
-(*
-constructor TCustomStyledButton.InternalCreateStyled(AOwner: TComponent;
-  const AFamily: TStyledButtonFamily; const AClass: TStyledButtonClass;
-  const AAppearance: TStyledButtonAppearance;
-  const ADrawType: TStyledButtonDrawType; const AUseCustomDrawType: Boolean);
-begin
-  _DefaultStyleDrawType := ADrawType;
-  _UseCustomDrawType := AUseCustomDrawType;
-  CreateStyled(AOwner, AFamily, AClass, AAppearance);
-end;
-*)
 
 function TCustomStyledButton.IsCaptionAlignmentStored: Boolean;
 begin
@@ -6006,7 +5991,7 @@ end;
 class procedure TCustomStyledButton.RegisterDefaultRenderingStyle(
   const ADrawType: TStyledButtonDrawType; const AFamily: TStyledButtonFamily;
   const AClass: TStyledButtonClass; const AAppearance: TStyledButtonAppearance;
-  const AStyleRadius: Integer);
+  const AStyleRadius: Integer; const ACursor: TCursor);
 begin
   _DefaultStyleDrawType := ADrawType;
   _UseCustomDrawType := True;
@@ -6014,6 +5999,7 @@ begin
   _DefaultClass := AClass;
   _DefaultAppearance := AAppearance;
   _DefaultStyleRadius := AStyleRadius;
+  _DefaultCursor := ACursor;
 end;
 
 procedure TCustomStyledButton.ReleasePaintBuffer;
@@ -6196,11 +6182,13 @@ initialization
   TCustomStyledGraphicButton._DefaultClass := DEFAULT_WINDOWS_CLASS;
   TCustomStyledGraphicButton._DefaultAppearance := DEFAULT_APPEARANCE;
   TCustomStyledGraphicButton._DefaultStyleRadius := DEFAULT_RADIUS;
+  TCustomStyledGraphicButton._DefaultCursor := DEFAULT_CURSOR;
 
   TCustomStyledButton._DefaultStyleDrawType := DEFAULT_STYLEDRAWTYPE;
   TCustomStyledButton._DefaultFamily := DEFAULT_CLASSIC_FAMILY;
   TCustomStyledButton._DefaultClass := DEFAULT_WINDOWS_CLASS;
   TCustomStyledButton._DefaultAppearance := DEFAULT_APPEARANCE;
   TCustomStyledButton._DefaultStyleRadius := DEFAULT_RADIUS;
+  TCustomStyledButton._DefaultCursor := DEFAULT_CURSOR;
 
 end.

@@ -39,22 +39,15 @@ uses
   , Vcl.ButtonStylesAttributes
   ;
 
+const
+  DEFAULT_ALPHABLEND = 255;
+
 type
   TStyledDialogIcons = array[TMsgDlgType] of TIcon;
-
-  //  Abstraction of a Dialog Launcher
-  ITaskDialogLauncher = interface
-    ['{B2F16F98-C163-4706-A803-E624126D8DF6}']
-    function DoExecute(ParentWnd: HWND;
-      const ADialogType: TMsgDlgType;
-      const ATaskDialog: TCustomTaskDialog;
-      const ADialogBtnFamily: TStyledButtonFamily): boolean;
-  end;
 
 {$WARN SYMBOL_PLATFORM OFF}
 { TaskDialog based message dialog; requires Windows Vista or later }
 type
-
   { TStyledTaskDialog }
   [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledTaskDialog = class(TTaskDialog)
@@ -72,6 +65,15 @@ type
     function Execute(ParentWnd: HWND): Boolean; overload; override;
     property HelpFile: string read FHelpFile write FHelpFile;
     property Position: TPoint read FPosition write FPosition;
+  end;
+
+  //  Abstraction of a Dialog Launcher
+  ITaskDialogLauncher = interface
+    ['{B2F16F98-C163-4706-A803-E624126D8DF6}']
+    function DoExecute(ParentWnd: HWND;
+      const ADialogType: TMsgDlgType;
+      const ATaskDialog: TStyledTaskDialog;
+      const ADialogBtnFamily: TStyledButtonFamily): boolean;
   end;
 
 function StyledMessageDlg(const Msg: string; DlgType: TMsgDlgType;
@@ -107,17 +109,19 @@ function StyledTaskDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
 
 procedure StyledShowMessage(const Msg: string); overload;
 
-procedure SetUseAlwaysTaskDialog(Value: boolean);
+procedure SetUseAlwaysTaskDialog(AValue: boolean);
 procedure RegisterCustomExecute(const AShowStyledTaskDialog: ITaskDialogLauncher;
   const AButtonFamily: TStyledButtonFamily = '');
 procedure UnregisterCustomExecute;
 procedure InitializeStyledTaskDialogs(AUseTaskDialog: Boolean; AFont: TFont;
-  const ADialogButtonsFamily: TStyledButtonFamily = '');
+  const ADialogButtonsFamily: TStyledButtonFamily = '';
+  const AAlphaBlendValue: Byte = DEFAULT_ALPHABLEND);
 function GetTaskDlgType(const AIcon: TTaskDialogIcon): TMsgDlgType;
 function GetDialogFont: TFont;
 function GetDialogBtnFamily: TStyledButtonFamily;
 
 function GetDialogTypeTitle(const DlgType: TMsgDlgType): string;
+function GetDialogAlphaBlendValue: Byte;
 
 implementation
 
@@ -142,11 +146,12 @@ uses
   ;
 
 var
-  TaskDialogExecute: ITaskDialogLauncher;
-  DialogButtonsFamily: TStyledButtonFamily;
-  CustomIcons: TStyledDialogIcons;
-  DialogFont: TFont;
-  UseAlwaysTaskDialog: boolean;
+  _TaskDialogExecute: ITaskDialogLauncher;
+  _DialogButtonsFamily: TStyledButtonFamily;
+  _CustomIcons: TStyledDialogIcons;
+  _DialogFont: TFont;
+  _UseAlwaysTaskDialog: boolean;
+  _AlphaBlendValue: Byte;
 
   ButtonNames: array[TMsgDlgBtn] of string = (
     'Yes', 'No', 'OK', 'Cancel', 'Abort', 'Retry', 'Ignore', 'All', 'NoToAll',
@@ -155,14 +160,19 @@ var
     mrYes, mrNo, mrOk, mrCancel, mrAbort, mrRetry, mrIgnore, mrAll, mrNoToAll,
     mrYesToAll, 0, mrClose);
 
+function GetDialogAlphaBlendValue: Byte;
+begin
+  Result := _AlphaBlendValue;
+end;
+
 function GetDialogFont: TFont;
 begin
-  Result := DialogFont;
+  Result := _DialogFont;
 end;
 
 function GetDialogBtnFamily: TStyledButtonFamily;
 begin
-  Result := DialogButtonsFamily;
+  Result := _DialogButtonsFamily;
 end;
 
 function IsTaskMessageSupported : Boolean;
@@ -263,7 +273,7 @@ var
   end;
 
 begin
-  if IsTaskMessageSupported and UseAlwaysTaskDialog then
+  if IsTaskMessageSupported and _UseAlwaysTaskDialog then
   begin
     //Use a TaskDialog to Show the message instead of a MessageDialog
     Result := StyledTaskDlgPos('',Msg,DlgType,Buttons,DefaultButton,HelpCtx,X,Y);
@@ -275,8 +285,8 @@ begin
     MyMsg := ClearHRefs(Msg);
     Dlg := CreateMessageDialog(MyMsg, DlgType, Buttons, DefaultButton);
     try
-      if Assigned(DialogFont) then
-        Dlg.Font.Assign(DialogFont);
+      if Assigned(_DialogFont) then
+        Dlg.Font.Assign(_DialogFont);
 
       Dlg.HelpContext := HelpCtx;
       if X >= 0 then Dlg.Left := X;
@@ -310,49 +320,51 @@ const
   tdbHelp = -1;
 
 procedure InitializeStyledTaskDialogs(AUseTaskDialog: Boolean; AFont: TFont;
-  const ADialogButtonsFamily: TStyledButtonFamily = '');
+  const ADialogButtonsFamily: TStyledButtonFamily = '';
+  const AAlphaBlendValue: Byte = DEFAULT_ALPHABLEND);
 begin
   if Assigned(AFont) then
   begin
-    if not Assigned(DialogFont) then
-      DialogFont := TFont.Create;
-    DialogFont.Assign(AFont);
+    if not Assigned(_DialogFont) then
+      _DialogFont := TFont.Create;
+    _DialogFont.Assign(AFont);
   end
   else
-    FreeAndNil(DialogFont);
-  UseAlwaysTaskDialog := AUseTaskDialog;
-  DialogButtonsFamily := ADialogButtonsFamily;
+    FreeAndNil(_DialogFont);
+  _UseAlwaysTaskDialog := AUseTaskDialog;
+  _DialogButtonsFamily := ADialogButtonsFamily;
+  _AlphaBlendValue := AAlphaBlendValue;
 end;
 
 procedure UnregisterCustomIcons;
 begin
-  CustomIcons[mtWarning] := nil;
-  CustomIcons[mtError] := nil;
-  CustomIcons[mtInformation] := nil;
-  CustomIcons[mtConfirmation] := nil;
-  CustomIcons[mtCustom] := nil;
+  _CustomIcons[mtWarning] := nil;
+  _CustomIcons[mtError] := nil;
+  _CustomIcons[mtInformation] := nil;
+  _CustomIcons[mtConfirmation] := nil;
+  _CustomIcons[mtCustom] := nil;
 end;
 
 procedure RegisterCustomIcons(const ACustomIcons: TStyledDialogIcons);
 begin
   UnregisterCustomIcons;
-  CustomIcons := ACustomIcons;
+  _CustomIcons := ACustomIcons;
 end;
 
-procedure SetUseAlwaysTaskDialog(Value: boolean);
+procedure SetUseAlwaysTaskDialog(AValue: boolean);
 begin
-  UseAlwaysTaskDialog := Value;
+  _UseAlwaysTaskDialog := AValue;
 end;
 
 procedure RegisterCustomExecute(const AShowStyledTaskDialog: ITaskDialogLauncher;
   const AButtonFamily: TStyledButtonFamily = '');
 begin
-  TaskDialogExecute := AShowStyledTaskDialog;
+  _TaskDialogExecute := AShowStyledTaskDialog;
 end;
 
 procedure UnRegisterCustomExecute;
 begin
-  TaskDialogExecute := nil;
+  _TaskDialogExecute := nil;
 end;
 
 function GetTaskDlgType(
@@ -510,9 +522,9 @@ begin
   LTaskDlgType := GetTaskDlgType(MainIcon);
 
   //Use a custom interface if registered
-  if Assigned(TaskDialogExecute) then
-    Result := TaskDialogExecute.DoExecute(ParentWnd,
-      LTaskDlgType, Self, DialogButtonsFamily)
+  if Assigned(_TaskDialogExecute) then
+    Result := _TaskDialogExecute.DoExecute(ParentWnd,
+      LTaskDlgType, Self, _DialogButtonsFamily)
   else
     Result := inherited DoExecute(ParentWnd);
 end;
@@ -615,11 +627,12 @@ begin
 end;
 
 initialization
-  UseAlwaysTaskDialog := True;
-  DialogFont := nil;
+  _UseAlwaysTaskDialog := True;
+  _AlphaBlendValue := DEFAULT_ALPHABLEND;
+  _DialogFont := nil;
 
 finalization
-  if Assigned(DialogFont) then
-    DialogFont.Free;
+  if Assigned(_DialogFont) then
+    _DialogFont.Free;
 
 end.
