@@ -160,7 +160,7 @@ You can also use a Family/Class/Appearance of any type, for example:
 ```Pascal
 TStyledButton.RegisterDefaultRenderingStyle(btRoundRect, BOOTSTRAP_FAMILY, btn_primary, BOOTSTRAP_NORMAL);
 ```
-You can also use [Interposer Unit (Vcl.StyledComponentsHooks.pas)](/wiki/Interposer-Unit-(Vcl.StyledComponentsHooks)) to easily change all Buttons of your application.
+You can also use [Interposer Unit (Vcl.StyledComponentsHooks.pas)](https://github.com/EtheaDev/StyledComponents/wiki/Interposer-Unit-(Vcl.StyledComponentsHooks)) to easily change all Buttons of your application.
 
 ***New RoundedCorners options***
 
@@ -174,7 +174,7 @@ NOTICE: from version 3.3.3 the new **NotificationBadge** property was added to a
 
 ![NotificationBadge](./Images/NotificationBadge.jpg)
 
-Read [Notification Badge guide](/wiki/Notification-Badge-guide) to explorer how it works...
+Read [Notification Badge guide](https://github.com/EtheaDev/StyledComponents/wiki/Notification-Badge-guide) to explorer how it works...
 
 ***New Rounded Button Style***
 
