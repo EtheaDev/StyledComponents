@@ -113,7 +113,6 @@ type
     function IsStoredStyleClass: Boolean; override;
     function IsEnabledStored: Boolean; override;
     function IsCaptionStored: Boolean; override;
-    function GetText: TCaption; override;
     function GetImage(out AImageList: TCustomImageList;
       out AImageIndex: Integer): Boolean; override;
     function GetButtonState: TStyledButtonState; override;
@@ -603,16 +602,6 @@ end;
 function TStyledToolButton.GetStyleDrawType: TStyledButtonDrawType;
 begin
   Result := inherited StyleDrawType;
-end;
-
-function TStyledToolButton.GetText: TCaption;
-begin
-  if Assigned(FToolBar) and not (FToolBar.ShowCaptions) then
-    Result := ''
-  else if IsSeparator then
-    Result := ''
-  else
-    Result := inherited GetText;
 end;
 
 function TStyledToolButton.GetWrap: Boolean;

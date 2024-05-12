@@ -31,7 +31,7 @@ td{
 </style>
 <h1>Delphi VCL StyledComponents <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg" alt="License"/></a></h1>
 <h2>Components similar to Delphi VCL Buttons, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!</h2>
-<h3>Actual official version: 3.5.1</h3>
+<h3>Actual official version: 3.5.2</h3>
 <hr />
 <h2>A brief description</h2>
 <p><strong>StyledComponents</strong> is a set of VCL components for Delphi (32 and 64 bit) that allow you to overcome the limits imposed by standard VCL components, maintaining 100% compatibility of the properties.</p>
@@ -57,7 +57,8 @@ td{
 </ul>
 <h3>Shape attributes:</h3>
 <ul>
-<li><p><strong>StyleDrawType</strong></p>
+<li><strong>StyleDrawType</strong></li>
+</ul>
 <table>
   <tr>
     <th align="left"><code>btRoundRect (default)</code></th>
@@ -72,21 +73,20 @@ td{
     <td align="left"><img src="./Images/Classic_Normal_Windows_btEllipse.png" alt="Ellipse"/></td>
   </tr>
 </table>
-</li>
-<li><p><strong>StyleRoundedCorners</strong>: used for RoundRect and Rounded DrawType</p>
-</li>
-<li><p><strong>StyleRadius</strong>: used for btRoundRect DrawType</p>
-</li>
+<ul>
+<li><strong>StyleRoundedCorners</strong>: used for RoundRect and Rounded DrawType</li>
+<li><strong>StyleRadius</strong>: used for btRoundRect DrawType</li>
 </ul>
 <h3>New properties:</h3>
-<p>Additionally, the different StyledComponents add functionality not found in standard components, such as:</p>
+<p>StyledComponents offers more options then standard components, such as:</p>
 <ul>
 <li>Down, AllowUp and GroupIndex to use them in &ldquo;group&rdquo;</li>
 <li>Caption alignment (left, centered, right)</li>
 <li>Presence of Captions (with alignment) and customizable icons via ImageList in TStyledDBNavigator and TStyledBindNavigator</li>
 <li>Ability to change icon position and caption alignment in TStyledButtonGroup and TStyledCategoryButtons</li>
-<li>Possibility to also define the appearance of the individual buttons of the TStyledToolbar, TStyledButtonGroup and TStyledCategoryButtons components.</li>
-<li>Use animated icons with TStyledAnimatedButton</li>
+<li>Different appearance for buttons Items of TStyledToolbar, TStyledButtonGroup and TStyledCategoryButtons</li>
+<li>Notification Badge for all StyledButtons</li>
+<li>Animated icons using, TStyledAnimatedButton</li>
 </ul>
 <p>…finally, a component for Dialogs is available, completely customizable, which uses custom images or animations and StyledButtons within it, to be 100% consistent with the rest of the application.</p>
 <p>Notice: by default the cursor for all Styled Buttons is crHandPoint.</p>
@@ -211,13 +211,14 @@ td{
 <p>You can also use a Family/Class/Appearance of any type, for example:</p>
 <pre><code class="Pascal">TStyledButton.RegisterDefaultRenderingStyle(btRoundRect, BOOTSTRAP_FAMILY, btn_primary, BOOTSTRAP_NORMAL);
 </code></pre>
-<p>You can also use <a href="/wiki/Interposer-Unit-(Vcl.StyledComponentsHooks)">Interposer Unit (Vcl.StyledComponentsHooks.pas)</a> to easily change all Buttons of your application.</p>
+<p>You can also use <a href="https://github.com/EtheaDev/StyledComponents/wiki/Interposer-Unit-(Vcl.StyledComponentsHooks)">Interposer Unit (Vcl.StyledComponentsHooks.pas)</a> to easily change all Buttons of your application.</p>
 <p><strong><em>New RoundedCorners options</em></strong></p>
 <p>NOTICE: from version 3.5.0 the new <strong>RoundedCorners</strong> property was added to all of the Styled Buttons, to enable/disable Rounding drawing, as showed in this example:</p>
 <p><img src="./Images/StyledRoundedCornersExamples.jpg" alt="RoundedCorners"/></p>
 <p><strong><em>New Notification Badge for buttons</em></strong></p>
 <p>NOTICE: from version 3.3.3 the new <strong>NotificationBadge</strong> property was added to all of the Styled Buttons.</p>
 <p><img src="./Images/NotificationBadge.jpg" alt="NotificationBadge"/></p>
+<p>Read <a href="https://github.com/EtheaDev/StyledComponents/wiki/Notification-Badge-guide">Notification Badge guide</a> to explorer how it works&hellip;</p>
 <p><strong><em>New Rounded Button Style</em></strong></p>
 <p><em>Be careful with your existing dfm and code files: if you have stored StyleDrawType = btRounded you must change it with btRoundRect, or remove it, because is the default value.</em></p>
 <p><em>In this picture the new &ldquo;full-rounded&rdquo; Style introduced in 3.2 version, in &ldquo;VCL-Styled&rdquo; Style Demo</em></p>
@@ -332,7 +333,11 @@ TaskDialog -> StyledTaskDialog</p>
 <p><img src="./Images/SupportingDelphi.jpg" alt="Delphi Support"/></p>
 <p>Related links: <a href="https://www.embarcadero.com">embarcadero.com</a> - <a href="https://learndelphi.org">learndelphi.org</a></p>
 <h3>RELEASE NOTES</h3>
-<p>03 Mag 2024: version 3.5.1</p>
+<p>12 May 2024: version 3.5.2</p>
+<ul>
+<li>Fixed Storing Caption of StyledToolButton</li>
+</ul>
+<p>03 May 2024: version 3.5.1</p>
 <ul>
 <li>Added AlphaBlendValue for StyledTaskDialogs</li>
 <li>Added Assign method for StyledToolbar and StyledDbNavigator</li>
