@@ -2,7 +2,7 @@
 
 ## Components similar to Delphi VCL Buttons, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 3.5.2
+### Actual official version: 3.5.3
 
 ---
 ## A brief description
@@ -19,6 +19,8 @@ With **StyledComponents** you can overcome these limits in a simple way. You can
 - Use "families" of predefined styles as in the WEB environment (e.g. Angular or Bootstrap)
 - Adapt to the colors of the VCL styles, keeping the shape of the button consistent
 - The appearance is identical in “Windows” mode or by applying VCL styles to the application
+
+Last, but not least, with **StyledTaskDialog** you can control appearance of your Message Dialogs in any aspect. Using Skia4Delphi you can also add animated Icons to your messages.
 
 …all available from the Delphi XE6 version (which allows the use of GDI+, used for button drawing).
 
@@ -85,7 +87,7 @@ Those components uses some properties to Draw Icon and Caption in a different wa
 
 ---
 
-## New _TStyledAnimatedButton_ Component (beta):
+## New _TStyledAnimatedButton_ Component:
 | Component | Description |
 | - | - |
 | ![OK_ANIMATED_BUTTON_128.png](./Images/OK_ANIMATED_BUTTON_128.png) | **TStyledAnimatedButton** is Styled Button with with "animated icon" using a Skia TSkAnimatedImage component inside. You can select the events that starts the animation, like: _AnimateOnMouseOver_, _AnimateOnClick_, _AnimateAlways_, _AnimateOnFocus_. |
@@ -161,6 +163,10 @@ You can also use a Family/Class/Appearance of any type, for example:
 TStyledButton.RegisterDefaultRenderingStyle(btRoundRect, BOOTSTRAP_FAMILY, btn_primary, BOOTSTRAP_NORMAL);
 ```
 You can also use [Interposer Unit (Vcl.StyledComponentsHooks.pas)](https://github.com/EtheaDev/StyledComponents/wiki/Interposer-Unit-(Vcl.StyledComponentsHooks)) to easily change all Buttons of your application.
+
+***New Template unit to create your custom Family Styles***
+
+NOTICE: from version 3.5.3 there is a new unit "Vcl.TemplateButtonStyles.pas" you can use to create your own Family of Button Styles, [as explained here](https://github.com/EtheaDev/StyledComponents/wiki/HowtoBuildYourCustomStyle)
 
 ***New RoundedCorners options***
 
@@ -376,6 +382,9 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+16 May 2024: version 3.5.3
+- Added unit Vcl.TemplateButtonStyles.pas
+
 12 May 2024: version 3.5.2
 - Fixed Storing Caption of StyledToolButton
 

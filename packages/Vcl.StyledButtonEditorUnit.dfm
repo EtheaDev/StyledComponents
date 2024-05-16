@@ -145,6 +145,7 @@ object StyledButtonEditor: TStyledButtonEditor
       'Classic')
     TabIndex = 0
     OnChange = TabControlChange
+    OnGetImageIndex = TabControlGetImageIndex
     object ScrollBox: TScrollBox
       AlignWithMargins = True
       Left = 7

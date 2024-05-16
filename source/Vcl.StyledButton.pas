@@ -53,7 +53,7 @@ uses
   ;
 
 const
-  StyledButtonsVersion = '3.5.2';
+  StyledButtonsVersion = '3.5.3';
 
 resourcestring
   ERROR_SETTING_BUTTON_STYLE = 'Error setting Button Style: %s/%s/%s not available';

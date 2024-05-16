@@ -101,6 +101,8 @@ type
     procedure CheckBoxClick(Sender: TObject);
     procedure AsVCLComponentCheckBoxClick(Sender: TObject);
     procedure RoundedCheckBoxClick(Sender: TObject);
+    procedure TabControlGetImageIndex(Sender: TObject; TabIndex: Integer;
+      var ImageIndex: Integer);
   private
     FUpdating: Boolean;
     FFamilyBuilt: TStyledButtonFamily;
@@ -514,6 +516,16 @@ begin
   LFamily := TabControl.Tabs[TabControl.TabIndex];
   if FFamilyBuilt <> LFamily then
     BuildFamilyPreview(LFamily);
+end;
+
+procedure TStyledButtonEditor.TabControlGetImageIndex(Sender: TObject;
+  TabIndex: Integer; var ImageIndex: Integer);
+begin
+  //Use always Image n.6 for custom Families
+  if TabIndex <= 5 then
+    ImageIndex := TabIndex
+  else
+    ImageIndex := 6;
 end;
 
 procedure TStyledButtonEditor.UpdateDestFromGUI;
