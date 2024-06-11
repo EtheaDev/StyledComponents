@@ -57,11 +57,18 @@ uses
 type
   TStyledTaskDialogStd = class(TStyledTaskDialogForm)
     ImageList: TImageList;
+    FooterImage: TImage;
     Image: TImage;
   private
   protected
+    procedure InternalLoadImage(const AImage: TImage;
+      const AImageIndex: TImageIndex; AImageName: string); virtual;
     class function CanUseAnimations: Boolean; override;
     procedure LoadImage(const AImageIndex: TImageIndex; AImageName: string); override;
+    procedure LoadCustomMainIcon(const AIcon: TIcon;
+      const ATaskDialogIcon: TTaskDialogIcon); override;
+    procedure LoadCustomFooterIcon(const AIcon: TIcon;
+      const ATaskDialogIcon: TTaskDialogIcon); override;
   public
   end;
 
@@ -77,18 +84,44 @@ begin
   Result := False;
 end;
 
+procedure TStyledTaskDialogStd.LoadCustomFooterIcon(const AIcon: TIcon;
+  const ATaskDialogIcon: TTaskDialogIcon);
+begin
+  if (ATaskDialogIcon <> tdiNone) and not Assigned(AIcon) then
+    InternalLoadImage(FooterImage,
+      TaskDialogIconToImageIndex(ATaskDialogIcon), '')
+  else if Assigned(AIcon) then
+    FooterImage.Picture.Bitmap.Assign(AIcon);
+end;
+
+procedure TStyledTaskDialogStd.LoadCustomMainIcon(const AIcon: TIcon;
+  const ATaskDialogIcon: TTaskDialogIcon);
+begin
+  if (ATaskDialogIcon <> tdiNone) and not Assigned(AIcon) then
+    InternalLoadImage(Image,
+      TaskDialogIconToImageIndex(ATaskDialogIcon), '')
+  else if Assigned(AIcon) then
+    Image.Picture.Bitmap.Assign(AIcon);
+end;
+
 procedure TStyledTaskDialogStd.LoadImage(
+  const AImageIndex: TImageIndex; AImageName: string);
+begin
+  InternalLoadImage(Image, AImageIndex, AImageName);
+end;
+
+procedure TStyledTaskDialogStd.InternalLoadImage(const AImage: TImage;
   const AImageIndex: TImageIndex; AImageName: string);
 var
   LBackGroundColor: TColor;
 begin
   LBackGroundColor := TStyleManager.ActiveStyle.GetSystemColor(clWindow);
-  Image.Picture.Bitmap.Canvas.Brush.Color := LBackGroundColor;
-  Image.Picture.Bitmap.Canvas.FillRect(Rect(0, 0,
+  AImage.Picture.Bitmap.Canvas.Brush.Color := LBackGroundColor;
+  AImage.Picture.Bitmap.Canvas.FillRect(Rect(0, 0,
     ImageList.Width, ImageList.Height));
-  Image.Picture.Bitmap.PixelFormat := pf32bit;
-  Image.Picture.Bitmap.Transparent := True;
-  ImageList.GetBitmap(AImageIndex, Image.Picture.Bitmap);
+  AImage.Picture.Bitmap.PixelFormat := pf32bit;
+  AImage.Picture.Bitmap.Transparent := True;
+  ImageList.GetBitmap(AImageIndex, AImage.Picture.Bitmap);
 end;
 
 initialization

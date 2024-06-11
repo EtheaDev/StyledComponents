@@ -53,7 +53,7 @@ uses
   ;
 
 const
-  StyledButtonsVersion = '3.5.3';
+  StyledButtonsVersion = '3.5.4';
 
 resourcestring
   ERROR_SETTING_BUTTON_STYLE = 'Error setting Button Style: %s/%s/%s not available';
@@ -960,6 +960,7 @@ type
     {$IFDEF D10_4+}
     property StyleName;
     {$ENDIF}
+    property Tag;
     property OnClick;
     property OnDblClick;
     property OnMouseActivate;
@@ -1477,6 +1478,7 @@ type
     property Spacing;
     property TabOrder;
     property TabStop;
+    property Tag;
     property Visible;
     property WordWrap;
     property StyleElements;
@@ -5336,15 +5338,18 @@ procedure TCustomStyledButton.SetDefault(const AValue: Boolean);
 var
   Form: TCustomForm;
 begin
-  FRender.Default := AValue;
-  if HandleAllocated then
+  if FRender.Default <> AValue then
   begin
-    Form := GetParentForm(Self);
-    if Form <> nil then
-      Form.Perform(CM_FOCUSCHANGED, 0, LPARAM(Form.ActiveControl));
+    FRender.Default := AValue;
+    if HandleAllocated then
+    begin
+      Form := GetParentForm(Self);
+      if (Form <> nil) and (Form.ActiveControl <> nil) then
+        Form.Perform(CM_FOCUSCHANGED, 0, LPARAM(Form.ActiveControl));
+    end;
+    if (csLoading in ComponentState) then
+      FRender.Active := FRender.Default;
   end;
-  if (csLoading in ComponentState) then
-    FRender.Active := FRender.Default;
 end;
 
 function TCustomStyledButton.GetCancel: Boolean;
@@ -5354,7 +5359,8 @@ end;
 
 procedure TCustomStyledButton.SetCancel(const AValue: Boolean);
 begin
-  FRender.Cancel := AValue;
+  if FRender.Cancel <> AValue then
+    FRender.Cancel := AValue;
 end;
 
 function TCustomStyledButton.GetDisabledImageIndex: TImageIndex;

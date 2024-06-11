@@ -9,7 +9,7 @@
         <ProjectVersion>20.1</ProjectVersion>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">Win32</Platform>
+        <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Application</AppType>
         <ProjectName Condition="'$(ProjectName)'==''">AnimatedTaskDialogDemo</ProjectName>
@@ -1226,8 +1226,11 @@
         <DCCReference Include="..\..\source\Vcl.StyledCmpMessages.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledCmpStrUtils.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledTaskDialog.pas"/>
+        <DCCReference Include="..\..\source\Vcl.StyledTaskDialogFormUnit.pas">
+            <Form>TStyledTaskDialogForm</Form>
+        </DCCReference>
         <DCCReference Include="..\..\source\Skia.Vcl.StyledTaskDialogAnimatedUnit.pas">
-            <Form>StyledTaskDialogStd</Form>
+            <Form>TStyledTaskDialogAnimatedForm</Form>
         </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>

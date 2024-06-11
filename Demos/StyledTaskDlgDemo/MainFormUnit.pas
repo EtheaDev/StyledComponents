@@ -91,7 +91,18 @@ type
     procedure FamilyComboBoxSelect(Sender: TObject);
     procedure RaiseDatabaseError(Sender: TObject);
     procedure AlphaBlendSpinEditChange(Sender: TObject);
+    procedure TaskDialogButtonClicked(Sender: TObject;
+      ModalResult: TModalResult; var CanClose: Boolean);
+    procedure TaskDialogDialogConstructed(Sender: TObject);
+    procedure TaskDialogDialogCreated(Sender: TObject);
+    procedure TaskDialogDialogDestroyed(Sender: TObject);
+    procedure TaskDialogExpanded(Sender: TObject);
+    procedure TaskDialogHyperlinkClicked(Sender: TObject);
+    procedure TaskDialogNavigated(Sender: TObject);
+    procedure TaskDialogRadioButtonClicked(Sender: TObject);
+    procedure TaskDialogVerificationClicked(Sender: TObject);
   private
+    FRadioButtonSelected: string;
     procedure ShowSelection(const AModalResult: TModalResult);
     procedure BuildStyleList;
     procedure InitializeDialogs;
@@ -110,6 +121,7 @@ implementation
 
 uses
   System.TypInfo
+  , Winapi.ShellAPI
   , Vcl.Themes
   , Vcl.StyledCmpMessages
   , Vcl.StyledCmpStrUtils
@@ -177,8 +189,9 @@ var
   Msg: string;
   LButtonName: string;
 begin
-  //Example to resize message font
+  //Example to resize and change message font
   //Screen.MessageFont.Size := Round(Screen.MessageFont.Size * 1.2);
+  //Screen.MessageFont.Name := 'Century Gothic';
 
   Caption := Application.Title;
   MRLabel.Font.Style := [TFontStyle.fsBold];
@@ -243,7 +256,7 @@ begin
   Buttons := [];
   LUseDefault := False;
   LDefaultButton := mbOK;
-  HelpContext := 0;
+  //HelpContext := 0;
   for db := Low(TMsgDlgBtn) to High(TMsgDlgBtn) do
     if clbButtons.Checked[Ord(db)] then
     begin
@@ -361,13 +374,11 @@ end;
 procedure TMainForm.UseStyleDialogCompClick(Sender: TObject);
 const
   LModalResults: array[TMsgDlgBtn] of Integer = (mrYes, mrNo, mrOk, mrCancel,
-    mrAbort, mrRetry, mrIgnore, mrAll, mrNoToAll, mrYesToAll, -1, mrClose);
+    mrAbort, mrRetry, mrIgnore, mrAll, mrNoToAll, mrYesToAll, mrHelp, mrClose);
 
 var
   LTaskDialog: TTaskDialog;
   LDefaultButton: Boolean;
-  db : TMsgDlgBtn;
-  LTaskDialogBaseButtonItem: TTaskDialogBaseButtonItem;
 
   procedure AddCommonButton(const AButton: TTaskDialogCommonButton);
   begin
@@ -382,6 +393,7 @@ begin
   else
     LTaskDialog := TaskDialog;
 
+  (* remove comment if you want to use buttons defines in the form
   LTaskDialog.Buttons.Clear;
   LTaskDialog.CommonButtons := [];
   for db := Low(TMsgDlgBtn) to High(TMsgDlgBtn) do
@@ -399,14 +411,14 @@ begin
         TMsgDlgBtn.mbClose: AddCommonButton(tcbClose);
       else
         LTaskDialogBaseButtonItem := LTaskDialog.Buttons.add;
-        LTaskDialogBaseButtonItem.Caption := GetEnumName(TypeInfo(TMsgDlgBtn), Ord(db));
+        LTaskDialogBaseButtonItem.Caption := Copy(GetEnumName(TypeInfo(TMsgDlgBtn), Ord(db)), 3, MaxInt);
         LTaskDialogBaseButtonItem.ModalResult := LModalResults[db];
         if LDefaultButton then
           LTaskDialogBaseButtonItem.Default := True;
       end;
     end;
   end;
-
+  *)
   LTaskDialog.Caption := CaptionEdit.Text;
   LTaskDialog.Title := edTitle.Text;
   LTaskDialog.Text := edMessage.Text;
@@ -418,12 +430,71 @@ begin
   ShowSelection(LTaskDialog.ModalResult);
 end;
 
+procedure TMainForm.TaskDialogButtonClicked(Sender: TObject;
+  ModalResult: TModalResult; var CanClose: Boolean);
+begin
+  ;
+end;
+
+procedure TMainForm.TaskDialogDialogConstructed(Sender: TObject);
+begin
+  ;
+end;
+
+procedure TMainForm.TaskDialogDialogCreated(Sender: TObject);
+begin
+  ;
+end;
+
+procedure TMainForm.TaskDialogDialogDestroyed(Sender: TObject);
+begin
+  ;
+end;
+
+procedure TMainForm.TaskDialogExpanded(Sender: TObject);
+begin
+  ;
+end;
+
+procedure TMainForm.TaskDialogHyperlinkClicked(Sender: TObject);
+var
+  LURL: String;
+begin
+  LURL := (Sender as TTaskDialog).URL;
+  ShellExecute(Self.Handle, 'open' , PChar(LURL), nil, nil, SW_SHOW );
+end;
+
+procedure TMainForm.TaskDialogNavigated(Sender: TObject);
+begin
+  ;
+end;
+
+procedure TMainForm.TaskDialogRadioButtonClicked(Sender: TObject);
+var
+  LTaskDialog: TCustomTaskDialog;
+begin
+  if Sender is TCustomTaskDialog then
+    LTaskDialog := TCustomTaskDialog(Sender)
+  else
+    LTaskDialog := nil;
+  if Assigned(LTaskDialog) then
+    FRadioButtonSelected := LTaskDialog.RadioButton.Caption;
+end;
+
 procedure TMainForm.TaskDialogTimer(Sender: TObject; TickCount: Cardinal; var Reset: Boolean);
 begin
    // TaskDialog1.ProgressBar.Position := MyThread.CurrentProgressPercent;
    // Demo
    //TaskDialog.ProgressBar.Position :=  TaskDialog.ProgressBar.Position + 1;
    TaskDialog.Execute(Self.Handle);
+end;
+
+procedure TMainForm.TaskDialogVerificationClicked(Sender: TObject);
+begin
+  if tfVerificationFlagChecked in (Sender as TTaskDialog).Flags then
+    ShowMessage('Verification Click TRUE')
+  else
+    ShowMessage('Verification Click FALSE');
 end;
 
 initialization

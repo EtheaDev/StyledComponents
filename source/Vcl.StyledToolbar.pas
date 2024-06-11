@@ -207,6 +207,7 @@ type
     property ButtonStyleSelected;
     property ButtonStyleHot;
     property ButtonStyleDisabled;
+    property NotificationBadge;
     property OnDropDownClick;
 
     property AutoSize: Boolean read FAutoSize write SetAutoSize default False;

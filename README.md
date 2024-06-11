@@ -2,7 +2,7 @@
 
 ## Components similar to Delphi VCL Buttons, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 3.5.3
+### Actual official version: 3.5.4
 
 ---
 ## A brief description
@@ -165,6 +165,8 @@ TStyledButton.RegisterDefaultRenderingStyle(btRoundRect, BOOTSTRAP_FAMILY, btn_p
 You can also use [Interposer Unit (Vcl.StyledComponentsHooks.pas)](https://github.com/EtheaDev/StyledComponents/wiki/Interposer-Unit-(Vcl.StyledComponentsHooks)) to easily change all Buttons of your application.
 
 ***New Template unit to create your custom Family Styles***
+
+NOTICE: from version 3.5.4 the StyledTaskDialog support is now full compatible with TTaskDialog, adding use of CommandLinks and more... The defalt size of Icons/Animations for Dialogs now is 64x64 pixel (at 96 dpi).
 
 NOTICE: from version 3.5.3 there is a new unit "Vcl.TemplateButtonStyles.pas" you can use to create your own Family of Button Styles, [as explained here](https://github.com/EtheaDev/StyledComponents/wiki/HowtoBuildYourCustomStyle)
 
@@ -347,25 +349,27 @@ A simple demo to show how to use StyledTaskDialog with custom icons using ImageL
 
 The main form is useful to test every format / buttons and type of dialogs.
 
-*Confirmation Dialog with custom font and English buttons*
+++*Confirmation Dialog with custom font/size and English buttons*++
 
 ![ConfirmationDialog.jpg](./Images/ConfirmationDialog.jpg)
 
-*Warning Dialog with italians Buttons*
+++*Warning Dialog with italians Captions in AcquaGraphite Style*++
 
-A simple way to activate button captions is to change StyledComponents.inc file and activate {$Define ItaMessages}
+To activate button captions is to change StyledComponents.inc file and activate {$Define ItaMessages}
 
 ![StyledButtonDemo.jpg](./Images/WarningDialog.jpg)
 
-*Error Dialog*
+++*Error Dialog in Windows10 Vcl Style*++
 
 ![StyledButtonDemo.jpg](./Images/ErrorDialog.jpg)
 
-*Custom Dialog*
+++*Custom Message Dialog*++
 
 ![StyledButtonDemo.jpg](./Images/CustomDialog.jpg)
 
-*Shield Dialog with footer*
+++*Use StyleTaskDialog component*++
+
+*...with RadioButtons, CommandLinks, Verification Text and Footer Text*
 
 ![ShieldButtonDemo.jpg](./Images/ShieldDialog.jpg)
 
@@ -382,6 +386,18 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+11 Jun 2024: version 3.5.4
+- Added full support for TStyledTaskDialog component with EventHandlers and:
+1. RadioButtons
+1. CommandLinks
+1. Verification Text
+1. Footer Text
+1. Custom buttons
+- Published NotificationBadge property in StyledToolButton for StyledToolbar
+- Redefined size of dialog Icons/Animations, now is 64x64 (use {$DEFINE Use_Large_Dialog_Icons} to restore old value)
+- Fixed reading Tag value for TStyledBitBtn and TStyledSpeedButton
+- Fixed default StyleDrawType for TStyledNavButton
+
 16 May 2024: version 3.5.3
 - Added unit Vcl.TemplateButtonStyles.pas
 

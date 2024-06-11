@@ -85,7 +85,7 @@ object MainForm: TMainForm
     end
     object btUseStyledDialogComp: TButton
       Left = 523
-      Top = 123
+      Top = 124
       Width = 195
       Height = 25
       Anchors = [akTop, akRight]
@@ -95,7 +95,7 @@ object MainForm: TMainForm
     end
     object btUseNativeDialogComp: TButton
       Left = 523
-      Top = 154
+      Top = 155
       Width = 195
       Height = 25
       Anchors = [akTop, akRight]
@@ -231,7 +231,7 @@ object MainForm: TMainForm
         Text = 'Task dialog Tester'
       end
       object edMessage: TMemo
-        Left = 7
+        Left = 6
         Top = 70
         Width = 495
         Height = 162
@@ -413,12 +413,33 @@ object MainForm: TMainForm
     end
   end
   object TaskDialog: TTaskDialog
-    Buttons = <>
+    Buttons = <
+      item
+        Caption = 'Custom No'
+        CommandLinkHint = 'Custom No to All'
+        ModalResult = 13
+      end
+      item
+        Caption = 'custom Yes'
+        CommandLinkHint = 'Custom Yes To All'
+        ElevationRequired = True
+        ModalResult = 14
+      end>
     Caption = 'Caption'
-    ExpandedText = 'Expanded Text'
-    Flags = [tfEnableHyperlinks, tfAllowDialogCancellation]
-    FooterText = 'Footer Text'
-    RadioButtons = <>
+    Flags = [tfEnableHyperlinks, tfAllowDialogCancellation, tfUseCommandLinks, tfPositionRelativeToWindow]
+    FooterIcon = 1
+    FooterText = 
+      'The file was created: <A HREF="C:\Windows\System32\license.rtf">' +
+      'license.rtf</A>'
+    HelpContext = 100
+    RadioButtons = <
+      item
+        Caption = 'Radio Button 1'
+      end
+      item
+        Caption = 'Radio Button 2'
+        Default = True
+      end>
     Text = 
       'Message Text Lorem ipsum dolor sit amet, consectetur adipiscing ' +
       'elit, sed do eiusmod tempor incididunt ut labore et dolore magna' +
@@ -428,25 +449,50 @@ object MainForm: TMainForm
       'e eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat no' +
       'n proident, sunt in culpa qui officia deserunt mollit anim id es' +
       't laborum.'
-    Title = 
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do ' +
-      'eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut e' +
-      'nim ad minim veniam, quis nostrud exercitation ullamco laboris n' +
-      'isi ut aliquip ex ea commodo consequat. Duis aute irure dolor in' +
-      ' reprehenderit in voluptate velit esse cillum dolore eu fugiat n' +
-      'ulla pariatur. Excepteur sint occaecat cupidatat non proident, s' +
-      'unt in culpa qui officia deserunt mollit anim id est laborum'
-    VerificationText = 'Verification Test'
+    Title = 'Task Dialog Tester'
+    VerificationText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit'
+    OnButtonClicked = TaskDialogButtonClicked
+    OnDialogConstructed = TaskDialogDialogConstructed
+    OnDialogCreated = TaskDialogDialogCreated
+    OnDialogDestroyed = TaskDialogDialogDestroyed
+    OnExpanded = TaskDialogExpanded
+    OnHyperlinkClicked = TaskDialogHyperlinkClicked
+    OnNavigated = TaskDialogNavigated
+    OnRadioButtonClicked = TaskDialogRadioButtonClicked
+    OnTimer = TaskDialogTimer
+    OnVerificationClicked = TaskDialogVerificationClicked
     Left = 178
     Top = 119
   end
   object StyledTaskDialog: TStyledTaskDialog
-    Buttons = <>
+    Buttons = <
+      item
+        Caption = 'Custom No'
+        CommandLinkHint = 'Custom No to All'
+        ModalResult = 13
+      end
+      item
+        Caption = 'Custom Yes'
+        CommandLinkHint = 'Custom Yes To All'
+        ElevationRequired = True
+        ModalResult = 14
+      end>
     Caption = 'CAPTION OF DIALOG'
     ExpandedText = 'Expanded Text'
-    Flags = [tfEnableHyperlinks, tfAllowDialogCancellation]
-    FooterText = 'Footer Text'
-    RadioButtons = <>
+    Flags = [tfAllowDialogCancellation, tfUseCommandLinks, tfPositionRelativeToWindow]
+    FooterIcon = 1
+    FooterText = 
+      'The file was created: <A HREF="C:\Windows\System32\license.rtf">' +
+      'license.rtf</A>'
+    HelpContext = 100
+    RadioButtons = <
+      item
+        Caption = 'Radio Button 1'
+      end
+      item
+        Caption = 'Radio Button 2'
+        Default = True
+      end>
     Text = 
       'Message Text Lorem ipsum dolor sit amet, consectetur adipiscing ' +
       'elit, sed do eiusmod tempor incididunt ut labore et dolore magna' +
@@ -456,7 +502,18 @@ object MainForm: TMainForm
       'e eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat no' +
       'n proident, sunt in culpa qui officia deserunt mollit anim id es' +
       't laborum.'
-    Title = 'Title of Dialog'
+    Title = 'Task Dialog Tester'
+    VerificationText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit'
+    OnButtonClicked = TaskDialogButtonClicked
+    OnDialogConstructed = TaskDialogDialogConstructed
+    OnDialogCreated = TaskDialogDialogCreated
+    OnDialogDestroyed = TaskDialogDialogDestroyed
+    OnExpanded = TaskDialogExpanded
+    OnHyperlinkClicked = TaskDialogHyperlinkClicked
+    OnNavigated = TaskDialogNavigated
+    OnRadioButtonClicked = TaskDialogRadioButtonClicked
+    OnTimer = TaskDialogTimer
+    OnVerificationClicked = TaskDialogVerificationClicked
     Left = 297
     Top = 119
   end

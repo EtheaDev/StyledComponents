@@ -58,11 +58,20 @@ uses
 
 type
   TStyledTaskDialogAnimatedForm = class(TStyledTaskDialogForm)
+    SkFooterAnimatedImage: TSkAnimatedImage;
     SkAnimatedImage: TSkAnimatedImage;
   private
+    procedure InternalLoadImage(const AAnimatedImage: TSkAnimatedImage;
+      const AImageIndex: TImageIndex; AImageName: string);
+    function TaskDialogIconToIconName(
+      const ATaskDialogIcon: TTaskDialogIcon): string;
   protected
     class function CanUseAnimations: Boolean; override;
     procedure LoadImage(const AImageIndex: TImageIndex; AImageName: string); override;
+    procedure LoadCustomMainIcon(const AIcon: TIcon;
+      const ATaskDialogIcon: TTaskDialogIcon); override;
+    procedure LoadCustomFooterIcon(const AIcon: TIcon;
+      const ATaskDialogIcon: TTaskDialogIcon); override;
   public
   end;
 
@@ -78,7 +87,50 @@ begin
   Result := True;
 end;
 
+function TStyledTaskDialogAnimatedForm.TaskDialogIconToIconName(
+  const ATaskDialogIcon: TTaskDialogIcon): string;
+begin
+  case ATaskDialogIcon of
+    tdiWarning: Result := 'Warning';
+    tdiError: Result := 'Error';
+    tdiInformation: Result := 'Information';
+    tdiShield: Result := 'Shield';
+  else
+    Result := 'Custom';
+  end;
+end;
+
+procedure TStyledTaskDialogAnimatedForm.LoadCustomFooterIcon(const AIcon: TIcon;
+  const ATaskDialogIcon: TTaskDialogIcon);
+var
+  LImageName: string;
+begin
+  inherited;
+  //A Custom FooterIcon is not animated so ignore It
+  LImageName := TaskDialogIconToIconName(ATaskDialogIcon);
+  if LImageName <> '' then
+    InternalLoadImage(SkFooterAnimatedImage, -1, LImageName);
+end;
+
+procedure TStyledTaskDialogAnimatedForm.LoadCustomMainIcon(const AIcon: TIcon;
+  const ATaskDialogIcon: TTaskDialogIcon);
+var
+  LImageName: string;
+begin
+  //A Custom MainIcon is not animated so ignore it
+  LImageName := TaskDialogIconToIconName(ATaskDialogIcon);
+  if LImageName <> '' then
+    InternalLoadImage(SkAnimatedImage, -1, LImageName);
+end;
+
 procedure TStyledTaskDialogAnimatedForm.LoadImage(
+  const AImageIndex: TImageIndex; AImageName: string);
+begin
+  InternalLoadImage(SkAnimatedImage, AImageIndex, AImageName);
+end;
+
+procedure TStyledTaskDialogAnimatedForm.InternalLoadImage(
+  const AAnimatedImage: TSkAnimatedImage;
   const AImageIndex: TImageIndex; AImageName: string);
 var
   LStream: TResourceStream;
@@ -88,9 +140,9 @@ begin
   LImageName := UpperCase('LOTTIE_'+AImageName);
   LStream := TResourceStream.Create(HInstance, LImageName, RT_RCDATA);
   try
-    SkAnimatedImage.LoadFromStream(LStream);
-    SkAnimatedImage.Animation.Loop := False;
-    SkAnimatedImage.Animation.Start;
+    AAnimatedImage.LoadFromStream(LStream);
+    AAnimatedImage.Animation.Loop := False;
+    AAnimatedImage.Animation.Start;
   finally
     LStream.Free;
   end;

@@ -1,5 +1,6 @@
 {.$Define ItaMessages}
 {.$Define FraMessages}
+{.$DEFINE Use_Large_Dialog_Icons}
 
 {$DEFINE INCLUDE_AngularButtonStyles}
 {$DEFINE INCLUDE_BootstrapButtonStyles}

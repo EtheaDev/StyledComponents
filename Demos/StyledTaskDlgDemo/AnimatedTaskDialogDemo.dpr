@@ -34,7 +34,8 @@ uses
   Vcl.StyledCmpMessages in '..\..\source\Vcl.StyledCmpMessages.pas',
   Vcl.StyledCmpStrUtils in '..\..\source\Vcl.StyledCmpStrUtils.pas',
   Vcl.StyledTaskDialog in '..\..\source\Vcl.StyledTaskDialog.pas',
-  Skia.Vcl.StyledTaskDialogAnimatedUnit in '..\..\source\Skia.Vcl.StyledTaskDialogAnimatedUnit.pas' {StyledTaskDialogStd};
+  Vcl.StyledTaskDialogFormUnit in '..\..\source\Vcl.StyledTaskDialogFormUnit.pas' {TStyledTaskDialogForm},
+  Skia.Vcl.StyledTaskDialogAnimatedUnit in '..\..\source\Skia.Vcl.StyledTaskDialogAnimatedUnit.pas' {TStyledTaskDialogAnimatedForm};
 
 {$R *.res}
 

@@ -104,7 +104,13 @@ type
     procedure UpdateButtonContent;
     function IsImageAlignmentStored: Boolean;
     procedure SetImageAlignment(const AValue: TImageAlignment);
+    function IsCustomDrawType: Boolean;
+    function IsCustomRadius: Boolean;
+    function IsCustomRoundedCorners: Boolean;
+    function IsStoredStyleFamily: Boolean;
+    function IsStoredStyleAppearance: Boolean;
   protected
+    function IsStoredStyleClass: Boolean; override;
     function GetCaptionToDraw: TCaption; override;
     procedure SetCaption(const AValue: TCaption); override;
     procedure Paint; override;
@@ -120,6 +126,20 @@ type
   published
     property ImageAlignment: TImageAlignment read FImageAlignment write SetImageAlignment Stored IsImageAlignmentStored;
     property Caption: TCaption read GetCaption write SetCaption stored IsCaptionStored;
+    //StyledComponents Attributes
+    property StyleRadius stored IsCustomRadius;
+    property StyleRoundedCorners stored IsCustomRoundedCorners;
+    property StyleDrawType stored IsCustomDrawType;
+    property StyleFamily stored IsStoredStyleFamily;
+    property StyleClass stored IsStoredStyleClass;
+    property StyleAppearance stored IsStoredStyleAppearance;
+    property ButtonStyleNormal;
+    property ButtonStylePressed;
+    property ButtonStyleSelected;
+    property ButtonStyleHot;
+    property ButtonStyleDisabled;
+    property NotificationBadge;
+    property OnDropDownClick;
   end;
 
   { TCustomStyledDBNavigator }
@@ -229,6 +249,7 @@ type
     procedure SetCaptions(const AValue: TStrings);
     function GetAsVCLComponent: Boolean;
     procedure SetAsVCLComponent(const AValue: Boolean);
+    function GetButtonItem(AIndex: TNavigateBtn): TStyledNavButton;
   protected
     function GetActiveStyleName: string;
     procedure ClickHandler(Sender: TObject); virtual; abstract;
@@ -279,6 +300,7 @@ type
     property AsVCLComponent: Boolean read GetAsVCLComponent write SetAsVCLComponent stored False;
     property Align;
     property Anchors;
+    property ButtonItems[Index: TNavigateBtn]: TStyledNavButton read GetButtonItem;
     property Constraints;
     property DragCursor;
     property DragKind;
@@ -604,7 +626,7 @@ begin
   TStringList(FHints).OnChange := HintsChanged;
   TStringList(FCaptions).OnChange := CaptionsChanged;
   {$IFDEF D10_4+}
-  FButtonImages := TVirtualImageList.Create(AOwner);
+  FButtonImages := TVirtualImageList.Create(nil);
   FButtonImages.AutoFill := True;
   FButtonImages.ImageCollection := FButtonsImageCollection;
   FButtonImages.SetSize(DEFAULT_BTN_IMAGE_SIZE, DEFAULT_BTN_IMAGE_SIZE);
@@ -1056,6 +1078,12 @@ function TCustomStyledDBNavigator.GetButton(
   const AValue: TNavigateBtn): TStyledNavButton;
 begin
   Result := FButtons[Avalue];
+end;
+
+function TCustomStyledDBNavigator.GetButtonItem(
+  AIndex: TNavigateBtn): TStyledNavButton;
+begin
+  Result := GetButton(AIndex);
 end;
 
 procedure TCustomStyledDBNavigator.GetChildren(Proc: TGetChildProc; Root: TComponent);
@@ -1784,6 +1812,7 @@ begin
       FDbNavigator._DefaultCursor,
       FDbNavigator._UseCustomDrawType);
     StyleRadius := FDbNavigator.StyleRadius;
+    StyleDrawType := FDbNavigator.StyleDrawType;
     ControlStyle := [csCaptureMouse, csDoubleClicks, csSetCaption, csOpaque];
   end
   else
@@ -1807,12 +1836,57 @@ begin
     Result := inherited GetCaption;
 end;
 
+function TStyledNavButton.IsCustomDrawType: Boolean;
+begin
+  if Assigned(FDbNavigator) then
+    Result := StyleDrawType <> FDbNavigator.StyleDrawType
+  else
+    Result := StyleDrawType <> btRoundRect;
+end;
+
+function TStyledNavButton.IsCustomRadius: Boolean;
+begin
+  if Assigned(FDbNavigator) then
+    Result := StyleRadius <> FDbNavigator.StyleRadius
+  else
+    Result := StyleRadius <> DEFAULT_RADIUS;
+end;
+
+function TStyledNavButton.IsCustomRoundedCorners: Boolean;
+begin
+  Result := StyleRoundedCorners <> ALL_ROUNDED_CORNERS;
+end;
+
 function TStyledNavButton.IsImageAlignmentStored: Boolean;
 begin
   if Assigned(FDbNavigator) then
     Result := FImageAlignment <> iaTop
   else
     Result := True;
+end;
+
+function TStyledNavButton.IsStoredStyleFamily: Boolean;
+begin
+  if Assigned(FDbNavigator) then
+    Result := not SameText(StyleFamily,FDbNavigator.StyleFamily)
+  else
+    Result := True;
+end;
+
+function TStyledNavButton.IsStoredStyleAppearance: Boolean;
+begin
+  if Assigned(FDbNavigator) then
+    Result := not SameText(StyleAppearance, FDbNavigator.StyleAppearance)
+  else
+    Result := True;
+end;
+
+function TStyledNavButton.IsStoredStyleClass: Boolean;
+begin
+  if Assigned(FDbNavigator) then
+    Result := not SameText(StyleClass,FDbNavigator.StyleClass)
+  else
+    Result := inherited IsStoredStyleClass;
 end;
 
 procedure TStyledNavButton.MouseDown(Button: TMouseButton; Shift: TShiftState;

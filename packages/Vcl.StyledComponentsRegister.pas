@@ -442,22 +442,28 @@ begin
   if Index = 0 then
   begin
     LDbNavigator := GetDbNavigator;
-    LNavButton := LDbNavigator.Buttons[nbFirst];
-    LNavButton.StyleDrawType := LDbNavigator.StyleDrawType;
-    LNavButton.StyleRadius := LDbNavigator.StyleRadius;
-    LNavButton.SetBounds(0, 0, LDbNavigator.ButtonWidth, LDbNavigator.ButtonHeight);
-    if LDbNavigator.ShowCaptions then
-    begin
-      LNavButton.Name := Designer.UniqueName('Button');
-      LNavButton.Caption := 'Button';
-    end;
-    if EditStyledButton(LNavButton) then
-    begin
-      LDbNavigator.SetDbNavigatorStyle(LNavButton.StyleFamily,
-        LNavButton.StyleClass, LNavButton.StyleAppearance);
-      LDbNavigator.StyleRadius := LNavButton.StyleRadius;
-      LDbNavigator.StyleDrawType := LNavButton.StyleDrawType;
-      Designer.Modified;
+    LNavButton := TStyledNavButton.CreateStyled(LDbNavigator,
+      LDbNavigator.StyleFamily, LDbNavigator.StyleClass, LDbNavigator.StyleAppearance,
+      LDbNavigator.StyleDrawType, LDbNavigator.Cursor, False);
+    try
+      LNavButton.StyleDrawType := LDbNavigator.StyleDrawType;
+      LNavButton.StyleRadius := LDbNavigator.StyleRadius;
+      LNavButton.SetBounds(0, 0, LDbNavigator.ButtonWidth, LDbNavigator.ButtonHeight);
+      if LDbNavigator.ShowCaptions then
+      begin
+        LNavButton.Name := Designer.UniqueName('Button');
+        LNavButton.Caption := 'Button';
+      end;
+      if EditStyledButton(LNavButton) then
+      begin
+        LDbNavigator.SetDbNavigatorStyle(LNavButton.StyleFamily,
+          LNavButton.StyleClass, LNavButton.StyleAppearance);
+        LDbNavigator.StyleRadius := LNavButton.StyleRadius;
+        LDbNavigator.StyleDrawType := LNavButton.StyleDrawType;
+        Designer.Modified;
+      end;
+    finally
+      LNavButton.Free;
     end;
   end
   else if Index = 1 then
