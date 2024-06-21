@@ -388,6 +388,7 @@ Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org
 ### RELEASE NOTES
 21 Jun 2024: version 3.6.0
 StyledTaskDialog Changes:
+
 - Refactoring of TaskDialog functions and flags for initialization
 - Added registration of UseCommandLinks for TaskDialogMessages
 - Use of CommandLinks in TaskDialog when asking confirmation operations
@@ -395,11 +396,15 @@ StyledTaskDialog Changes:
 - Complete update of TaskDialog and AnimatedTaskDialog Demos
 - Redefined default dialog min width to 500px at 96DPI
 - Added properties: DialogButtonsFamily, UseCommandLinks, UseTitleInMessageDlg, AlphaBlendValue to StylesTaskDialog component
+
 NotificationBadge updates:
+
 - Added NotificationBadge for StyledCategoryButtons and StyleButtonGroup
 - Updated StyledButton Demos with "emulation" of NotificationBadge via Timer
 - Updated demos for NotificationBadge in StyledButtonGroup and StyledCategoryButtons
+
 Other changes:
+
 - Added TStyledButtonItem Assign method
 - Added Packages for Delphi 10
 Fixes:
