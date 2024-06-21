@@ -47,8 +47,8 @@ const
 
 type
   TfmMain = class(TForm)
-    BottomPanel: TPanel;
     ImageList32: TImageList;
+    BottomPanel: TPanel;
     ClientPanel: TPanel;
     LeftPanel: TPanel;
     CreateButton: TStyledButton;
@@ -70,6 +70,7 @@ type
     StyledButtonGroupBootstrap: TStyledButtonGroup;
     cbCaptionAlignment: TComboBox;
     cbImageAlignment: TComboBox;
+    BadgeTimer: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure CreateButtonClick(Sender: TObject);
     procedure UpdateButtonGroups(Sender: TObject);
@@ -77,9 +78,16 @@ type
     procedure ButtonGroupButtonClicked(Sender: TObject; Index: Integer);
     procedure cbCaptionAlignmentSelect(Sender: TObject);
     procedure cbImageAlignmentSelect(Sender: TObject);
+    procedure StyledButtonGroupBootstrapGetNotificationBadgeInfo(
+      const AButtonItemIndex: Integer; var ABadgeContent: string;
+      var ASize: TNotificationBadgeSize;
+      var APosition: TNotificationBadgePosition; var AColor, AFontColor: TColor;
+      var AFontStyle: TFontStyles);
+    procedure BadgeTimerTimer(Sender: TObject);
   private
     FButtonGroup: TButtonGroup;
     FStyledButtonGroup: TStyledButtonGroup;
+    FNotificationCount: Integer;
     procedure CreateStyledButtonGroup;
     procedure CreateButtonGroups;
     procedure CreateButtonGroup;
@@ -195,6 +203,7 @@ begin
   FStyledButtonGroup.Images := ImageList32;
   FStyledButtonGroup.ButtonWidth := BUTTON_WIDTH;
   FStyledButtonGroup.ButtonHeight := BUTTON_HEIGHT;
+  FStyledButtonGroup.OnButtonClicked := ButtonGroupButtonClicked;
 end;
 
 procedure TfmMain.CreateButtonGroup;
@@ -209,6 +218,7 @@ begin
   FButtonGroup.Images := ImageList32;
   FButtonGroup.ButtonWidth := BUTTON_WIDTH;
   FButtonGroup.ButtonHeight := BUTTON_HEIGHT;
+  FButtonGroup.OnButtonClicked := ButtonGroupButtonClicked;
 end;
 
 procedure TfmMain.CreateButtonGroups;
@@ -249,10 +259,34 @@ begin
   ShowCaptionCheckBox.Checked := BUTTONGROUP_SHOW_CAPTIONS;
 end;
 
+procedure TfmMain.BadgeTimerTimer(Sender: TObject);
+begin
+  Inc(FNotificationCount);
+  //force repaint of Notificationbadges
+  StyledCategoryButtonsBootstrap.Repaint;
+end;
+
+procedure TfmMain.StyledButtonGroupBootstrapGetNotificationBadgeInfo(
+  const AButtonItemIndex: Integer; var ABadgeContent: string;
+  var ASize: TNotificationBadgeSize; var APosition: TNotificationBadgePosition;
+  var AColor, AFontColor: TColor; var AFontStyle: TFontStyles);
+begin
+  if (AButtonItemIndex = 0) then
+    ABadgeContent := IntToStr(FNotificationCount+10)
+  else if (AButtonItemIndex = 1) then
+  begin
+    AColor := clBlue;
+    ABadgeContent := IntToStr(FNotificationCount+20);
+  end;
+end;
+
 procedure TfmMain.ButtonGroupButtonClicked(Sender: TObject; Index: Integer);
 begin
-  if Sender is TGrpButtonItem then
-    ShowMessage(TGrpButtonItem(Sender).Caption);
+  if Sender is TButtonGroup then
+  begin
+    if TButtonGroup(Sender).Items[Index] is TGrpButtonItem then
+      ShowMessage(TGrpButtonItem(TButtonGroup(Sender).Items[Index]).Caption);
+  end;
 end;
 
 procedure TfmMain.UpdateButtonGroups(Sender: TObject);

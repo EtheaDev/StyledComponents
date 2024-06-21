@@ -13,6 +13,12 @@ object fmMain: TfmMain
   ShowHint = True
   OnCreate = FormCreate
   TextHeight = 15
+  object BadgeTimer: TTimer
+    Interval = 5000
+    OnTimer = BadgeTimerTimer
+    Left = 608
+    Top = 272
+  end
   object BottomPanel: TPanel
     Left = 0
     Top = 422
@@ -50,13 +56,12 @@ object fmMain: TfmMain
     object BottomClientPanel: TPanel
       Left = 161
       Top = 1
-      Width = 655
+      Width = 651
       Height = 76
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
       Visible = False
-      ExplicitWidth = 651
       object WidthLabel: TLabel
         Left = 20
         Top = 15
@@ -162,7 +167,7 @@ object fmMain: TfmMain
       Left = 1
       Top = 1
       Width = 137
-      Height = 421
+      Height = 420
       Align = alLeft
       ButtonHeight = 40
       ButtonWidth = 100
@@ -185,14 +190,12 @@ object fmMain: TfmMain
       TabOrder = 0
       OnButtonClicked = ButtonGroupButtonClicked
       StyleDrawType = btRounded
-      ExplicitLeft = -5
-      ExplicitTop = 2
     end
     object StyledButtonGroupBootstrap: TStyledButtonGroup
       Left = 138
       Top = 1
       Width = 137
-      Height = 421
+      Height = 420
       Align = alLeft
       ButtonHeight = 40
       ButtonWidth = 100
@@ -222,7 +225,7 @@ object fmMain: TfmMain
       OnButtonClicked = ButtonGroupButtonClicked
       StyleDrawType = btRounded
       StyleFamily = 'Bootstrap'
-      ExplicitHeight = 420
+      OnGetNotificationBadgeInfo = StyledButtonGroupBootstrapGetNotificationBadgeInfo
     end
   end
   object Panel1: TPanel

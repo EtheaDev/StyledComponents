@@ -71,6 +71,7 @@ type
     StyledButtonGroupBootstrap: TStyledButtonGroup;
     cbCaptionAlignment: TComboBox;
     cbImageAlignment: TComboBox;
+    BadgeTimer: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure CreateButtonClick(Sender: TObject);
     procedure UpdateButtonGroups(Sender: TObject);
@@ -78,9 +79,16 @@ type
     procedure ButtonGroupButtonClicked(Sender: TObject; Index: Integer);
     procedure cbCaptionAlignmentSelect(Sender: TObject);
     procedure cbImageAlignmentSelect(Sender: TObject);
+    procedure StyledButtonGroupBootstrapGetNotificationBadgeInfo(
+      const AButtonItemIndex: Integer; var ABadgeContent: string;
+      var ASize: TNotificationBadgeSize;
+      var APosition: TNotificationBadgePosition; var AColor, AFontColor: TColor;
+      var AFontStyle: TFontStyles);
+    procedure BadgeTimerTimer(Sender: TObject);
   private
     FButtonGroup: TButtonGroup;
     FStyledButtonGroup: TStyledButtonGroup;
+    FNotificationCount: Integer;
     procedure CreateStyledButtonGroup;
     procedure CreateButtonGroups;
     procedure CreateButtonGroup;
@@ -215,8 +223,6 @@ begin
 end;
 
 procedure TfmMain.CreateButtonGroups;
-var
-  LButton: TGrpButtonItem;
 begin
   //Create Standard ButtonGroup
   CreateButtonGroup;
@@ -252,6 +258,27 @@ begin
   BuildCaptionAligmentList;
   BuildImageAlignment;
   ShowCaptionCheckBox.Checked := BUTTONGROUP_SHOW_CAPTIONS;
+end;
+
+procedure TfmMain.BadgeTimerTimer(Sender: TObject);
+begin
+  Inc(FNotificationCount);
+  //force repaint of Notificationbadges
+  StyledCategoryButtonsBootstrap.Repaint;
+end;
+
+procedure TfmMain.StyledButtonGroupBootstrapGetNotificationBadgeInfo(
+  const AButtonItemIndex: Integer; var ABadgeContent: string;
+  var ASize: TNotificationBadgeSize; var APosition: TNotificationBadgePosition;
+  var AColor, AFontColor: TColor; var AFontStyle: TFontStyles);
+begin
+  if (AButtonItemIndex = 0) then
+    ABadgeContent := IntToStr(FNotificationCount+10)
+  else if (AButtonItemIndex = 1) then
+  begin
+    AColor := clBlue;
+    ABadgeContent := IntToStr(FNotificationCount+20);
+  end;
 end;
 
 procedure TfmMain.ButtonGroupButtonClicked(Sender: TObject; Index: Integer);

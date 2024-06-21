@@ -15,10 +15,16 @@ object fmMain: TfmMain
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 15
+  object BadgeTimer: TTimer
+    Interval = 5000
+    OnTimer = BadgeTimerTimer
+    Left = 608
+    Top = 272
+  end
   object BottomPanel: TPanel
     Left = 0
-    Top = 423
-    Width = 817
+    Top = 422
+    Width = 813
     Height = 78
     Align = alBottom
     TabOrder = 0
@@ -52,7 +58,7 @@ object fmMain: TfmMain
     object BottomClientPanel: TPanel
       Left = 161
       Top = 1
-      Width = 655
+      Width = 651
       Height = 76
       Align = alClient
       BevelOuter = bvNone
@@ -155,15 +161,15 @@ object fmMain: TfmMain
   object ClientPanel: TPanel
     Left = 137
     Top = 0
-    Width = 680
-    Height = 423
+    Width = 676
+    Height = 422
     Align = alClient
     TabOrder = 1
     object StyledButtonGroup: TStyledButtonGroup
       Left = 1
       Top = 1
       Width = 137
-      Height = 421
+      Height = 420
       Align = alLeft
       ButtonHeight = 40
       ButtonWidth = 100
@@ -182,13 +188,14 @@ object fmMain: TfmMain
           ImageIndex = 6
         end>
       TabOrder = 0
+      OnButtonClicked = ButtonGroupButtonClicked
       StyleDrawType = btRounded
     end
     object StyledButtonGroupBootstrap: TStyledButtonGroup
       Left = 138
       Top = 1
       Width = 137
-      Height = 421
+      Height = 420
       Align = alLeft
       ButtonHeight = 40
       ButtonWidth = 100
@@ -213,14 +220,16 @@ object fmMain: TfmMain
           StyleAppearance = 'Normal'
         end>
       TabOrder = 1
+      OnButtonClicked = ButtonGroupButtonClicked
       StyleDrawType = btRounded
       StyleFamily = 'Bootstrap'
+      OnGetNotificationBadgeInfo = StyledButtonGroupBootstrapGetNotificationBadgeInfo
     end
   end
   object Panel1: TPanel
     Left = 0
-    Top = 501
-    Width = 817
+    Top = 500
+    Width = 813
     Height = 33
     Align = alBottom
     TabOrder = 2
@@ -245,7 +254,7 @@ object fmMain: TfmMain
     Left = 0
     Top = 0
     Width = 137
-    Height = 423
+    Height = 422
     Align = alLeft
     ButtonHeight = 40
     ButtonWidth = 100

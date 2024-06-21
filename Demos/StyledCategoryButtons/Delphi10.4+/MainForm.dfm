@@ -13,6 +13,12 @@ object fmMain: TfmMain
   ShowHint = True
   OnCreate = FormCreate
   TextHeight = 15
+  object BadgeTimer: TTimer
+    Interval = 5000
+    OnTimer = BadgeTimerTimer
+    Left = 608
+    Top = 272
+  end
   object BottomPanel: TPanel
     Left = 0
     Top = 423
@@ -365,6 +371,7 @@ object fmMain: TfmMain
     OnButtonClicked = CategoryButtonsButtonClicked
     StyleDrawType = btRounded
     StyleFamily = 'Bootstrap'
+    OnGetNotificationBadgeInfo = StyledCategoryButtonsBootstrapGetNotificationBadgeInfo
   end
   object VirtualImageList: TVirtualImageList
     Images = <

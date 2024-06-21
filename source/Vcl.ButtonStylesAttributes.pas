@@ -37,24 +37,26 @@ interface
 {$ENDIF}
 
 uses
-  Winapi.Windows
+  System.UITypes
   , System.Classes
   , System.Contnrs
-  , System.UITypes
   , System.Types
+  , Winapi.Windows
+  , Winapi.CommCtrl
   , Vcl.Graphics
   , Vcl.Controls
   , Vcl.Buttons
   , Vcl.StdCtrls
   , Vcl.ImgList
   , Vcl.Themes
-  , Winapi.CommCtrl
   ;
 
 const
   DEFAULT_RADIUS = 6;
   RESOURCE_SHIELD_ICON = 'BUTTON_SHIELD_ADMIN';
   DEFAULT_MAX_BADGE_VALUE = 99;
+  DEFAULT_BADGE_COLOR = clRed;
+  DEFAULT_BADGE_FONT_COLOR = clWhite;
 
 resourcestring
   ERROR_FAMILY_NOT_FOUND = 'Styled Button Family "%s" not found';
@@ -99,7 +101,7 @@ Type
     FSize: TNotificationBadgeSize;
     FColor: TColor;
     FFontColor: TColor;
-
+    FFontStyle: TFontStyles;
     FOwnerControl: TControl;
     FOnContentChange: TNotifyEvent;
     procedure InvalidateControl;
@@ -108,20 +110,24 @@ Type
     procedure SetNotificationCount(const AValue: Integer);
     procedure SetColor(const AValue: TColor);
     procedure SetFontColor(const AValue: TColor);
+    procedure SetFontStyle(const AValue: TFontStyles);
     function GetBadgeContent: string;
     procedure SetCustomText(const AValue: string);
     procedure SetSize(const Value: TNotificationBadgeSize);
     function GetIsVisible: Boolean;
+    function IsFontStyleStored: Boolean;
   public
     procedure Assign(ASource: TPersistent); override;
     constructor Create(AOwner: TComponent); override;
     function HasCustomAttributes: Boolean;
     property BadgeContent: string read GetBadgeContent;
     property IsVisible: Boolean read GetIsVisible;
+    property OwnerControl: TControl read FOwnerControl;
   published
-    property Color: TColor read FColor write SetColor default clRed;
+    property Color: TColor read FColor write SetColor default DEFAULT_BADGE_COLOR;
     property CustomText: string read FCustomText write SetCustomText;
-    property FontColor: TColor read FFontColor write SetFontColor default clWhite;
+    property FontColor: TColor read FFontColor write SetFontColor default DEFAULT_BADGE_FONT_COLOR;
+    property FontStyle: TFontStyles read FFontStyle write SetFontStyle stored IsFontStyleStored;
     property NotificationCount: Integer read FNotificationCount write SetNotificationCount default 0;
     property MaxNotifications: Word read FMaxNotifications write SetMaxNotifications default DEFAULT_MAX_BADGE_VALUE;
     property Position: TNotificationBadgePosition read FPosition write SetPosition default nbpTopRight;
@@ -261,6 +267,8 @@ procedure CloneButtonStyle(const ASource: TStyledButtonAttributes;
   var ADest: TStyledButtonAttributes);
 function GetActiveStyleName(const AControl: TControl): string;
 function GetWindowsVersion: TWindowsVersion;
+function ClearHRefs(const Msg: string;  OnlyLinks: boolean = True;
+  OnlyFileNotExists: boolean = False): string;
 
 //Calculate Image and Text Rect for Drawing using ImageAlignment and ImageMargins
 //for StyledButton and StyledGraphicButton
@@ -289,6 +297,20 @@ procedure DrawBitBtnGlyph(ACanvas: TCanvas; ARect: TRect;
   AState: TButtonState; AEnabled: Boolean;
   AOriginal: TBitmap; ANumGlyphs: Integer; const ATransparentColor: TColor);
 
+//drawing a Text in a Canvas Using Alignment and Spacing
+procedure DrawButtonText(const ACanvas: TCanvas;
+  const AText: string; const AAlignment: TAlignment;
+  const ASpacing: Integer;
+  var ARect: TRect; AFlags: Cardinal);
+
+//drawing a Notification Badge on a Canvas
+procedure DrawButtonNotificationBadge(const ACanvas: TCanvas;
+  const ASurfaceRect: TRect; const AScaleFactor: Single;
+  const AValue: string;
+  const ASizeType: TNotificationBadgeSize;
+  const APosition: TNotificationBadgePosition;
+  const AColor, AFontColor: TColor; const AFontStyle: TFontStyles);
+
 //drawing "old-style" with masked bitmap
 procedure DrawBitmapTransparent(ACanvas: TCanvas; ARect: TRect;
   const AWidth, AHeight: Integer; AOriginal: TBitmap;
@@ -300,20 +322,25 @@ procedure DrawIconFromCommandLinkRes(ACanvas: TCanvas; ARect: TRect;
 
 //Draw rectangle and border into Canvas
 procedure DrawRect(ACanvas: TCanvas; var ARect: TRect);
+
 //draw Button into Canvas
 procedure CanvasDrawShape(const ACanvas: TCanvas; ARect: TRect;
   const ADrawType: TStyledButtonDrawType; const ACornerRadius: Single;
   const ARoundedCorners: TRoundedCorners;
   const APreserveBorderSpace: Boolean = True);
+
 //draw Text into Canvas
 procedure CanvasDrawText(const ACanvas: TCanvas; ARect: TRect;
   const AText: string; ABiDiModeFlags: LongInt);
+
 //draw bar and triangle for SplitButton into Canvas
 procedure CanvasDrawBarAndTriangle(const ACanvas: TCanvas; const ARect: TRect;
   const AScaleFactor: Single; ABarColor, ATriangleColor: TColor);
+
 //draw Vertical bar into Canvas
 procedure CanvasDrawBar(const ACanvas: TCanvas; const ARect: TRect;
   const AScaleFactor: Single; ABarColor: TColor);
+
 //draw a triangle into Canvas
 procedure CanvasDrawTriangle(const ACanvas: TCanvas; const ARect: TRect;
   const AScaleFactor: Single; ATriangleColor: TColor);
@@ -352,12 +379,12 @@ implementation
 
 uses
   System.Win.Registry
+  , System.SysUtils
+  , System.Math
 {$ifdef GDIPlusSupport}
   , Winapi.GDIPAPI
   , Winapi.GDIPOBJ
 {$endif}
-  , System.SysUtils
-  , System.Math
   , Vcl.StandardButtonStyles
   ;
 
@@ -547,6 +574,99 @@ begin
   Result := _WindowsVersion;
 end;
 
+function ExtractHrefValues(const HRef: string;
+  out LinkStr, DisplayLabel: string) : boolean;
+var
+  p1, p2, p3: integer;
+begin
+  p1 := pos('>', HRef);
+  p2 := Length(HRef)-3;
+  p3 := pos('">',HRef);
+  if (p1 > 0) and (p3 > 0) and
+    SameText(Copy(HRef,1,9),'<A HREF="') and
+    SameText(Copy(HRef,p2,4),'</A>') then
+  begin
+    DisplayLabel := Copy(HRef,p1+1,p2-p1-1);
+    LinkStr := Copy(HRef,10,p1-11);
+    Result := True;
+  end
+  else
+  begin
+    LinkStr := HRef;
+    DisplayLabel := '';
+    Result := False;
+  end;
+end;
+
+function HRefToString(const HRef: string): string;
+var
+  DisplayLabel: string;
+  LinkStr: string;
+begin
+  //input: '<A HREF="c:\windows\system32\Notepad.exe'>Editor</A>'
+  //output: 'Editor (c:\windows\system32\Notepad.exe)';
+
+  if ExtractHrefValues(HRef, DisplayLabel, LinkStr) then
+  begin
+    if not SameText(DisplayLabel, LinkStr) then
+      Result := Format('%s (%s)',[LinkStr,DisplayLabel])
+    else
+      Result := LinkStr;
+  end
+  else
+    Result := HRef;
+end;
+
+function HRefToLinkStr(const HRef: string): string;
+var
+  DisplayLabel: string;
+  LinkStr: string;
+begin
+  //input: '<A HREF="c:\windows\system32\Notepad.exe'>Editor</A>'
+  //output: 'Editor';
+  if ExtractHrefValues(HRef, DisplayLabel, LinkStr) then
+  begin
+    Result := LinkStr;
+  end
+  else
+    Result := HRef;
+end;
+
+function ClearHRefs(const Msg: string; OnlyLinks: boolean = True;
+  OnlyFileNotExists: boolean = False): string;
+var
+  p1, p2: integer;
+  SubMsg, HRef, LinkStr, DisplayLabel: string;
+begin
+  Result := '';
+  SubMsg := Msg;
+  while True do
+  begin
+    p1 := pos('<A HREF="', UpperCase(SubMsg));
+    p2 := pos('</A>', UpperCase(SubMsg));
+    if (p1 > 0) and (p2 > 0) then
+    begin
+      HRef := Copy(SubMsg, p1, Succ(p2+3-p1));
+      ExtractHrefValues(HRef, LinkStr, DisplayLabel);
+      if not OnlyFileNotExists or not FileExists(LinkStr) then
+      begin
+        if OnlyLinks then
+          Result := Result + Copy(SubMsg,1,p1-1)+HRefToLinkStr(HRef)
+        else
+          Result := Result + Copy(SubMsg,1,p1-1)+HRefToString(HRef);
+      end
+      else
+        Result := Result + Copy(SubMsg,1,p1-1)+HRef;
+      SubMsg := Copy(SubMsg,p2+4,maxint);
+    end
+    else
+    begin
+      Result := Result + SubMsg;
+      break;
+    end;
+  end;
+end;
+
 var
   FFamilies: TObjectList;
 
@@ -661,14 +781,6 @@ begin
       LHotStyle.Free;
       LDisabledStyle.Free;
     end;
-    //Attributes defined with Family/Class/Appearance reset any changes
-(*
-    ANormalStyle.ResetChanged;
-    APressedStyle.ResetChanged;
-    ASelectedStyle.ResetChanged;
-    AHotStyle.ResetChanged;
-    ADisabledStyle.ResetChanged;
-*)
   end;
 end;
 
@@ -773,8 +885,9 @@ begin
   FNotificationCount := 0;
   FMaxNotifications := DEFAULT_MAX_BADGE_VALUE;
   FPosition := nbpTopRight;
-  FColor := clRed;
-  FFontColor := clWhite;
+  FColor := DEFAULT_BADGE_COLOR;
+  FFontColor := DEFAULT_BADGE_FONT_COLOR;
+  FFontStyle := [System.UITypes.TFontStyle.fsBold];
   FSize := nbsNormal;
   if AOwner is TControl then
   begin
@@ -808,8 +921,8 @@ begin
   Result := (FNotificationCount <> 0) or
     (FMaxNotifications <> DEFAULT_MAX_BADGE_VALUE) or
     (FPosition <> nbpTopRight) or
-    (FColor <> clRed) or
-    (FFontColor <> clWhite) or
+    (FColor <> DEFAULT_BADGE_COLOR) or
+    (FFontColor <> DEFAULT_BADGE_FONT_COLOR) or
     (FSize <> nbsNormal) or
     (FCustomText <> '');
 end;
@@ -818,6 +931,14 @@ procedure TNotificationBadgeAttributes.InvalidateControl;
 begin
   if Assigned(FOwnerControl) then
     FOwnerControl.Invalidate;
+end;
+
+function TNotificationBadgeAttributes.IsFontStyleStored: Boolean;
+var
+  LFontStyle : TFontStyles;
+begin
+  LFontStyle := [System.UITypes.TFontStyle.fsBold];
+  Result := FFontStyle <> LFontStyle;
 end;
 
 procedure TNotificationBadgeAttributes.SetMaxNotifications(const AValue: Word);
@@ -889,6 +1010,16 @@ begin
   if FFontColor <> AValue then
   begin
     FFontColor := AValue;
+    if IsVisible then
+      InvalidateControl;
+  end;
+end;
+
+procedure TNotificationBadgeAttributes.SetFontStyle(const AValue: TFontStyles);
+begin
+  if FFontStyle <> AValue then
+  begin
+    FFontStyle := AValue;
     if IsVisible then
       InvalidateControl;
   end;
@@ -1849,6 +1980,96 @@ begin
     IL.Free;
     TmpImage.Free;
   end;
+end;
+
+procedure DrawButtonText(const ACanvas: TCanvas;
+  const AText: string; const AAlignment: TAlignment;
+  const ASpacing: Integer;
+  var ARect: TRect; AFlags: Cardinal);
+var
+  R: TRect;
+  OldBKMode: Integer;
+begin
+  R := ARect;
+  Winapi.Windows.DrawText(ACanvas.Handle, PChar(AText), Length(AText),
+    R, AFlags or DT_CALCRECT);
+  case AAlignment of
+    taLeftJustify: OffsetRect(R, ASpacing, (ARect.Height - R.Height) div 2);
+    taRightJustify: OffsetRect(R, ARect.Width - R.Width - ASpacing, (ARect.Height - R.Height) div 2);
+  else
+    OffsetRect(R, (ARect.Width - R.Width) div 2, (ARect.Height - R.Height) div 2);
+  end;
+  OldBKMode := SetBkMode(ACanvas.Handle, Winapi.Windows.TRANSPARENT);
+  CanvasDrawText(ACanvas, R, AText, AFlags);
+  SetBkMode(ACanvas.Handle, OldBKMode);
+end;
+
+procedure DrawButtonNotificationBadge(const ACanvas: TCanvas;
+  const ASurfaceRect: TRect; const AScaleFactor: Single;
+  const AValue: string;
+  const ASizeType: TNotificationBadgeSize;
+  const APosition: TNotificationBadgePosition;
+  const AColor, AFontColor: TColor; const AFontStyle: TFontStyles);
+var
+  LRect: TRect;
+  W, H, LBadgeChars, LBadgeBorderSize: Integer;
+  LFlags: Cardinal;
+begin
+  ACanvas.Pen.Style := psClear;
+  ACanvas.Brush.Color := AColor;
+  ACanvas.Font.Color := AFontColor;
+  ACanvas.Font.Style := AFontStyle;
+
+  //Calculate Badge Size
+  LFlags := DT_NOCLIP or DT_CENTER or DT_VCENTER or DT_CALCRECT;
+  LRect := ASurfaceRect;
+  LBadgeChars := Length(AValue);
+  Winapi.Windows.DrawText(ACanvas.Handle,
+    PChar(AValue), LBadgeChars, LRect, LFlags);
+
+  //Add Border
+  LBadgeBorderSize := Round(3 * AScaleFactor);
+  InflateRect(LRect, Round(LBadgeBorderSize*2.2), LBadgeBorderSize);
+  if ASizeType = nbsSmallDot then
+  begin
+    //Reduce size of dot based on Font Size
+    H := Round(LRect.Height / 2);
+    W := H;
+  end
+  else
+  begin
+    H := LRect.Height;
+    W := Max(LRect.Width, H);
+  end;
+
+  //Calculate Badge Position
+  if APosition in [nbpTopLeft, nbpTopRight] then
+  begin
+    LRect.Top := ASurfaceRect.Top;
+    LRect.Bottom := LRect.Top + H;
+  end
+  else
+  begin
+    LRect.Bottom := ASurfaceRect.Bottom;
+    LRect.Top := LRect.Bottom - H;
+  end;
+  if APosition in [nbpTopRight, nbpBottomRight] then
+  begin
+    LRect.Right := ASurfaceRect.Right;
+    LRect.Left := ASurfaceRect.Right - W;
+  end
+  else
+  begin
+    LRect.Left := ASurfaceRect.Left;
+    LRect.Right := ASurfaceRect.Left + W;
+  end;
+  //Draw Badge
+  CanvasDrawshape(ACanvas, LRect, btRounded, 0, ALL_ROUNDED_CORNERS, False);
+
+  //Draw Badge Content
+  if ASizeType <> nbsSmallDot then
+    DrawButtonText(ACanvas, AValue, taCenter, 0, LRect,
+      DT_NOCLIP or DT_CENTER or DT_VCENTER);
 end;
 
 procedure DrawBitBtnGlyph(ACanvas: TCanvas; ARect: TRect;

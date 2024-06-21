@@ -31,7 +31,7 @@ td{
 </style>
 <h1>Delphi VCL StyledComponents <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg" alt="License"/></a></h1>
 <h2>Components similar to Delphi VCL Buttons, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!</h2>
-<h3>Actual official version: 3.5.4</h3>
+<h3>Actual official version: 3.6.0</h3>
 <hr />
 <h2>A brief description</h2>
 <p><strong>StyledComponents</strong> is a set of VCL components for Delphi (32 and 64 bit) that allow you to overcome the limits imposed by standard VCL components, maintaining 100% compatibility of the properties.</p>
@@ -338,6 +338,29 @@ TaskDialog -> StyledTaskDialog</p>
 <p><img src="./Images/SupportingDelphi.jpg" alt="Delphi Support"/></p>
 <p>Related links: <a href="https://www.embarcadero.com">embarcadero.com</a> - <a href="https://learndelphi.org">learndelphi.org</a></p>
 <h3>RELEASE NOTES</h3>
+<p>21 Jun 2024: version 3.6.0
+StyledTaskDialog Changes:</p>
+<ul>
+<li>Refactoring of TaskDialog functions and flags for initialization</li>
+<li>Added registration of UseCommandLinks for TaskDialogMessages</li>
+<li>Use of CommandLinks in TaskDialog when asking confirmation operations</li>
+<li>Refactoring of some function names for StyledTaskDialog</li>
+<li>Complete update of TaskDialog and AnimatedTaskDialog Demos</li>
+<li>Redefined default dialog min width to 500px at 96DPI</li>
+<li>Added properties: DialogButtonsFamily, UseCommandLinks, UseTitleInMessageDlg, AlphaBlendValue to StylesTaskDialog component
+NotificationBadge updates:</li>
+<li>Added NotificationBadge for StyledCategoryButtons and StyleButtonGroup</li>
+<li>Updated StyledButton Demos with &ldquo;emulation&rdquo; of NotificationBadge via Timer</li>
+<li>Updated demos for NotificationBadge in StyledButtonGroup and StyledCategoryButtons
+Other changes:</li>
+<li>Added TStyledButtonItem Assign method</li>
+<li>Added Packages for Delphi 10
+Fixes:</li>
+<li>Fixed some packages for build in release mode</li>
+<li>Fixed assigning the active component if not focused</li>
+<li>Fixed compilation for DXE6</li>
+<li>Fixed height for TaskDialog when message in very long&hellip;</li>
+</ul>
 <p>11 Jun 2024: version 3.5.4</p>
 <ul>
 <li>Added full support for TStyledTaskDialog component with EventHandlers and:</li>

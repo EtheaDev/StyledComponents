@@ -33,16 +33,16 @@ interface
 {$INCLUDE StyledComponents.inc}
 
 uses
-  Vcl.ImgList
-  , System.Math
+  System.Math
+  , Vcl.ImgList
   , System.UITypes
+  , System.SysUtils
+  , System.Classes
   , Winapi.Windows
   , Winapi.CommCtrl
   , Winapi.Messages
   , Vcl.Graphics
   , Vcl.buttons
-  , System.SysUtils
-  , System.Classes
   , Vcl.StdCtrls
   , Vcl.Themes
   , Vcl.Controls
@@ -218,10 +218,6 @@ type
     procedure DrawBackgroundAndBorder(const ACanvas: TCanvas;
       const AStyleAttribute: TStyledButtonAttributes;
       const AEraseBackground: Boolean);
-    procedure DrawText(const ACanvas: TCanvas;
-      const AText: string; const AAlignment: TAlignment;
-      const ASpacing: Integer;
-      var ARect: TRect; AFlags: Cardinal);
     function GetDrawingStyle(const ACanvas: TCanvas): TStyledButtonAttributes;
     procedure SetStyleDrawType(const AValue: TStyledButtonDrawType);
     procedure ImageListChange(Sender: TObject);
@@ -2305,102 +2301,20 @@ begin
   end;
 end;
 
-procedure TStyledButtonRender.DrawText(const ACanvas: TCanvas;
-  const AText: string; const AAlignment: TAlignment;
-  const ASpacing: Integer;
-  var ARect: TRect; AFlags: Cardinal);
-var
-  R: TRect;
-  OldBKMode: Integer;
-begin
-  //Drawing Caption
-  R := ARect;
-  Winapi.Windows.DrawText(ACanvas.Handle, PChar(AText), Length(AText),
-    R, AFlags or DT_CALCRECT);
-  case AAlignment of
-    taLeftJustify: OffsetRect(R, ASpacing, (ARect.Height - R.Height) div 2);
-    taRightJustify: OffsetRect(R, ARect.Width - R.Width - ASpacing, (ARect.Height - R.Height) div 2);
-  else
-    OffsetRect(R, (ARect.Width - R.Width) div 2, (ARect.Height - R.Height) div 2);
-  end;
-  OldBKMode := SetBkMode(ACanvas.Handle, Winapi.Windows.TRANSPARENT);
-  CanvasDrawText(ACanvas, R, AText, AFlags);
-  SetBkMode(ACanvas.Handle, OldBKMode);
-end;
-
 procedure TStyledButtonRender.DrawNotificationBadge(
   const ACanvas: TCanvas; const ASurfaceRect: TRect);
 var
-  LRect: TRect;
-  W, H, LBadgeChars, LBadgeBorderSize: Integer;
-  LBadgeValue: string;
   LScaleFactor: Single;
-  LFlags: Cardinal;
 begin
   if not FNotificationBadge.IsVisible then
     Exit;
 
   LScaleFactor := GetOwnerScaleFactor;
-  ACanvas.Pen.Style := psClear;
-  ACanvas.Brush.Color := FNotificationBadge.Color;
-  ACanvas.Font.Color := FNotificationBadge.FontColor;
-  ACanvas.Font.Style := [TFontStyle.fsBold];
-
-  //Calculate Badge Size
-  LFlags := DT_NOCLIP or DT_CENTER or DT_VCENTER or DT_CALCRECT;
-  LRect := ASurfaceRect;
-  LBadgeChars := Length(FNotificationBadge.BadgeContent);
-  if FNotificationBadge.CustomText = '' then
-    LBadgeValue := StringOfChar('9', LBadgeChars)
-  else
-    LBadgeValue := FNotificationBadge.CustomText;
-  Winapi.Windows.DrawText(ACanvas.Handle,
-    PChar(LBadgeValue), LBadgeChars, LRect, LFlags);
-  LBadgeValue := FNotificationBadge.BadgeContent;
-
-  //Add Border
-  LBadgeBorderSize := Round(3 * LScaleFactor);
-  InflateRect(LRect, Round(LBadgeBorderSize*2.2), LBadgeBorderSize);
-  if FNotificationBadge.Size = nbsSmallDot then
-  begin
-    //Reduce size of dot based on Font Size
-    H := Round(LRect.Height / 2);
-    W := H;
-  end
-  else
-  begin
-    H := LRect.Height;
-    W := Max(LRect.Width, H);
-  end;
-
-  //Calculate Badge Position
-  if FNotificationBadge.Position in [nbpTopLeft, nbpTopRight] then
-  begin
-    LRect.Top := ASurfaceRect.Top;
-    LRect.Bottom := LRect.Top + H;
-  end
-  else
-  begin
-    LRect.Bottom := ASurfaceRect.Bottom;
-    LRect.Top := LRect.Bottom - H;
-  end;
-  if FNotificationBadge.Position in [nbpTopRight, nbpBottomRight] then
-  begin
-    LRect.Right := ASurfaceRect.Right;
-    LRect.Left := ASurfaceRect.Right - W;
-  end
-  else
-  begin
-    LRect.Left := ASurfaceRect.Left;
-    LRect.Right := ASurfaceRect.Left + W;
-  end;
-  //Draw Badge
-  CanvasDrawshape(ACanvas, LRect, btRounded, 0, ALL_ROUNDED_CORNERS, False);
-
-  //Draw Badge Content
-  if FNotificationBadge.Size <> nbsSmallDot then
-    DrawText(ACanvas, LBadgeValue, taCenter, 0, LRect,
-      DT_NOCLIP or DT_CENTER or DT_VCENTER);
+  DrawButtonNotificationBadge(ACanvas, ASurfaceRect, LScaleFactor,
+    FNotificationBadge.BadgeContent,
+    FNotificationBadge.Size, FNotificationBadge.Position,
+    FNotificationBadge.Color,
+    FNotificationBadge.FontColor, FNotificationBadge.FontStyle);
 end;
 
 procedure TStyledButtonRender.DrawBackgroundAndBorder(
@@ -2682,7 +2596,7 @@ begin
     //WordWrap but not vertical centerer: fixed top
     LTextFlags := DT_NOCLIP or DT_WORDBREAK;
     LTextRect.Top := Round(28*GetOwnerScaleFactor);
-    DrawText(ACanvas, LCaption, taLeftJustify, 0, LTextRect, LTextFlags);
+    DrawButtonText(ACanvas, LCaption, taLeftJustify, 0, LTextRect, LTextFlags);
     if FCommandLinkHint <> '' then
     begin
       ACanvas.Font.Height := Round(-11*GetOwnerScaleFactor);
@@ -2697,11 +2611,11 @@ begin
       //WordWrap but not vertical centerer: fixed top
       LTextFlags := DT_NOCLIP or DT_WORDBREAK;
       OffsetRect(LTextRect, 0, Round(15*GetOwnerScaleFactor));
-      DrawText(ACanvas, FCommandLinkHint, taLeftJustify, 0, LTextRect, LTextFlags);
+      DrawButtonText(ACanvas, FCommandLinkHint, taLeftJustify, 0, LTextRect, LTextFlags);
     end;
   end
   else
-    DrawText(ACanvas, LCaption, FCaptionAlignment, FSpacing, LTextRect, LTextFlags);
+    DrawButtonText(ACanvas, LCaption, FCaptionAlignment, FSpacing, LTextRect, LTextFlags);
 end;
 
 procedure TStyledButtonRender.DrawButton(const ACanvas: TCanvas;

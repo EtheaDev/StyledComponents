@@ -870,6 +870,8 @@ begin
     TStyledCategoryButtons, 'StyleFamily', TStyledFamilyPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
     TStyledButtonItem, 'StyleFamily', TStyledFamilyPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+    TStyledTaskDialog, 'DialogButtonsFamily', TStyledFamilyPropertyEditor);
 
   //Property Editor for StyleClass
   RegisterPropertyEditor(TypeInfo(TStyledButtonClass),

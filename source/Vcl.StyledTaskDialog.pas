@@ -41,6 +41,9 @@ uses
 
 const
   DEFAULT_ALPHABLEND = 255;
+  DEFAULT_STYLEDDIALOG_MIN_WIDTH = 500;
+  DEFAULT_STYLEDDIALOG_MIN_HEIGHT = 280;
+
   {$IFDEF Use_Large_Dialog_Icons}
   DEFAULT_MAIN_ICON_SIZE = 128;
   {$ELSE}
@@ -61,6 +64,11 @@ type
     FParentWnd: HWND;
     FPosition: TPoint;
     FMainIconSize: Integer;
+    FDialogButtonsFamily: TStyledButtonFamily;
+    FUseCommandLinks: Boolean;
+    FUseTitleInMessageDlg: Boolean;
+    FAlphaBlendValue: Integer;
+    function IsDefaultFamily: Boolean;
   strict protected
     function DoExecute(ParentWnd: HWND): Boolean; override;
     procedure DoOnDialogCreated; override;
@@ -73,9 +81,14 @@ type
     property HelpFile: string read FHelpFile write FHelpFile;
     property Position: TPoint read FPosition write FPosition;
     property MainIconSize: Integer read FMainIconSize write FMainIconSize default DEFAULT_MAIN_ICON_SIZE;
+  published
+    property DialogButtonsFamily: TStyledButtonFamily read FDialogButtonsFamily write FDialogButtonsFamily stored IsDefaultFamily;
+    property UseCommandLinks: Boolean read FUseCommandLinks write FUseCommandLinks default False;
+    property UseTitleInMessageDlg: Boolean read FUseTitleInMessageDlg write FUseTitleInMessageDlg default True;
+    property AlphaBlendValue: Integer read FAlphaBlendValue write FAlphaBlendValue default DEFAULT_ALPHABLEND;
   end;
 
-  //  Abstraction of a Dialog Launcher
+  //Abstraction of a Dialog Launcher
   ITaskDialogLauncher = interface
     ['{B2F16F98-C163-4706-A803-E624126D8DF6}']
     function DoExecute(ParentWnd: HWND;
@@ -84,44 +97,62 @@ type
       const ADialogBtnFamily: TStyledButtonFamily): boolean;
   end;
 
-function StyledMessageDlg(const Msg: string; DlgType: TMsgDlgType;
-  Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer; overload;
-function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
-  Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer; overload;
 
+//Deprecated functions
+function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer; overload; deprecated 'use StyledTaskMessageDlg(...) instead'
+function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn): Integer; overload; deprecated 'use StyledTaskMessageDlgPos(...) instead'
+function StyledTaskDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint;
+  X: Integer = -1; Y: Integer = -1): Integer; overload; deprecated 'use StyledTaskMessageDlgPos(...) or StyledTaskMessageDlg(...) instead'
+function StyledTaskDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; DefaultButton: TMsgDlgBtn; HelpCtx: Longint;
+  X: Integer = -1; Y: Integer = -1): Integer; overload; deprecated 'use StyledTaskMessageDlgPos(...) or StyledTaskMessageDlg(...) instead'
+function StyledMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; DefaultButton: TMsgDlgBtn; HelpCtx: Longint;
+  X: Integer; Y: Integer): Integer; overload; deprecated 'use StyledMessageDlgPos(...) changing position of DefaultButton param, after HelpCtx'
+
+//Equivalent functions of standard MessageDlg functions
 function StyledMessageDlg(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn): Integer; overload;
-function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
-  Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn): Integer; overload;
-
+function StyledMessageDlg(const Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer; overload;
 function StyledMessageDlg(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn;
   CustomButtonCaptions: array of string): Integer; overload;
-function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
+
+//Equivalent functions of standard MessageDlgPos functions
+function StyledMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint;
+  X: Integer; Y: Integer): Integer; overload;
+function StyledMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn;
-  CustomButtonCaptions: array of string): Integer; overload;
+  X: Integer; Y: Integer): Integer; overload;
 
-function StyledMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
+//Equivalent functions of standard TaskMessageDlg functions
+function StyledTaskMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer; overload;
+function StyledTaskMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn): Integer; overload;
+//Equivalent functions of standard TaskMessageDlgPos functions
+function StyledTaskMessageDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint;
-  X: Integer = -1; Y: Integer = -1): Integer; overload;
-function StyledMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
-  Buttons: TMsgDlgButtons; DefaultButton: TMsgDlgBtn; HelpCtx: Longint;
-  X: Integer = -1; Y: Integer = -1): Integer; overload;
+  X: Integer; Y: Integer): Integer; overload;
+function StyledTaskMessageDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn;
+  X: Integer; Y: Integer): Integer; overload;
 
-function StyledTaskDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
-  Buttons: TMsgDlgButtons; HelpCtx: Longint;
-  X: Integer = -1; Y: Integer = -1): Integer; overload;
-function StyledTaskDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
-  Buttons: TMsgDlgButtons; DefaultButton: TMsgDlgBtn; HelpCtx: Longint;
-  X: Integer = -1; Y: Integer = -1): Integer; overload;
-
+//Equivalent function of standard ShowMessage function
 procedure StyledShowMessage(const Msg: string); overload;
 
-procedure SetUseAlwaysTaskDialog(AValue: boolean);
+procedure SetUseTitleInMessageDlg(AValue: boolean);
 procedure RegisterCustomExecute(const AShowStyledTaskDialog: ITaskDialogLauncher;
   const AButtonFamily: TStyledButtonFamily = '');
 procedure UnregisterCustomExecute;
-procedure InitializeStyledTaskDialogs(AUseTaskDialog: Boolean; AFont: TFont;
+procedure InitializeStyledTaskDialogs(
+  AUseTitleInMessageDlg: Boolean;
+  AFont: TFont; AUseCommandLinks: Boolean = False;
   const ADialogButtonsFamily: TStyledButtonFamily = '';
   const AAlphaBlendValue: Byte = DEFAULT_ALPHABLEND);
 function GetTaskDlgType(const AIcon: TTaskDialogIcon): TMsgDlgType;
@@ -150,6 +181,7 @@ uses
   , Winapi.ShellApi
   , Vcl.StyledCmpMessages
   , Vcl.StyledButton
+  , Vcl.StandardButtonStyles
   , Vcl.StyledCmpStrUtils
   , Vcl.StyledTaskDialogStdUnit
   ;
@@ -159,7 +191,8 @@ var
   _DialogButtonsFamily: TStyledButtonFamily;
   _CustomIcons: TStyledDialogIcons;
   _DialogFont: TFont;
-  _UseAlwaysTaskDialog: boolean;
+  _UseCommandLinks: Boolean;
+  _UseTitleInMessageDlg: boolean;
   _AlphaBlendValue: Byte;
 
   ButtonNames: array[TMsgDlgBtn] of string = (
@@ -168,6 +201,170 @@ var
   ModalResults: array[TMsgDlgBtn] of Integer = (
     mrYes, mrNo, mrOk, mrCancel, mrAbort, mrRetry, mrIgnore, mrAll, mrNoToAll,
     mrYesToAll, 0, mrClose);
+
+function GetDefaultButton(const Buttons: TMsgDlgButtons): TMsgDlgBtn;
+begin
+  if      mbYes       in Buttons then Result := TMsgDlgBtn.mbYes
+  else if mbOK        in Buttons then Result := TMsgDlgBtn.mbOK
+  else if mbNo        in Buttons then Result := TMsgDlgBtn.mbNo
+  else if mbCancel    in Buttons then Result := TMsgDlgBtn.mbCancel
+  else if mbAbort     in Buttons then Result := TMsgDlgBtn.mbAbort
+  else if mbRetry     in Buttons then Result := TMsgDlgBtn.mbRetry
+  else if mbIgnore    in Buttons then Result := TMsgDlgBtn.mbIgnore
+  else if mbAll       in Buttons then Result := TMsgDlgBtn.mbAll
+  else if mbNoToAll   in Buttons then Result := TMsgDlgBtn.mbNoToAll
+  else if mbYesToAll  in Buttons then Result := TMsgDlgBtn.mbYesToAll
+  else if mbHelp      in Buttons then Result := TMsgDlgBtn.mbHelp
+  else if mbClose     in Buttons then Result := TMsgDlgBtn.mbClose
+  else Result := TMsgDlgBtn.mbRetry;
+end;
+
+//Internal Function to Display a Styled TaskMessage Dialog
+//using a TStyledTaskDialog component
+function InternalDoTaskMessageDlgPosHelp(const Instruction, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint;
+  X, Y: Integer;
+  const HelpFileName: string;
+  DefaultButton: TMsgDlgBtn;
+  UseAlternateTaskDlgFlags: Boolean;
+  AlternateTaskDlgFlags: TTaskDialogFlags;
+  CustomButtonCaptions: array of string): Integer;
+const
+  IconMap: array[TMsgDlgType] of TTaskDialogIcon = (tdiWarning, tdiError,
+    tdiInformation, tdiInformation, tdiNone);
+  LModalResults: array[TMsgDlgBtn] of Integer = (mrYes, mrNo, mrOk, mrCancel,
+    mrAbort, mrRetry, mrIgnore, mrAll, mrNoToAll, mrYesToAll, mrHelp, mrClose);
+var
+  DlgBtn: TMsgDlgBtn;
+  LTaskDialog: TStyledTaskDialog;
+  LTaskDialogButtonItem: TTaskDialogButtonItem;
+  LUseCommandLinks: Boolean;
+  LIndex: Integer;
+begin
+  //At least OK Button
+  if Buttons = [] then
+    Buttons := [TMsgDlgBtn.mbOK];
+
+  Application.ModalStarted;
+  LTaskDialog := TStyledTaskDialog.Create(nil);
+  try
+    if UseAlternateTaskDlgFlags then
+      LTaskDialog.Flags := AlternateTaskDlgFlags; // replace  the default Flags to AlternateTaskDlgFlags.
+    // Assign buttons
+    LIndex := -1;
+    LUseCommandLinks := True;
+    for DlgBtn := Low(TMsgDlgBtn) to High(TMsgDlgBtn) do
+    begin
+      if DlgBtn in Buttons then
+      begin
+        LTaskDialogButtonItem := LTaskDialog.Buttons.Add as TTaskDialogButtonItem;
+        Inc(LIndex);
+        if LIndex <= High(CustomButtonCaptions) then
+          LTaskDialogButtonItem.Caption := CustomButtonCaptions[LIndex]
+        else
+        begin
+          //use Captions defined in Vcl.StyledCmpMessages.pas
+          case DlgBtn of
+            mbYes: LTaskDialogButtonItem.Caption := STR_YES;
+            mbNo: LTaskDialogButtonItem.Caption := STR_NO;
+            mbOK: LTaskDialogButtonItem.Caption := STR_OK;
+            mbCancel: LTaskDialogButtonItem.Caption := STR_CANCEL;
+            mbAbort: LTaskDialogButtonItem.Caption := STR_ABORT;
+            mbRetry: LTaskDialogButtonItem.Caption := STR_RETRY;
+            mbIgnore: LTaskDialogButtonItem.Caption := STR_IGNORE;
+            mbAll: LTaskDialogButtonItem.Caption := STR_ALL;
+            mbNoToAll: LTaskDialogButtonItem.Caption := STR_NOTOALL;
+            mbYesToAll: LTaskDialogButtonItem.Caption := STR_YESTOALL;
+            mbHelp: LTaskDialogButtonItem.Caption := STR_HELP;
+            mbClose: LTaskDialogButtonItem.Caption := STR_CLOSE;
+          end;
+        end;
+
+        //Set CommandLinkHint based on DlgBtn when using a Warning or Confirmation
+        if DlgType in [TMsgDlgType.mtWarning, TMsgDlgType.mtConfirmation] then
+        case DlgBtn of
+          mbYes: LTaskDialogButtonItem.CommandLinkHint := Format('%s %s', [STR_CONFIRM, STR_THE_OPERATION]);
+          mbNo: LTaskDialogButtonItem.CommandLinkHint := Format('%s %s', [STR_CANCEL, STR_THE_OPERATION]);
+          mbCancel: LTaskDialogButtonItem.CommandLinkHint := Format('%s %s', [STR_CANCEL, STR_THE_OPERATION]);
+          mbAbort: LTaskDialogButtonItem.CommandLinkHint := Format('%s %s', [STR_ABORT, STR_THE_OPERATION]);
+          mbRetry: LTaskDialogButtonItem.CommandLinkHint := Format('%s %s', [STR_RETRY, STR_THE_OPERATION]);
+          mbIgnore: LTaskDialogButtonItem.CommandLinkHint := Format('%s %s', [STR_IGNORE, STR_THE_OPERATION]);
+          mbNoToAll: LTaskDialogButtonItem.CommandLinkHint := Format('%s %s', [STR_CANCEL, STR_THE_OPERATION]);
+          mbYesToAll: LTaskDialogButtonItem.CommandLinkHint := Format('%s %s', [STR_CONFIRM, STR_THE_OPERATION]);
+        end;
+        LUseCommandLinks := LUseCommandLinks and (LTaskDialogButtonItem.CommandLinkHint <> '');
+
+        if DlgBtn = DefaultButton then
+          LTaskDialogButtonItem.Default := True;
+        LTaskDialogButtonItem.ModalResult := LModalResults[DlgBtn];
+      end;
+    end;
+
+    //use Captions defined in Vcl.StyledCmpMessages.pas
+    LTaskDialog.Caption := GetDialogTypeTitle(DlgType);
+    LTaskDialog.CommonButtons := [];
+    if Not UseAlternateTaskDlgFlags and Application.UseRightToLeftReading then
+      LTaskDialog.Flags := LTaskDialog.Flags + [tfRtlLayout];
+    if pos('<A HREF=',Msg) > 0 then
+      LTaskDialog.Flags := LTaskDialog.Flags + [tfEnableHyperlinks];
+
+    if LTaskDialog.UseCommandLinks and LUseCommandLinks then
+      LTaskDialog.Flags := LTaskDialog.Flags + [tfUseCommandLinks];
+
+    LTaskDialog.HelpContext := HelpCtx;
+    LTaskDialog.HelpFile := HelpFileName;
+    LTaskDialog.MainIcon := IconMap[DlgType];
+    LTaskDialog.Position := Point(X, Y);
+    LTaskDialog.Text := Msg;
+
+    if (Instruction = '') and (LTaskDialog.UseTitleInMessageDlg) then
+      LTaskDialog.Title := LTaskDialog.Caption
+    else
+      LTaskDialog.Title := Instruction;
+
+    // Show dialog and return result
+    Result := mrNone;
+    if LTaskDialog.Execute then
+      Result := LTaskDialog.ModalResult;
+  finally
+    LTaskDialog.Free;
+    Application.ModalFinished;
+  end;
+end;
+
+//Begin of Internal Functions
+  function DoTaskMessageDlgPosHelp(const Instruction, Msg: string; DlgType: TMsgDlgType;
+    Buttons: TMsgDlgButtons; HelpCtx: Longint; X: Integer = -1; Y: Integer = -1;
+    const HelpFileName: string = ''): Integer; overload; inline;
+  begin
+    Result := InternalDoTaskMessageDlgPosHelp(Instruction, Msg, DlgType,
+      Buttons, HelpCtx, X, Y, HelpFileName, GetDefaultButton(Buttons), False, [], []);
+  end;
+
+  function DoTaskMessageDlgPosHelp(const Instruction, Msg: string; DlgType: TMsgDlgType;
+    Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn;
+    X: Integer = -1; Y: Integer = -1; const HelpFileName: string = ''): Integer; overload; inline;
+  begin
+    Result := InternalDoTaskMessageDlgPosHelp(Instruction, Msg, DlgType,
+      Buttons, HelpCtx, X, Y, HelpFileName, DefaultButton, False, [], []);
+  end;
+
+  function DoMessageDlgPosHelp(const Msg: string; DlgType: TMsgDlgType;
+    Buttons: TMsgDlgButtons; HelpCtx: Integer; DefaultButton: TMsgDlgBtn;
+    X: Integer = -1; Y: Integer = -1; const HelpFileName: string = ''): Integer; overload; inline;
+  begin
+    Result := InternalDoTaskMessageDlgPosHelp('', Msg, DlgType,
+      Buttons, HelpCtx, X, Y, HelpFileName, DefaultButton, False, [], []);
+  end;
+
+  function DoMessageDlgPosHelp(const Msg: string; DlgType: TMsgDlgType;
+    Buttons: TMsgDlgButtons; HelpCtx: Longint;
+    X: Integer = -1; Y: Integer = -1; const HelpFileName: string = ''): Integer; overload; inline;
+  begin
+    Result := InternalDoTaskMessageDlgPosHelp('', Msg, DlgType,
+      Buttons, HelpCtx, X, Y, HelpFileName, GetDefaultButton(Buttons), False, [], []);
+  end;
+//End of Internal Functions
 
 function GetDialogAlphaBlendValue: Byte;
 begin
@@ -184,148 +381,63 @@ begin
   Result := _DialogButtonsFamily;
 end;
 
-function IsTaskMessageSupported : Boolean;
-begin
-{$IFDEF D16+}
-  Result := (Win32MajorVersion >= 6) and StyleServices.Enabled;
-{$ELSE}
-  Result := (Win32MajorVersion >= 6) and StyleServices.Enabled;
-{$ENDIF}
-end;
-
 function StyledMessageDlg(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer; overload;
 begin
-  Result := StyledTaskDlgPos(GetDialogTypeTitle(DlgType),
-    Msg, DlgType, Buttons, HelpCtx, -1, -1);
+  Result := DoTaskMessageDlgPosHelp('', Msg, DlgType, Buttons, HelpCtx);
 end;
 
 function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer;
 begin
-  Result := StyledTaskDlgPos(Title, Msg, DlgType, Buttons, HelpCtx, -1, -1);
-end;
-
-function StyledMessageDlg(const Msg: string; DlgType: TMsgDlgType;
-  Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn): Integer; overload;
-begin
-  Result := StyledTaskDlgPos(GetDialogTypeTitle(DlgType),
-    Msg, DlgType, Buttons, DefaultButton, HelpCtx, -1, -1);
+  Result := DoTaskMessageDlgPosHelp(Title, Msg, DlgType, Buttons, HelpCtx);
 end;
 
 function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn): Integer; overload;
 begin
-  Result := StyledTaskDlgPos(Title, Msg, DlgType, Buttons, DefaultButton,
-    HelpCtx, -1, -1);
+  Result := DoTaskMessageDlgPosHelp(Title, Msg, DlgType, Buttons, HelpCtx, DefaultButton);
+end;
+
+function StyledMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; DefaultButton: TMsgDlgBtn; HelpCtx: Longint;
+  X: Integer; Y: Integer): Integer; overload;
+begin
+  Result := DoTaskMessageDlgPosHelp('', Msg, DlgType, Buttons, HelpCtx,
+    DefaultButton, X, Y);
+end;
+
+function StyledMessageDlg(const Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn): Integer; overload;
+begin
+  Result := DoTaskMessageDlgPosHelp('', Msg, DlgType, Buttons, HelpCtx, DefaultButton);
 end;
 
 function StyledMessageDlg(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn;
   CustomButtonCaptions: array of string): Integer; overload;
 begin
-  Result := StyledTaskDlgPos(GetDialogTypeTitle(DlgType), Msg, DlgType,
-    Buttons, DefaultButton, HelpCtx, -1, -1);
+  Result := InternalDoTaskMessageDlgPosHelp('', Msg, DlgType, Buttons, HelpCtx,
+    -1, -1, '', DefaultButton, False, [], CustomButtonCaptions);
 end;
 
-function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
+function StyledMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint; X: Integer; Y: Integer): Integer;
+begin
+  Result := DoTaskMessageDlgPosHelp('', Msg, DlgType, Buttons, HelpCtx, X, Y);
+end;
+
+function StyledMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn;
-  CustomButtonCaptions: array of string): Integer; overload;
+  X: Integer; Y: Integer): Integer;
 begin
-  Result := StyledTaskDlgPos(Title, Msg, DlgType, Buttons, DefaultButton,
-    HelpCtx, -1, -1);
+  Result := DoTaskMessageDlgPosHelp('', Msg, DlgType, Buttons,
+    HelpCtx, DefaultButton, X, Y);
 end;
 
-function StyleMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
-  Buttons: TMsgDlgButtons; HelpCtx: Longint; X, Y: Integer): Integer;
-begin
-  Result := MessageDlgPosHelp(Msg, DlgType, Buttons, HelpCtx, X, Y, '');
-end;
 
-function StyledMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
-  Buttons: TMsgDlgButtons; HelpCtx: Longint; X: Integer = -1; Y: Integer = -1): Integer;
-var
-  DefaultButton: TMsgDlgBtn;
-begin
-  if      mbYes       in Buttons then DefaultButton := mbYes
-  else if mbOK        in Buttons then DefaultButton := mbOK
-  else if mbNo        in Buttons then DefaultButton := mbNo
-  else if mbCancel    in Buttons then DefaultButton := mbCancel
-  else if mbAbort     in Buttons then DefaultButton := mbAbort
-  else if mbRetry     in Buttons then DefaultButton := mbRetry
-  else if mbIgnore    in Buttons then DefaultButton := mbIgnore
-  else if mbAll       in Buttons then DefaultButton := mbAll
-  else if mbNoToAll   in Buttons then DefaultButton := mbNoToAll
-  else if mbYesToAll  in Buttons then DefaultButton := mbYesToAll
-  else if mbHelp      in Buttons then DefaultButton := mbHelp
-  else if mbClose     in Buttons then DefaultButton := mbClose
-  else DefaultButton := mbYes;
-  if Buttons = [] then
-    Buttons := [mbOK];
-  Result := StyledMessageDlgPos(Msg, DlgType, Buttons, DefaultButton, HelpCtx, X, Y);
-end;
-
-function StyledMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
-  Buttons: TMsgDlgButtons; DefaultButton: TMsgDlgBtn; HelpCtx: Longint; X: Integer = -1; Y: Integer = -1): Integer;
-var
-  Dlg : TForm;
-  MyMsg : string;
-
-  procedure ChangeButtonCaption(MsgDlgBtn : TMsgDlgBtn;
-    const Caption : string);
-  var
-    Button : TButton;
-  begin
-    Button := Dlg.FindComponent(ButtonNames[MsgDlgBtn]) as TButton;
-    if Assigned(Button) then
-      Button.Caption := Caption;
-  end;
-
-begin
-  if IsTaskMessageSupported and _UseAlwaysTaskDialog then
-  begin
-    //Use a TaskDialog to Show the message instead of a MessageDialog
-    Result := StyledTaskDlgPos('',Msg,DlgType,Buttons,DefaultButton,HelpCtx,X,Y);
-  end
-  else
-  begin
-    //Use standard MessageDlg
-    //clear message for Hyperlinks (becasue are not supported)
-    MyMsg := ClearHRefs(Msg);
-    Dlg := CreateMessageDialog(MyMsg, DlgType, Buttons, DefaultButton);
-    try
-      if Assigned(_DialogFont) then
-        Dlg.Font.Assign(_DialogFont);
-
-      Dlg.HelpContext := HelpCtx;
-      if X >= 0 then Dlg.Left := X;
-      if Y >= 0 then Dlg.Top := Y;
-      if (Y < 0) and (X < 0) then Dlg.Position := poScreenCenter;
-
-      ChangeButtonCaption(mbYes,'&'+STR_YES);
-      ChangeButtonCaption(mbNo,'&'+STR_NO);
-      ChangeButtonCaption(mbOK,STR_OK);
-      ChangeButtonCaption(mbCancel,STR_CANCEL);
-      ChangeButtonCaption(mbAbort,STR_ABORT);
-      ChangeButtonCaption(mbRetry,STR_RETRY);
-      ChangeButtonCaption(mbIgnore,STR_IGNORE);
-      ChangeButtonCaption(mbAll,'&'+STR_ALL);
-      ChangeButtonCaption(mbNoToAll,'&'+STR_NOTOALL);
-      ChangeButtonCaption(mbYesToAll,'&'+STR_YESTOALL);
-      ChangeButtonCaption(mbHelp,'&'+STR_HELP);
-      ChangeButtonCaption(mbClose,'&'+STR_CLOSE);
-
-      //Caption translated
-      Dlg.Caption := GetDialogTypeTitle(DlgType);
-
-      Result := Dlg.ShowModal;
-    finally
-      Dlg.Free;
-    end;
-  end;
-end;
-
-procedure InitializeStyledTaskDialogs(AUseTaskDialog: Boolean; AFont: TFont;
+procedure InitializeStyledTaskDialogs(AUseTitleInMessageDlg: Boolean;
+  AFont: TFont; AUseCommandLinks: Boolean = False;
   const ADialogButtonsFamily: TStyledButtonFamily = '';
   const AAlphaBlendValue: Byte = DEFAULT_ALPHABLEND);
 begin
@@ -337,7 +449,8 @@ begin
   end
   else
     FreeAndNil(_DialogFont);
-  _UseAlwaysTaskDialog := AUseTaskDialog;
+  _UseCommandLinks := AUseCommandLinks;
+  _UseTitleInMessageDlg := AUseTitleInMessageDlg;
   _DialogButtonsFamily := ADialogButtonsFamily;
   _AlphaBlendValue := AAlphaBlendValue;
 end;
@@ -357,9 +470,9 @@ begin
   _CustomIcons := ACustomIcons;
 end;
 
-procedure SetUseAlwaysTaskDialog(AValue: boolean);
+procedure SetUseTitleInMessageDlg(AValue: boolean);
 begin
-  _UseAlwaysTaskDialog := AValue;
+  _UseTitleInMessageDlg := AValue;
 end;
 
 procedure RegisterCustomExecute(const AShowStyledTaskDialog: ITaskDialogLauncher;
@@ -390,115 +503,40 @@ begin
     Result := TMsgDlgType.mtInformation;
 end;
 
-function DoTaskMessageDlgPos(const Instruction, Msg: string; DlgType: TMsgDlgType;
-  Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn;
-  X: Integer = -1; Y: Integer = -1;
-  CustomIcon : TIcon = nil): Integer;
-const
-  IconMap: array[TMsgDlgType] of TTaskDialogIcon = (tdiWarning, tdiError,
-    tdiInformation, tdiInformation, tdiNone);
-  LModalResults: array[TMsgDlgBtn] of Integer = (mrYes, mrNo, mrOk, mrCancel,
-    mrAbort, mrRetry, mrIgnore, mrAll, mrNoToAll, mrYesToAll, mrHelp, mrClose);
-var
-  DlgBtn: TMsgDlgBtn;
-  LTaskDialog: TStyledTaskDialog;
-  LTaskDialogButtonItem: TTaskDialogBaseButtonItem;
+function StyledTaskMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer; overload;
 begin
-  Application.ModalStarted;
-  LTaskDialog := TStyledTaskDialog.Create(nil);
-  try
-    // Assign buttons
-    for DlgBtn := Low(TMsgDlgBtn) to High(TMsgDlgBtn) do
-    begin
-      if DlgBtn in Buttons then
-      begin
-        LTaskDialogButtonItem := LTaskDialog.Buttons.Add;
-        //Button Caption translated
-        case DlgBtn of
-          mbYes: LTaskDialogButtonItem.Caption := STR_YES;
-          mbNo: LTaskDialogButtonItem.Caption := STR_NO;
-          mbOK: LTaskDialogButtonItem.Caption := STR_OK;
-          mbCancel: LTaskDialogButtonItem.Caption := STR_CANCEL;
-          mbAbort: LTaskDialogButtonItem.Caption := STR_ABORT;
-          mbRetry: LTaskDialogButtonItem.Caption := STR_RETRY;
-          mbIgnore: LTaskDialogButtonItem.Caption := STR_IGNORE;
-          mbAll: LTaskDialogButtonItem.Caption := STR_ALL;
-          mbNoToAll: LTaskDialogButtonItem.Caption := STR_NOTOALL;
-          mbYesToAll: LTaskDialogButtonItem.Caption := STR_YESTOALL;
-          mbHelp: LTaskDialogButtonItem.Caption := STR_HELP;
-          mbClose: LTaskDialogButtonItem.Caption := STR_CLOSE;
-        end;
-        if DlgBtn = DefaultButton then
-          LTaskDialogButtonItem.Default := True;
-        LTaskDialogButtonItem.ModalResult := LModalResults[DlgBtn];
-      end;
-    end;
+  Result := DoTaskMessageDlgPosHelp(Title, Msg, DlgType, Buttons, HelpCtx);
+end;
 
-    // Set dialog properties
-    with LTaskDialog do
-    begin
-      CommonButtons := [];
-      if Application.UseRightToLeftReading then
-        Flags := Flags + [tfRtlLayout];
-      if pos('<A HREF=',Msg) > 0 then
-        Flags := Flags + [tfEnableHyperlinks];
-
-      HelpContext := HelpCtx;
-      MainIcon :=  IconMap[DlgType];
-      Position := Point(X, Y);
-      Text := Msg;
-
-      //Caption translated
-      LTaskDialog.Caption := GetDialogTypeTitle(DlgType);
-
-      if Instruction <> '' then
-        Title := Instruction
-      else
-        Title :=  LTaskDialog.Caption;
-
-      if Assigned(CustomIcon) then
-      begin
-        Flags := Flags + [tfUseHiconMain];
-        LTaskDialog.CustomMainIcon.Assign(CustomIcon);
-      end;
-    end;
-
-    // Show dialog and return result
-    Result := mrNone;
-    if LTaskDialog.Execute then
-      Result := LTaskDialog.ModalResult;
-  finally
-    LTaskDialog.Free;
-    Application.ModalFinished;
-  end;
+function StyledTaskMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn): Integer; overload;
+begin
+  Result := DoTaskMessageDlgPosHelp(Title, Msg, DlgType, Buttons, HelpCtx, DefaultButton);
 end;
 
 function StyledTaskDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; X: Integer = -1; Y: Integer = -1): Integer;
-var
-  DefaultButton: TMsgDlgBtn;
 begin
-  if      mbYes       in Buttons then DefaultButton := mbYes
-  else if mbOK        in Buttons then DefaultButton := mbOK
-  else if mbNo        in Buttons then DefaultButton := mbNo
-  else if mbCancel    in Buttons then DefaultButton := mbCancel
-  else if mbAbort     in Buttons then DefaultButton := mbAbort
-  else if mbRetry     in Buttons then DefaultButton := mbRetry
-  else if mbIgnore    in Buttons then DefaultButton := mbIgnore
-  else if mbAll       in Buttons then DefaultButton := mbAll
-  else if mbNoToAll   in Buttons then DefaultButton := mbNoToAll
-  else if mbYesToAll  in Buttons then DefaultButton := mbYesToAll
-  else if mbHelp      in Buttons then DefaultButton := mbHelp
-  else if mbClose     in Buttons then DefaultButton := mbClose
+  Result := DoTaskMessageDlgPosHelp(Title, Msg, DlgType, Buttons, HelpCtx, X, Y);
+end;
 
-  else DefaultButton := mbYes;
-
-  Result := StyledTaskDlgPos(Title, Msg, DlgType, Buttons, DefaultButton, HelpCtx, X, Y);
+function StyledTaskMessageDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint; X: Integer; Y: Integer): Integer;
+begin
+  Result := DoTaskMessageDlgPosHelp(Title, Msg, DlgType, Buttons, HelpCtx, X, Y);
 end;
 
 function StyledTaskDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; DefaultButton: TMsgDlgBtn; HelpCtx: Longint;
   X: Integer = -1; Y: Integer = -1): Integer;
+begin
+  Result := StyledTaskMessageDlgPos(Title, Msg, DlgType, Buttons, HelpCtx, DefaultButton, X, Y);
+end;
+
+function StyledTaskMessageDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn;
+  X: Integer; Y: Integer): Integer;
 var
   MsgWithTitle: string;
 begin
@@ -506,10 +544,15 @@ begin
     MsgWithTitle := UpperCase(Title)+sLineBreak+Msg
   else
     MsgWithTitle := Msg;
-  if IsTaskMessageSupported then
-    Result := DoTaskMessageDlgPos(Title, Msg, DlgType, Buttons, HelpCtx, DefaultButton, X, Y)
-  else
-    Result := StyledMessageDlgPos(MsgWithTitle, DlgType, Buttons, DefaultButton, HelpCtx, -1, -1);
+    Result := StyledMessageDlgPos(MsgWithTitle, DlgType, Buttons, HelpCtx, DefaultButton, -1, -1);
+end;
+
+function StyledTaskMessageDlgPosHelp(const Title, Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint; X, Y: Integer;
+  const HelpFileName: string; DefaultButton: TMsgDlgBtn; CustomButtonCaptions: array of string): Integer;
+begin
+  Result := InternalDoTaskMessageDlgPosHelp(Title, Msg, DlgType, Buttons, HelpCtx,
+    X, Y, HelpFileName, DefaultButton, False, [], []);
 end;
 
 procedure StyledShowMessage(const Msg: string); overload;
@@ -521,6 +564,10 @@ end;
 constructor TStyledTaskDialog.Create(AOwner: TComponent);
 begin
   inherited;
+  FDialogButtonsFamily := _DialogButtonsFamily;
+  FUseCommandLinks := _UseCommandLinks;
+  FUseTitleInMessageDlg := _UseTitleInMessageDlg;
+  FAlphaBlendValue := _AlphaBlendValue;
   FMainIconSize := DEFAULT_MAIN_ICON_SIZE;
 end;
 
@@ -533,10 +580,10 @@ var
 begin
   LTaskDlgType := GetTaskDlgType(MainIcon);
 
-  //Use a custom interface if registered
+  //Use a custom interface for StyledTaskDialog, if registered
   if Assigned(_TaskDialogExecute) then
     Result := _TaskDialogExecute.DoExecute(ParentWnd,
-      LTaskDlgType, Self, _DialogButtonsFamily)
+      LTaskDlgType, Self, Self.FDialogButtonsFamily)
   else
     Result := inherited DoExecute(ParentWnd);
 end;
@@ -620,6 +667,11 @@ begin
   Result := inherited Execute(ParentWnd);
 end;
 
+function TStyledTaskDialog.IsDefaultFamily: Boolean;
+begin
+  Result := FDialogButtonsFamily <> DEFAULT_CLASSIC_FAMILY;
+end;
+
 function GetDialogTypeTitle(const DlgType: TMsgDlgType): string;
 begin
   case DlgType of
@@ -632,7 +684,9 @@ begin
 end;
 
 initialization
-  _UseAlwaysTaskDialog := True;
+  _DialogButtonsFamily := DEFAULT_CLASSIC_FAMILY;
+  _UseCommandLinks := False;
+  _UseTitleInMessageDlg := True;
   _AlphaBlendValue := DEFAULT_ALPHABLEND;
   _DialogFont := nil;
 

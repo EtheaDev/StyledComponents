@@ -2,7 +2,7 @@
 
 ## Components similar to Delphi VCL Buttons, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 3.5.4
+### Actual official version: 3.6.0
 
 ---
 ## A brief description
@@ -386,6 +386,28 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+21 Jun 2024: version 3.6.0
+StyledTaskDialog Changes:
+- Refactoring of TaskDialog functions and flags for initialization
+- Added registration of UseCommandLinks for TaskDialogMessages
+- Use of CommandLinks in TaskDialog when asking confirmation operations
+- Refactoring of some function names for StyledTaskDialog
+- Complete update of TaskDialog and AnimatedTaskDialog Demos
+- Redefined default dialog min width to 500px at 96DPI
+- Added properties: DialogButtonsFamily, UseCommandLinks, UseTitleInMessageDlg, AlphaBlendValue to StylesTaskDialog component
+NotificationBadge updates:
+- Added NotificationBadge for StyledCategoryButtons and StyleButtonGroup
+- Updated StyledButton Demos with "emulation" of NotificationBadge via Timer
+- Updated demos for NotificationBadge in StyledButtonGroup and StyledCategoryButtons
+Other changes:
+- Added TStyledButtonItem Assign method
+- Added Packages for Delphi 10
+Fixes:
+- Fixed some packages for build in release mode
+- Fixed assigning the active component if not focused
+- Fixed compilation for DXE6
+- Fixed height for TaskDialog when message in very long...
+
 11 Jun 2024: version 3.5.4
 - Added full support for TStyledTaskDialog component with EventHandlers and:
 1. RadioButtons

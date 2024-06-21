@@ -204,6 +204,7 @@ type
     ClassicOutlineFlowPanel: TFlowPanel;
     ButtonSplit: TButton;
     StyledButtonSplit: TStyledButton;
+    BadgeTimer: TTimer;
     procedure TestActionExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure cbChangeStyleSelect(Sender: TObject);
@@ -223,7 +224,9 @@ type
     procedure PopupMenuClick(Sender: TObject);
     procedure StyledButtonSquareClick(Sender: TObject);
     procedure StyledButtonCircularClick(Sender: TObject);
+    procedure BadgeTimerTimer(Sender: TObject);
   private
+    FNotificationCount: Integer;
     procedure RepaintAngularBtnWithMR(const AFamily: TStyledButtonFamily);
     procedure BuildStyleList;
     procedure BuildFamilyPreview(const AFamily: TStyledButtonFamily;
@@ -488,6 +491,12 @@ end;
 procedure TMainForm.AngularThemesPanelResize(Sender: TObject);
 begin
   rgAngularLightThemes.Width := AngularThemesPanel.Width div 2;
+end;
+
+procedure TMainForm.BadgeTimerTimer(Sender: TObject);
+begin
+  Inc(FNotificationCount);
+  btn_IconHome.NotificationBadge.NotificationCount := FNotificationCount;
 end;
 
 procedure TMainForm.BuildFamilyPreview(const AFamily: TStyledButtonFamily;

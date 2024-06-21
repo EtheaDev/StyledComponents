@@ -114,8 +114,8 @@ type
     FMainIcon: TTaskDialogIcon;
     FOnTimer: TTaskDlgTimerEvent;
     FRadioButtons: TTaskDialogButtons;
-    procedure GetIconNameAndIndex(ATaskDialog: TMsgDlgType;
-      out AImageName: string; out AImageIndex: Integer); overload;
+    //procedure GetIconNameAndIndex(ATaskDialog: TMsgDlgType;
+    //  out AImageName: string; out AImageIndex: Integer); overload;
     procedure GetIconNameAndIndex(ATaskDialogIcon: TTaskDialogIcon;
       out AImageName: string; out AImageIndex: Integer); overload;
     procedure ShowDialogForm;
@@ -149,8 +149,6 @@ type
     function FindButton(const AModalResult: TModalResult): TStyledButton;
     procedure SetMainIconSize(const AValue: Integer);
     function GetMainIconSize: Integer;
-    function ModalResultToCommonButton(const AModalResult: TModalResult;
-        out ACommonButton: TTaskDialogCommonButton): Boolean;
     procedure SetRadioButtons(const AValue: TTaskDialogButtons);
     function UsingCommandLinks: Boolean;
     property Buttons: TTaskDialogButtons read FButtons write SetButtons;
@@ -201,6 +199,8 @@ type
     function GetDefaultButton(const ADefaultButton: TTaskDialogCommonButton): TStyledButton; virtual;
     property TaskDialog: TCustomTaskDialog read FTaskDialog;
   public
+    function ModalResultToCommonButton(const AModalResult: TModalResult;
+      out ACommonButton: TTaskDialogCommonButton): Boolean;
     procedure SetDialogFont(const AFont: TFont); virtual;
     constructor Create(AOwner: TComponent); override;
   end;
@@ -326,7 +326,6 @@ begin
     if Assigned(LStyledButton) then
     begin
       TabOrder := LStyledButton.TabOrder -1;
-      //LStyledButton.Caption := LTaskDialogButtonItem.Caption;
       if LTaskDialogButtonItem.Default then
         SetFocusToButton(LStyledButton);
     end;
@@ -458,18 +457,29 @@ end;
 
 procedure TStyledTaskDialogForm.AdjustHeight;
 var
+  LTitleHeight: Integer;
   LRadioGroupPanelHeight: Integer;
   LCommandLinksPanelHeight: Integer;
   LVerificationPanelHeight: Integer;
   LButtonsPanelHeight: Integer;
   LFooterPanelHeight: Integer;
   LMinHeight, LCalcHeight: Integer;
-  LImageSize, LWidth, LHeight, LMargins: Integer;
+  LImageSize, LMessageHeight, LWidth, LHeight, LMargins: Integer;
 begin
-  LMargins := Round(ImagePanel.Left * 2);
+  LMargins := CenterPanel.Margins.Top * 2;
   DefaultDialogSize(LWidth, LHeight, LImageSize);
 
   //Calculate Height of Form, based on Visible Components
+  if TitleLabel.Caption <> '' then
+  begin
+    LTitleHeight := TitleLabel.Height + LMargins;
+  end
+  else
+  begin
+    LTitleHeight := 0;
+    TitleLabel.Visible := False;
+  end;
+
   if RadioGroupPanel.Visible then
     LRadioGroupPanelHeight := RadioGroupPanel.Height + LMargins
   else
@@ -486,7 +496,7 @@ begin
     LVerificationPanelHeight := 0;
 
   if CommandLinksPanel.Visible then
-    LCommandLinksPanelHeight := CommandLinksPanel.Height + LMargins
+    LCommandLinksPanelHeight := CommandLinksPanel.Height + (LMargins * 2)
   else
     LCommandLinksPanelHeight := 0;
 
@@ -495,22 +505,27 @@ begin
   else
     LButtonsPanelHeight := 0;
 
+  LMessageHeight := AutoSizeLabel.Height + LMargins;
+
+  //Actual Height based on size of Message
   LCalcHeight :=
-    AutoSizeLabel.Height + LMargins +
-    TitleLabel.Height + LMargins +
+    LTitleHeight +
+    LMessageHeight +
     LRadioGroupPanelHeight +
     LFooterPanelHeight +
     LVerificationPanelHeight +
     LButtonsPanelHeight +
-    LCommandLinksPanelHeight +
-    LMargins;
-  LMinHeight := LImageSize + LMargins +
+    LCommandLinksPanelHeight;
+
+  //Minumum Height based on size of Image
+  LMinHeight :=
+    LTitleHeight +
+    LImageSize + LMargins +
     LRadioGroupPanelHeight +
     LFooterPanelHeight +
     LVerificationPanelHeight +
     LButtonsPanelHeight +
-    LCommandLinksPanelHeight +
-    LMargins;
+    LCommandLinksPanelHeight;
 
   Constraints.MinHeight := LMinHeight +
     Height - ClientHeight;
@@ -521,16 +536,18 @@ begin
   ClientHeight := LHeight;
 
   TextLabel.Font.Assign(AutoSizeLabel.Font);
-  TextLabel.Height := AutoSizeLabel.Height;
-  AutoSizeLabel.Visible := False;
+  TextLabel.Height := LMessageHeight;
 
   if LCalcHeight > LHeight then
   begin
     MessageScrollBox.VertScrollBar.Visible := True;
-    MessageScrollBox.VertScrollBar.Range := LCalcHeight;
+    MessageScrollBox.VertScrollBar.Range := LMessageHeight + LTitleHeight + 100;
+    TextLabel.Align := alClient;
   end
   else
     MessageScrollBox.VertScrollBar.Visible := False;
+
+  AutoSizeLabel.Visible := False;
 end;
 
 procedure TStyledTaskDialogForm.AdjustWidth;
@@ -561,13 +578,16 @@ end;
 
 procedure TStyledTaskDialogForm.SetText(const AValue: string);
 begin
-  AutoSizeLabel.Caption := AValue;
+  AutoSizeLabel.Caption := ClearHRefs(AValue);
   TextLabel.Caption := AValue;
 end;
 
 procedure TStyledTaskDialogForm.SetTitle(const AValue: string);
 begin
-  TitleLabel.Caption := AValue;
+  if TitleLabel.Caption <> AValue then
+  begin
+    TitleLabel.Caption :=  AValue;
+  end;
 end;
 
 procedure TStyledTaskDialogForm.SetVerificationText(const AValue: string);
@@ -705,7 +725,8 @@ end;
 
 function TStyledTaskDialogForm.UsingCommandLinks: Boolean;
 begin
-  Result := tfUseCommandLinks in FTaskDialog.Flags;
+  Result := (tfUseCommandLinks in FTaskDialog.Flags) and
+    (FTaskDialog.Title <> '');
 end;
 
 procedure TStyledTaskDialogForm.AddCustomButtons(const AButtons: TTaskDialogButtons);
@@ -715,7 +736,7 @@ var
   LLastButton, LStyledButton: TStyledButton;
   LUsingCommandLinks: Boolean;
   LCommandLinkHeight: Integer;
-  LCommonButton: TTaskDialogCommonButton;
+  //LCommonButton: TTaskDialogCommonButton;
 begin
   LLastButton := nil;
   LCommandLinkHeight := CommandLinksPanel.Height;
@@ -750,7 +771,7 @@ begin
     LStyledButton.Default := LButtonItem.Default;
     LStyledButton.ElevationRequired := LButtonItem.ElevationRequired;
     LStyledButton.Enabled := LButtonItem.Enabled;
-    if LUsingCommandLinks and ModalResultToCommonButton(LStyledButton.ModalResult, LCommonButton) then
+    if LUsingCommandLinks then
     begin
       LStyledButton.Parent := CommandLinksPanel;
       LStyledButton.AlignWithMargins := True;
@@ -784,7 +805,7 @@ begin
       LLastButton := LStyledButton;
     end;
   end;
-  if Self.ActiveControl = nil then
+  if (Self.ActiveControl = nil) and Assigned(LLastButton) and (LLastButton.CanFocus) then
     Self.ActiveControl := LLastButton;
 end;
 
@@ -954,8 +975,8 @@ var
 begin
   LScaleFactor := Self.PixelsPerInch / 96;
   //Values for 96 DPI
-  AClientWidth := Round(600 * LScaleFactor);
-  AClientHeight := Round(280 * LScaleFactor);
+  AClientWidth := Round(DEFAULT_STYLEDDIALOG_MIN_WIDTH * LScaleFactor);
+  AClientHeight := Round(DEFAULT_STYLEDDIALOG_MIN_HEIGHT * LScaleFactor);
   AImageSize := Round(DEFAULT_MAIN_ICON_SIZE * LScaleFactor);
 end;
 
@@ -1064,6 +1085,7 @@ begin
   Result := inherited HelpContext;
 end;
 
+(*
 procedure TStyledTaskDialogForm.GetIconNameAndIndex(
   ATaskDialog: TMsgDlgType; out AImageName: string; out AImageIndex: Integer);
 const
@@ -1073,6 +1095,7 @@ begin
   AImageName := ImageNames[ATaskDialog];
   AImageIndex := Ord(ATaskDialog);
 end;
+*)
 
 procedure TStyledTaskDialogForm.GetIconNameAndIndex(
   ATaskDialogIcon: TTaskDialogIcon; out AImageName: string; out AImageIndex: Integer);
@@ -1209,7 +1232,7 @@ begin
     LForm.FDialogType := ADialogType;
     LForm.FDialogBtnFamily := ADialogBtnFamily;
     LFont := GetDialogFont;
-    LForm.AlphaBlendValue := GetDialogAlphaBlendValue;
+    LForm.AlphaBlendValue := ATaskDialog.AlphaBlendValue;
     LForm.AlphaBlend := LForm.AlphaBlendValue <> DEFAULT_ALPHABLEND;
     LDlgBtnFamily := GetDialogBtnFamily;
     if Assigned(LFont) then

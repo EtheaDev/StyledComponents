@@ -61,12 +61,12 @@ type
     edMessage: TMemo;
     FontLabel: TLabel;
     FontComboBox: TComboBox;
-    btCustomTaskDialog: TButton;
+    btStyledTaskDialog: TButton;
     btNativeTaskDialog: TButton;
-    btRaiseErrorTaskDialog: TButton;
-    btCustomMsgDialog: TButton;
+    btRaiseDatabaseError: TButton;
+    btStyledMsgDialog: TButton;
     btNativeMsgDialog: TButton;
-    btRaiseErrorMsgDialog: TButton;
+    btRaiseGenericError: TButton;
     RightPanel: TPanel;
     DefaultButtonLabel: TLabel;
     rgDlgType: TRadioGroup;
@@ -78,6 +78,10 @@ type
     MRLabel: TLabel;
     AlphaBlendSpinEdit: TSpinEdit;
     AlphaLabel: TLabel;
+    cbUseCommandLinks: TCheckBox;
+    cbUseTitleInMessageDlg: TCheckBox;
+    btNativeShowMessage: TButton;
+    btStyledShowMessage: TButton;
     procedure FormCreate(Sender: TObject);
     procedure ShowDlg(Sender: TObject);
     procedure RaiseError(Sender: TObject);
@@ -85,7 +89,6 @@ type
     procedure TaskDialogTimer(Sender: TObject; TickCount: Cardinal;
       var Reset: Boolean);
     procedure UseStyleDialogCompClick(Sender: TObject);
-    procedure cbUseStyledDialogClick(Sender: TObject);
     procedure FontComboBoxSelect(Sender: TObject);
     procedure cbChangeStyleSelect(Sender: TObject);
     procedure FamilyComboBoxSelect(Sender: TObject);
@@ -101,6 +104,8 @@ type
     procedure TaskDialogNavigated(Sender: TObject);
     procedure TaskDialogRadioButtonClicked(Sender: TObject);
     procedure TaskDialogVerificationClicked(Sender: TObject);
+    procedure cbUseClick(Sender: TObject);
+    procedure DoShowMessage(Sender: TObject);
   private
     FRadioButtonSelected: string;
     procedure ShowSelection(const AModalResult: TModalResult);
@@ -160,14 +165,24 @@ begin
   end;
 end;
 
-procedure TMainForm.cbUseStyledDialogClick(Sender: TObject);
+procedure TMainForm.cbUseClick(Sender: TObject);
 begin
-//  UseStyledDialogForm(cbUseStyledDialog.Checked)
+  InitializeDialogs;
+end;
+
+procedure TMainForm.DoShowMessage(Sender: TObject);
+begin
+  if Sender = btNativeShowMessage then
+    ShowMessage(edMessage.Text)
+  else
+    StyledShowMessage(edMessage.Text);
 end;
 
 procedure TMainForm.InitializeDialogs;
 begin
-  InitializeStyledTaskDialogs(True, Screen.MessageFont,
+  InitializeStyledTaskDialogs(cbUseTitleInMessageDlg.Checked,
+    Screen.MessageFont,
+    cbUseCommandLinks.Checked,
     FamilyComboBox.Text, AlphaBlendSpinEdit.Value);
 end;
 
@@ -192,13 +207,13 @@ begin
   //Example to resize and change message font
   //Screen.MessageFont.Size := Round(Screen.MessageFont.Size * 1.2);
   //Screen.MessageFont.Name := 'Century Gothic';
+  InitializeDialogs;
 
   Caption := Application.Title;
   MRLabel.Font.Style := [TFontStyle.fsBold];
   FontComboBox.Items.Assign(Screen.Fonts);
   FontComboBox.Text := Screen.IconFont.Name;
   BuildStyleList;
-  SetUseAlwaysTaskDialog(True);
 
   for dt := Low(TMsgDlgType) to High(TMsgDlgType)  do
     rgDlgType.Items.Add(GetEnumName(TypeInfo(TMsgDlgType), Ord(dt)));
@@ -219,7 +234,6 @@ begin
         'You can visit site: '+StringToHRef('http://www.ethea.it','www.Ethea.it');
 
   edMessage.Text := Msg;
-  //UseStyledDialogForm(cbUseStyledDialog.Checked);
 end;
 
 procedure TMainForm.ShowSelection(const AModalResult: TModalResult);
@@ -247,52 +261,63 @@ end;
 
 procedure TMainForm.ShowDlg(Sender: TObject);
 var
-  Buttons: TMsgDlgButtons;
+  LButtons: TMsgDlgButtons;
   db : TMsgDlgBtn;
   LDefaultButton: TMsgDlgBtn;
-  LUseDefault: boolean;
+  LUseDefaultbutton: boolean;
   LResult: TModalResult;
+  LDlgType: TMsgDlgType;
 begin
-  Buttons := [];
-  LUseDefault := False;
+  LButtons := [];
+  LUseDefaultbutton := False;
   LDefaultButton := mbOK;
+  LDlgType := TMsgDlgType(rgDlgType.ItemIndex);
   //HelpContext := 0;
   for db := Low(TMsgDlgBtn) to High(TMsgDlgBtn) do
     if clbButtons.Checked[Ord(db)] then
     begin
-      Buttons := Buttons + [db];
+      LButtons := LButtons + [db];
       if db = TMsgDlgBtn.mbHelp then
         HelpContext := 200;
       if SameText(DefaultButtonComboBox.Text, clbButtons.Items[Ord(db)]) then
       begin
+        //The Default Button correponds to a selected Button
         LDefaultButton := db;
-        LUseDefault := True;
+        LUseDefaultbutton := True;
       end;
     end;
 
-  if LUseDefault then
+  if LUseDefaultbutton then
   begin
-    if Sender = btCustomTaskDialog then
-      LResult := StyledTaskDlgPos(edTitle.Text, edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, LDefaultButton, HelpContext)
-    else if Sender = btNativeTaskDialog then
-      LResult := TaskMessageDlg(edTitle.Text, edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, HelpContext)
+    if Sender = btNativeTaskDialog then
+      //Call Delphi TaskMessageDlg passing Default Button
+      LResult := TaskMessageDlg(edTitle.Text, edMessage.Text, LDlgType, LButtons, HelpContext, LDefaultButton)
     else if Sender = btNativeMsgDialog then
-      LResult := MessageDlg(edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, 0)
-    else if Sender = btCustomMsgDialog then
-      LResult := StyledMessageDlgPos(edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, LDefaultButton, HelpContext)
+      //Call Delphi MessageDlg (ignore Title!) passing Default Button
+      LResult := MessageDlg(edMessage.Text, LDlgType, LButtons, 0, LDefaultButton)
+    else if Sender = btStyledTaskDialog then
+      //Call StyledTaskMessageDlg passing Default Button
+      LResult := StyledTaskMessageDlg(edTitle.Text, edMessage.Text, LDlgType, LButtons, HelpContext, LDefaultButton)
+    else if Sender = btStyledMsgDialog then
+      //Call StyledMessageDlg (ignore Title!) passing Default Button
+      LResult := StyledMessageDlg(edMessage.Text, LDlgType, LButtons, HelpContext, LDefaultButton)
     else
       LResult := mrNone;
   end
   else
   begin
-    if Sender = btCustomTaskDialog then
-      LResult := StyledTaskDlgPos(edTitle.Text, edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, HelpContext)
-    else if Sender = btNativeTaskDialog then
-      LResult := TaskMessageDlg(edTitle.Text, edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, HelpContext)
+    if Sender = btNativeTaskDialog then
+      //Call Delphi TaskMessageDlg without Default Button
+      LResult := TaskMessageDlg(edTitle.Text, edMessage.Text, LDlgType, LButtons, HelpContext)
     else if Sender = btNativeMsgDialog then
-      LResult := MessageDlg(edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, 0)
-    else if Sender = btCustomMsgDialog then
-      LResult := StyledMessageDlgPos(edMessage.Text, TMsgDlgType(rgDlgType.ItemIndex), Buttons, HelpContext)
+      //Call Delphi MessageDlg (ignore Title!) without Default Button
+      LResult := MessageDlg(edMessage.Text, LDlgType, LButtons, 0)
+    else if Sender = btStyledTaskDialog then
+      //Call StyledTaskMessageDlg without Default Button
+      LResult := StyledTaskMessageDlg(edTitle.Text, edMessage.Text, LDlgType, LButtons, HelpContext)
+    else if Sender = btStyledMsgDialog then
+      //Call StyledMessageDlgPos (ignore Title!) without Default Button
+      LResult := StyledMessageDlg(edMessage.Text, LDlgType, LButtons, HelpContext)
     else
       LResult := mrNone;
   end;
@@ -355,7 +380,7 @@ begin
     if E.InheritsFrom(EAccessViolation) then
       Buttons := Buttons + [mbAbort];
 
-    Selection := StyledTaskDlgPos(LTitle, LMessage, mtError, Buttons, mbOK, LHelpContext);
+    Selection := StyledTaskMessageDlg(LTitle, LMessage, mtError, Buttons, LHelpContext, mbOK);
     if Selection = mrAbort then
       Application.Terminate
     else if Selection = -1 then
@@ -363,7 +388,7 @@ begin
   end
   else
   begin
-    Selection := StyledMessageDlgPos(LMessage, mtError, Buttons, mbOK, LHelpContext);
+    Selection := StyledMessageDlg(LMessage, mtError, Buttons, LHelpContext, mbOK);
     if Selection = mrAbort then
       Application.Terminate
     else if Selection = -1 then
@@ -394,6 +419,7 @@ begin
     LTaskDialog := TaskDialog;
 
   (* remove comment if you want to use buttons defines in the form
+     or leave the comment to use the custom buttons defines at design-time
   LTaskDialog.Buttons.Clear;
   LTaskDialog.CommonButtons := [];
   for db := Low(TMsgDlgBtn) to High(TMsgDlgBtn) do

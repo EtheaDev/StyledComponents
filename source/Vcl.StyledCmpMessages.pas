@@ -51,6 +51,7 @@ resourcestring
     STR_INFORMATION = 'Informazione';
     STR_CONFIRM = 'Conferma';
     STR_CLOSE = '&Chiudi';
+    STR_THE_OPERATION = 'l''operazione';
     EINSTANTERRORDESC = 'Errore nei dati';
     EDATABASEERRORDESC = 'Errore nei dati';
     EGENERICERROR = 'Errore';
@@ -107,6 +108,7 @@ resourcestring
     STR_INFORMATION = 'Information';
     STR_CONFIRM = 'Confirmer';
     STR_CLOSE = '&Fermer';
+    STR_THE_OPERATION = 'l''opération';
     EINSTANTERRORDESC = 'Erreur de données';
     EDATABASEERRORDESC = 'Erreur de données';
     EGENERICERROR = 'Erreur';
@@ -162,6 +164,7 @@ resourcestring
     STR_INFORMATION = 'Information';
     STR_CONFIRM = 'Confirm';
     STR_CLOSE = '&Close';
+    STR_THE_OPERATION = 'the operation';
     EDATABASEERRORDESC = 'Error in data';
     EFILERERROR = 'Error in input/output file operation';
     EGENERICERROR = 'Error';

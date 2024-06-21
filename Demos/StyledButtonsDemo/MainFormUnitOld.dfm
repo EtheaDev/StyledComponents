@@ -17,6 +17,12 @@ object MainForm: TMainForm
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
+  object BadgeTimer: TTimer
+    Interval = 5000
+    OnTimer = BadgeTimerTimer
+    Left = 828
+    Top = 12
+  end
   object Panel1: TPanel
     Left = 0
     Top = 0

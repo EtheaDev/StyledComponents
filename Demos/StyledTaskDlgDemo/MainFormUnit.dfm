@@ -5,7 +5,7 @@ object MainForm: TMainForm
   ActiveControl = CaptionEdit
   Caption = 'StyledTaskDialog Demo (c) Ethea S.r.l.'
   ClientHeight = 573
-  ClientWidth = 745
+  ClientWidth = 727
   Color = clBtnFace
   Constraints.MinHeight = 600
   Constraints.MinWidth = 730
@@ -22,13 +22,13 @@ object MainForm: TMainForm
   object ExtraGroupBox: TGroupBox
     Left = 0
     Top = 343
-    Width = 745
+    Width = 727
     Height = 230
     Align = alBottom
     Caption = 'Use Style Dialog Component with extra feature'
     TabOrder = 0
     DesignSize = (
-      745
+      727
       230)
     object ExpandedTextLabel: TLabel
       Left = 33
@@ -63,18 +63,17 @@ object MainForm: TMainForm
       Caption = 'Dialog Caption:'
     end
     object StyleLabel: TLabel
-      Left = 523
-      Top = 186
+      Left = 521
+      Top = 189
       Width = 130
       Height = 13
       Anchors = [akRight, akBottom]
       Caption = 'Change application style:'
-      ExplicitLeft = 531
     end
     object ExpandedTextMemo: TMemo
       Left = 112
       Top = 44
-      Width = 405
+      Width = 387
       Height = 56
       Anchors = [akLeft, akTop, akRight]
       Lines.Strings = (
@@ -84,8 +83,8 @@ object MainForm: TMainForm
       WordWrap = False
     end
     object btUseStyledDialogComp: TButton
-      Left = 523
-      Top = 124
+      Left = 521
+      Top = 127
       Width = 195
       Height = 25
       Anchors = [akTop, akRight]
@@ -94,8 +93,8 @@ object MainForm: TMainForm
       OnClick = UseStyleDialogCompClick
     end
     object btUseNativeDialogComp: TButton
-      Left = 523
-      Top = 155
+      Left = 521
+      Top = 158
       Width = 195
       Height = 25
       Anchors = [akTop, akRight]
@@ -106,7 +105,7 @@ object MainForm: TMainForm
     object FooterTextMemo: TMemo
       Left = 112
       Top = 106
-      Width = 405
+      Width = 387
       Height = 56
       Anchors = [akLeft, akTop, akRight]
       Lines.Strings = (
@@ -118,7 +117,7 @@ object MainForm: TMainForm
     object VerificationTextMemo: TMemo
       Left = 112
       Top = 168
-      Width = 405
+      Width = 387
       Height = 56
       Anchors = [akLeft, akTop, akRight]
       Lines.Strings = (
@@ -128,8 +127,8 @@ object MainForm: TMainForm
       WordWrap = False
     end
     object rgMainIcon: TRadioGroup
-      Left = 523
-      Top = 10
+      Left = 521
+      Top = 13
       Width = 195
       Height = 107
       Anchors = [akTop, akRight]
@@ -146,15 +145,15 @@ object MainForm: TMainForm
     object CaptionEdit: TEdit
       Left = 112
       Top = 17
-      Width = 405
+      Width = 387
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
       Text = 'Caption'
     end
     object cbChangeStyle: TComboBox
-      Left = 523
-      Top = 203
+      Left = 521
+      Top = 206
       Width = 196
       Height = 21
       Style = csDropDownList
@@ -166,19 +165,19 @@ object MainForm: TMainForm
   object ClientPanel: TPanel
     Left = 0
     Top = 0
-    Width = 745
+    Width = 727
     Height = 343
     Align = alClient
     TabOrder = 1
     object LeftPanelClient: TPanel
       Left = 1
       Top = 1
-      Width = 529
+      Width = 511
       Height = 341
       Align = alClient
       TabOrder = 0
       DesignSize = (
-        529
+        511
         341)
       object TitleLabel: TLabel
         Left = 7
@@ -196,129 +195,128 @@ object MainForm: TMainForm
       end
       object FontLabel: TLabel
         Left = 256
-        Top = 238
+        Top = 184
         Width = 75
         Height = 13
         Alignment = taRightJustify
         Anchors = [akLeft, akBottom]
         Caption = 'Message Font:'
-        ExplicitTop = 239
       end
       object Label2: TLabel
         Left = 16
-        Top = 240
+        Top = 186
         Width = 89
         Height = 13
         Alignment = taRightJustify
         Anchors = [akLeft, akBottom]
         Caption = 'Dlg Buttons type:'
-        ExplicitTop = 241
       end
       object AlphaLabel: TLabel
-        Left = 358
-        Top = 5
+        Left = 367
+        Top = 7
         Width = 33
         Height = 13
+        Anchors = [akTop, akRight]
         Caption = 'Alpha:'
       end
       object edTitle: TEdit
         Left = 7
         Top = 24
-        Width = 345
+        Width = 354
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 0
         Text = 'Task dialog Tester'
       end
       object edMessage: TMemo
-        Left = 6
+        Left = 5
         Top = 70
-        Width = 495
-        Height = 162
+        Width = 492
+        Height = 107
         Anchors = [akLeft, akTop, akRight, akBottom]
         ScrollBars = ssBoth
-        TabOrder = 2
+        TabOrder = 3
         WordWrap = False
       end
       object FontComboBox: TComboBox
         Left = 337
-        Top = 237
+        Top = 183
         Width = 160
         Height = 21
         Anchors = [akLeft, akBottom]
-        TabOrder = 3
+        TabOrder = 5
         Text = 'FontComboBox'
         OnSelect = FontComboBoxSelect
       end
-      object btCustomTaskDialog: TButton
-        Left = 7
-        Top = 264
+      object btStyledTaskDialog: TButton
+        Left = 173
+        Top = 210
         Width = 160
         Height = 25
         Anchors = [akLeft, akBottom]
-        Caption = 'Custom Task Dialog'
-        TabOrder = 4
+        Caption = 'Styled Task Dialog'
+        TabOrder = 7
         OnClick = ShowDlg
       end
       object btNativeTaskDialog: TButton
-        Left = 171
-        Top = 264
+        Left = 7
+        Top = 210
         Width = 160
         Height = 25
         Anchors = [akLeft, akBottom]
         Caption = 'Native Task Dialog'
-        TabOrder = 5
+        TabOrder = 6
         OnClick = ShowDlg
       end
-      object btRaiseErrorTaskDialog: TButton
-        Left = 337
-        Top = 264
+      object btRaiseDatabaseError: TButton
+        Left = 7
+        Top = 303
         Width = 160
         Height = 25
         Anchors = [akLeft, akBottom]
         Caption = 'Raise Database Error'
-        TabOrder = 6
+        TabOrder = 14
         OnClick = RaiseDatabaseError
       end
-      object btCustomMsgDialog: TButton
-        Left = 6
-        Top = 295
+      object btStyledMsgDialog: TButton
+        Left = 173
+        Top = 241
         Width = 160
         Height = 25
         Anchors = [akLeft, akBottom]
-        Caption = 'Custom Message Dialog'
-        TabOrder = 7
+        Caption = 'Styled Message Dialog'
+        TabOrder = 10
         OnClick = ShowDlg
       end
       object btNativeMsgDialog: TButton
-        Left = 171
-        Top = 295
+        Left = 7
+        Top = 241
         Width = 160
         Height = 25
         Anchors = [akLeft, akBottom]
         Caption = 'Native Message Dialog'
-        TabOrder = 8
+        TabOrder = 9
         OnClick = ShowDlg
       end
-      object btRaiseErrorMsgDialog: TButton
-        Left = 337
-        Top = 295
+      object btRaiseGenericError: TButton
+        Left = 173
+        Top = 303
         Width = 160
         Height = 25
         Anchors = [akLeft, akBottom]
         Caption = 'Raise Generic Error'
-        TabOrder = 9
+        TabOrder = 15
         OnClick = RaiseError
       end
       object FamilyComboBox: TComboBox
         Left = 111
-        Top = 237
+        Top = 183
         Width = 130
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akBottom]
         ItemIndex = 0
-        TabOrder = 10
+        TabOrder = 4
         Text = 'Classic'
         OnSelect = FamilyComboBoxSelect
         Items.Strings = (
@@ -330,31 +328,30 @@ object MainForm: TMainForm
           'SVG-Colors')
       end
       object gbResult: TGroupBox
-        Left = 410
+        Left = 419
         Top = 4
-        Width = 92
+        Width = 79
         Height = 60
         Anchors = [akTop, akRight]
         Caption = 'ModalResult'
-        TabOrder = 11
+        TabOrder = 2
         object MRLabel: TLabel
           AlignWithMargins = True
           Left = 5
           Top = 25
-          Width = 82
+          Width = 69
           Height = 30
           Margins.Top = 10
           Align = alClient
           Alignment = taCenter
-          ExplicitWidth = 3
-          ExplicitHeight = 13
         end
       end
       object AlphaBlendSpinEdit: TSpinEdit
-        Left = 358
+        Left = 367
         Top = 24
         Width = 46
         Height = 22
+        Anchors = [akTop, akRight]
         Increment = 10
         MaxValue = 255
         MinValue = 100
@@ -362,9 +359,49 @@ object MainForm: TMainForm
         Value = 255
         OnChange = AlphaBlendSpinEditChange
       end
+      object cbUseCommandLinks: TCheckBox
+        Left = 339
+        Top = 214
+        Width = 153
+        Height = 17
+        Caption = 'Use Command Links'
+        TabOrder = 8
+        OnClick = cbUseClick
+      end
+      object cbUseTitleInMessageDlg: TCheckBox
+        Left = 339
+        Top = 245
+        Width = 153
+        Height = 17
+        Caption = 'Add Title in MessageDlg'
+        Checked = True
+        State = cbChecked
+        TabOrder = 11
+        OnClick = cbUseClick
+      end
+      object btNativeShowMessage: TButton
+        Left = 7
+        Top = 272
+        Width = 160
+        Height = 25
+        Anchors = [akLeft, akBottom]
+        Caption = 'Native ShowMessage'
+        TabOrder = 12
+        OnClick = DoShowMessage
+      end
+      object btStyledShowMessage: TButton
+        Left = 173
+        Top = 272
+        Width = 160
+        Height = 25
+        Anchors = [akLeft, akBottom]
+        Caption = 'Styled ShowMessage'
+        TabOrder = 13
+        OnClick = DoShowMessage
+      end
     end
     object RightPanel: TPanel
-      Left = 530
+      Left = 512
       Top = 1
       Width = 214
       Height = 341
@@ -381,7 +418,6 @@ object MainForm: TMainForm
         Alignment = taRightJustify
         Anchors = [akLeft, akBottom]
         Caption = 'Default Button:'
-        ExplicitTop = 317
       end
       object rgDlgType: TRadioGroup
         Left = 6

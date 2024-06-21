@@ -34,7 +34,7 @@ uses
   Vcl.StandardButtonStyles, Vcl.AngularButtonStyles, Vcl.BootstrapButtonStyles, Vcl.ColorButtonStyles,
   Vcl.ImgList, Vcl.VirtualImageList, Vcl.StyledCategoryButtons,
   Vcl.ButtonStylesAttributes, System.Actions, Vcl.ActnList, Vcl.StdActns,
-  Vcl.StdCtrls, Vcl.ComCtrls, Vcl.StyledButton, Vcl.ExtCtrls;
+  Vcl.StdCtrls, Vcl.ComCtrls, Vcl.StyledButton, Vcl.ExtCtrls, DB;
 const
   //Params to check
   CAPTION_STR = 'Caption';
@@ -68,6 +68,7 @@ type
     cbCaptionAlignment: TComboBox;
     cbImageAlignment: TComboBox;
     StyledCategoryButtonsBootstrap: TStyledCategoryButtons;
+    BadgeTimer: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure CreateButtonClick(Sender: TObject);
     procedure UpdateCategoryButtons(Sender: TObject);
@@ -75,9 +76,16 @@ type
     procedure CategoryButtonsButtonClicked(Sender: TObject; const Button: TButtonItem);
     procedure cbCaptionAlignmentSelect(Sender: TObject);
     procedure cbImageAlignmentSelect(Sender: TObject);
+    procedure StyledCategoryButtonsBootstrapGetNotificationBadgeInfo(
+      const ACategoryIndex, AButtonItemIndex: Integer;
+      var ABadgeContent: string; var ASize: TNotificationBadgeSize;
+      var APosition: TNotificationBadgePosition; var AColor, AFontColor: TColor;
+      var AFontStyle: TFontStyles);
+    procedure BadgeTimerTimer(Sender: TObject);
   private
     FCategoryButtons: TCategoryButtons;
     FStyledCategoryButtons: TStyledCategoryButtons;
+    FNotificationCount: Integer;
     procedure CreateStyledCategoryButtons;
     procedure CreateCategoryButtons;
     procedure CreateCategoriesButtons;
@@ -248,6 +256,27 @@ begin
   BuildCaptionAligmentList;
   BuildImageAlignment;
   ShowCaptionCheckBox.Checked := CategoryButtons_SHOW_CAPTIONS;
+end;
+
+procedure TfmMain.BadgeTimerTimer(Sender: TObject);
+begin
+  Inc(FNotificationCount);
+  //force repaint of Notificationbadges
+  StyledCategoryButtonsBootstrap.Repaint;
+end;
+
+procedure TfmMain.StyledCategoryButtonsBootstrapGetNotificationBadgeInfo(
+  const ACategoryIndex, AButtonItemIndex: Integer; var ABadgeContent: string;
+  var ASize: TNotificationBadgeSize; var APosition: TNotificationBadgePosition;
+  var AColor, AFontColor: TColor; var AFontStyle: TFontStyles);
+begin
+  if (ACategoryIndex = 0) and (AButtonItemIndex = 0) then
+    ABadgeContent := IntToStr(FNotificationCount+10)
+  else if (ACategoryIndex = 1) and (AButtonItemIndex = 0) then
+  begin
+    AColor := clBlue;
+    ABadgeContent := IntToStr(FNotificationCount+20);
+  end;
 end;
 
 procedure TfmMain.CategoryButtonsButtonClicked(Sender: TObject;
