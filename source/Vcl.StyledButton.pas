@@ -49,7 +49,8 @@ uses
   , Vcl.ActnList
   , Vcl.Menus
   , Vcl.ButtonStylesAttributes
-  , Vcl.StandardButtonStyles
+  , Vcl.StandardButtonStyles,
+  Vcl.ThemeAwareButtonStyles
   ;
 
 const
@@ -6108,16 +6109,16 @@ begin
 end;
 
 initialization
-  TCustomStyledGraphicButton._DefaultStyleDrawType := DEFAULT_STYLEDRAWTYPE;
-  TCustomStyledGraphicButton._DefaultFamily := DEFAULT_CLASSIC_FAMILY;
-  TCustomStyledGraphicButton._DefaultClass := DEFAULT_WINDOWS_CLASS;
-  TCustomStyledGraphicButton._DefaultAppearance := DEFAULT_APPEARANCE;
+  TCustomStyledGraphicButton._DefaultStyleDrawType := THEME_AWARE_STYLEDRAWTYPE;
+  TCustomStyledGraphicButton._DefaultFamily := THEME_AWARE_FAMILY;
+  TCustomStyledGraphicButton._DefaultClass := THEME_AWARE_CLASS;
+  TCustomStyledGraphicButton._DefaultAppearance := THEME_AWARE_NORMAL_APPEARANCE;
   TCustomStyledGraphicButton._DefaultStyleRadius := DEFAULT_RADIUS;
   TCustomStyledGraphicButton._DefaultCursor := DEFAULT_CURSOR;
 
-  TCustomStyledButton._DefaultStyleDrawType := DEFAULT_STYLEDRAWTYPE;
-  TCustomStyledButton._DefaultFamily := DEFAULT_CLASSIC_FAMILY;
-  TCustomStyledButton._DefaultClass := DEFAULT_WINDOWS_CLASS;
+  TCustomStyledButton._DefaultStyleDrawType := THEME_AWARE_STYLEDRAWTYPE;
+  TCustomStyledButton._DefaultFamily := THEME_AWARE_FAMILY;
+  TCustomStyledButton._DefaultClass := THEME_AWARE_CLASS;
   TCustomStyledButton._DefaultAppearance := DEFAULT_APPEARANCE;
   TCustomStyledButton._DefaultStyleRadius := DEFAULT_RADIUS;
   TCustomStyledButton._DefaultCursor := DEFAULT_CURSOR;

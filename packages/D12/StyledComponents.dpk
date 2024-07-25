@@ -84,7 +84,7 @@ contains
   Vcl.StyledToolbar in '..\..\source\Vcl.StyledToolbar.pas',
   Vcl.StyledDbNavigator in '..\..\source\Vcl.StyledDbNavigator.pas',
   Vcl.StyledButtonGroup in '..\..\source\Vcl.StyledButtonGroup.pas',
-  Vcl.StyledCategoryButtons in '..\..\source\Vcl.StyledCategoryButtons.pas';
-
+  Vcl.StyledCategoryButtons in '..\..\source\Vcl.StyledCategoryButtons.pas',
+  Vcl.ThemeAwareButtonStyles in '..\..\source\Vcl.ThemeAwareButtonStyles.pas';
 end.
 

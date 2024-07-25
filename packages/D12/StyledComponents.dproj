@@ -129,6 +129,7 @@
         <DCCReference Include="..\..\source\Vcl.StyledDbNavigator.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledButtonGroup.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledCategoryButtons.pas"/>
+        <DCCReference Include="..\..\source\Vcl.ThemeAwareButtonStyles.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

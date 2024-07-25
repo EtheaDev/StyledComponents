@@ -173,6 +173,7 @@ uses
   , Vcl.DbCtrls
   , Vcl.ButtonGroup
   , Vcl.CategoryButtons
+  , Vcl.ThemeAwareButtonStyles
   , System.SysUtils
   , System.Contnrs
   , System.UITypes
