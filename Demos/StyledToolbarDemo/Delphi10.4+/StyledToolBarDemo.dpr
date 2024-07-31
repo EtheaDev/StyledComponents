@@ -40,7 +40,6 @@ uses
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  TStyleManager.TrySetStyle('Windows10');
   Application.Title := 'Styled Toolbar Demo - (c) Ethea S.r.l.';
 
   //Example to define a default Rendering Style for Styled Buttons

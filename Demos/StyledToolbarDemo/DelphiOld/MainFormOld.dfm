@@ -10,9 +10,11 @@ object fmMain: TfmMain
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OldCreateOrder = True
   ShowHint = True
   OnClick = ToolButtonclick
   OnCreate = FormCreate
+  PixelsPerInch = 96
   TextHeight = 15
   object ToolBar: TToolBar
     AlignWithMargins = True
@@ -31,7 +33,6 @@ object fmMain: TfmMain
     TabStop = True
     OnClick = ToolBarClick
     OnMouseEnter = ToolBarMouseEnter
-    ExplicitWidth = 735
     object ToolButton2: TToolButton
       Left = 0
       Top = 0
@@ -141,7 +142,6 @@ object fmMain: TfmMain
     OnClick = ToolBarClick
     OnMouseEnter = StyledToolbarMouseEnter
     StyleRadius = 30
-    ExplicitWidth = 735
     object StyledToolButton1: TStyledToolButton
       Left = 0
       Top = 0
@@ -173,7 +173,7 @@ object fmMain: TfmMain
       Style = tbsSeparator
     end
     object StyledToolButton3: TStyledToolButton
-      Left = 162
+      Left = 160
       Top = 0
       Down = True
       OnClick = ToolButtonclick
@@ -183,23 +183,24 @@ object fmMain: TfmMain
       Style = tbsCheck
     end
     object StyledToolButton5: TStyledToolButton
-      Left = 239
+      Left = 237
       Top = 0
       OnClick = ToolButtonclick
       StyleElements = [seFont, seBorder]
       Caption = 'Options'
       ImageIndex = 9
+      StyleDrawType = btRect
       StyleClass = 'Amakrits'
       Grouped = True
       Style = tbsCheck
     end
     object StyledToolButton6: TStyledToolButton
-      Left = 316
+      Left = 314
       Top = 0
       Style = tbsSeparator
     end
     object StyledToolButton4: TStyledToolButton
-      Left = 324
+      Left = 320
       Top = 0
       OnClick = ToolButtonclick
       StyleElements = [seFont, seBorder]
@@ -211,7 +212,7 @@ object fmMain: TfmMain
     end
     object Edit2: TEdit
       AlignWithMargins = True
-      Left = 404
+      Left = 412
       Top = 3
       Width = 120
       Height = 23
@@ -219,7 +220,7 @@ object fmMain: TfmMain
       Text = 'Edit2'
     end
     object StyledToolButton7: TStyledToolButton
-      Left = 527
+      Left = 535
       Top = 0
       OnClick = ToolButtonclick
       Caption = 'Recycle Bin'
@@ -233,8 +234,6 @@ object fmMain: TfmMain
     Height = 78
     Align = alBottom
     TabOrder = 2
-    ExplicitTop = 423
-    ExplicitWidth = 741
     object LeftPanel: TPanel
       Left = 1
       Top = 1
@@ -259,7 +258,7 @@ object fmMain: TfmMain
     object BottomClientPanel: TPanel
       Left = 123
       Top = 1
-      Width = 617
+      Width = 613
       Height = 76
       Align = alClient
       BevelOuter = bvNone
@@ -341,9 +340,6 @@ object fmMain: TfmMain
     Height = 286
     Align = alClient
     TabOrder = 3
-    ExplicitTop = 137
-    ExplicitWidth = 741
-    ExplicitHeight = 287
   end
   object Panel1: TPanel
     Left = 0
@@ -352,8 +348,6 @@ object fmMain: TfmMain
     Height = 33
     Align = alBottom
     TabOrder = 4
-    ExplicitTop = 501
-    ExplicitWidth = 741
     object StyleLabel: TLabel
       Left = 11
       Top = 9
@@ -403,7 +397,7 @@ object fmMain: TfmMain
     Left = 476
     Top = 274
     Bitmap = {
-      494C01011800B000040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01011800B000080020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000080000000E0000000010020000000000000C0
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

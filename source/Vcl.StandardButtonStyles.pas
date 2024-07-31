@@ -5,7 +5,7 @@
 {                                                                              }
 {  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
 {  Author: Carlo Barazzetta                                                    }
-{  Contributors: Ariel Montes                                                  }
+{  Contributors: Ariel Montes, Lance Rasmussen                                 }
 {                                                                              }
 {  https://github.com/EtheaDev/StyledComponents                                }
 {                                                                              }
@@ -620,6 +620,77 @@ begin
     RegisterThemeAttributes('Windows11 Impressive Light SE',ttLight,clBlack,clWhite,
       htmlToColor('#CAD4E6'),htmlToColor('#5172EF'),
       htmlToColor('#CAD4E6'),htmlToColor('#5172EF'),btRoundRect);
+
+    //New Third Parties Styles (provided by Lance Rasmussen)
+    RegisterThemeAttributes('CDE Frost: Blue',ttDark,clWhite,clWhite,
+      htmlToColor('#084f8a'),htmlToColor('#084f8a'),
+      htmlToColor('#084f8a'),clWhite,btRect);
+    RegisterThemeAttributes('CDE Frost: Teal',ttDark,clWhite,clWhite,
+      htmlToColor('#3F506D'),htmlToColor('#5172EF'),
+      htmlToColor('#3F506D'),htmlToColor('#5172EF'),btRoundRect);
+    RegisterThemeAttributes('CDE: Golden Graphite',ttDark,clWhite,clWhite,
+      htmlToColor('#3F506D'),htmlToColor('#5172EF'),
+      htmlToColor('#3F506D'),htmlToColor('#5172EF'),btRoundRect);
+    RegisterThemeAttributes('CDE Graphite: Blue',ttDark,clWhite,clWhite,
+      htmlToColor('#084f8a'),htmlToColor('#084f8a'),
+      htmlToColor('#084f8a'),clWhite,btRect);
+    RegisterThemeAttributes('CDE Graphite: Teal',ttDark,clWhite,clWhite,
+      htmlToColor('#3F506D'),htmlToColor('#5172EF'),
+      htmlToColor('#3F506D'),htmlToColor('#5172EF'),btRoundRect);
+    RegisterThemeAttributes('CDE Impressive: Dark',ttDark,clWhite,clWhite,
+      htmlToColor('#3F506D'),htmlToColor('#5172EF'),
+      htmlToColor('#3F506D'),htmlToColor('#5172EF'),btRoundRect);
+    RegisterThemeAttributes('CDE Impressive: Light',ttLight,clBlack,clWhite,
+      htmlToColor('#CAD4E6'),htmlToColor('#5172EF'),
+      htmlToColor('#CAD4E6'),htmlToColor('#5172EF'),btRoundRect);
+     RegisterThemeAttributes('CDE Modern: Dark',ttDark,clWhite,clWhite,
+      htmlToColor('#3F506D'),htmlToColor('#5172EF'),
+      htmlToColor('#3F506D'),htmlToColor('#5172EF'),btRoundRect);
+    RegisterThemeAttributes('CDE Modern: Light',ttLight,clBlack,clWhite,
+      htmlToColor('#CAD4E6'),htmlToColor('#5172EF'),
+      htmlToColor('#CAD4E6'),htmlToColor('#5172EF'),btRoundRect);
+    RegisterThemeAttributes('Raize Frost : Blue',ttDark,clWhite,clWhite,
+      htmlToColor('#084f8a'),htmlToColor('#084f8a'),
+      htmlToColor('#084f8a'),clWhite,btRect);
+    RegisterThemeAttributes('Raize Frost : Green',ttDark,clWhite,clWhite,
+      htmlToColor('#084f8a'),htmlToColor('#084f8a'),
+      htmlToColor('#084f8a'),clWhite,btRect);
+    RegisterThemeAttributes('Raize Frost : Orange',ttDark,clWhite,clWhite,
+      htmlToColor('#084f8a'),htmlToColor('#084f8a'),
+      htmlToColor('#084f8a'),clWhite,btRect);
+    RegisterThemeAttributes('Raize Frost : Purple',ttDark,clWhite,clWhite,
+      htmlToColor('#084f8a'),htmlToColor('#084f8a'),
+      htmlToColor('#084f8a'),clWhite,btRect);
+    RegisterThemeAttributes('Raize Frost : Red',ttDark,clWhite,clWhite,
+      htmlToColor('#084f8a'),htmlToColor('#084f8a'),
+      htmlToColor('#084f8a'),clWhite,btRect);
+    RegisterThemeAttributes('Raize Frost : Teal',ttDark,clWhite,clWhite,
+      htmlToColor('#084f8a'),htmlToColor('#084f8a'),
+      htmlToColor('#084f8a'),clWhite,btRect);
+    RegisterThemeAttributes('Raize Frost : Yellow',ttDark,clWhite,clWhite,
+      htmlToColor('#084f8a'),htmlToColor('#084f8a'),
+      htmlToColor('#084f8a'),clWhite,btRect);
+    RegisterThemeAttributes('Raize Graphite : Blue',ttDark,clWhite,clWhite,
+      htmlToColor('#084f8a'),htmlToColor('#084f8a'),
+      htmlToColor('#084f8a'),clWhite,btRect);
+    RegisterThemeAttributes('Raize Graphite : Green',ttDark,clWhite,clWhite,
+      htmlToColor('#084f8a'),htmlToColor('#084f8a'),
+      htmlToColor('#084f8a'),clWhite,btRect);
+    RegisterThemeAttributes('Raize Graphite : Orange',ttDark,clWhite,clWhite,
+      htmlToColor('#084f8a'),htmlToColor('#084f8a'),
+      htmlToColor('#084f8a'),clWhite,btRect);
+    RegisterThemeAttributes('Raize Graphite : Purple',ttDark,clWhite,clWhite,
+      htmlToColor('#084f8a'),htmlToColor('#084f8a'),
+      htmlToColor('#084f8a'),clWhite,btRect);
+    RegisterThemeAttributes('Raize Graphite : Red',ttDark,clWhite,clWhite,
+      htmlToColor('#084f8a'),htmlToColor('#084f8a'),
+      htmlToColor('#084f8a'),clWhite,btRect);
+    RegisterThemeAttributes('Raize Graphite : Teal',ttDark,clWhite,clWhite,
+      htmlToColor('#084f8a'),htmlToColor('#084f8a'),
+      htmlToColor('#084f8a'),clWhite,btRect);
+    RegisterThemeAttributes('Raize Graphite : Yellow',ttDark,clWhite,clWhite,
+      htmlToColor('#084f8a'),htmlToColor('#084f8a'),
+      htmlToColor('#084f8a'),clWhite,btRect);
   end;
 
   //IDE Styled

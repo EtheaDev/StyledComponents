@@ -42,7 +42,6 @@ object fmMain: TfmMain
       ImageIndex = 12
       ImageName = 'launch-black'
       Style = tbsCheck
-      OnClick = ToolButtonclick
     end
     object ToolButton1: TToolButton
       Left = 77
@@ -53,7 +52,6 @@ object fmMain: TfmMain
       ImageIndex = 2
       ImageName = 'home-pink'
       Style = tbsCheck
-      OnClick = ToolButtonclick
     end
     object ToolButton5: TToolButton
       Left = 154
@@ -254,7 +252,6 @@ object fmMain: TfmMain
         TabOrder = 0
         StyleElements = [seFont, seBorder]
         OnClick = CreateButtonClick
-        StyleClass = 'Windows10'
       end
     end
     object BottomClientPanel: TPanel

@@ -33,8 +33,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ButtonStylesAttributes,
   Vcl.StandardButtonStyles, Vcl.AngularButtonStyles, Vcl.BootstrapButtonStyles, Vcl.ColorButtonStyles,
   Vcl.StyledButton, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnMan,
-  Vcl.ActnCtrls, Vcl.ImgList, Vcl.StdCtrls, Vcl.StyledToolbar, Vcl.Menus,
-  System.ImageList;
+  Vcl.ActnCtrls, Vcl.ImgList, Vcl.StdCtrls, Vcl.StyledToolbar, Vcl.Menus;
 
 const
   //Params to check

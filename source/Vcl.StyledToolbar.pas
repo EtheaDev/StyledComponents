@@ -56,6 +56,9 @@ uses
 resourcestring
   ERROR_SETTING_TOOLBAR_STYLE = 'Error setting Toolbar Style: %s/%s/%s not available';
 
+const
+  DEFAULT_TOOLBUTTON_SEP_WIDTH = 6;
+
 type
   EStyledToolbarError = Exception;
 
@@ -74,6 +77,7 @@ type
     FMarked: Boolean;
     FStyle: TToolButtonStyle;
     FEnabled: Boolean;
+    FWidthLoaded: Boolean;
     FImageAlignment: TImageAlignment;
     FMenuItem: TMenuItem;
     function IsStoredCursor: Boolean;
@@ -106,6 +110,8 @@ type
     procedure UpdateGroupIndex;
     function GetStyleDrawType: TStyledButtonDrawType;
     procedure SetStyleDrawType(const AValue: TStyledButtonDrawType);
+    procedure SetWidth(const AValue: Integer);
+    function GetWidth: Integer;
   protected
     FToolBar: TStyledToolBar;
     function GetCaptionToDraw: TCaption; override;
@@ -121,9 +127,9 @@ type
       X, Y: Integer); override;
     procedure Notification(AComponent: TComponent; AOperation: TOperation); override;
     procedure SetAutoSize(AValue: Boolean); override;
-    procedure SetToolBar(AToolBar: TStyledToolBar);
     procedure SetParent(AParent: TWinControl); override;
     procedure ValidateContainer(AComponent: TComponent); override;
+    procedure Loaded; override;
   public
     constructor Create(AOwner: TComponent); override;
     procedure Click; override;
@@ -217,7 +223,7 @@ type
     property Marked: Boolean read FMarked write SetMarked default False;
     property MenuItem: TMenuItem read FMenuItem write SetMenuItem;
     property Style: TToolButtonStyle read FStyle write SetStyle default tbsButton;
-    property Width stored IsWidthStored;
+    property Width read GetWidth write SetWidth stored IsWidthStored;
     property Wrap: Boolean read GetWrap write SetWrap default False;
   end;
 
@@ -233,7 +239,6 @@ type
   private
     //Private variable of Properties
     FTransparent: Boolean;
-    FButtons: TList;
     FShowCaptions: Boolean;
     FImages: TCustomImageList;
     FButtonWidth: Integer;
@@ -387,7 +392,6 @@ type
     destructor Destroy; override;
     function NewButton(out ANewToolButton: TStyledToolButton;
         const AStyle: TToolButtonStyle = tbsButton): Boolean;
-    procedure GetChildren(Proc: TGetChildProc; Root: TComponent); override;
     property AsVCLComponent: Boolean read GetAsVCLComponent write SetAsVCLComponent stored False;
     property ButtonCount: Integer read GetButtonCount;
     property Buttons[Index: Integer]: TStyledToolButton read GetButton;
@@ -496,7 +500,6 @@ uses
   ;
 
 const
-  DEFAULT_SEP_WIDTH = 6;
   DEFAULT_TOOLBUTTON_WIDTH = 23;
   DEFAULT_TOOLBUTTON_HEIGHT = 22;
   DEFAULT_IMAGE_HMARGIN = 8;
@@ -511,8 +514,17 @@ begin
   else
     ControlStyle := [csCaptureMouse, csSetCaption, csClickEvents];
   FStyle := tbsButton;
-  Width := DEFAULT_TOOLBUTTON_WIDTH;
-  Height := DEFAULT_TOOLBUTTON_HEIGHT;
+  if Owner is TStyledToolbar then
+  begin
+    FToolBar := TStyledToolbar(Owner);
+    Width := FToolBar.ButtonWidth;
+    Height := FToolBar.ButtonHeight;
+  end
+  else
+  begin
+    Width := DEFAULT_TOOLBUTTON_WIDTH;
+    Height := DEFAULT_TOOLBUTTON_HEIGHT;
+  end;
   ImageAlignment := iaTop;
   FEnabled := True;
 end;
@@ -595,7 +607,7 @@ end;
 function TStyledToolButton.GetIndex: Integer;
 begin
   if Assigned(FToolBar) then
-    Result := FToolBar.FButtons.IndexOf(Self)
+    Result := FToolBar.GetControlIndex(Self)
   else
     Result := -1;
 end;
@@ -603,6 +615,11 @@ end;
 function TStyledToolButton.GetStyleDrawType: TStyledButtonDrawType;
 begin
   Result := inherited StyleDrawType;
+end;
+
+function TStyledToolButton.GetWidth: Integer;
+begin
+  Result := inherited Width;
 end;
 
 function TStyledToolButton.GetWrap: Boolean;
@@ -636,7 +653,7 @@ function TStyledToolButton.IsWidthStored: Boolean;
 begin
   if IsSeparator then
   begin
-    Result := Width <> DEFAULT_SEP_WIDTH
+    Result := Width <> DEFAULT_TOOLBUTTON_SEP_WIDTH
   end
   else if Assigned(FToolBar) then
   begin
@@ -647,6 +664,12 @@ begin
   end
   else
     Result := Width <> DEFAULT_TOOLBUTTON_WIDTH;
+end;
+
+procedure TStyledToolButton.Loaded;
+begin
+  inherited;
+  FWidthLoaded := False;
 end;
 
 procedure TStyledToolButton.Notification(AComponent: TComponent;
@@ -965,15 +988,14 @@ begin
 end;
 
 procedure TStyledToolButton.SetStyle(AValue: TToolButtonStyle);
-var
-  WasSeparator: Boolean;
 begin
   if AValue = tbsTextButton then
     raise Exception.Create('tbsTextButton not available');
-  WasSeparator := IsSeparator;
   if FStyle <> AValue then
   begin
     FStyle := AValue;
+    if IsSeparator and not FWidthLoaded then
+      Width := DEFAULT_TOOLBUTTON_SEP_WIDTH;
     UpdateGroupIndex;
     if IsDropDown then
     begin
@@ -985,11 +1007,7 @@ begin
     begin
       inherited Style := TCustomButton.TButtonStyle.bsPushButton;
     end;
-    if IsSeparator <> WasSeparator then
-    begin
-      Width := DEFAULT_SEP_WIDTH;
-      StyleDrawType := StyleDrawType;
-    end;
+    StyleDrawType := StyleDrawType;
     UpdateButtonContent;
   end;
 end;
@@ -1001,16 +1019,11 @@ begin
     inherited StyleDrawType := AValue;
 end;
 
-procedure TStyledToolButton.SetToolBar(AToolBar: TStyledToolBar);
+procedure TStyledToolButton.SetWidth(const AValue: Integer);
 begin
-  if FToolBar <> AToolBar then
-  begin
-    if FToolBar <> nil then
-      FToolBar.RemoveButton(Self);
-    Parent := AToolBar;
-    if AToolBar <> nil then
-      AToolBar.InsertButton(Self);
-  end;
+  if (csLoading in ComponentState) and (AValue <> Width) then
+    FWidthLoaded := True;
+  inherited Width := AValue;
 end;
 
 procedure TStyledToolButton.SetWrap(const AValue: Boolean);
@@ -1019,18 +1032,8 @@ begin
 end;
 
 procedure TStyledToolButton.ValidateContainer(AComponent: TComponent);
-var
-  W: Integer;
 begin
   inherited ValidateContainer(AComponent);
-  { Update non-stored Width and Height if inserting into TStyledToolBar }
-  if (csLoading in ComponentState) and (AComponent is TStyledToolBar) then
-  begin
-    if IsSeparator then
-      W := DEFAULT_SEP_WIDTH else
-      W := TStyledToolBar(AComponent).ButtonWidth;
-    SetBounds(Left, Top, W, TStyledToolBar(AComponent).ButtonHeight);
-  end;
 end;
 
 { TStyledButtonToolbar }
@@ -1061,17 +1064,9 @@ end;
 
 
 procedure TStyledToolbar.ClearButtons;
-var
-  LButton: TStyledToolButton;
-  LIndex: Integer;
 begin
-  while FButtons.Count > 0 do
-  begin
-    LIndex := FButtons.Count-1;
-    LButton := GetButton(LIndex);
-    LButton.Free;
-    FButtons.Delete(LIndex);
-  end;
+  while ControlCount > 0 do
+    Controls[0].Free;
 end;
 
 procedure TStyledToolbar.Click;
@@ -1097,7 +1092,6 @@ constructor TStyledToolbar.CreateStyled(AOwner: TComponent;
   const AAppearance: TStyledButtonAppearance);
 begin
   inherited Create(AOwner);
-  FButtons := TList.Create;
 
   ControlStyle := [csAcceptsControls, csCaptureMouse, csClickEvents,
     csDoubleClicks, csMenuEvents, csSetCaption, csGestures];
@@ -1155,7 +1149,6 @@ begin
   //FHotImageChangeLink.Free;
   FreeAndNil(FDisabledImageChangeLink);
   FreeAndNil(FImageChangeLink);
-  FreeAndNil(FButtons);
   inherited Destroy;
 end;
 
@@ -1206,7 +1199,7 @@ begin
   if not (csLoading in ComponentState) and HandleAllocated then
   begin
     //Recalc correct Size only for AutoSize and AutoWrap
-    if Assigned(Parent) and FAutoSize and AutoWrap and (FButtons.Count > 0) then
+    if Assigned(Parent) and FAutoSize and AutoWrap and (ControlCount > 0) then
     begin
       if (Align in [alLeft, alRight]) then
       begin
@@ -1303,9 +1296,6 @@ begin
       try
         LButton.Height := FButtonHeight;
         LButton.Flat := FFlat;
-        if not LButton.IsSeparator then
-          LButton.Width := FButtonWidth;
-        FButtons.Insert(FButtons.Count, LButton);
         if Assigned(FOnCustomizeAdded) then
           FOnCustomizeAdded(Self, LButton);
       finally
@@ -1315,10 +1305,6 @@ begin
       LButton.EndUpdate;
     end;
     LButton.UpdateButtonContent;
-  end
-  else
-  begin
-    FButtons.Insert(FButtons.Count, Control);
   end;
   if Showing then
     AdjustSize;
@@ -1381,10 +1367,10 @@ function TStyledToolbar.FindButtonFromAccel(Accel: Word): TStyledToolButton;
 var
   I: Integer;
 begin
-  for I := 0 to FButtons.Count - 1 do
-    if TControl(FButtons[I]) is TStyledToolButton then
+  for I := 0 to ControlCount - 1 do
+    if Controls[I] is TStyledToolButton then
     begin
-      Result := TStyledToolButton(FButtons[I]);
+      Result := TStyledToolButton(Controls[I]);
       if Result.Visible and Result.Enabled and IsAccel(Accel, Result.Caption) then
         Exit;
     end;
@@ -1431,13 +1417,13 @@ procedure TStyledToolBar.RemoveButton(Control: TControl);
 var
   I: Integer;
 begin
-  I := FButtons.IndexOf(Control);
+  I := GetControlIndex(Control);
   if I >= 0 then
   begin
     if Control is TStyledToolButton then
     begin
       TStyledToolButton(Control).FToolBar := nil;
-      FButtons.Remove(Control);
+      RemoveControl(Control);
     end;
   end;
   if Showing then
@@ -1651,15 +1637,19 @@ procedure TStyledToolbar.WMSysCommand(var Message: TWMSysCommand);
   function IsMenuBar: Boolean;
   var
     I: Integer;
+    LControl: TControl;
   begin
     Result := False;
-    for I := 0 to FButtons.Count - 1 do
-      if (TControl(FButtons[I]) is TStyledToolButton)
-      and Assigned(TStyledToolButton(FButtons[I]).MenuItem) then
+    for I := 0 to ControlCount - 1 do
+    begin
+      LControl := Controls[I];
+      if (LControl is TStyledToolButton)
+      and Assigned(TStyledToolButton(LControl).MenuItem) then
       begin
         Result := True;
         Break;
       end;
+    end;
   end;
 
 var
@@ -1714,7 +1704,8 @@ var
   LPoint: TPoint;
   LRect: TRect;
   I: Integer;
-  LButton, LSourceButton, LTargetButton: TStyledToolButton;
+  LControl, LTargetControl: TControl;
+  LSourceButton: TStyledToolButton;
 begin
   if (AControl is TStyledToolButton) and not DisableButtonAlign then
   begin
@@ -1722,21 +1713,21 @@ begin
     LSourceButton := TStyledToolButton(AControl);
     LPoint.Y := AControl.Top + (AControl.Height div 2);
     LPoint.X := AControl.Left + (AControl.Width div 2);
-    LTargetButton := nil;
-    for I := 0 to FButtons.Count -1 do
+    LTargetControl := nil;
+    for I := 0 to ControlCount -1 do
     begin
-      LButton := TStyledToolButton(FButtons[I]);
-      LRect := LButton.BoundsRect;
-      if (LButton <> LSourceButton) and PtInRect(LRect, LPoint) then
+      LControl := Controls[I];
+      LRect := LControl.BoundsRect;
+      if (LControl <> LSourceButton) and PtInRect(LRect, LPoint) then
       begin
-        LTargetButton := LButton;
+        LTargetControl := LControl;
         Break;
       end;
     end;
-    if Assigned(LTargetButton) then
+    if Assigned(LTargetControl) then
     begin
       //Replace index of Source Control to Target
-      SetControlIndex(AControl, GetControlIndex(LTargetButton));
+      SetControlIndex(AControl, GetControlIndex(LTargetControl));
     end;
   end;
   inherited;
@@ -1935,21 +1926,6 @@ begin
   AHeight := LHeight;
 end;
 
-procedure TStyledToolbar.GetChildren(Proc: TGetChildProc; Root: TComponent);
-var
-  I: Integer;
-  Control: TControl;
-begin
-  for I := 0 to FButtons.Count - 1 do
-    Proc(TStyledButton(FButtons[I]));
-  for I := 0 to ControlCount - 1 do
-  begin
-    Control := Controls[I];
-    if (Control.Owner = Root) and (FButtons.IndexOf(Control) = -1) then
-      Proc(Control);
-  end;
-end;
-
 function TStyledToolbar.GetDisableButtonAlign: Boolean;
 begin
   Result := FDisableButtonAlign > 0;
@@ -2066,23 +2042,36 @@ end;
 
 function TStyledToolbar.GetButton(AIndex: Integer): TStyledToolButton;
 var
-  LObject: TObject;
+  LControl: TControl;
+  I, LIndex: Integer;
 begin
   Result := nil;
-  if (AIndex >= 0) and (AIndex <= FButtons.Count-1) then
+  LIndex := -1;
+  for I := 0 to ControlCount -1 do
   begin
-    LObject := FButtons[AIndex];
-    if LObject is TStyledToolButton then
-      Result := TStyledToolButton(LObject)
+    LControl := Controls[AIndex];
+    if LControl is TStyledToolButton then
+    begin
+      Inc(LIndex);
+      if LIndex = AIndex then
+      begin
+        Result := TStyledToolButton(LControl);
+        break;
+      end;
+    end;
   end;
 end;
 
 function TStyledToolbar.GetButtonCount: Integer;
+var
+  I: Integer;
 begin
-  if Assigned(FButtons) then
-    Result := FButtons.Count
-  else
-    Result := 0;
+  Result := 0;
+  for I := 0 to ControlCount-1 do
+  begin
+    if Controls[I] is TStyledToolButton then
+      Inc(Result);
+  end;
 end;
 
 procedure TStyledToolBar.CMControlChange(var Message: TCMControlChange);
@@ -2167,13 +2156,11 @@ var
   I: Integer;
   LButton: TStyledToolButton;
 begin
-  if not Assigned(FButtons) then
-    Exit;
-  for I := 0 to FButtons.Count -1 do
+  for I := 0 to ControlCount -1 do
   begin
-    if TObject(FButtons.Items[I]) is TStyledToolButton then
+    if Controls[I] is TStyledToolButton then
     begin
-      LButton := TStyledToolButton(FButtons.Items[I]);
+      LButton := TStyledToolButton(Controls[I]);
       AButtonProc(LButton);
     end;
   end;
@@ -2183,18 +2170,9 @@ procedure TStyledToolbar.ProcessControls(
   AControlProc: TControlProc);
 var
   I: Integer;
-  LControl: TControl;
 begin
-  if not Assigned(FButtons) then
-    Exit;
-  for I := 0 to FButtons.Count -1 do
-  begin
-    if TObject(FButtons.Items[I]) is TControl then
-    begin
-      LControl := TControl(FButtons.Items[I]);
-      AControlProc(Lcontrol);
-    end;
-  end;
+  for I := 0 to ControlCount -1 do
+    AControlProc(Controls[I]);
 end;
 
 function TStyledToolbar.GetStyledToolButtonClass: TStyledToolButtonClass;
@@ -2213,13 +2191,15 @@ begin
     if Assigned(FOnCustomizeNewButton) then
     begin
       FOnCustomizeNewButton(Self,
-        FButtons.Count, ANewToolButton);
+        ControlCount, ANewToolButton);
       Result := Assigned(ANewToolButton);
     end;
     if not Result then
     begin
       ANewToolButton := GetStyledToolButtonClass.Create(Self.Owner);
       ANewToolButton.Style := AStyle;
+      if ANewToolButton.IsSeparator then
+        ANewToolButton.Width := DEFAULT_TOOLBUTTON_SEP_WIDTH;
       ANewToolButton.Parent := Self;
       ANewToolButton.FToolbar := Self;
       ANewToolButton.SetButtonStyle(FStyleFamily, FStyleClass, FStyleAppearance);

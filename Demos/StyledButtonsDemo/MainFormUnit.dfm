@@ -17,12 +17,6 @@ object MainForm: TMainForm
   OnBeforeMonitorDpiChanged = FormBeforeMonitorDpiChanged
   OnCreate = FormCreate
   TextHeight = 13
-  object BadgeTimer: TTimer
-    Interval = 5000
-    OnTimer = BadgeTimerTimer
-    Left = 828
-    Top = 12
-  end
   object Panel1: TPanel
     Left = 0
     Top = 0
@@ -1722,6 +1716,11 @@ object MainForm: TMainForm
         end
       end
     end
+  end
+  object BadgeTimer: TTimer
+    OnTimer = BadgeTimerTimer
+    Left = 828
+    Top = 12
   end
   object ActionList: TActionList
     Images = VirtualImageList32

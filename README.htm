@@ -31,7 +31,7 @@ td{
 </style>
 <h1>Delphi VCL StyledComponents <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg" alt="License"/></a></h1>
 <h2>Components similar to Delphi VCL Buttons, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!</h2>
-<h3>Actual official version: 3.6.0</h3>
+<h3>Actual official version: 3.6.1</h3>
 <hr />
 <h2>A brief description</h2>
 <p><strong>StyledComponents</strong> is a set of VCL components for Delphi (32 and 64 bit) that allow you to overcome the limits imposed by standard VCL components, maintaining 100% compatibility of the properties.</p>
@@ -338,6 +338,12 @@ TaskDialog -> StyledTaskDialog</p>
 <p><img src="./Images/SupportingDelphi.jpg" alt="Delphi Support"/></p>
 <p>Related links: <a href="https://www.embarcadero.com">embarcadero.com</a> - <a href="https://learndelphi.org">learndelphi.org</a></p>
 <h3>RELEASE NOTES</h3>
+<p>31 Jul 2024: version 3.6.1</p>
+<ul>
+<li>Fixed Change of Index position for StyledToolButtons</li>
+<li>Fixed storing Width for StyledToolButtons when IsSeparator/Divider</li>
+<li>Initialize StyledToolButton when Owner is a StyledToolbar</li>
+</ul>
 <p>21 Jun 2024: version 3.6.0
 StyledTaskDialog Changes:</p>
 <ul>
@@ -347,12 +353,16 @@ StyledTaskDialog Changes:</p>
 <li>Refactoring of some function names for StyledTaskDialog</li>
 <li>Complete update of TaskDialog and AnimatedTaskDialog Demos</li>
 <li>Redefined default dialog min width to 500px at 96DPI</li>
-<li>Added properties: DialogButtonsFamily, UseCommandLinks, UseTitleInMessageDlg, AlphaBlendValue to StylesTaskDialog component
-NotificationBadge updates:</li>
+<li>Added properties: DialogButtonsFamily, UseCommandLinks, UseTitleInMessageDlg, AlphaBlendValue to StylesTaskDialog component</li>
+</ul>
+<p>NotificationBadge updates:</p>
+<ul>
 <li>Added NotificationBadge for StyledCategoryButtons and StyleButtonGroup</li>
 <li>Updated StyledButton Demos with &ldquo;emulation&rdquo; of NotificationBadge via Timer</li>
-<li>Updated demos for NotificationBadge in StyledButtonGroup and StyledCategoryButtons
-Other changes:</li>
+<li>Updated demos for NotificationBadge in StyledButtonGroup and StyledCategoryButtons</li>
+</ul>
+<p>Other changes:</p>
+<ul>
 <li>Added TStyledButtonItem Assign method</li>
 <li>Added Packages for Delphi 10
 Fixes:</li>

@@ -37,7 +37,6 @@ uses
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  TStyleManager.TrySetStyle('Aqua Light Slate');
   Application.Title := 'Styled Toolbar Demo - (c) Ethea S.r.l.';
   Application.CreateForm(TfmMain, fmMain);
   Application.Run;
