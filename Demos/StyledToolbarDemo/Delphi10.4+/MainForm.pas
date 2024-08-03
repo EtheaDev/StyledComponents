@@ -88,6 +88,7 @@ type
     StyledToolButton7: TStyledToolButton;
     ToolButton8: TToolButton;
     FlatCheckBox: TCheckBox;
+    ClearButton: TStyledButton;
     procedure FormCreate(Sender: TObject);
     procedure ToolBarClick(Sender: TObject);
     procedure ToolButtonclick(Sender: TObject);
@@ -97,6 +98,7 @@ type
     procedure cbChangeStyleSelect(Sender: TObject);
     procedure ToolBarMouseEnter(Sender: TObject);
     procedure StyledToolbarMouseEnter(Sender: TObject);
+    procedure ClearButtonClick(Sender: TObject);
   private
     FToolBar: TToolBar;
     FStyledToolBar: TStyledToolBar;
@@ -169,6 +171,15 @@ begin
     Result.Free;
     raise;
   End;
+end;
+
+procedure TfmMain.ClearButtonClick(Sender: TObject);
+begin
+  if Assigned(FStyledToolBar) then
+    FStyledToolBar.ClearButtons;
+  if Assigned(FToolbar) then
+    while FToolbar.ButtonCount > 0 do
+      FToolbar.Buttons[0].Free;
 end;
 
 procedure TfmMain.CreateButtonClick(Sender: TObject);

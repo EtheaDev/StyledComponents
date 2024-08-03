@@ -1421,10 +1421,7 @@ begin
   if I >= 0 then
   begin
     if Control is TStyledToolButton then
-    begin
       TStyledToolButton(Control).FToolBar := nil;
-      RemoveControl(Control);
-    end;
   end;
   if Showing then
     AdjustSize;

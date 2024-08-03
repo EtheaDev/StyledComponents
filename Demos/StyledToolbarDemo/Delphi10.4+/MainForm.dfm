@@ -250,7 +250,6 @@ object fmMain: TfmMain
         Hint = 'Create Toolbar "runtime"'
         Caption = 'Create Toolbars'
         TabOrder = 0
-        StyleElements = [seFont, seBorder]
         OnClick = CreateButtonClick
       end
     end
@@ -329,6 +328,16 @@ object fmMain: TfmMain
         Caption = 'Flat buttons'
         TabOrder = 4
         OnClick = UpdateToolbars
+      end
+      object ClearButton: TStyledButton
+        Left = 382
+        Top = 14
+        Width = 108
+        Height = 41
+        Hint = 'Create Toolbar "runtime"'
+        Caption = 'Clear Buttons'
+        TabOrder = 5
+        OnClick = ClearButtonClick
       end
     end
   end
