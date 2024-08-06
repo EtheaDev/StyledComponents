@@ -36,6 +36,7 @@ uses
   , System.SysUtils
   , System.Classes
   , System.Math
+  , System.TypInfo // 20240806 - Added by Lance Rasmussen
   , Vcl.ToolWin
   , Vcl.ComCtrls
   , Vcl.StdCtrls
@@ -80,6 +81,7 @@ type
     FWidthLoaded: Boolean;
     FImageAlignment: TImageAlignment;
     FMenuItem: TMenuItem;
+    FSortOrder: integer; // 20240806 - Added by Lance Rasmussen
     function IsStoredCursor: Boolean;
     function IsStoredFlat: Boolean;
     function IsCustomRadius: Boolean;
@@ -112,6 +114,8 @@ type
     procedure SetStyleDrawType(const AValue: TStyledButtonDrawType);
     procedure SetWidth(const AValue: Integer);
     function GetWidth: Integer;
+    procedure SetSortOrder(const Value: integer); // 20240806 - Added by Lance Rasmussen
+    function GetSortOrder: integer; // 20240806 - Added by Lance Rasmussen
   protected
     FToolBar: TStyledToolBar;
     function GetCaptionToDraw: TCaption; override;
@@ -168,6 +172,8 @@ type
     property ParentFont;
     property ParentShowHint;
     property ShowHint;
+    property SortOrder: integer read GetSortOrder write SetSortOrder Stored True; // 20240806 - Added by Lance Rasmussen
+
     {$IFDEF D10_4+}
     property StyleName;
     {$ENDIF}
@@ -397,6 +403,7 @@ type
     property Buttons[Index: Integer]: TStyledToolButton read GetButton;
     property StyleApplied: Boolean read FStyleApplied write SetStyleApplied;
     property AutoWrap: Boolean read GetAutoWrap;
+    procedure SortBySortOrder; // 20240806 - Added by Lance Rasmussen
   published
     property Align default alTop;
     property Anchors;
@@ -610,6 +617,12 @@ begin
     Result := FToolBar.GetControlIndex(Self)
   else
     Result := -1;
+end;
+
+// 20240806 - Added by Lance Rasmussen
+function TStyledToolButton.GetSortOrder: integer;
+begin
+  result := FSortOrder;
 end;
 
 function TStyledToolButton.GetStyleDrawType: TStyledButtonDrawType;
@@ -987,6 +1000,12 @@ begin
   {$ENDIF}
 end;
 
+// 20240806 - Added by Lance Rasmussen
+procedure TStyledToolButton.SetSortOrder(const Value: integer);
+begin
+  FSortOrder := Value;
+end;
+
 procedure TStyledToolButton.SetStyle(AValue: TToolButtonStyle);
 begin
   if AValue = tbsTextButton then
@@ -1231,6 +1250,60 @@ begin
       inherited AutoSize := False;
     end;
     inherited AutoWrap := AValue;
+  end;
+end;
+
+// 20240806 - Added by Lance Rasmussen
+procedure TStyledToolbar.SortBySortOrder;
+var
+  i, j: Integer;
+  ControlList: TList;
+  Control: TControl;
+
+  // See if the component has the a specifc property
+  function HasProperty(Control: TObject; const PropertyName: string): Boolean;
+  begin
+    Result := GetPropInfo(Control.ClassInfo, PropertyName) <> nil;
+  end;
+
+  // Use for sort
+  function CompareControlsBySortOrder(Item1, Item2: Pointer): Integer;
+  begin
+    // Check first to make sure what we are comparing has a SortOrder property
+    if (HasProperty(TControl(Item1),'SortOrder')) and (HasProperty(TControl(Item2),'SortOrder')) then
+      Result := TStyledToolButton(TControl(Item1)).SortOrder - TStyledToolButton(TControl(Item2)).SortOrder;
+  end;
+begin
+ // Create a list to hold the controls
+  ControlList := TList.Create;
+  try
+    // Add the controls to the list
+    for i := 0 to self.ControlCount - 1 do
+    begin
+      ControlList.Add(self.Controls[i]);
+    end;
+
+    // Sort the list based on the SortOrder property
+    ControlList.Sort(@CompareControlsBySortOrder);
+
+    // Remove all controls from the StyledToolBar
+    for i := self.ControlCount - 1 downto 0 do
+    begin
+      self.Controls[i].Parent := nil;
+    end;
+
+    // Add the controls back to the StyledToolBar in the sorted order
+    for i := 0 to ControlList.Count - 1 do
+    begin
+      Control := TControl(ControlList[i]);
+      Control.Parent := Self;
+      Control.Left := I * Control.Width;  // Reposition
+    end;
+
+    // Rearrange controls in the StyledToolBar
+    self.Realign;
+  finally
+    ControlList.Free;
   end;
 end;
 
