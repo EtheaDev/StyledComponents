@@ -200,6 +200,8 @@ begin
       DestButton.Height := AButtonRender.Height;
       DestButton.Caption := AButtonRender.Caption;
       DestButton.Hint := AButtonRender.Hint;
+      if AButtonRender.StyleDrawType <> DEFAULT_STYLEDRAWTYPE then
+        DestButton.StyleDrawType := AButtonRender.StyleDrawType;
 
       Result := ShowModal = mrOk;
       SavedBounds := BoundsRect;

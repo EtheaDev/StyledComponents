@@ -82,6 +82,11 @@ type
     cbUseTitleInMessageDlg: TCheckBox;
     btNativeShowMessage: TButton;
     btStyledShowMessage: TButton;
+    ButtonsWidthSpinEdit: TSpinEdit;
+    ButtonsWidthLabel: TLabel;
+    lbAutoClickDelay: TLabel;
+    AutoClickDelaySpinEdit: TSpinEdit;
+    cbAutoClick: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure ShowDlg(Sender: TObject);
     procedure RaiseError(Sender: TObject);
@@ -91,9 +96,7 @@ type
     procedure UseStyleDialogCompClick(Sender: TObject);
     procedure FontComboBoxSelect(Sender: TObject);
     procedure cbChangeStyleSelect(Sender: TObject);
-    procedure FamilyComboBoxSelect(Sender: TObject);
     procedure RaiseDatabaseError(Sender: TObject);
-    procedure AlphaBlendSpinEditChange(Sender: TObject);
     procedure TaskDialogButtonClicked(Sender: TObject;
       ModalResult: TModalResult; var CanClose: Boolean);
     procedure TaskDialogDialogConstructed(Sender: TObject);
@@ -104,7 +107,7 @@ type
     procedure TaskDialogNavigated(Sender: TObject);
     procedure TaskDialogRadioButtonClicked(Sender: TObject);
     procedure TaskDialogVerificationClicked(Sender: TObject);
-    procedure cbUseClick(Sender: TObject);
+    procedure InitializeDialogsClick(Sender: TObject);
     procedure DoShowMessage(Sender: TObject);
   private
     FRadioButtonSelected: string;
@@ -131,11 +134,6 @@ uses
   , Vcl.StyledCmpMessages
   , Vcl.StyledCmpStrUtils
   , Vcl.StyledTaskDialogFormUnit;
-
-procedure TMainForm.AlphaBlendSpinEditChange(Sender: TObject);
-begin
-  InitializeDialogs;
-end;
 
 procedure TMainForm.BuildStyleList;
 var
@@ -165,7 +163,7 @@ begin
   end;
 end;
 
-procedure TMainForm.cbUseClick(Sender: TObject);
+procedure TMainForm.InitializeDialogsClick(Sender: TObject);
 begin
   InitializeDialogs;
 end;
@@ -179,16 +177,21 @@ begin
 end;
 
 procedure TMainForm.InitializeDialogs;
+var
+  LAutoClickDelay: Integer;
 begin
+  if cbAutoClick.Checked then
+    LAutoClickDelay := AutoClickDelaySpinEdit.Value
+  else
+    LAutoClickDelay := -1;
+  //Initialize Task Dialogs Defaults
   InitializeStyledTaskDialogs(cbUseTitleInMessageDlg.Checked,
     Screen.MessageFont,
     cbUseCommandLinks.Checked,
-    FamilyComboBox.Text, AlphaBlendSpinEdit.Value);
-end;
-
-procedure TMainForm.FamilyComboBoxSelect(Sender: TObject);
-begin
-  InitializeDialogs;
+    FamilyComboBox.Text, AlphaBlendSpinEdit.Value,
+    ButtonsWidthSpinEdit.Value,
+    DEFAULT_STYLEDDIALOG_BUTTONSHEIGHT,
+    LAutoClickDelay);
 end;
 
 procedure TMainForm.FontComboBoxSelect(Sender: TObject);
@@ -208,6 +211,9 @@ begin
   //Screen.MessageFont.Size := Round(Screen.MessageFont.Size * 1.2);
   //Screen.MessageFont.Name := 'Century Gothic';
   InitializeDialogs;
+
+  ButtonsWidthSpinEdit.Value := DEFAULT_STYLEDDIALOG_BUTTONSWIDTH;
+  AlphaBlendSpinEdit.Value := DEFAULT_STYLEDDIALOG_ALPHABLEND;
 
   Caption := Application.Title;
   MRLabel.Font.Style := [TFontStyle.fsBold];
@@ -403,31 +409,40 @@ const
 
 var
   LTaskDialog: TTaskDialog;
-  LDefaultButton: Boolean;
+  LUseDefaultButton: Boolean;
+  db: TMsgDlgBtn;
+  LTaskDialogBaseButtonItem: TTaskDialogBaseButtonItem;
 
   procedure AddCommonButton(const AButton: TTaskDialogCommonButton);
   begin
     LTaskDialog.CommonButtons := LTaskDialog.CommonButtons + [AButton];
-    if LDefaultButton then
+    if LUseDefaultButton then
       LTaskDialog.DefaultButton := AButton;
   end;
 
 begin
   if Sender = btUseStyledDialogComp then
-    LTaskDialog := StyledTaskDialog
+  begin
+    //Styled TaskDialog
+    LTaskDialog := StyledTaskDialog;
+    StyledTaskDialog.AutoClick := cbAutoClick.Checked;
+    StyledTaskDialog.AutoClickDelay := AutoClickDelaySpinEdit.Value;
+    StyledTaskDialog.ButtonsWidth := ButtonsWidthSpinEdit.Value;
+  end
   else
+  begin
+    //Standard VCL TaskDialog
     LTaskDialog := TaskDialog;
-
-  (* remove comment if you want to use buttons defines in the form
-     or leave the comment to use the custom buttons defines at design-time
+  end;
   LTaskDialog.Buttons.Clear;
   LTaskDialog.CommonButtons := [];
+  LTaskDialog.DefaultButton := tcbOk;
+  LTaskDialog.Flags := LTaskDialog.Flags - [tfUseCommandLinks];
   for db := Low(TMsgDlgBtn) to High(TMsgDlgBtn) do
   begin
     if clbButtons.Checked[Ord(db)] then
     begin
-      LDefaultButton := SameText(DefaultButtonComboBox.Text, clbButtons.Items[Ord(db)]);
-      //tcbOk, tcbYes, tcbNo, tcbCancel, tcbRetry, tcbClose
+      LUseDefaultButton := SameText(DefaultButtonComboBox.Text, clbButtons.Items[Ord(db)]);
       case db of
         TMsgDlgBtn.mbYes: AddCommonButton(tcbYes);
         TMsgDlgBtn.mbNo: AddCommonButton(tcbNo);
@@ -439,12 +454,15 @@ begin
         LTaskDialogBaseButtonItem := LTaskDialog.Buttons.add;
         LTaskDialogBaseButtonItem.Caption := Copy(GetEnumName(TypeInfo(TMsgDlgBtn), Ord(db)), 3, MaxInt);
         LTaskDialogBaseButtonItem.ModalResult := LModalResults[db];
-        if LDefaultButton then
+        if LUseDefaultButton then
+        begin
           LTaskDialogBaseButtonItem.Default := True;
+          LTaskDialog.DefaultButton := MsgDlgBtnToDefaultBtn(db);
+        end;
+        LTaskDialog.Flags := LTaskDialog.Flags + [tfUseCommandLinks];
       end;
     end;
   end;
-  *)
   LTaskDialog.Caption := CaptionEdit.Text;
   LTaskDialog.Title := edTitle.Text;
   LTaskDialog.Text := edMessage.Text;

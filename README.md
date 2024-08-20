@@ -2,7 +2,7 @@
 
 ## Components similar to Delphi VCL Buttons, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 3.6.2
+### Actual official version: 3.6.3
 
 ---
 ## A brief description
@@ -53,6 +53,7 @@ StyledComponents offers more options then standard components, such as:
 - Ability to change icon position and caption alignment in TStyledButtonGroup and TStyledCategoryButtons
 - Different appearance for buttons Items of TStyledToolbar, TStyledButtonGroup and TStyledCategoryButtons
 - Notification Badge for all StyledButtons
+- AutoClick event (after a Delayed time)
 - Animated icons using, TStyledAnimatedButton
 
 …finally, a component for Dialogs is available, completely customizable, which uses custom images or animations and StyledButtons within it, to be 100% consistent with the rest of the application.
@@ -87,7 +88,7 @@ Those components uses some properties to Draw Icon and Caption in a different wa
 
 ---
 
-## New _TStyledAnimatedButton_ Component:
+## _TStyledAnimatedButton_ Component (using Skia4Delphi):
 | Component | Description |
 | - | - |
 | ![OK_ANIMATED_BUTTON_128.png](./Images/OK_ANIMATED_BUTTON_128.png) | **TStyledAnimatedButton** is Styled Button with with "animated icon" using a Skia TSkAnimatedImage component inside. You can select the events that starts the animation, like: _AnimateOnMouseOver_, _AnimateOnClick_, _AnimateAlways_, _AnimateOnFocus_. |
@@ -183,6 +184,18 @@ NOTICE: from version 3.3.3 the new **NotificationBadge** property was added to a
 ![NotificationBadge](./Images/NotificationBadge.jpg)
 
 Read [Notification Badge guide](https://github.com/EtheaDev/StyledComponents/wiki/Notification-Badge-guide) to explorer how it works...
+
+***New AutoClick/AutoClickDelay for buttons***
+
+NOTICE: from version 3.6.3 you can activate the _AutoClick_ flag to invoke the Click event of the StyledButton, after a _AutoClickDelay_ time, as showed in the AutoClick Demo:
+
+![AutoClickDemo](./Images/AutoClickDemo.jpg)
+
+Also the StyledTaskdialog can use this function to AutoClick and close the Dialog.
+
+![AutoClickTaskDialog](./Images/AutoClickTaskDialog.jpg)
+
+Read [AutoClick/Delay guide](https://github.com/EtheaDev/StyledComponents/wiki/AutoClick-Delay-guide) to explorer how it works...
 
 ***New Rounded Button Style***
 
@@ -386,6 +399,18 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+20 Aug 2024: version 3.6.3
+- Added AutoClick and AutoClickDelay properties to StyledButton and StyledGraphicButton
+- Added AutoClick and AutoClickDelay properties to StyledTaskDialog
+- Added "custom" Width and Height of Buttons for Styled Message Dialogs
+- Added various versions of DoStyledTaskMessageDlg(...) functions and StyledShowMessageFmt procedure
+- Added EStyledAttributesException for any StyleComponent Exceptions
+- Added SortBySortOrder to StyledToolbar
+- Added New AutoClick/Delay Demo for new and old Delphi versions
+- Updated StyledMessageDlg Demo with AutoClick/Delay and ButtonsWidth
+- Fixed drawing outside button borders when border is Rounded or RoundRect
+- Fixed Tag value when Casting to TComponent
+
 03 Aug 2024: version 3.6.2
 - Fixed Stack Overflow removing StyledToolButton
 

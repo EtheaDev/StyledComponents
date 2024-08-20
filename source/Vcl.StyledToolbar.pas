@@ -5,7 +5,7 @@
 {                                                                              }
 {  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
 {  Author: Carlo Barazzetta                                                    }
-{  Contributors:                                                               }
+{  Contributors: Lance Rasmussen                                               }
 {                                                                              }
 {  https://github.com/EtheaDev/StyledComponents                                }
 {                                                                              }
@@ -58,6 +58,7 @@ resourcestring
 
 const
   DEFAULT_TOOLBUTTON_SEP_WIDTH = 6;
+  DEFAULT_SORT_ORDER = -1;
 
 type
   EStyledToolbarError = Exception;
@@ -80,6 +81,7 @@ type
     FWidthLoaded: Boolean;
     FImageAlignment: TImageAlignment;
     FMenuItem: TMenuItem;
+    FSortOrder: integer;
     function IsStoredCursor: Boolean;
     function IsStoredFlat: Boolean;
     function IsCustomRadius: Boolean;
@@ -168,6 +170,7 @@ type
     property ParentFont;
     property ParentShowHint;
     property ShowHint;
+    property SortOrder: Integer read FSortOrder write FSortOrder default DEFAULT_SORT_ORDER;
     {$IFDEF D10_4+}
     property StyleName;
     {$ENDIF}
@@ -397,6 +400,7 @@ type
     property Buttons[Index: Integer]: TStyledToolButton read GetButton;
     property StyleApplied: Boolean read FStyleApplied write SetStyleApplied;
     property AutoWrap: Boolean read GetAutoWrap;
+    procedure SortBySortOrder;
   published
     property Align default alTop;
     property Anchors;
@@ -509,6 +513,7 @@ const
 constructor TStyledToolButton.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  FSortOrder := DEFAULT_SORT_ORDER;
   if StyleServices.Available then
     ControlStyle := [csSetCaption, csClickEvents]
   else
@@ -1231,6 +1236,56 @@ begin
       inherited AutoSize := False;
     end;
     inherited AutoWrap := AValue;
+  end;
+end;
+
+procedure TStyledToolbar.SortBySortOrder;
+var
+  I: Integer;
+  ControlList: TList;
+  Control: TControl;
+
+  // Use for sort
+  function CompareToolButtonsBySortOrder(Item1, Item2: Pointer): Integer;
+  begin
+    // Check we are comparing TStyledToolButtons
+    if (TControl(Item1) is TStyledToolButton) and (TControl(Item2) is TStyledToolButton) then
+      Result := TStyledToolButton(TControl(Item1)).SortOrder - TStyledToolButton(TControl(Item2)).SortOrder
+    else
+      Result := 0;
+  end;
+
+begin
+ // Create a list to hold the controls
+  ControlList := TList.Create;
+  try
+    // Add the controls to the list
+    for I := 0 to self.ControlCount - 1 do
+    begin
+      ControlList.Add(self.Controls[I]);
+    end;
+
+    // Sort the list based on the SortOrder property
+    ControlList.Sort(@CompareToolButtonsBySortOrder);
+
+    // Remove all controls from the StyledToolBar
+    for I := self.ControlCount - 1 downto 0 do
+    begin
+      self.Controls[I].Parent := nil;
+    end;
+
+    // Add the controls back to the StyledToolBar in the sorted order
+    for I := 0 to ControlList.Count - 1 do
+    begin
+      Control := TControl(ControlList[I]);
+      Control.Parent := Self;
+      Control.Left := I * Control.Width;  // Reposition
+    end;
+
+    // Rearrange controls in the StyledToolBar
+    self.Realign;
+  finally
+    ControlList.Free;
   end;
 end;
 

@@ -219,10 +219,25 @@ object MainForm: TMainForm
         Anchors = [akTop, akRight]
         Caption = 'Alpha:'
       end
+      object ButtonsWidthLabel: TLabel
+        Left = 299
+        Top = 7
+        Width = 60
+        Height = 13
+        Anchors = [akTop, akRight]
+        Caption = 'Btns Width:'
+      end
+      object lbAutoClickDelay: TLabel
+        Left = 419
+        Top = 284
+        Width = 54
+        Height = 13
+        Caption = 'Delay (ms):'
+      end
       object edTitle: TEdit
         Left = 7
         Top = 24
-        Width = 354
+        Width = 286
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 0
@@ -235,7 +250,7 @@ object MainForm: TMainForm
         Height = 107
         Anchors = [akLeft, akTop, akRight, akBottom]
         ScrollBars = ssBoth
-        TabOrder = 3
+        TabOrder = 4
         WordWrap = False
       end
       object FontComboBox: TComboBox
@@ -244,7 +259,7 @@ object MainForm: TMainForm
         Width = 160
         Height = 21
         Anchors = [akLeft, akBottom]
-        TabOrder = 5
+        TabOrder = 6
         Text = 'FontComboBox'
         OnSelect = FontComboBoxSelect
       end
@@ -255,7 +270,7 @@ object MainForm: TMainForm
         Height = 25
         Anchors = [akLeft, akBottom]
         Caption = 'Styled Task Dialog'
-        TabOrder = 7
+        TabOrder = 8
         OnClick = ShowDlg
       end
       object btNativeTaskDialog: TButton
@@ -265,7 +280,7 @@ object MainForm: TMainForm
         Height = 25
         Anchors = [akLeft, akBottom]
         Caption = 'Native Task Dialog'
-        TabOrder = 6
+        TabOrder = 7
         OnClick = ShowDlg
       end
       object btRaiseDatabaseError: TButton
@@ -275,7 +290,7 @@ object MainForm: TMainForm
         Height = 25
         Anchors = [akLeft, akBottom]
         Caption = 'Raise Database Error'
-        TabOrder = 14
+        TabOrder = 15
         OnClick = RaiseDatabaseError
       end
       object btStyledMsgDialog: TButton
@@ -285,7 +300,7 @@ object MainForm: TMainForm
         Height = 25
         Anchors = [akLeft, akBottom]
         Caption = 'Styled Message Dialog'
-        TabOrder = 10
+        TabOrder = 11
         OnClick = ShowDlg
       end
       object btNativeMsgDialog: TButton
@@ -295,7 +310,7 @@ object MainForm: TMainForm
         Height = 25
         Anchors = [akLeft, akBottom]
         Caption = 'Native Message Dialog'
-        TabOrder = 9
+        TabOrder = 10
         OnClick = ShowDlg
       end
       object btRaiseGenericError: TButton
@@ -305,7 +320,7 @@ object MainForm: TMainForm
         Height = 25
         Anchors = [akLeft, akBottom]
         Caption = 'Raise Generic Error'
-        TabOrder = 15
+        TabOrder = 16
         OnClick = RaiseError
       end
       object FamilyComboBox: TComboBox
@@ -316,9 +331,9 @@ object MainForm: TMainForm
         Style = csDropDownList
         Anchors = [akLeft, akBottom]
         ItemIndex = 0
-        TabOrder = 4
+        TabOrder = 5
         Text = 'Classic'
-        OnSelect = FamilyComboBoxSelect
+        OnSelect = InitializeDialogsClick
         Items.Strings = (
           'Classic'
           'Bootstrap'
@@ -334,13 +349,13 @@ object MainForm: TMainForm
         Height = 60
         Anchors = [akTop, akRight]
         Caption = 'ModalResult'
-        TabOrder = 2
+        TabOrder = 3
         object MRLabel: TLabel
           AlignWithMargins = True
           Left = 5
           Top = 25
           Width = 69
-          Height = 30
+          Height = 13
           Margins.Top = 10
           Align = alClient
           Alignment = taCenter
@@ -355,9 +370,9 @@ object MainForm: TMainForm
         Increment = 10
         MaxValue = 255
         MinValue = 100
-        TabOrder = 1
+        TabOrder = 2
         Value = 255
-        OnChange = AlphaBlendSpinEditChange
+        OnChange = InitializeDialogsClick
       end
       object cbUseCommandLinks: TCheckBox
         Left = 339
@@ -365,8 +380,8 @@ object MainForm: TMainForm
         Width = 153
         Height = 17
         Caption = 'Use Command Links'
-        TabOrder = 8
-        OnClick = cbUseClick
+        TabOrder = 9
+        OnClick = InitializeDialogsClick
       end
       object cbUseTitleInMessageDlg: TCheckBox
         Left = 339
@@ -376,8 +391,8 @@ object MainForm: TMainForm
         Caption = 'Add Title in MessageDlg'
         Checked = True
         State = cbChecked
-        TabOrder = 11
-        OnClick = cbUseClick
+        TabOrder = 12
+        OnClick = InitializeDialogsClick
       end
       object btNativeShowMessage: TButton
         Left = 7
@@ -386,7 +401,7 @@ object MainForm: TMainForm
         Height = 25
         Anchors = [akLeft, akBottom]
         Caption = 'Native ShowMessage'
-        TabOrder = 12
+        TabOrder = 13
         OnClick = DoShowMessage
       end
       object btStyledShowMessage: TButton
@@ -396,8 +411,40 @@ object MainForm: TMainForm
         Height = 25
         Anchors = [akLeft, akBottom]
         Caption = 'Styled ShowMessage'
-        TabOrder = 13
+        TabOrder = 14
         OnClick = DoShowMessage
+      end
+      object ButtonsWidthSpinEdit: TSpinEdit
+        Left = 299
+        Top = 24
+        Width = 62
+        Height = 22
+        Anchors = [akTop, akRight]
+        MaxValue = 150
+        MinValue = 60
+        TabOrder = 1
+        Value = 74
+      end
+      object AutoClickDelaySpinEdit: TSpinEdit
+        Left = 419
+        Top = 303
+        Width = 62
+        Height = 22
+        Increment = 1000
+        MaxValue = 100000
+        MinValue = 1000
+        TabOrder = 18
+        Value = 5000
+        OnChange = InitializeDialogsClick
+      end
+      object cbAutoClick: TCheckBox
+        Left = 339
+        Top = 305
+        Width = 74
+        Height = 17
+        Caption = 'AutoClick'
+        TabOrder = 17
+        OnClick = InitializeDialogsClick
       end
     end
     object RightPanel: TPanel
@@ -433,7 +480,7 @@ object MainForm: TMainForm
         Width = 196
         Height = 195
         Anchors = [akLeft, akTop, akBottom]
-        ItemHeight = 13
+        ItemHeight = 17
         TabOrder = 1
       end
       object DefaultButtonComboBox: TComboBox
@@ -550,6 +597,8 @@ object MainForm: TMainForm
     OnRadioButtonClicked = TaskDialogRadioButtonClicked
     OnTimer = TaskDialogTimer
     OnVerificationClicked = TaskDialogVerificationClicked
+    AutoClick = True
+    ButtonsWidth = 100
     Left = 297
     Top = 119
   end

@@ -360,7 +360,7 @@ Var
   code: Cardinal;
   i, n: Integer;
 begin
-  Handled := true;
+  Handled := True;
   If ssShift In Shift Then
     msg := WM_HSCROLL
   Else

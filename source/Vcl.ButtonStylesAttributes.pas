@@ -38,6 +38,7 @@ interface
 
 uses
   System.UITypes
+  , System.SysUtils
   , System.Classes
   , System.Contnrs
   , System.Types
@@ -57,12 +58,16 @@ const
   DEFAULT_MAX_BADGE_VALUE = 99;
   DEFAULT_BADGE_COLOR = clRed;
   DEFAULT_BADGE_FONT_COLOR = clWhite;
+  DEFAULT_AUTOCLICK_DELAY = 5000; //Five Seconds
 
 resourcestring
   ERROR_FAMILY_NOT_FOUND = 'Styled Button Family "%s" not found';
   ERROR_NEGATIVE_VALUE = 'Error: Notification Count cannot be negative!';
+  ERROR_VALUE_OUT_OF_RANGE = 'Error: Value "%d" for "%s" is out of Range (%d-%d)';
 
 Type
+  EStyledAttributesException = class(Exception);
+
   //Windows Version
   TWindowsVersion = (wvUndefined, wvWindowsXP, wvWindowsVista, wvWindows7,
     wvWindows8, wvWindows8_1, wvWindows10, wvWindows11);
@@ -256,6 +261,7 @@ Type
   end;
 
 //utilities
+procedure CheckValue(const AName: string; const AValue, AMin, AMax: Integer);
 function DarkenColor(Color:TColor; Percent:integer):TColor;
 function LightenColor(Color:TColor; Percent:integer):TColor;
 function HtmlToColor(Color: string): TColor;
@@ -379,7 +385,6 @@ implementation
 
 uses
   System.Win.Registry
-  , System.SysUtils
   , System.Math
 {$ifdef GDIPlusSupport}
   , Winapi.GDIPAPI
@@ -390,6 +395,13 @@ uses
 
 var
   _WindowsVersion: TWindowsVersion;
+
+procedure CheckValue(const AName: string; const AValue, AMin, AMax: Integer);
+begin
+  if (AValue < AMin) or (AValue > AMax) then
+    raise EStyledAttributesException.CreateFmt(ERROR_VALUE_OUT_OF_RANGE,
+      [AValue, AName, AMin, AMax]);
+end;
 
 function SameStyledButtonStyle(Style1, Style2: TStyledButtonAttributes): Boolean;
 begin
@@ -821,7 +833,7 @@ end;
 function GetButtonFamilyClass(const AFamilyName: TStyledButtonFamily): TButtonFamily;
 begin
   if not GetButtonFamily(AFamilyName, Result) then
-    raise Exception.CreateFmt(ERROR_FAMILY_NOT_FOUND,[AFamilyName]);
+    raise EStyledAttributesException.CreateFmt(ERROR_FAMILY_NOT_FOUND,[AFamilyName]);
 end;
 
 function GetButtonClasses(const AFamily: TButtonFamily): TButtonClasses;
@@ -846,7 +858,7 @@ begin
   if GetButtonFamily(AFamily, LButtonFamily) then
     Result := LButtonFamily.FCustomAttributes.GetButtonClasses
   else
-    raise Exception.CreateFmt(ERROR_FAMILY_NOT_FOUND,[AFamily]);
+    raise EStyledAttributesException.CreateFmt(ERROR_FAMILY_NOT_FOUND,[AFamily]);
 end;
 
 function GetButtonFamilyAppearances(const AFamily: TStyledButtonFamily): TButtonAppearances;
@@ -856,7 +868,7 @@ begin
   if GetButtonFamily(AFamily, LButtonFamily) then
     Result := LButtonFamily.FCustomAttributes.GetButtonAppearances
   else
-    raise Exception.CreateFmt(ERROR_FAMILY_NOT_FOUND,[AFamily]);
+    raise EStyledAttributesException.CreateFmt(ERROR_FAMILY_NOT_FOUND,[AFamily]);
 end;
 
 { TNotificationBadgeAttributes }
@@ -995,7 +1007,7 @@ end;
 procedure TNotificationBadgeAttributes.SetNotificationCount(const AValue: Integer);
 begin
   if AValue < 0 then
-    raise Exception.Create(ERROR_NEGATIVE_VALUE);
+    raise EStyledAttributesException.Create(ERROR_NEGATIVE_VALUE);
   if FNotificationCount <> AValue then
   begin
     FNotificationCount := AValue;
@@ -1531,7 +1543,7 @@ begin
   w := ARectangle.Width;
   h := ARectangle.Height;
   d := ARadius / 2;
-
+  d := Min(d, Min(ARectangle.Width, ARectangle.Height));
   // topleft
   if rcTopLeft in ARoundedCorners then
     LPath.AddArc(l, t, d, d, 180, 90)

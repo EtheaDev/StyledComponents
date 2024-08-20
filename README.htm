@@ -31,7 +31,7 @@ td{
 </style>
 <h1>Delphi VCL StyledComponents <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg" alt="License"/></a></h1>
 <h2>Components similar to Delphi VCL Buttons, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!</h2>
-<h3>Actual official version: 3.6.2</h3>
+<h3>Actual official version: 3.6.3</h3>
 <hr />
 <h2>A brief description</h2>
 <p><strong>StyledComponents</strong> is a set of VCL components for Delphi (32 and 64 bit) that allow you to overcome the limits imposed by standard VCL components, maintaining 100% compatibility of the properties.</p>
@@ -87,6 +87,7 @@ td{
 <li>Ability to change icon position and caption alignment in TStyledButtonGroup and TStyledCategoryButtons</li>
 <li>Different appearance for buttons Items of TStyledToolbar, TStyledButtonGroup and TStyledCategoryButtons</li>
 <li>Notification Badge for all StyledButtons</li>
+<li>AutoClick event (after a Delayed time)</li>
 <li>Animated icons using, TStyledAnimatedButton</li>
 </ul>
 <p>…finally, a component for Dialogs is available, completely customizable, which uses custom images or animations and StyledButtons within it, to be 100% consistent with the rest of the application.</p>
@@ -153,7 +154,7 @@ td{
 <li>The space between the Icon and the Caption, defined by <em>spacing</em>.</li>
 </ul>
 <hr />
-<h2>New <em>TStyledAnimatedButton</em> Component:</h2>
+<h2><em>TStyledAnimatedButton</em> Component (using Skia4Delphi):</h2>
 <table>
   <tr>
     <th>Component</th>
@@ -223,6 +224,12 @@ td{
 <p>NOTICE: from version 3.3.3 the new <strong>NotificationBadge</strong> property was added to all of the Styled Buttons.</p>
 <p><img src="./Images/NotificationBadge.jpg" alt="NotificationBadge"/></p>
 <p>Read <a href="https://github.com/EtheaDev/StyledComponents/wiki/Notification-Badge-guide">Notification Badge guide</a> to explorer how it works&hellip;</p>
+<p><strong><em>New AutoClick/AutoClickDelay for buttons</em></strong></p>
+<p>NOTICE: from version 3.6.3 you can activate the <em>AutoClick</em> flag to invoke the Click event of the StyledButton, after a <em>AutoClickDelay</em> time, as showed in the AutoClick Demo:</p>
+<p><img src="./Images/AutoClickDemo.jpg" alt="AutoClickDemo"/></p>
+<p>Also the StyledTaskdialog can use this function to AutoClick and close the Dialog.</p>
+<p><img src="./Images/AutoClickTaskDialog.jpg" alt="AutoClickTaskDialog"/></p>
+<p>Read <a href="https://github.com/EtheaDev/StyledComponents/wiki/AutoClick-Delay-guide">AutoClick/Delay guide</a> to explorer how it works&hellip;</p>
 <p><strong><em>New Rounded Button Style</em></strong></p>
 <p><em>Be careful with your existing dfm and code files: if you have stored StyleDrawType = btRounded you must change it with btRoundRect, or remove it, because is the default value.</em></p>
 <p><em>In this picture the new &ldquo;full-rounded&rdquo; Style introduced in 3.2 version, in &ldquo;VCL-Styled&rdquo; Style Demo</em></p>
@@ -338,6 +345,19 @@ TaskDialog -> StyledTaskDialog</p>
 <p><img src="./Images/SupportingDelphi.jpg" alt="Delphi Support"/></p>
 <p>Related links: <a href="https://www.embarcadero.com">embarcadero.com</a> - <a href="https://learndelphi.org">learndelphi.org</a></p>
 <h3>RELEASE NOTES</h3>
+<p>20 Aug 2024: version 3.6.3</p>
+<ul>
+<li>Added AutoClick and AutoClickDelay properties to StyledButton and StyledGraphicButton</li>
+<li>Added AutoClick and AutoClickDelay properties to StyledTaskDialog</li>
+<li>Added &ldquo;custom&rdquo; Width and Height of Buttons for Styled Message Dialogs</li>
+<li>Added various versions of DoStyledTaskMessageDlg(&hellip;) functions and StyledShowMessageFmt procedure</li>
+<li>Added EStyledAttributesException for any StyleComponent Exceptions</li>
+<li>Added SortBySortOrder to StyledToolbar</li>
+<li>Added New AutoClick/Delay Demo for new and old Delphi versions</li>
+<li>Updated StyledMessageDlg Demo with AutoClick/Delay and ButtonsWidth</li>
+<li>Fixed drawing outside button borders when border is Rounded or RoundRect</li>
+<li>Fixed Tag value when Casting to TComponent</li>
+</ul>
 <p>03 Aug 2024: version 3.6.2</p>
 <ul>
 <li>Fixed Stack Overflow removing StyledToolButton</li>
