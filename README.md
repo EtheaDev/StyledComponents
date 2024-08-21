@@ -189,11 +189,9 @@ Read [Notification Badge guide](https://github.com/EtheaDev/StyledComponents/wik
 
 NOTICE: from version 3.6.3 you can activate the _AutoClick_ flag to invoke the Click event of the StyledButton, after a _AutoClickDelay_ time, as showed in the AutoClick Demo:
 
-![AutoClickDemo](./Images/AutoClickDemo.jpg)
-
 Also the StyledTaskdialog can use this function to AutoClick and close the Dialog.
 
-![AutoClickTaskDialog](./Images/AutoClickTaskDialog.jpg)
+![AutoClickDemo](./Images/AutoClickDemo.gif)
 
 Read [AutoClick/Delay guide](https://github.com/EtheaDev/StyledComponents/wiki/AutoClick-Delay-guide) to explorer how it works...
 
