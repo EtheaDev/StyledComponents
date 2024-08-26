@@ -1534,42 +1534,45 @@ function GetRoundedCornersPath(ARectangle: TGPRectF;
 const
   d0 = 0.0001;
 var
-  LPath : TGPGraphicsPath;
   l, t, w, h, d : Single;
 begin
-  LPath := TGPGraphicsPath.Create;
-  l := ARectangle.X;
-  t := ARectangle.Y;
-  w := ARectangle.Width;
-  h := ARectangle.Height;
-  d := ARadius / 2;
-  d := Min(d, Min(ARectangle.Width, ARectangle.Height));
-  // topleft
-  if rcTopLeft in ARoundedCorners then
-    LPath.AddArc(l, t, d, d, 180, 90)
-  else
-    LPath.AddArc(l, t, d0, d0, 180, 90);
+  Result := TGPGraphicsPath.Create;
+  try
+    l := ARectangle.X;
+    t := ARectangle.Y;
+    w := ARectangle.Width;
+    h := ARectangle.Height;
+    d := ARadius / 2;
+    d := Min(d, Min(ARectangle.Width, ARectangle.Height));
+    // topleft
+    if rcTopLeft in ARoundedCorners then
+      Result.AddArc(l, t, d, d, 180, 90)
+    else
+      Result.AddArc(l, t, d0, d0, 180, 90);
 
-  // topright
-  if rcTopRight in ARoundedCorners then
-    LPath.AddArc(l + w - d, t, d, d, 270, 90)
-  else
-    LPath.AddArc(l + w - d0, t, d0, d0, 270, 90);
+    // topright
+    if rcTopRight in ARoundedCorners then
+      Result.AddArc(l + w - d, t, d, d, 270, 90)
+    else
+      Result.AddArc(l + w - d0, t, d0, d0, 270, 90);
 
-  // bottomright
-  if rcBottomRight in ARoundedCorners then
-    LPath.AddArc(l + w - d, t + h - d, d, d, 0, 90)
-  else
-    LPath.AddArc(l + w - d0, t + h - d0, d0, d0, 0, 90);
+    // bottomright
+    if rcBottomRight in ARoundedCorners then
+      Result.AddArc(l + w - d, t + h - d, d, d, 0, 90)
+    else
+      Result.AddArc(l + w - d0, t + h - d0, d0, d0, 0, 90);
 
-  // bottomleft
-  if rcBottomLeft in ARoundedCorners then
-    LPath.AddArc(l, t + h - d, d, d, 90, 90)
-  else
-    LPath.AddArc(l, t + h - d0, d0, d0, 90, 90);
+    // bottomleft
+    if rcBottomLeft in ARoundedCorners then
+      Result.AddArc(l, t + h - d, d, d, 90, 90)
+    else
+      Result.AddArc(l, t + h - d0, d0, d0, 90, 90);
 
-  LPath.CloseFigure();
-  result := LPath;
+    Result.CloseFigure();
+  except
+    FreeAndNil(Result);
+    raise;
+  end
 end;
 
 function GPColor(AColor: TColor): TGPColor;
@@ -2217,6 +2220,8 @@ var
 begin
   LGraphics := nil;
   LPen := nil;
+  LBrush := nil;
+  LPath := nil;
   try
     X := ARect.Left;
     Y := ARect.Top;
@@ -2272,6 +2277,8 @@ begin
   finally
     LGraphics.Free;
     LPen.Free;
+    LBrush.Free;
+    LPath.Free;
   end;
 end;
 {$else}
