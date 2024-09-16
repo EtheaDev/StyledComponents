@@ -114,6 +114,7 @@ type
     procedure ShowSelection(const AModalResult: TModalResult);
     procedure BuildStyleList;
     procedure InitializeDialogs;
+    function EnableAndFocusOKButton(const ATaskDialog: TCustomTaskDialog): Boolean;
   protected
     procedure Loaded; override;
   public
@@ -131,6 +132,7 @@ uses
   System.TypInfo
   , Winapi.ShellAPI
   , Vcl.Themes
+  , Vcl.StyledButton
   , Vcl.StyledCmpMessages
   , Vcl.StyledCmpStrUtils
   , Vcl.StyledTaskDialogFormUnit;
@@ -487,7 +489,7 @@ end;
 
 procedure TMainForm.TaskDialogDialogCreated(Sender: TObject);
 begin
-  ;
+  EnableAndFocusOKButton(Sender as TCustomTaskDialog);
 end;
 
 procedure TMainForm.TaskDialogDialogDestroyed(Sender: TObject);
@@ -533,12 +535,40 @@ begin
    TaskDialog.Execute(Self.Handle);
 end;
 
-procedure TMainForm.TaskDialogVerificationClicked(Sender: TObject);
+function TMainForm.EnableAndFocusOKButton(const ATaskDialog: TCustomTaskDialog): Boolean;
+var
+  LOKButton: TStyledButton;
 begin
-  if tfVerificationFlagChecked in (Sender as TTaskDialog).Flags then
-    ShowMessage('Verification Click TRUE')
-  else
-    ShowMessage('Verification Click FALSE');
+  //Example to enable/disable OK Button based on Verification Flag Checked
+  //This is possible only with TStyledTaskDialog!
+  Result := False;
+  if ATaskDialog is TStyledTaskDialog then
+  begin
+    LOKButton := TStyledTaskDialog(ATaskDialog).FindDialogButton(mrOK);
+    if Assigned(LOKButton) then
+    begin
+      LOKButton.Enabled := tfVerificationFlagChecked in ATaskDialog.Flags;
+      if LOKButton.CanFocus then
+        LOKButton.SetFocus;
+      Result := True;
+    end;
+  end;
+end;
+
+procedure TMainForm.TaskDialogVerificationClicked(Sender: TObject);
+var
+  LTaskDialog: TCustomTaskDialog;
+begin
+  LTaskDialog := Sender as TCustomTaskDialog;
+  //In this examples, for StyledTaskDialog, clicking on Verification checkbox
+  //enable/disable OK Button
+  if not EnableAndFocusOKButton(LTaskDialog) then
+  begin
+    if tfVerificationFlagChecked in LTaskDialog.Flags then
+      ShowMessage('Verification Click TRUE')
+    else
+      ShowMessage('Verification Click FALSE');
+  end;
 end;
 
 initialization

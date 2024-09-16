@@ -480,7 +480,7 @@ object MainForm: TMainForm
         Width = 196
         Height = 195
         Anchors = [akLeft, akTop, akBottom]
-        ItemHeight = 17
+        ItemHeight = 13
         TabOrder = 1
       end
       object DefaultButtonComboBox: TComboBox

@@ -32,11 +32,13 @@ interface
 uses
   System.SysUtils
   , System.Classes
+  , System.UITypes
   , WinApi.Windows
   , Vcl.Dialogs
   , Vcl.Graphics
   , Vcl.Forms
   , Vcl.ButtonStylesAttributes
+  , Vcl.StyledButton
   ;
 
 const
@@ -57,6 +59,7 @@ const
 
 type
   TStyledDialogIcons = array[TMsgDlgType] of TIcon;
+  TOnFindDialogButtonEvent = function (const AModalResult: TModalResult): TStyledButton of object;
 
 {$WARN SYMBOL_PLATFORM OFF}
 { TaskDialog based message dialog; requires Windows Vista or later }
@@ -77,6 +80,7 @@ type
     FButtonsHeight: Integer;
     FAutoClick: Boolean;
     FAutoClickDelay: Integer;
+    FOnFindDialogButton: TOnFindDialogButtonEvent;
     function IsDefaultFamily: Boolean;
     procedure SetAutoClick(const AValue: Boolean);
     procedure SetAutoClickDelay(const AValue: Integer);
@@ -92,9 +96,11 @@ type
     procedure DoOnHyperlinkClicked(const AURL: string); override;
     constructor Create(AOwner: TComponent); override;
     function Execute(ParentWnd: HWND): Boolean; overload; override;
+    function FindDialogButton(const AModalResult: TModalResult): TStyledButton;
     property HelpFile: string read FHelpFile write FHelpFile;
     property Position: TPoint read FPosition write FPosition;
     property MainIconSize: Integer read FMainIconSize write FMainIconSize default DEFAULT_MAIN_ICON_SIZE;
+    property OnFindDialogButton: TOnFindDialogButtonEvent read FOnFindDialogButton write FOnFindDialogButton;
   published
     property AutoClick: Boolean read FAutoClick write SetAutoClick default False;
     property AutoClickDelay: Integer read FAutoClickDelay write SetAutoClickDelay default DEFAULT_AUTOCLICK_DELAY;
@@ -230,14 +236,12 @@ uses
   , System.WideStrUtils
   , Winapi.MultiMon
   , System.HelpIntfs
-  , System.UITypes
   , Vcl.Controls
   , Vcl.StdCtrls
   , Vcl.ExtCtrls
   , Vcl.Consts
   , Winapi.ShellApi
   , Vcl.StyledCmpMessages
-  , Vcl.StyledButton
   , Vcl.StandardButtonStyles
   , Vcl.StyledCmpStrUtils
   , Vcl.StyledTaskDialogStdUnit
@@ -801,6 +805,15 @@ function TStyledTaskDialog.Execute(ParentWnd: HWND): Boolean;
 begin
   FParentWnd := ParentWnd;
   Result := inherited Execute(ParentWnd);
+end;
+
+function TStyledTaskDialog.FindDialogButton(
+  const AModalResult: TModalResult): TStyledButton;
+begin
+  if Assigned(FOnFindDialogButton) then
+    Result := FOnFindDialogButton(AModalResult)
+  else
+    Result := nil;
 end;
 
 function TStyledTaskDialog.IsDefaultFamily: Boolean;
