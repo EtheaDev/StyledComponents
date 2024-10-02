@@ -32,8 +32,10 @@ interface
 {$INCLUDE StyledComponents.inc}
 {$IFDEF D10_4+}
   {$R CommandLinkPNG.RES}
+  {$R StyledButtonsPNG.RES}
 {$ELSE}
   {$R CommandLinkBMP.RES}
+  {$R StyledButtonsBMP.RES}
 {$ENDIF}
 
 uses
@@ -53,6 +55,7 @@ uses
   ;
 
 const
+  StyledComponentsVersion = '3.6.6';
   DEFAULT_RADIUS = 6;
   RESOURCE_SHIELD_ICON = 'BUTTON_SHIELD_ADMIN';
   DEFAULT_MAX_BADGE_VALUE = 99;
@@ -291,17 +294,17 @@ procedure CalcImageAndTextRect(const ASurfaceRect: TRect;
 procedure CalcImageAndTextRect(const ACanvas: TCanvas;
   const ACaption: string; const AClient: TRect;
   const AOffset: TPoint;
-  var AGlyphPos: TPoint; var ATextBounds: TRect;
+  out AGlyphPos: TPoint; out ATextBounds: TRect;
   const AImageWidth, AImageHeight: Integer;
   const ALayout: TButtonLayout;
   const AMargin, ASpacing: Integer;
   const ABiDiFlags: Cardinal); overload;
 
 //draw of Glyph
-procedure DrawBitBtnGlyph(ACanvas: TCanvas; ARect: TRect;
-  Kind: Vcl.Buttons.TBitBtnKind;
-  AState: TButtonState; AEnabled: Boolean;
-  AOriginal: TBitmap; ANumGlyphs: Integer; const ATransparentColor: TColor);
+procedure DrawBitBtnGlyph(const ACanvas: TCanvas; const ARect: TRect;
+  const AKind: Vcl.Buttons.TBitBtnKind;
+  const AState: TButtonState; const AEnabled: Boolean;
+  const AOriginal: TBitmap; const ANumGlyphs: Integer; const ATransparentColor: TColor);
 
 //drawing a Text in a Canvas Using Alignment and Spacing
 procedure DrawButtonText(const ACanvas: TCanvas;
@@ -1585,10 +1588,10 @@ begin
 end;
 {$ifend}
 
-const //Same as Vcl.Buttons
+const //Similar to Vcl.Buttons
   BitBtnResNames: array[TBitBtnKind] of PChar = (
-    nil, 'BBOK', 'BBCANCEL', 'BBHELP', 'BBYES', 'BBNO', 'BBCLOSE',
-    'BBABORT', 'BBRETRY', 'BBIGNORE', 'BBALL');
+    nil, 'STYLED_BBOK', 'STYLED_BBCANCEL', 'STYLED_BBHELP', 'STYLED_BBYES', 'STYLED_BBNO', 'STYLED_BBCLOSE',
+    'STYLED_BBABORT', 'STYLED_BBRETRY', 'STYLED_BBIGNORE', 'STYLED_BBALL');
 
 procedure CalcImageAndTextRect(const ASurfaceRect: TRect;
   const ACaption: string;
@@ -1675,7 +1678,7 @@ end;
 procedure CalcImageAndTextRect(const ACanvas: TCanvas;
   const ACaption: string; const AClient: TRect;
   const AOffset: TPoint;
-  var AGlyphPos: TPoint; var ATextBounds: TRect;
+  out AGlyphPos: TPoint; out ATextBounds: TRect;
   const AImageWidth, AImageHeight: Integer;
   const ALayout: TButtonLayout;
   const AMargin, ASpacing: Integer;
@@ -1821,30 +1824,35 @@ begin
   else if (AVCLStyleName = 'Windows') then
   begin
     //Load image from resources by Kind
-    LResName := 'CMD_LINK_ARROW_BLUE';
+    LResName := 'STYLED_CMD_LINK_ARROW_BLUE';
   end
   else
   begin
     if ACanvas.Font.Color = clWhite then
-      LResName := 'CMD_LINK_ARROW_WHITE'
+      LResName := 'STYLED_CMD_LINK_ARROW_WHITE'
     else if ACanvas.Font.Color = clBlack then
-      LResName := 'CMD_LINK_ARROW_BLACK'
+      LResName := 'STYLED_CMD_LINK_ARROW_BLACK'
     else
     begin
       GetStyleAttributes(AVCLStyleName, LThemeAttribute);
       if LThemeAttribute.ThemeType = ttLight then
-        LResName := 'CMD_LINK_ARROW_BLACK'
+        LResName := 'STYLED_CMD_LINK_ARROW_BLACK'
       else
-        LResName := 'CMD_LINK_ARROW_WHITE';
+        LResName := 'STYLED_CMD_LINK_ARROW_WHITE';
     end;
   end;
   {$IFDEF D10_4+}
   LImage := TWicImage.Create;
-  try
+  try try
     LImage.InterpolationMode := wipmHighQualityCubic;
     LImage.LoadFromResourceName(HInstance, LResName);
     ACanvas.StretchDraw(ARect, LImage);
     Exit;
+  except
+    on E: EResNotFound do ; //ignore Exception
+    else
+      raise;
+  end;  
   finally
     LImage.Free;
   end;
@@ -2087,10 +2095,11 @@ begin
       DT_NOCLIP or DT_CENTER or DT_VCENTER);
 end;
 
-procedure DrawBitBtnGlyph(ACanvas: TCanvas; ARect: TRect;
-  Kind: Vcl.Buttons.TBitBtnKind;
-  AState: TButtonState; AEnabled: Boolean;
-  AOriginal: TBitmap; ANumGlyphs: Integer; const ATransparentColor: TColor);
+procedure DrawBitBtnGlyph(const ACanvas: TCanvas; const ARect: TRect;
+  const AKind: Vcl.Buttons.TBitBtnKind;
+  const AState: TButtonState; const AEnabled: Boolean;
+  const AOriginal: TBitmap; const ANumGlyphs: Integer;
+  const ATransparentColor: TColor);
 var
   LResName: String;
   LOriginal: TBitmap;
@@ -2098,46 +2107,57 @@ var
   {$IFDEF D10_4+}
   LImage: TWicImage;
   {$ENDIF}
+  LState: TButtonState;
 begin
-  if not AEnabled then
-    AState := bsDisabled;
   LOriginal := nil;
   try
-    if Kind = bkCustom then
-    begin
-      if ANumGlyphs = 0 then
-        Exit;
-      LOriginal := AOriginal;
-      LNumGlyphs := ANumGlyphs;
-    end
-    else
-    begin
-      //Load image from resources by Kind
-      LResName := BitBtnResNames[Kind];
-      {$IFDEF D10_4+}
-      LImage := TWicImage.Create;
-      try
-        LImage.InterpolationMode := wipmHighQualityCubic;
-        LImage.LoadFromResourceName(HInstance, LResName);
-        ACanvas.StretchDraw(ARect, LImage);
-        Exit;
-      finally
-        LImage.Free;
+    try
+      if AKind = bkCustom then
+      begin
+        if ANumGlyphs = 0 then
+          Exit;
+        LOriginal := AOriginal;
+        LNumGlyphs := ANumGlyphs;
+      end
+      else
+      begin
+        //Load image from resources by Kind
+        LResName := BitBtnResNames[AKind];
+        {$IFDEF D10_4+}
+        if not AEnabled then
+          LResName := LResName+'_DISABLED';
+        LImage := TWicImage.Create;
+        try
+          LImage.InterpolationMode := wipmHighQualityCubic;
+          LImage.LoadFromResourceName(HInstance, LResName);
+          ACanvas.StretchDraw(ARect, LImage);
+          Exit;
+        finally
+          LImage.Free;
+        end;
+        {$ELSE}
+          LOriginal := TBitmap.Create;
+          LNumGlyphs := 2;
+          LOriginal.PixelFormat := pf32bit;
+          LOriginal.LoadFromResourceName(HInstance, LResName);
+        {$ENDIF}
       end;
-      {$ELSE}
-        LOriginal := TBitmap.Create;
-        LNumGlyphs := 2;
-        LOriginal.PixelFormat := pf32bit;
-        LOriginal.LoadFromResourceName(HInstance, LResName);
-      {$ENDIF}
+      if not Assigned(LOriginal) or ((LOriginal.Width = 0) or (LOriginal.Height = 0)) then
+        Exit;
+      if AEnabled then
+        LState := AState
+      else
+        LState := bsDisabled;
+      DrawBitmapTransparent(ACanvas, ARect, LOriginal.Width div LNumGlyphs, LOriginal.Height, LOriginal,
+        LState, LNumGlyphs, ATransparentColor);
+    finally
+      if AKind <> bkCustom then
+        LOriginal.Free;
     end;
-    if not Assigned(LOriginal) or ((LOriginal.Width = 0) or (LOriginal.Height = 0)) then
-      Exit;
-    DrawBitmapTransparent(ACanvas, ARect, LOriginal.Width div LNumGlyphs, LOriginal.Height, LOriginal,
-      AState, LNumGlyphs, ATransparentColor);
-  finally
-    if Kind <> bkCustom then
-      LOriginal.Free;
+  except
+    on E: EResNotFound do ; //ignore Exception
+    else
+      raise;
   end;
 end;
 

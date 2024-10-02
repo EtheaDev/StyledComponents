@@ -751,7 +751,6 @@ procedure TStyledTaskDialogForm.UpdateButtonsVisibility;
   var
     I: Integer;
     LTaskDialogButtonItem: TTaskDialogBaseButtonItem;
-    //LButton: TStyledButton;
   begin
     Result := False;
     for I := FButtons.Count - 1 downto 0 do
@@ -763,35 +762,17 @@ procedure TStyledTaskDialogForm.UpdateButtonsVisibility;
         break;
       end;
     end;
-(*
-    if Result and CommandLinksPanel.Visible then
-    begin
-      for I := 0 to CommandLinksPanel.ComponentCount -1 do
-      begin
-        if CommandLinksPanel.Components[I] is TStyledButton then
-        begin
-          LButton := TStyledButton(CommandLinksPanel.Components[I]);
-          if AButton.ModalResult = LButton.ModalResult then
-          begin
-            //Hide Common Button if used as CommandLink
-            Result := False;
-            break;
-          end;
-        end;
-      end;
-    end;
-*)
   end;
 
 begin
-  YesButton.Visible := (tcbYes in FCommonButtons) or IsButtonVisible(YesButton);
-  NoButton.Visible := (tcbNo in FCommonButtons) or IsButtonVisible(NoButton);
-  OKButton.Visible := (tcbOk in FCommonButtons) or IsButtonVisible(OKButton);
-  CancelButton.Visible := (tcbCancel in FCommonButtons) or IsButtonVisible(CancelButton);
-  RetryButton.Visible := (tcbRetry in FCommonButtons) or IsButtonVisible(RetryButton);
-  CloseButton.Visible := (tcbClose in FCommonButtons) or IsButtonVisible(CloseButton);
   if not UsingCommandLinks then
   begin
+    YesButton.Visible := (tcbYes in FCommonButtons) or IsButtonVisible(YesButton);
+    NoButton.Visible := (tcbNo in FCommonButtons) or IsButtonVisible(NoButton);
+    OKButton.Visible := (tcbOk in FCommonButtons) or IsButtonVisible(OKButton);
+    CancelButton.Visible := (tcbCancel in FCommonButtons) or IsButtonVisible(CancelButton);
+    RetryButton.Visible := (tcbRetry in FCommonButtons) or IsButtonVisible(RetryButton);
+    CloseButton.Visible := (tcbClose in FCommonButtons) or IsButtonVisible(CloseButton);
     AbortButton.Visible := IsButtonVisible(AbortButton);
     IgnoreButton.Visible := IsButtonVisible(IgnoreButton);
     AllButton.Visible := IsButtonVisible(AllButton);
@@ -801,6 +782,12 @@ begin
   end
   else
   begin
+    YesButton.Visible := (tcbYes in FCommonButtons);
+    NoButton.Visible := (tcbNo in FCommonButtons);
+    OKButton.Visible := (tcbOk in FCommonButtons);
+    CancelButton.Visible := (tcbCancel in FCommonButtons);
+    RetryButton.Visible := (tcbRetry in FCommonButtons);
+    CloseButton.Visible := (tcbClose in FCommonButtons);
     AbortButton.Visible := False;
     IgnoreButton.Visible := False;
     AllButton.Visible := False;
@@ -1163,6 +1150,7 @@ begin
     AdjustControlsTopPos;
     PlayMessageDlgSound;
     FocusDefaultButton;
+    VerificationCheckBox.Checked := tfVerificationFlagChecked in TaskDialog.Flags;
     if Assigned(FTaskDialog.OnDialogCreated) then
       FTaskDialog.OnDialogCreated(FTaskDialog);
   finally
@@ -1210,7 +1198,7 @@ end;
 
 function TStyledTaskDialogForm.GetScaleFactor: Single;
 begin
-  Result := Self.PixelsPerInch / 96;
+  Result :={$IFDEF D10_3+}Self.ScaleFactor{$ELSE}1{$ENDIF};
 end;
 
 function TStyledTaskDialogForm.GetText: string;
@@ -1308,6 +1296,10 @@ var
   LFont: TFont;
   LDlgBtnFamily: TStyledButtonFamily;
 begin
+  //At least OK Button
+  if (ATaskDialog.Buttons.Count = 0) and (ATaskDialog.CommonButtons = []) then
+    ATaskDialog.CommonButtons := [TTaskDialogCommonButton.tcbOk];
+
   if tfPositionRelativeToWindow in ATaskDialog.Flags then
     _DialogPosition := poOwnerFormCenter
   else
@@ -1371,7 +1363,7 @@ initialization
 
   _DialogPosition := poScreenCenter;
   //Register the handler
-  RegisterCustomExecute(_DialogLauncher);
+  //RegisterCustomExecute(_DialogLauncher);
   //Init default Dialog buttons Styles
   SetLength(_DlgButtonClasses, Ord(TMsgDlgBtn.mbClose)+1);
 

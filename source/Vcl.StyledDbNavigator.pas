@@ -538,9 +538,9 @@ uses
 
 const
   DEFAULT_BTN_IMAGE_SIZE = 15;
-  COLORED_IMAGE_COLLECTION = 'SNB_';
-  WHITE_IMAGE_COLLECTION = 'NAVW_';
-  BLACK_IMAGE_COLLECTION = 'NAVB_';
+  COLORED_IMAGE_COLLECTION = 'STYLED_NB_';
+  WHITE_IMAGE_COLLECTION = 'STYLED_NAVW_';
+  BLACK_IMAGE_COLLECTION = 'STYLED_NAVB_';
   VERTICAL_ICON = '_VERT';
   DEFAULT_IMAGE_MARGIN = 4;
 
@@ -795,7 +795,7 @@ procedure TCustomStyledDBNavigator.SetButtonGlyph(Index: TNavigateBtn);
 var
   LResName: string;
 begin
-  FmtStr(LResName, 'SNB_%s', [BtnTypeName[Index]]);
+  FmtStr(LResName, COLORED_IMAGE_COLLECTION+'%s', [BtnTypeName[Index]]);
   FButtons[Index].NumGlyphs := 2;
   FButtons[Index].Glyph.LoadFromResourceName(HInstance, LResName);
 end;

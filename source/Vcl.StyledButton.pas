@@ -53,9 +53,6 @@ uses
   , Vcl.StandardButtonStyles
   ;
 
-const
-  StyledButtonsVersion = '3.5.4';
-
 resourcestring
   ERROR_SETTING_BUTTON_STYLE = 'Error setting Button Style: %s/%s/%s not available';
   ERROR_CANNOT_USE_RENDER = 'Error: cannot use TStyledButtonRender in this context';
@@ -290,6 +287,8 @@ type
     procedure SetAutoClickDelay(const AValue: Integer);
     procedure UpdateAutoClickTimer(const AReset: Boolean);
     procedure AutoClickOnTimer(Sender: TObject);
+  private
+    function IsGlyphAssigned: Boolean;
   protected
     FCustomDrawType: Boolean;
     FUseButtonLayout: Boolean;
@@ -1654,7 +1653,7 @@ begin
     ADest.DisabledImageName := Self.DisabledImageName;
     {$ENDIF}
   end;
-  if Assigned(FGlyph) then
+  if IsGlyphAssigned then
   begin
     ADest.FTransparentColor := FTransparentColor;
     ADest.NumGlyphs := FNumGlyphs;
@@ -2606,9 +2605,9 @@ begin
     AWidth := AImageList.Width;
     AHeight := AImageList.Height;
   end
-  else if ((FKind = bkCustom) and Assigned(FGlyph)) or (FKind <> bkCustom) then
+  else if ((FKind = bkCustom) and IsGlyphAssigned) or (FKind <> bkCustom) then
   begin
-    if Assigned(FGlyph) then
+    if (FKind = bkCustom) and (FNumGlyphs > 0) then
     begin
       AWidth := FGlyph.Width div FNumGlyphs;
       AHeight := FGlyph.Height;
@@ -2717,7 +2716,7 @@ begin
   end
   else
   begin
-    if ((FKind = bkCustom) and Assigned(FGlyph)) or (FKind <> bkCustom) then
+    if ((FKind = bkCustom) and IsGlyphAssigned) or (FKind <> bkCustom) then
     begin
       //Uses the Glyph to draw the Icon
       DrawBitBtnGlyph(ACanvas, LImageRect, FKind, FState, Enabled,
@@ -3794,10 +3793,20 @@ begin
   FControlFont(Result);
 end;
 
+function TStyledButtonRender.IsGlyphAssigned: Boolean;
+begin
+  Result := Assigned(FGlyph) and
+    (FGlyph.Width <> 0) and (FGlyph.Height <> 0);
+end;
+
 function TStyledButtonRender.GetGlyph: TBitmap;
 begin
   if not Assigned(FGlyph) then
+  begin
     FGlyph := TBitmap.Create;
+    FGlyph.Width := 0;
+    FGlyph.Height := 0;
+  end;
   Result := FGlyph;
 end;
 
@@ -3851,7 +3860,8 @@ end;
 
 procedure TStyledButtonRender.Invalidate;
 begin
-  FOwnerControl.Invalidate;
+  if not (csLoading in FOwnerControl.ComponentState) then
+    FOwnerControl.Invalidate;
 end;
 
 { TCustomStyledGraphicButton }
@@ -5028,11 +5038,11 @@ end;
 constructor TStyledSpeedButton.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  SetBounds(0, 0, 23, 22);
-  ParentFont := True;
   FRender.SetText('');
   FRender.FUseButtonLayout := True;
   FRender.Transparent := True;
+  SetBounds(0, 0, 23, 22); //As default VCL SpeedButton
+  ParentFont := True;
 end;
 
 { TCustomStyledButton }

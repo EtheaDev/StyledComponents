@@ -2,7 +2,7 @@
 
 ## Components similar to Delphi VCL Buttons, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 3.6.5
+### Actual official version: 3.6.6
 
 ---
 ## A brief description
@@ -44,7 +44,11 @@ With three values, you can select predefined ready styles for button color, bord
 - **StyleRoundedCorners**: used for RoundRect and Rounded DrawType
 - **StyleRadius**: used for btRoundRect DrawType
 
-### New properties:
+_In this picture you can see the StyledComponentsDemo application with some examples:_
+
+![StyledComponentsDemo](./Images/StyledComponentsDemo.jpg)
+
+### Special Properties:
 StyledComponents offers more options then standard components, such as:
 
 - Down, AllowUp and GroupIndex to use them in "group"
@@ -165,29 +169,53 @@ TStyledButton.RegisterDefaultRenderingStyle(btRoundRect, BOOTSTRAP_FAMILY, btn_p
 ```
 You can also use [Interposer Unit (Vcl.StyledComponentsHooks.pas)](https://github.com/EtheaDev/StyledComponents/wiki/Interposer-Unit-(Vcl.StyledComponentsHooks)) to easily change all Buttons of your application.
 
-***New Template unit to create your custom Family Styles***
+***Template unit to create your custom Family Styles***
 
-NOTICE: from version 3.5.4 the StyledTaskDialog support is now full compatible with TTaskDialog, adding use of CommandLinks and more... The defalt size of Icons/Animations for Dialogs now is 64x64 pixel (at 96 dpi).
+With the unit "Vcl.TemplateButtonStyles.pas" you can create your own Family of Button Styles, [as explained here](https://github.com/EtheaDev/StyledComponents/wiki/HowtoBuildYourCustomStyle)
 
-NOTICE: from version 3.5.3 there is a new unit "Vcl.TemplateButtonStyles.pas" you can use to create your own Family of Button Styles, [as explained here](https://github.com/EtheaDev/StyledComponents/wiki/HowtoBuildYourCustomStyle)
+---
+---
+*The Component Editor, with selected Family "Boostrap" and StyleRadius 18: Style Appearance can be Normal or Outline*
 
-***New RoundedCorners options***
+![StyledButtonComponentEditorBootstrap.jpg](./Images/StyledButtonComponentEditorBootstrap.jpg)
+---
+*The Component Editor, with selected Family "Angular Light": Style Appearance can be Flat, Raised, Basic, Stroked*
 
-NOTICE: from version 3.5.0 the new **RoundedCorners** property was added to all of the Styled Buttons, to enable/disable Rounding drawing, as showed in this example:
+![StyledButtonComponentEditorAngular.jpg](./Images/StyledButtonComponentEditorAngular.jpg)
+---
+*The Component Editor, with selected Family "Classic": Style Appearance can be Normal or Outline*
+
+![StyledButtonComponentEditor.jpg](./Images/StyledButtonComponentEditor.jpg)
+---
+*The Component Editor, with selected Family "Basic-Colors", and Rounded StyleDrawType: Style Appearance can be Normal and Outline*
+
+![StyledButtonComponentEditorRounded.jpg](./Images/StyledButtonComponentEditorRounded.jpg)
+---
+*The Component Editor, with selected Family "SVG-Color", Style Appearance can be Normal or Outline*
+
+![StyledButtonComponentEditorSVG.jpg](./Images/StyledButtonComponentEditorSVG.jpg)
+---
+**Special Features**
+
+Styled Components has special features compared to classic VCL Controls.
+
+***RoundedCorners options***
+
+You can define **RoundedCorners** property, to enable/disable Rounding drawing, as showed in this example:
 
 ![RoundedCorners](./Images/StyledRoundedCornersExamples.jpg)
 
-***New Notification Badge for buttons***
+***Notification Badge for buttons***
 
-NOTICE: from version 3.3.3 the new **NotificationBadge** property was added to all of the Styled Buttons.
+All styled Buttons can show **NotificationBadge** above them, with custom label/color and shape.
 
 ![NotificationBadge](./Images/NotificationBadge.jpg)
 
 Read [Notification Badge guide](https://github.com/EtheaDev/StyledComponents/wiki/Notification-Badge-guide) to explorer how it works...
 
-***New AutoClick/AutoClickDelay for buttons***
+***AutoClick/AutoClickDelay for buttons***
 
-NOTICE: from version 3.6.3 you can activate the _AutoClick_ flag to invoke the Click event of the StyledButton, after a _AutoClickDelay_ time, as showed in the AutoClick Demo:
+You can activate the _AutoClick_ flag to invoke the Click event of the StyledButton, after a _AutoClickDelay_ time, as showed in the AutoClick Demo:
 
 Also the StyledTaskdialog can use this function to AutoClick and close the Dialog.
 
@@ -195,68 +223,47 @@ Also the StyledTaskdialog can use this function to AutoClick and close the Dialo
 
 Read [AutoClick/Delay guide](https://github.com/EtheaDev/StyledComponents/wiki/AutoClick-Delay-guide) to explorer how it works...
 
-***New Rounded Button Style***
+***Rounded Button Style***
 
-_Be careful with your existing dfm and code files: if you have stored StyleDrawType = btRounded you must change it with btRoundRect, or remove it, because is the default value._
-
-_In this picture the new "full-rounded" Style introduced in 3.2 version, in "VCL-Styled" Style Demo_
+_In this picture an example of "full-rounded" buttons applyed to all "VCL-Styled" buttons: a feature not available in VCL Styled buttons.
 
 ![RoundedButtons.jpg](./Images/RoundedButtons.jpg)
+
 ---
----
-*In this picture the Component Editor selecting "Boostrap" styles and StyleRadius 18: Style Appearance can be Normal or Outline*
 
-![StyledButtonComponentEditorBootstrap.jpg](./Images/StyledButtonComponentEditorBootstrap.jpg)
----
-*In this picture, the Component Editor selecting "AngularUI" styles: Style Appearance can be Flat, Raised, Basic, Stroked*
+**Use the "StyledComponentsDemos" to see all the components in action!**
 
-![StyledButtonComponentEditorAngular.jpg](./Images/StyledButtonComponentEditorAngular.jpg)
----
-*In this picture, the Component Editor selecting "Classic" styles: Style Appearance can be Normal or Outline*
+In the Demos folder you can find subfolders for every Delphi version that contains the project:
 
-![StyledButtonComponentEditor.jpg](./Images/StyledButtonComponentEditor.jpg)
----
-*In this picture, the Component Editor selecting "Basic-Colors" styles and Rounded StyleDrawType: Style Appearance are Normal and Outline*
+_StyledComponentsDemo.dproj_
 
-![StyledButtonComponentEditorRounded.jpg](./Images/StyledButtonComponentEditorRounded.jpg)
----
-*In this picture, the Component Editor selecting "SVG-Color" styles: Style Appearance can be Normal or Outline*
-
-![StyledButtonComponentEditorSVG.jpg](./Images/StyledButtonComponentEditorSVG.jpg)
----
-**Look at the Demo Folder:**
-
-**Demos\StyledButtonsDemo\DelphiNNN\StyledButtonsDemo.dpr**
-
-A simple demo to show the use of Buttons in many different ways...
-
-![StyledButtonDemoBootstrap.jpg](./Images/StyledButtonDemoBootstrap.jpg)
-
-In the demo you can test many different ways to obtain Styled Button, Icon, FAB...
-
-![StyledButtonDemoAngular.jpg](./Images/StyledButtonDemoAngular.jpg)
-
-**Demos\StyledButtonsDemo\Delphi11+\StyledButtonInControlList**
-
-A simple demo to show how to use StyledGraphicButton into a ControlList (only for D11+)
-
-![StyledButtonInControlListDemo.jpg](./Images/StyledButtonInControlListDemo.jpg)
+The demo is organized to launch different Forms "embedded" into the main form client area or outside.
 
 **Demos\StyledButtonsDemo\Delphi10_4+\StyledButtonsVCLStyled.dpr**
 
-A simple demo to show how StyledButton with "Classic" Family is compatible with VCL Styles (only for D10.4+)
+Using standard VCL Buttons you can apply different colors only from Delphi 10.4, using "per-control" option, but you cannot control other aspect of Buttons.
+
+With StyledComponents you can have Buttons with the active VCL-Style also in previous versions of Delphi, and you can control all the aspect of the button, like Rounded shape, as you can test in the Demo.
+
+The same demo, compiled with an old Delphi version (like XE6) show that you have this feature available!
 
 ![StyledButtonsVCLStyled.jpg](./Images/StyledButtonsVCLStyled.jpg)
 
-**Demos\StyledAnimatedButtonsDemo\DelphiXE7+\AnimatedButtonsTest.dpr**
+**Enabling Skia4Delphi to see the Animated Buttons Demo in action**
 
-A simple demo to show StyledAnimatedButton and StyledAnimatedTaskDialog (available from Delphi XE7+ using Skia4Delphi)
+If you have Skia4Delphi installed, you must install also the Packages contained into Vcl.StyledAnimatedComponents.groupproj.
+
+Then you must "Enable SKIA" in the "context-menu" of StyledComponentsDemo project, so you can see the StyledAnimated Buttons in action.
 
 ![StyledAnimatedButtonsDemo.jpg](./Images/StyledAnimatedButtonsDemo.jpg)
 
-**Demos\RoundedCornersDemo\DelphiXXX\StyledRoundedCornersExamples.dpr**
+_Notice that this feature is not available in Delphi XE6._
 
-A simple demo to show StyledRoundedCorners options applied to many Styled Components
+![StyledAnimatedButtonsDemo.jpg](./Images/StyledButtonsDemoWarning.jpg)
+
+**RoundedCorners Demo**
+
+A simple way to show StyledRoundedCorners options applied to many Styled Components.
 
 ![StyledRoundedCornersDemo.jpg](./Images/StyledRoundedCornersDemo.jpg)
 
@@ -268,12 +275,13 @@ TStyledToolbar (and TStyledToolButtons) shows a Toolbar like a classic TToolbar 
 
 In the StyledToolbar demo, you can see how to use this component, compared to the classic Delphi TToolBar.
 
+The major differece is based on the control of the "size" of buttons when "ShowCaptions" is True: in standard Toolbar, the dimension is defined by the larger caption.
+In the StyledToolbar the dimension is always defined by "ButtonWidth" property.
+
+
 *In this picture, the Toolbar Demo compares the StyledToolbar and the classic Toolbar*
 
 ![StyledToolbarDemo.jpg](./Images/StyledToolbarDemo.jpg)
-
-The major differece is based on the control of the "size" of buttons when "ShowCaptions" is True: in standard Toolbar, the dimension is defined by the larger caption.
-In the StyledToolbar the dimension is always defined by "ButtonWidth" property.
 
 ---
 
@@ -352,9 +360,7 @@ By default, StyledDialogs uses Segoe UI Font with Size 9 (stored into Vcl.Styled
   InitializeStyledTaskDialogs(True, Screen.MessageFont, BOOTSTRAP_FAMILY);
 ```
 
-## Samples/Demos ##
-
-**Demos\StyledTaskDlgDemo and Demos\AnimatedTaskDialogDemo**
+**StyledTaskDialog Demo**
 
 A simple demo to show how to use StyledTaskDialog with custom icons using ImageList.
 
@@ -397,6 +403,15 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+02 Oct 2024: version 3.6.6
+- Created a new demo comprehensive of all components (StyledComponentsDemo)
+- Removed old single Component Demos
+- Fixed "resource not found" into IDE for StyledBitBtn
+- Fixed Dialogs position using multimonitor
+- Fixed UseCommandLinks option
+- Fixed Scalefactor for XE6
+- Fixed Height of buttons in StyledCategoryButtons (before Delphi 10.4)
+
 16 Sep 2024: version 3.6.5
 - Fixed Dialog buttons with with DPI > 100%
 - Added FindDialogButton to TStyledTaskDialog

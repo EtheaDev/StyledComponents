@@ -1,6 +1,7 @@
 {******************************************************************************}
 {                                                                              }
-{       StyledComponents: a set of Styled VCL Component                        }
+{       StyledAnimatedComponents: a set of StyledComponents with animations    }
+{       using Skia4Delphi (needs Skia Package already installed                }
 {                                                                              }
 {       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }

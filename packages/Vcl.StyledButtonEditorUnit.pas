@@ -393,7 +393,7 @@ var
 begin
   TabControl.OnChange := nil;
   try
-    Caption := Format(Caption, [StyledButtonsVersion]);
+    Caption := Format(Caption, [StyledComponentsVersion]);
     for I := Low(TStyledButtonDrawType) to High(TStyledButtonDrawType) do
     begin
       LDrawName := GetEnumName(TypeInfo(TStyledButtonDrawType), Ord(I));

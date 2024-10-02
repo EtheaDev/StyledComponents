@@ -483,16 +483,18 @@ begin
     RegisterThemeAttributes('Material Patterns Blue',ttLight,clBlack,clBlack,
       htmlToColor('#e6ecf2'),htmlToColor('#e6ecf2'),
       htmlToColor('#c4d3df'),htmlToColor('#18a1e9'),btRoundRect);
-    { TODO: Old Delphi Styles
-    RegisterThemeAttributes('Metropolis UI Black',ttDark,clWhite,
-      clWebLightYellow,clWebLightYellow,clDkGray,btRoundRect);
-    RegisterThemeAttributes('Metropolis UI Blue',ttDark,clWhite,
-      clWebDarkSlategray,clWebDarkSlategray,clDkGray,btRoundRect);
-    RegisterThemeAttributes('Metropolis UI Dark',ttDark,clWhite,
-      clWebLightYellow,clWebLightYellow,clDkGray,btRoundRect);
-    RegisterThemeAttributes('Metropolis UI Green',ttDark,clWhite,
-      clWebLightGreen,clWebLightGreen,clWebLightgrey,btRoundRect);
-    }
+    RegisterThemeAttributes('Metropolis UI Black',ttDark,clWhite,clWhite,
+      htmlToColor('#0070bb'),htmlToColor('#1585cc'),
+      htmlToColor('#043f5c'),htmlToColor('#043f5c'),btRoundRect);
+    RegisterThemeAttributes('Metropolis UI Blue',ttDark,clWhite,clWhite,
+      htmlToColor('#5f6a72'),htmlToColor('#00a1a1'),
+      htmlToColor('#5f6a72'),htmlToColor('#00a1a1'),btRoundRect);
+    RegisterThemeAttributes('Metropolis UI Dark',ttDark,clWhite,clWhite,
+      htmlToColor('#0070bb'),htmlToColor('#1585cc'),
+      htmlToColor('#043f5c'),htmlToColor('#043f5c'),btRoundRect);
+    RegisterThemeAttributes('Metropolis UI Green',ttDark,clWhite,clWhite,
+      htmlToColor('#055249'),htmlToColor('#055249'),
+      htmlToColor('#055249'),clWhite,btRect);
     RegisterThemeAttributes('Obsidian',ttLight,clBlack,clBlack,
       htmlToColor('#cfd2d7'),htmlToColor('#ffd24e'),
       htmlToColor('#2f2f2f'),htmlToColor('#2f2f2f'),btRoundRect);

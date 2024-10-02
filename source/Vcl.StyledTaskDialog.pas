@@ -211,6 +211,8 @@ function GetDialogAlphaBlendValue: Byte;
 function MsgDlgBtnToDefaultBtn(const ABtn: TMsgDlgBtn): TTaskDialogCommonButton;
 
 //Global Initialization procedures (different versions)
+procedure InitializeStyledTaskDialogs(AFont: TFont); overload;
+
 procedure InitializeStyledTaskDialogs(
   const ADialogButtonsFamily: TStyledButtonFamily = '';
   const AUseCommandLinks: Boolean = False;
@@ -305,7 +307,7 @@ var
   DlgBtn: TMsgDlgBtn;
   LTaskDialog: TStyledTaskDialog;
   LTaskDialogButtonItem: TTaskDialogButtonItem;
-  LUseCommandLinks: Boolean;
+  LCommandLinkPresent: Boolean;
   LIndex: Integer;
 begin
   //At least OK Button
@@ -315,6 +317,8 @@ begin
   Application.ModalStarted;
   LTaskDialog := TStyledTaskDialog.Create(nil);
   try
+    //Reset default CommonButtons
+    LTaskDialog.CommonButtons := [];
     LTaskDialog.AutoClick := AutoClickDelay > 0;
     if LTaskDialog.AutoClick then
       LTaskDialog.AutoClickDelay := AutoClickDelay;
@@ -323,11 +327,29 @@ begin
       LTaskDialog.Flags := AlternateTaskDlgFlags; //Replace the default Flags to AlternateTaskDlgFlags.
     // Assign buttons
     LIndex := -1;
-    LUseCommandLinks := True;
+    LCommandLinkPresent := False;
     for DlgBtn := Low(TMsgDlgBtn) to High(TMsgDlgBtn) do
     begin
+      //Check for particular case using command links:
+      if UseCommandLinks then
+      begin
+        //if mbYes and mbOK are both present with "UseCommandLinks", then tcbOk is used as CommonButton
+        if (DlgBtn = TMsgDlgBtn.mbOK) and (DlgBtn in Buttons) and (TMsgDlgBtn.mbYes in Buttons) then
+        begin
+          LTaskDialog.CommonButtons := LTaskDialog.CommonButtons + [TTaskDialogCommonButton.tcbOk];
+          Continue;
+        end;
+        //if mbNo and mbCancel are both present with "UseCommandLinks", then tcbCancel is used as CommonButton
+        if (DlgBtn = TMsgDlgBtn.mbCancel) and (DlgBtn in Buttons) and (TMsgDlgBtn.mbNo in Buttons) then
+        begin
+          LTaskDialog.CommonButtons := LTaskDialog.CommonButtons + [TTaskDialogCommonButton.tcbCancel];
+          Continue;
+        end;
+      end;
+
       if DlgBtn in Buttons then
       begin
+        //if a Button is "common", add only if not using CommandLinks
         LTaskDialogButtonItem := LTaskDialog.Buttons.Add as TTaskDialogButtonItem;
         Inc(LIndex);
         if LIndex <= High(CustomButtonCaptions) then
@@ -364,7 +386,9 @@ begin
           mbNoToAll: LTaskDialogButtonItem.CommandLinkHint := Format('%s %s', [STR_CANCEL, STR_THE_OPERATION]);
           mbYesToAll: LTaskDialogButtonItem.CommandLinkHint := Format('%s %s', [STR_CONFIRM, STR_THE_OPERATION]);
         end;
-        LUseCommandLinks := LUseCommandLinks and (LTaskDialogButtonItem.CommandLinkHint <> '');
+
+        if LTaskDialogButtonItem.CommandLinkHint <> '' then
+          LCommandLinkPresent := UseCommandLinks;
 
         if DlgBtn = DefaultButton then
           LTaskDialogButtonItem.Default := True;
@@ -374,13 +398,12 @@ begin
 
     //use Captions defined in Vcl.StyledCmpMessages.pas
     LTaskDialog.Caption := GetDialogTypeTitle(DlgType);
-    LTaskDialog.CommonButtons := [];
     if Not UseAlternateTaskDlgFlags and Application.UseRightToLeftReading then
       LTaskDialog.Flags := LTaskDialog.Flags + [tfRtlLayout];
     if pos('<A HREF=',Msg) > 0 then
       LTaskDialog.Flags := LTaskDialog.Flags + [tfEnableHyperlinks];
 
-    if LTaskDialog.UseCommandLinks and LUseCommandLinks then
+    if LTaskDialog.UseCommandLinks and LCommandLinkPresent then
       LTaskDialog.Flags := LTaskDialog.Flags + [tfUseCommandLinks];
 
     LTaskDialog.HelpContext := HelpCtx;
@@ -538,7 +561,19 @@ function StyledMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
   X: Integer; Y: Integer): Integer;
 begin
   Result := DoStyledTaskMessageDlgPosHelp('', Msg, DlgType, Buttons,
-    HelpCtx, DefaultButton, X, Y);
+    HelpCtx, DefaultButton, X, Y, -1, _UseCommandLinks, '');
+end;
+
+procedure InitializeStyledTaskDialogs(AFont: TFont);
+begin
+  if Assigned(AFont) then
+  begin
+    if not Assigned(_DialogFont) then
+      _DialogFont := TFont.Create;
+    _DialogFont.Assign(AFont);
+  end
+  else
+    FreeAndNil(_DialogFont);
 end;
 
 procedure InitializeStyledTaskDialogs(
@@ -634,25 +669,29 @@ end;
 function StyledTaskMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer; overload;
 begin
-  Result := DoStyledTaskMessageDlgPosHelp(Title, Msg, DlgType, Buttons, HelpCtx);
+  Result := DoStyledTaskMessageDlgPosHelp(Title, Msg, DlgType, Buttons, HelpCtx,
+    -1, -1, -1, _UseCommandLinks);
 end;
 
 function StyledTaskMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn): Integer; overload;
 begin
-  Result := DoStyledTaskMessageDlgPosHelp(Title, Msg, DlgType, Buttons, HelpCtx, DefaultButton);
+  Result := DoStyledTaskMessageDlgPosHelp(Title, Msg, DlgType, Buttons, HelpCtx, DefaultButton,
+    -1, -1, -1, _UseCommandLinks, '');
 end;
 
 function StyledTaskDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; X: Integer = -1; Y: Integer = -1): Integer;
 begin
-  Result := DoStyledTaskMessageDlgPosHelp(Title, Msg, DlgType, Buttons, HelpCtx, X, Y);
+  Result := DoStyledTaskMessageDlgPosHelp(Title, Msg, DlgType, Buttons, HelpCtx, X, Y,
+    -1, _UseCommandLinks, '');
 end;
 
 function StyledTaskMessageDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; X: Integer; Y: Integer): Integer;
 begin
-  Result := DoStyledTaskMessageDlgPosHelp(Title, Msg, DlgType, Buttons, HelpCtx, X, Y);
+  Result := DoStyledTaskMessageDlgPosHelp(Title, Msg, DlgType, Buttons, HelpCtx, X, Y,
+    -1, _UseCommandLinks, '');
 end;
 
 function StyledTaskDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
@@ -680,7 +719,7 @@ function StyledTaskMessageDlgPosHelp(const Title, Msg: string; DlgType: TMsgDlgT
   const HelpFileName: string; DefaultButton: TMsgDlgBtn; CustomButtonCaptions: array of string): Integer;
 begin
   Result := InternalDoTaskMessageDlgPosHelp(Title, Msg, DlgType, Buttons, HelpCtx,
-    X, Y, HelpFileName, DefaultButton, -1, False, False, [], []);
+    X, Y, HelpFileName, DefaultButton, -1, _UseCommandLinks, False, [], []);
 end;
 
 procedure StyledShowMessage(const Msg: string); overload;
@@ -697,6 +736,7 @@ end;
 constructor TStyledTaskDialog.Create(AOwner: TComponent);
 begin
   inherited;
+  DoOnDialogCreated;
   FDialogButtonsFamily := _DialogButtonsFamily;
   FUseCommandLinks := _UseCommandLinks;
   FUseTitleInMessageDlg := _UseTitleInMessageDlg;

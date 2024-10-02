@@ -256,7 +256,7 @@ var
   LPos: Integer;
   LDrawName: string;
 begin
-  Caption := Format(Caption, [StyledButtonsVersion]);
+  Caption := Format(Caption, [StyledComponentsVersion]);
 (*
   for I := Low(TStyledButtonDrawType) to High(TStyledButtonDrawType) do
   begin
