@@ -114,7 +114,6 @@
         <DCCReference Include="..\..\source\Vcl.StyledTaskDialogStdUnit.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledTaskDialogFormUnit.pas">
             <Form>StyledTaskDialogForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\..\source\Vcl.StyledToolbar.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledDbNavigator.pas"/>

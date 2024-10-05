@@ -60,11 +60,6 @@ package StyledAnimatedComponents;
 {$IMPLICITBUILD OFF}
 
 requires
-  rtl,
-  vcl,
-  vclimg,
-  dbrtl,
-  vcldb,
   StyledComponents,
   Skia.Package.VCL,
   Skia.Package.RTL,

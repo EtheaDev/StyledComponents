@@ -40,7 +40,6 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_DcuOutput>..\..\Lib\DXE7\$(Platform)\$(Config)</DCC_DcuOutput>
         <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
         <DCC_E>false</DCC_E>
@@ -117,7 +116,6 @@
         <DCCReference Include="..\..\source\Vcl.StyledTaskDialogStdUnit.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledTaskDialogFormUnit.pas">
             <Form>StyledTaskDialogForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\..\source\Vcl.StyledToolbar.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledDbNavigator.pas"/>

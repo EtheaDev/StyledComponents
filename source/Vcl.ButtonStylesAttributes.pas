@@ -55,7 +55,7 @@ uses
   ;
 
 const
-  StyledComponentsVersion = '3.6.6';
+  StyledComponentsVersion = '3.6.7';
   DEFAULT_RADIUS = 6;
   RESOURCE_SHIELD_ICON = 'BUTTON_SHIELD_ADMIN';
   DEFAULT_MAX_BADGE_VALUE = 99;

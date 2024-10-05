@@ -93,11 +93,9 @@
         </DCCReference>
         <DCCReference Include="..\source\DemoWelcomeForm.pas">
             <Form>WelcomeForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\source\FAboutForm.pas">
             <Form>fmAbout</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\source\AutoClickForm.pas">
             <Form>fmAutoClick</Form>

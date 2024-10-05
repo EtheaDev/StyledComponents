@@ -78,8 +78,8 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     Margins.Bottom = 4
     Align = alClient
     BevelOuter = bvNone
-    Color = clWindow
     ParentBackground = False
+    ParentColor = True
     TabOrder = 0
     object ImagePanel: TPanel
       AlignWithMargins = True
@@ -93,6 +93,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Margins.Bottom = 4
       Align = alLeft
       BevelOuter = bvNone
+      ParentColor = True
       TabOrder = 0
       object IconContainer: TPanel
         Left = 0
@@ -101,6 +102,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
         Height = 64
         Align = alTop
         BevelOuter = bvNone
+        ParentColor = True
         TabOrder = 0
       end
     end
@@ -175,6 +177,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     Margins.Bottom = 4
     Align = alBottom
     BevelOuter = bvNone
+    ParentColor = True
     TabOrder = 2
     Visible = False
   end
@@ -192,6 +195,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     BevelEdges = [beTop]
     BevelKind = bkFlat
     BevelOuter = bvNone
+    ParentColor = True
     TabOrder = 4
     object YesButton: TStyledButton
       AlignWithMargins = True
@@ -374,6 +378,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     Margins.Bottom = 0
     Align = alBottom
     BevelOuter = bvNone
+    ParentColor = True
     TabOrder = 3
     Visible = False
     object VerificationCheckBox: TCheckBox
@@ -404,6 +409,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     Margins.Bottom = 0
     Align = alBottom
     BevelOuter = bvNone
+    ParentColor = True
     TabOrder = 1
     Visible = False
   end

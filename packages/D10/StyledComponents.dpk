@@ -57,7 +57,7 @@ package StyledComponents;
 {$DEFINE RELEASE}
 {$ENDIF IMPLICITBUILDING}
 {$DESCRIPTION 'Ethea Styled Components'}
-{$LIBSUFFIX 'D10'}
+{$LIBSUFFIX 'D10_0'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
 

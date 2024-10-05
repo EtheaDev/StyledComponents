@@ -94,11 +94,6 @@
         <DCCReference Include="..\StyledAnimatedButton.dcr"/>
         <DCCReference Include="..\StyledAnimatedTaskDialog.dcr"/>
         <DCCReference Include="..\StyledAnimatedToolbar.dcr"/>
-        <DCCReference Include="rtl.dcp"/>
-        <DCCReference Include="vcl.dcp"/>
-        <DCCReference Include="vclimg.dcp"/>
-        <DCCReference Include="dbrtl.dcp"/>
-        <DCCReference Include="vcldb.dcp"/>
         <DCCReference Include="StyledComponents.dcp"/>
         <DCCReference Include="Skia.Package.VCL.dcp"/>
         <DCCReference Include="Skia.Package.RTL.dcp"/>
@@ -129,7 +124,13 @@
                 <Source>
                     <Source Name="MainSource">StyledAnimatedComponents.dpk</Source>
                 </Source>
-                <Excluded_Packages/>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\22.0\Bpl\dclLiscorVCL_D11.bpl">*** Liscor VCL Design Package for D11 ***</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcboffice2k280.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcbofficexp280.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k280.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp280.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                </Excluded_Packages>
                 <WelcomePageFile Path="..\..\README.htm"/>
                 <WelcomePageFolder/>
             </Delphi.Personality>

@@ -270,12 +270,17 @@ end;
 
 procedure TfrmMain.acExampleExecute(Sender: TObject);
 const
-  D10_3 = 'Delphi 10.3';
-  D10_4 = 'Delphi 10.4';
-  D11 = 'Delphi 11';
-  D12 = 'Delphi 12';
-  DXE6 = 'Delphi XE6';
-  DXE7_SKIA = 'Delphi XE7 With SKIA enabled';
+  D10_3 = 'from Delphi 10.3';
+  D10_4 = 'from Delphi 10.4';
+  D11 = 'from Delphi 11';
+  D12 = 'from Delphi 12';
+  DXE6 = 'from Delphi XE6';
+
+  {$IFDEF DXE7+}
+  DXE7_SKIA = 'Using Skia4Delphi. Install it and "Enable Skia" in this demo';
+  {$ELSE}
+  DXE7_SKIA = 'from Delphi XE7 With Skia enabled';
+  {$ENDIF}
 begin
   //Some actions can works only with particular Delphi Version to Latest one
   FActiveAction := Sender as TAction;
@@ -318,14 +323,7 @@ end;
 
 procedure TfrmMain.acQuitExecute(Sender: TObject);
 begin
-  if StyledTaskMessageDlg('Exit from StyledComponents Demo',
-    'If you need more info about StyledComponents read the '+
-      StringToHRef('https://github.com/EtheaDev/StyledComponents/wiki/','wiki section')+' of the project.'+sLineBreak+
-    sLineBreak+
-    'Do you want to exit now?',
-    mtConfirmation,
-    [mbYes, mbNo, mbCancel], 0) in [mrYes] then
-    Close;
+  Close;
 end;
 
 procedure TfrmMain.acSettingsChangedUpdate(Sender: TObject);
@@ -358,7 +356,14 @@ end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  ;
+  if StyledTaskMessageDlg('Exit from StyledComponents Demo',
+    'If you need more info about StyledComponents read the '+
+      StringToHRef('https://github.com/EtheaDev/StyledComponents/wiki/','wiki section')+' of the project.'+sLineBreak+
+    sLineBreak+
+    'Do you want to exit now?',
+    mtConfirmation,
+    [mbYes, mbNo, mbCancel], 0) <> mrYes then
+  Action := caNone;
 end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
@@ -530,7 +535,7 @@ end;
 procedure TfrmMain.ShowDelphiVersion(const AAction: TAction; const ADelphiVer: string);
 begin
   StyledTaskMessageDlg(AAction.Caption,
-    Format('%s%s%sThis example is available only from %s!',
+    Format('%s%s%sThis example is available only %s!',
       [AAction.Hint, sLineBreak, sLineBreak, ADelphiVer]), mtInformation,
       [mbOK], 0);
 end;

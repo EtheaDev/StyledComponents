@@ -24,7 +24,7 @@
 {  limitations under the License.                                              }
 {                                                                              }
 {******************************************************************************}
-package StyledAnimatedComponents;
+package dclStyledAnimatedComponents;
 
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
@@ -54,7 +54,7 @@ package StyledAnimatedComponents;
 {$DESCRIPTION 'Ethea Styled Animated Components'}
 {$LIBSUFFIX 'D10_2'}
 {$DESIGNONLY}
-{$IMPLICITBUILD ON}
+{$IMPLICITBUILD OFF}
 
 requires
   DesignIDE,

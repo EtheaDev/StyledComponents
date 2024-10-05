@@ -48,8 +48,7 @@ uses
   Vcl.BootstrapButtonStyles,
   Vcl.AngularButtonStyles,
   Vcl.ColorButtonStyles,
-  Vcl.ImgList,
-  Vcl.StyledAttributesFrameUnit;
+  Vcl.ImgList;
 
 type
   TStyledButtonCustomEditor = class(TForm)

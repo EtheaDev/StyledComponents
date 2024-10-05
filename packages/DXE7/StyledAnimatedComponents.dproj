@@ -58,7 +58,6 @@
         <DCC_Description>Ethea Styled Animated Components</DCC_Description>
         <RuntimeOnlyPackage>true</RuntimeOnlyPackage>
         <DllSuffix>DXE7</DllSuffix>
-        <DCC_OutputNeverBuildDcps>true</DCC_OutputNeverBuildDcps>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
@@ -94,11 +93,6 @@
         <DCCReference Include="..\StyledAnimatedButton.dcr"/>
         <DCCReference Include="..\StyledAnimatedTaskDialog.dcr"/>
         <DCCReference Include="..\StyledAnimatedToolbar.dcr"/>
-        <DCCReference Include="rtl.dcp"/>
-        <DCCReference Include="vcl.dcp"/>
-        <DCCReference Include="vclimg.dcp"/>
-        <DCCReference Include="dbrtl.dcp"/>
-        <DCCReference Include="vcldb.dcp"/>
         <DCCReference Include="StyledComponents.dcp"/>
         <DCCReference Include="Skia.Package.VCL.dcp"/>
         <DCCReference Include="Skia.Package.RTL.dcp"/>
