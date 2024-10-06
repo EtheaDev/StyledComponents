@@ -237,6 +237,7 @@ type
     procedure SetCursor(const AValue: TCursor);
     procedure SetImageAlignment(const AValue: TImageAlignment);
     function GetScaleFactor: Single;
+    function CalcMaxBorderWidth: Integer;
     function GetButtonCategories: TStyledButtonCategories;
     procedure SetButtonCategories(const AValue: TStyledButtonCategories);
     procedure SetImageMargins(const AValue: TImageMargins);
@@ -532,7 +533,8 @@ begin
 
   //Calculate LTextRect and LImageRect using ImageMargins and ImageAlignment
   CalcImageAndTextRect(ASurfaceRect, ACaption, LTextRect, LImageRect,
-    LImageWidth, LImageHeight, FImageAlignment, FImageMargins, GetScaleFactor);
+    LImageWidth, LImageHeight, FImageAlignment, FImageMargins,
+    CalcMaxBorderWidth, GetScaleFactor);
 
   if LUseImageList and not Assigned(OnDrawIcon) then
   begin
@@ -772,6 +774,15 @@ begin
       iaBottom: FImageMargins.Bottom := AdJustMargin(FImageMargins.Bottom, DEFAULT_IMAGE_VMARGIN);
     end;
   end;
+end;
+
+function TStyledCategoryButtons.CalcMaxBorderWidth: Integer;
+begin
+  Result := Max(Max(Max(Max(FButtonStyleNormal.BorderWidth,
+    FButtonStylePressed.BorderWidth),
+    FButtonStyleSelected.BorderWidth),
+    FButtonStyleHot.BorderWidth),
+    FButtonStyleDisabled.BorderWidth);
 end;
 
 function TStyledCategoryButtons.ImageMarginsStored: Boolean;

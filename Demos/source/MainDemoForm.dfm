@@ -12,7 +12,6 @@ object frmMain: TfrmMain
   Font.Height = -11
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = True
   Position = poScreenCenter
   ShowHint = True
   OnActivate = FormActivate
@@ -20,7 +19,6 @@ object frmMain: TfrmMain
   OnCreate = FormCreate
   OnResize = FormResize
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object WorkPanel: TPanel
     Left = 200
@@ -175,7 +173,6 @@ object frmMain: TfrmMain
       Align = alLeft
       Caption = 'Styled Components Demos'
       Layout = tlCenter
-      ExplicitHeight = 13
     end
     object SettingsToolBar: TStyledToolbar
       AlignWithMargins = True

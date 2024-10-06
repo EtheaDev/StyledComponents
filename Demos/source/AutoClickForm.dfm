@@ -13,10 +13,8 @@ object fmAutoClick: TfmAutoClick
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = True
   Position = poScreenCenter
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 15
   object lbAutoClickDelay: TLabel
     Left = 266
@@ -171,151 +169,125 @@ object fmAutoClick: TfmAutoClick
     end
   end
   object VirtualImageList32: TVirtualImageList
-    DisabledGrayscale = False
-    DisabledSuffix = '_Disabled'
     Images = <
       item
         CollectionIndex = 0
         CollectionName = 'home-deeppurple'
-        Disabled = False
         Name = 'home-deeppurple'
       end
       item
         CollectionIndex = 1
         CollectionName = 'home-indigo'
-        Disabled = False
         Name = 'home-indigo'
       end
       item
         CollectionIndex = 2
         CollectionName = 'home-pink'
-        Disabled = False
         Name = 'home-pink'
       end
       item
         CollectionIndex = 3
         CollectionName = 'home-purple'
-        Disabled = False
         Name = 'home-purple'
       end
       item
         CollectionIndex = 4
         CollectionName = 'menu-amber'
-        Disabled = False
         Name = 'menu-amber'
       end
       item
         CollectionIndex = 5
         CollectionName = 'menu-pink'
-        Disabled = False
         Name = 'menu-pink'
       end
       item
         CollectionIndex = 6
         CollectionName = 'menu-Blue-grey'
-        Disabled = False
         Name = 'menu-Blue-grey'
       end
       item
         CollectionIndex = 7
         CollectionName = 'menu-green'
-        Disabled = False
         Name = 'menu-green'
       end
       item
         CollectionIndex = 8
         CollectionName = 'heart'
-        Disabled = False
         Name = 'heart'
       end
       item
         CollectionIndex = 9
         CollectionName = 'dots-vertical-white'
-        Disabled = False
         Name = 'dots-vertical-white'
       end
       item
         CollectionIndex = 10
         CollectionName = 'dots-vertical-black'
-        Disabled = False
         Name = 'dots-vertical-black'
       end
       item
         CollectionIndex = 11
         CollectionName = 'launch-white'
-        Disabled = False
         Name = 'launch-white'
       end
       item
         CollectionIndex = 12
         CollectionName = 'launch-black'
-        Disabled = False
         Name = 'launch-black'
       end
       item
         CollectionIndex = 13
         CollectionName = 'trash-white'
-        Disabled = False
         Name = 'trash-white'
       end
       item
         CollectionIndex = 14
         CollectionName = 'trash-black'
-        Disabled = False
         Name = 'trash-black'
       end
       item
         CollectionIndex = 15
         CollectionName = 'bookmark-white'
-        Disabled = False
         Name = 'bookmark-white'
       end
       item
         CollectionIndex = 16
         CollectionName = 'bookmark-black'
-        Disabled = False
         Name = 'bookmark-black'
       end
       item
         CollectionIndex = 17
         CollectionName = 'home-white'
-        Disabled = False
         Name = 'home-white'
       end
       item
         CollectionIndex = 18
         CollectionName = 'home-black'
-        Disabled = False
         Name = 'home-black'
       end
       item
         CollectionIndex = 19
         CollectionName = 'Angular-logo'
-        Disabled = False
         Name = 'Angular-logo'
       end
       item
         CollectionIndex = 20
         CollectionName = 'Bootstrap-logo'
-        Disabled = False
         Name = 'Bootstrap-logo'
       end
       item
         CollectionIndex = 21
         CollectionName = 'Delphi-Logo'
-        Disabled = False
         Name = 'Delphi-Logo'
       end
       item
         CollectionIndex = 22
         CollectionName = 'Basic-Color'
-        Disabled = False
         Name = 'Basic-Color'
       end
       item
         CollectionIndex = 23
         CollectionName = 'SVG-Color'
-        Disabled = False
         Name = 'SVG-Color'
       end>
     ImageCollection = dmResources.ImageCollection

@@ -10,10 +10,8 @@ object fmBitBtn: TfmBitBtn
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = True
   ShowHint = True
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 15
   object btOK: TBitBtn
     Left = 8

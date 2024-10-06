@@ -287,6 +287,7 @@ type
     procedure SetAutoClickDelay(const AValue: Integer);
     procedure UpdateAutoClickTimer(const AReset: Boolean);
     procedure AutoClickOnTimer(Sender: TObject);
+    function CalcMaxBorderWidth: Integer;
   private
     function IsGlyphAssigned: Boolean;
   protected
@@ -466,7 +467,7 @@ type
     //Properties used when UseButtonLayout is True
     property Layout: TButtonLayout read FButtonLayout write SetLayout;
     property Margin: Integer read FMargin write SetMargin default -1;
-    property Spacing: Integer read FSpacing write SetSpacing default 4;
+    property Spacing: Integer read FSpacing write SetSpacing default 0;
 
     //Property used by TStyledButton, TStyledGraphicButton and TStyledSpeedButton
     property AllowAllUp: Boolean read FAllowAllUp write SetAllowAllUp;
@@ -774,7 +775,7 @@ type
     property ParentFont default True;
     property Layout: TButtonLayout read GetLayout write SetLayout default blGlyphLeft;
     property Margin: Integer read GetMargin write SetMargin default -1;
-    property Spacing: Integer read GetSpacing write SetSpacing default 4;
+    property Spacing: Integer read GetSpacing write SetSpacing default 0;
     property StyleElements stored IsStoredStyleElements;
     property Caption: TCaption read GetText write SetText stored IsCaptionStored;
     property CaptionAlignment: TAlignment read GetCaptionAlignment write SetCaptionAlignment Stored IsCaptionAlignmentStored;
@@ -971,7 +972,7 @@ type
     {$IFDEF D10_4+}
     property SelectedImageName;
     {$ENDIF}
-    property Spacing;
+    property Spacing default 4;
     property Transparent default True;
     property Visible;
     property StyleElements;
@@ -1275,7 +1276,7 @@ type
     property ParentFont default True;
     property Layout: TButtonLayout read GetLayout write SetLayout default blGlyphLeft;
     property Margin: Integer read GetMargin write SetMargin default -1;
-    property Spacing: Integer read GetSpacing write SetSpacing default 4;
+    property Spacing: Integer read GetSpacing write SetSpacing default 0;
     property StyleElements stored IsStoredStyleElements;
     property TabStop default True;
     property Caption: TCaption read GetText write SetText stored IsCaptionStored;
@@ -1503,7 +1504,7 @@ type
     property NotificationBadge;
     property NumGlyphs;
     property Style: TButtonStyle read FStyle write FStyle;
-    property Spacing;
+    property Spacing default 4;
     property TabOrder;
     property TabStop;
     property Tag;
@@ -1625,7 +1626,7 @@ begin
   ADest.FFlat := Self.FFlat;
   ADest.FCaptionAlignment := Self.FCaptionAlignment;
   ADest.FCommandLinkHint := Self.FCommandLinkHint;
-  ADest.FNotificationBadge.Assign(Self.FNotificationBadge);
+  ADest.WordWrap := Self.WordWrap;
 
   if Assigned(FImages) then
   begin
@@ -1897,7 +1898,7 @@ begin
   ImageIndex := -1;
   FPressedImageIndex := -1;
   FSelectedImageIndex := -1;
-  FSpacing := 4;
+  FSpacing := 0;
   FMargin := -1;
 
   FStyle := TCustomButton.TButtonStyle.bsPushButton;
@@ -2291,8 +2292,7 @@ begin
     else
     begin
       //Auto click execution
-      if not (csDesigning in FOwnerControl.ComponentState) and
-        (FOwnerControl.Enabled) and (State <> bsDown) then
+      if (FOwnerControl.Enabled) and (State <> bsDown) then
       begin
         //Disable AutoClick before click
         AutoClick := False;
@@ -2514,13 +2514,23 @@ begin
   end;
 end;
 
+function TStyledButtonRender.CalcMaxBorderWidth: Integer;
+begin
+  Result := Max(Max(Max(Max(FButtonStyleNormal.BorderWidth,
+    FButtonStylePressed.BorderWidth),
+    FButtonStyleSelected.BorderWidth),
+    FButtonStyleHot.BorderWidth),
+    FButtonStyleDisabled.BorderWidth);
+end;
+
 function TStyledButtonRender.CalcImageRect(const ASurfaceRect: TRect;
   const AImageWidth, AImageHeight: Integer): TRect;
 var
   LTextRect: TRect;
 begin
   CalcImageAndTextRect(ASurfaceRect, Caption, LTextRect, Result,
-    AImageWidth, AImageHeight, FImageAlignment, FImageMargins, GetOwnerScaleFactor);
+    AImageWidth, AImageHeight, FImageAlignment, FImageMargins,
+    CalcMaxBorderWidth, GetOwnerScaleFactor);
 end;
 
 procedure TStyledButtonRender.SetButtonStyles(
@@ -2641,13 +2651,15 @@ begin
   else
     LCaption := '';
   case FCaptionAlignment of
-    taLeftJustify: LTextFlags := DT_NOCLIP or DT_LEFT or DT_VCENTER;
-    taRightJustify: LTextFlags := DT_NOCLIP or DT_RIGHT or DT_VCENTER;
+    taLeftJustify: LTextFlags := DT_LEFT;
+    taRightJustify: LTextFlags := DT_RIGHT;
   else
-    LTextFlags := DT_NOCLIP or DT_CENTER or DT_VCENTER;
+    LTextFlags := DT_CENTER;
   end;
   if FWordWrap then
-    LTextFlags := LTextFlags or DT_WORDBREAK;
+    LTextFlags := LTextFlags or DT_WORDBREAK
+  else
+    LTextFlags := LTextFlags or DT_VCENTER;
   LTextFlags := FOwnerControl.DrawTextBiDiModeFlags(LTextFlags);
   LUseImageList := GetImageSize(LImageWidth, LImageHeight,
     LImageList, LImageIndex);
@@ -2670,7 +2682,8 @@ begin
     if Style = bsCommandLink then
     begin
       CalcImageAndTextRect(ASurfaceRect, LCaption, LTextRect, LImageRect,
-        LImageWidth, LImageHeight, FImageAlignment, FImageMargins, GetOwnerScaleFactor);
+        LImageWidth, LImageHeight, FImageAlignment, FImageMargins,
+        CalcMaxBorderWidth, GetOwnerScaleFactor);
       if Assigned(Images) then
       begin
         //A CommandLink Buttons Ignores ImageAlignment and ImagePosition
@@ -2699,7 +2712,8 @@ begin
     begin
       //Calculate LTextRect and LImageRect using ImageMargins and ImageAlignment
       CalcImageAndTextRect(ASurfaceRect, LCaption, LTextRect, LImageRect,
-        LImageWidth, LImageHeight, FImageAlignment, FImageMargins, GetOwnerScaleFactor);
+        LImageWidth, LImageHeight, FImageAlignment, FImageMargins,
+        CalcMaxBorderWidth, GetOwnerScaleFactor);
     end;
   end;
   if ElevationRequired then
@@ -2735,13 +2749,14 @@ begin
     if AsVCLComponent and (ActiveStyleName = 'Windows') then
       ACanvas.Font.Color := HtmlToColor('#0279D7'); //Windows Blue color
     //Calculate TextRect: WordWrap, centered
-    LTextFlags := DT_NOCLIP or DT_VCENTER or DT_WORDBREAK;
+    LTextFlags := DT_VCENTER or DT_WORDBREAK;
     Winapi.Windows.DrawText(ACanvas.Handle, PChar(LCaption),
       Length(LCaption), LTextRect, LTextFlags or DT_CALCRECT);
     //WordWrap but not vertical centerer: fixed top
-    LTextFlags := DT_NOCLIP or DT_WORDBREAK;
+    LTextFlags := DT_WORDBREAK;
     LTextRect.Top := Round(28*GetOwnerScaleFactor);
-    DrawButtonText(ACanvas, LCaption, taLeftJustify, 0, LTextRect, LTextFlags);
+    DrawButtonText(ACanvas, LCaption, taLeftJustify, FSpacing, CalcMaxBorderWidth,
+      LTextRect, LTextFlags);
     if FCommandLinkHint <> '' then
     begin
       ACanvas.Font.Height := Round(-11*GetOwnerScaleFactor);
@@ -2750,17 +2765,19 @@ begin
       LTextRect.Bottom := ASurfaceRect.Bottom;
       LTextRect.Right := ASurfaceRect.Right - Round(4*GetOwnerScaleFactor);
       //Calculate TextRect: WordWrap, centered
-      LTextFlags := DT_NOCLIP or DT_VCENTER or DT_WORDBREAK;
+      LTextFlags := DT_VCENTER or DT_WORDBREAK;
       Winapi.Windows.DrawText(ACanvas.Handle, PChar(FCommandLinkHint),
         Length(FCommandLinkHint), LTextRect, LTextFlags or DT_CALCRECT);
       //WordWrap but not vertical centerer: fixed top
-      LTextFlags := DT_NOCLIP or DT_WORDBREAK;
+      LTextFlags := DT_WORDBREAK;
       OffsetRect(LTextRect, 0, Round(15*GetOwnerScaleFactor));
-      DrawButtonText(ACanvas, FCommandLinkHint, taLeftJustify, 0, LTextRect, LTextFlags);
+      DrawButtonText(ACanvas, FCommandLinkHint, taLeftJustify, FSpacing, CalcMaxBorderWidth,
+        LTextRect, LTextFlags);
     end;
   end
   else
-    DrawButtonText(ACanvas, LCaption, FCaptionAlignment, FSpacing, LTextRect, LTextFlags);
+    DrawButtonText(ACanvas, LCaption, FCaptionAlignment, FSpacing, CalcMaxBorderWidth,
+      LTextRect, LTextFlags);
 end;
 
 procedure TStyledButtonRender.DrawButton(const ACanvas: TCanvas;
@@ -5039,6 +5056,7 @@ constructor TStyledSpeedButton.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FRender.SetText('');
+  FRender.Spacing := 4;
   FRender.FUseButtonLayout := True;
   FRender.Transparent := True;
   SetBounds(0, 0, 23, 22); //As default VCL SpeedButton
@@ -6289,6 +6307,7 @@ constructor TStyledBitBtn.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FRender.FUseButtonLayout := True;
+  FRender.Spacing := 4;
 end;
 
 function TStyledBitBtn.IsCaptionStored: Boolean;

@@ -108,8 +108,6 @@ var
   LImagePng: TPngImage;
   LBitmap: TBitmap;
   LFileName: string;
-  BmpRGBA: ^TRGBAArray;
-  PngRGB: ^TRGB;
 begin
   //Notice: this procedure works fine olny with
   //DrawTextWithGDIPlus and DrawRectWithGDIPlus compiler directives

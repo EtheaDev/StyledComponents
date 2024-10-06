@@ -16,7 +16,7 @@ object fmAbout: TfmAbout
   TextHeight = 13
   object lbCopyright: TLabel
     Left = 7
-    Top = 213
+    Top = 209
     Width = 115
     Height = 13
     Anchors = [akLeft, akBottom]
@@ -35,8 +35,8 @@ object fmAbout: TfmAbout
     WordWrap = True
   end
   object lbVersion: TLabel
-    Left = 295
-    Top = 213
+    Left = 289
+    Top = 209
     Width = 39
     Height = 13
     Alignment = taRightJustify
@@ -44,8 +44,8 @@ object fmAbout: TfmAbout
     Caption = 'Version:'
   end
   object OKButton: TStyledButton
-    Left = 269
-    Top = 231
+    Left = 263
+    Top = 225
     Width = 65
     Height = 23
     Anchors = [akRight, akBottom]

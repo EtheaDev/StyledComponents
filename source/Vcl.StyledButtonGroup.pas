@@ -222,6 +222,7 @@ type
     procedure SetCursor(const AValue: TCursor);
     procedure SetImageAlignment(const AValue: TImageAlignment);
     function GetScaleFactor: Single;
+    function CalcMaxBorderWidth: Integer;
     function GetGrpButtonItems: TStyledGrpButtonItems;
     procedure SetGrpButtonItems(const AValue: TStyledGrpButtonItems);
     procedure SetImageMargins(const AValue: TImageMargins);
@@ -462,7 +463,7 @@ begin
     R.Right := ASurfaceRect.Right - ASpacing;
   if ASurfaceRect.Left > R.Left - ASpacing then
     R.Left := ASurfaceRect.Left + ASpacing;
-  ACanvas.TextRect(R, LText, [tfEndEllipsis]);
+  ACanvas.TextRect(R, LText, [TTextFormats.tfEndEllipsis]);
 end;
 
 procedure TStyledButtonGroup.DrawCaptionAndImage(
@@ -497,7 +498,8 @@ begin
 
   //Calculate LTextRect and LImageRect using ImageMargins and ImageAlignment
   CalcImageAndTextRect(ASurfaceRect, ACaption, LTextRect, LImageRect,
-    LImageWidth, LImageHeight, FImageAlignment, FImageMargins, GetScaleFactor);
+    LImageWidth, LImageHeight, FImageAlignment, FImageMargins,
+    CalcMaxBorderWidth, GetScaleFactor);
 
   if LUseImageList and not Assigned(OnDrawIcon) then
   begin
@@ -760,6 +762,15 @@ begin
       iaBottom: FImageMargins.Bottom := AdJustMargin(FImageMargins.Bottom, DEFAULT_IMAGE_VMARGIN);
     end;
   end;
+end;
+
+function TStyledButtonGroup.CalcMaxBorderWidth: Integer;
+begin
+  Result := Max(Max(Max(Max(FButtonStyleNormal.BorderWidth,
+    FButtonStylePressed.BorderWidth),
+    FButtonStyleSelected.BorderWidth),
+    FButtonStyleHot.BorderWidth),
+    FButtonStyleDisabled.BorderWidth);
 end;
 
 function TStyledButtonGroup.ImageMarginsStored: Boolean;

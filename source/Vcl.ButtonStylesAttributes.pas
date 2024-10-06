@@ -287,12 +287,13 @@ procedure CalcImageAndTextRect(const ASurfaceRect: TRect;
   const AImageWidth, AImageHeight: Integer;
   const AImageAlignment: TImageAlignment;
   const AImageMargins: TImageMargins;
+  const ABorderWidth: Integer;
   const AScale: Single); overload;
 
 //Calculate Image and Text Rect for Drawing using ButtonLayout, Margin and Spacing
 //For StyledSpeedButton and StyledBitBtn
 procedure CalcImageAndTextRect(const ACanvas: TCanvas;
-  const ACaption: string; const AClient: TRect;
+  const ACaption: string; const ASurfaceRect: TRect;
   const AOffset: TPoint;
   out AGlyphPos: TPoint; out ATextBounds: TRect;
   const AImageWidth, AImageHeight: Integer;
@@ -309,8 +310,8 @@ procedure DrawBitBtnGlyph(const ACanvas: TCanvas; const ARect: TRect;
 //drawing a Text in a Canvas Using Alignment and Spacing
 procedure DrawButtonText(const ACanvas: TCanvas;
   const AText: string; const AAlignment: TAlignment;
-  const ASpacing: Integer;
-  var ARect: TRect; AFlags: Cardinal);
+  const ASpacing, ABorderWidth: Integer;
+  var ARect: TRect; ABidiFlags: Cardinal);
 
 //drawing a Notification Badge on a Canvas
 procedure DrawButtonNotificationBadge(const ACanvas: TCanvas;
@@ -1599,6 +1600,7 @@ procedure CalcImageAndTextRect(const ASurfaceRect: TRect;
   const AImageWidth, AImageHeight: Integer;
   const AImageAlignment: TImageAlignment;
   const AImageMargins: TImageMargins;
+  const ABorderWidth: Integer;
   const AScale: Single);
 var
   IW, IH, IX, IY: Integer;
@@ -1673,10 +1675,32 @@ begin
 
   if ATextRect.IsEmpty then
     ATextRect := ASurfaceRect;
+
+  //Preserve Border Spacing for ATextRect
+  if LImageAlignment in [iaCenter, iaLeft] then
+  begin
+    if ATextRect.Right > (ASurfaceRect.Width - ABorderWidth) then
+      ATextRect.Right := ASurfaceRect.Width - ABorderWidth;
+  end;
+  if LImageAlignment in [iaCenter, iaRight] then
+  begin
+    if ATextRect.Left < (ASurfaceRect.Left + ABorderWidth) then
+      ATextRect.Left := ASurfaceRect.Left + ABorderWidth;
+  end;
+  if LImageAlignment in [iaTop] then
+  begin
+    if ATextRect.Bottom > (ASurfaceRect.Height - ABorderWidth) then
+      ATextRect.Bottom := ASurfaceRect.Height - ABorderWidth;
+  end;
+  if LImageAlignment in [iaBottom] then
+  begin
+    if ATextRect.Top < (ASurfaceRect.Top + ABorderWidth) then
+      ATextRect.Top := ASurfaceRect.Top + ABorderWidth;
+  end;
 end;
 
 procedure CalcImageAndTextRect(const ACanvas: TCanvas;
-  const ACaption: string; const AClient: TRect;
+  const ACaption: string; const ASurfaceRect: TRect;
   const AOffset: TPoint;
   out AGlyphPos: TPoint; out ATextBounds: TRect;
   const AImageWidth, AImageHeight: Integer;
@@ -1699,14 +1723,14 @@ begin
 
   { calculate the item sizes }
   LClientSize := Point(
-    AClient.Right - AClient.Left,
-    AClient.Bottom - AClient.Top);
+    ASurfaceRect.Right - ASurfaceRect.Left,
+    ASurfaceRect.Bottom - ASurfaceRect.Top);
 
   LGlyphSize := Point(AImageWidth, AImageHeight);
 
   if Length(ACaption) > 0 then
   begin
-    ATextBounds := Rect(0, 0, AClient.Right - AClient.Left, 0);
+    ATextBounds := Rect(0, 0, ASurfaceRect.Right - ASurfaceRect.Left, 0);
     DrawText(ACanvas.Handle, ACaption, Length(ACaption), ATextBounds,
       DT_CALCRECT or ABiDiFlags);
     LTextSize := Point(
@@ -1800,10 +1824,10 @@ begin
   end;
 
   { fixup the result variables }
-  Inc(AGlyphPos.X, AClient.Left + AOffset.X);
-  Inc(AGlyphPos.Y, AClient.Top + AOffset.Y);
+  Inc(AGlyphPos.X, ASurfaceRect.Left + AOffset.X);
+  Inc(AGlyphPos.Y, ASurfaceRect.Top + AOffset.Y);
 
-  OffsetRect(ATextBounds, LTextPos.X + AClient.Left + AOffset.X, LTextPos.Y + AClient.Top + AOffset.Y);
+  OffsetRect(ATextBounds, LTextPos.X + ASurfaceRect.Left + AOffset.X, LTextPos.Y + ASurfaceRect.Top + AOffset.Y);
 end;
 
 procedure DrawIconFromCommandLinkRes(ACanvas: TCanvas; ARect: TRect;
@@ -2007,24 +2031,42 @@ end;
 
 procedure DrawButtonText(const ACanvas: TCanvas;
   const AText: string; const AAlignment: TAlignment;
-  const ASpacing: Integer;
-  var ARect: TRect; AFlags: Cardinal);
+  const ASpacing, ABorderWidth: Integer;
+  var ARect: TRect; ABidiFlags: Cardinal);
 var
   R: TRect;
   OldBKMode: Integer;
 begin
   R := ARect;
   Winapi.Windows.DrawText(ACanvas.Handle, PChar(AText), Length(AText),
-    R, AFlags or DT_CALCRECT);
+    R, ABidiFlags or DT_CALCRECT);
+  R.Width := ARect.Width;
+
   case AAlignment of
     taLeftJustify: OffsetRect(R, ASpacing, (ARect.Height - R.Height) div 2);
-    taRightJustify: OffsetRect(R, ARect.Width - R.Width - ASpacing, (ARect.Height - R.Height) div 2);
+    taRightJustify: OffsetRect(R, ARect.Width - R.Width - ASpacing , (ARect.Height - R.Height) div 2);
   else
     OffsetRect(R, (ARect.Width - R.Width) div 2, (ARect.Height - R.Height) div 2);
   end;
   OldBKMode := SetBkMode(ACanvas.Handle, Winapi.Windows.TRANSPARENT);
-  CanvasDrawText(ACanvas, R, AText, AFlags);
-  SetBkMode(ACanvas.Handle, OldBKMode);
+  try
+    if ((DT_WORDBREAK and ABiDiFlags) = DT_WORDBREAK) then
+    begin
+      if R.Top < ARect.Top + ABorderWidth + ASpacing then
+        R.Top := ARect.Top + ABorderWidth + ASpacing ;
+      if R.Bottom > ARect.Bottom - ABorderWidth - Aspacing then
+        R.Bottom := ARect.Bottom - ABorderWidth - Aspacing;
+      Winapi.Windows.DrawText(ACanvas.Handle, PChar(AText),
+        Length(AText), R, ABidiFlags or DT_END_ELLIPSIS);
+    end
+    else
+    begin
+      Winapi.Windows.DrawText(ACanvas.Handle, PChar(AText),
+        Length(AText), R, ABidiFlags);
+    end;
+  finally
+    SetBkMode(ACanvas.Handle, OldBKMode);
+  end;
 end;
 
 procedure DrawButtonNotificationBadge(const ACanvas: TCanvas;
@@ -2091,7 +2133,7 @@ begin
 
   //Draw Badge Content
   if ASizeType <> nbsSmallDot then
-    DrawButtonText(ACanvas, AValue, taCenter, 0, LRect,
+    DrawButtonText(ACanvas, AValue, taCenter, 0, 0, LRect,
       DT_NOCLIP or DT_CENTER or DT_VCENTER);
 end;
 
@@ -2422,7 +2464,6 @@ var
   LFontColor: TGPColor;
   LPointF: TGPPointF;
   X,Y: Single;
-  R: TRectF;
 begin
   LGraphics := nil;
   LFontFamily := nil;

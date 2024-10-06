@@ -403,8 +403,10 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
-05 Oct 2024: version 3.6.7
+06 Oct 2024: version 3.6.7
 - Fixed StyledAnimatedComponents Packages
+- Fixed drawing Button Caption word-wrap mode
+- Fixed default "Spacing" to 0 for StyledButtons
 
 02 Oct 2024: version 3.6.6
 - Created a new demo comprehensive of all components (StyledComponentsDemo)

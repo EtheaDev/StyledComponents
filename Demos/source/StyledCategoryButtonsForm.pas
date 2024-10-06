@@ -28,6 +28,8 @@ unit StyledCategoryButtonsForm;
 
 interface
 
+{$INCLUDE StyledComponents.inc}
+
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   DResources, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.CategoryButtons, System.ImageList,
@@ -39,7 +41,7 @@ const
   //Params to check
   CAPTION_STR = 'Caption';
   BUTTON_WIDTH = 120;
-  BUTTON_HEIGHT = 40;
+  BUTTON_HEIGHT = 36;
   CATEGORYBUTTONS_FULLSIZE = True;
   CATEGORYBUTTONS_SHOW_CAPTIONS = True;
   CATEGORYBUTTONS_STYLE = False;
@@ -82,6 +84,7 @@ type
     FCategoryButtons: TCategoryButtons;
     FStyledCategoryButtons: TStyledCategoryButtons;
     FNotificationCount: Integer;
+    function GetScaleFactor: Single;
     procedure CreateStyledCategoryButtons;
     procedure CreateCategoryButtons;
     procedure CreateCategoriesButtons;
@@ -184,8 +187,8 @@ begin
   UpdateShowCaptions(FStyledCategoryButtons, CATEGORYBUTTONS_SHOW_CAPTIONS);
   UpdateSetFullSize(FStyledCategoryButtons, CATEGORYBUTTONS_FULLSIZE);
   FStyledCategoryButtons.Images := VirtualImageList;
-  FStyledCategoryButtons.ButtonWidth := BUTTON_WIDTH;
-  FStyledCategoryButtons.ButtonHeight := BUTTON_HEIGHT;
+  FStyledCategoryButtons.ButtonWidth := Round(BUTTON_WIDTH*GetScaleFactor);
+  FStyledCategoryButtons.ButtonHeight := Round(BUTTON_HEIGHT*GetScaleFactor);
   FStyledCategoryButtons.ButtonOptions := [boFullSize,boGradientFill,boShowCaptions];
 end;
 
@@ -198,8 +201,8 @@ begin
   UpdateShowCaptions(FCategoryButtons, CategoryButtons_SHOW_CAPTIONS);
   UpdateSetFullSize(FCategoryButtons, CategoryButtons_FULLSIZE);
   FCategoryButtons.Images := VirtualImageList;
-  FCategoryButtons.ButtonWidth := BUTTON_WIDTH;
-  FCategoryButtons.ButtonHeight := BUTTON_HEIGHT;
+  FCategoryButtons.ButtonWidth := Round(BUTTON_WIDTH*GetScaleFactor);
+  FCategoryButtons.ButtonHeight := Round(BUTTON_HEIGHT*GetScaleFactor);
   FCategoryButtons.ButtonOptions := [boFullSize,boGradientFill,boShowCaptions];
 end;
 
@@ -210,39 +213,49 @@ var
 begin
   //Create Standard CategoryButtons
   CreateCategoryButtons;
+
   //Create first Category
   LCategory := FCategoryButtons.Categories.Add;
   LCategory.Caption := 'Category 1';
+
   //Add Buttons to first Category
   AddButtonToCategoryButtons(LCategory, CAPTION_STR+'1', 0);
   AddButtonToCategoryButtons(LCategory, CAPTION_STR+'2', 5);
+
   //Create second Category
   LCategory := FCategoryButtons.Categories.Add;
   LCategory.Caption := 'Category 2';
+
   //Add Buttons to second Category
   AddButtonToCategoryButtons(LCategory, CAPTION_STR+'3', 8);
   AddButtonToCategoryButtons(LCategory, CAPTION_STR+'4', 10);
 
   //Create Styled CategoryButtons
   CreateStyledCategoryButtons;
+
   //Create first Category
   LStyledCategory := FStyledCategoryButtons.Categories.Add;
   LStyledCategory.Caption := 'Category 1';
+
   //Add Buttons to first Category
   AddStyledButtonToCategoryButtons(LStyledCategory, CAPTION_STR+'1', 0,
     BOOTSTRAP_FAMILY, btn_primary, BOOTSTRAP_OUTLINE);
   AddStyledButtonToCategoryButtons(LStyledCategory, CAPTION_STR+'2', 5,
     BOOTSTRAP_FAMILY, btn_secondary, BOOTSTRAP_OUTLINE);
+
   //Create second Category
   LStyledCategory := FStyledCategoryButtons.Categories.Add;
   LStyledCategory.Caption := 'Category 2';
+
   //Add Buttons to second Category
   AddStyledButtonToCategoryButtons(LStyledCategory, CAPTION_STR+'3', 8,
     BOOTSTRAP_FAMILY, btn_success, BOOTSTRAP_OUTLINE);
+
   AddStyledButtonToCategoryButtons(LStyledCategory, CAPTION_STR+'4', 10,
     BOOTSTRAP_FAMILY, btn_danger, BOOTSTRAP_OUTLINE);
-  tbWidth.Position := BUTTON_WIDTH;
-  tbHeight.Position := BUTTON_HEIGHT;
+
+  tbWidth.Position := Round(BUTTON_WIDTH*GetScaleFactor);
+  tbHeight.Position := Round(BUTTON_HEIGHT*GetScaleFactor);;
 end;
 
 procedure TfmStyledCategoryButtons.FormCreate(Sender: TObject);
@@ -251,6 +264,11 @@ begin
   BuildCaptionAligmentList;
   BuildImageAlignment;
   ShowCaptionCheckBox.Checked := CategoryButtons_SHOW_CAPTIONS;
+end;
+
+function TfmStyledCategoryButtons.GetScaleFactor: Single;
+begin
+  Result := {$IFDEF D10_3+}ScaleFactor{$ELSE}1{$ENDIF};
 end;
 
 procedure TfmStyledCategoryButtons.BadgeTimerTimer(Sender: TObject);
@@ -282,44 +300,48 @@ begin
 end;
 
 procedure TfmStyledCategoryButtons.UpdateCategoryButtons(Sender: TObject);
+var
+  LButtonWidth, LButtonHeight: Integer;
 begin
+  LButtonWidth := Round(tbWidth.Position*GetScaleFactor);
+  LButtonHeight := Round(tbHeight.Position*GetScaleFactor);
   if Assigned(FStyledCategoryButtons) then
   begin
     UpdateShowCaptions(FStyledCategoryButtons, ShowCaptionCheckBox.Checked);
     UpdateSetFullSize(FStyledCategoryButtons, FullSizeCheckBox.Checked);
     UpdateShowIcon(FStyledCategoryButtons, ShowIconCheckBox.Checked);
 
-    FStyledCategoryButtons.ButtonWidth := tbWidth.Position;
-    FStyledCategoryButtons.ButtonHeight := tbHeight.Position;
+    FStyledCategoryButtons.ButtonWidth := LButtonWidth;
+    FStyledCategoryButtons.ButtonHeight := LButtonHeight;
   end;
   if Assigned(FCategoryButtons) then
   begin
     UpdateShowCaptions(FCategoryButtons, ShowCaptionCheckBox.Checked);
     UpdateSetFullSize(FCategoryButtons, FullSizeCheckBox.Checked);
     UpdateShowIcon(FCategoryButtons, ShowIconCheckBox.Checked);
-    FCategoryButtons.ButtonWidth := tbWidth.Position;
-    FCategoryButtons.ButtonHeight := tbHeight.Position;
+    FCategoryButtons.ButtonWidth := LButtonWidth;
+    FCategoryButtons.ButtonHeight := LButtonHeight;
   end;
   //Update VCL Button Group
   UpdateShowCaptions(CategoryButtons, ShowCaptionCheckBox.Checked);
   UpdateSetFullSize(CategoryButtons, FullSizeCheckBox.Checked);
   UpdateShowIcon(CategoryButtons, ShowIconCheckBox.Checked);
-  CategoryButtons.ButtonWidth := tbWidth.Position;
-  CategoryButtons.ButtonHeight := tbHeight.Position;
+  CategoryButtons.ButtonWidth := LButtonWidth;
+  CategoryButtons.ButtonHeight := LButtonHeight;
 
   //Update "classic" Styled Button Group
   UpdateShowCaptions(StyledCategoryButtons, ShowCaptionCheckBox.Checked);
   UpdateSetFullSize(StyledCategoryButtons, FullSizeCheckBox.Checked);
   UpdateShowIcon(StyledCategoryButtons, ShowIconCheckBox.Checked);
-  StyledCategoryButtons.ButtonWidth := tbWidth.Position;
-  StyledCategoryButtons.ButtonHeight := tbHeight.Position;
+  StyledCategoryButtons.ButtonWidth := LButtonWidth;
+  StyledCategoryButtons.ButtonHeight := LButtonHeight;
 
   //Update "bootstrap" Styled Button Group
   UpdateShowCaptions(StyledCategoryButtonsBootstrap, ShowCaptionCheckBox.Checked);
   UpdateSetFullSize(StyledCategoryButtonsBootstrap, FullSizeCheckBox.Checked);
   UpdateShowIcon(StyledCategoryButtonsBootstrap, ShowIconCheckBox.Checked);
-  StyledCategoryButtonsBootstrap.ButtonWidth := tbWidth.Position;
-  StyledCategoryButtonsBootstrap.ButtonHeight := tbHeight.Position;
+  StyledCategoryButtonsBootstrap.ButtonWidth := LButtonWidth;
+  StyledCategoryButtonsBootstrap.ButtonHeight := LButtonHeight;
 end;
 
 procedure TfmStyledCategoryButtons.BuildCaptionAligmentList;

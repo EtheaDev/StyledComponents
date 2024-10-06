@@ -20,7 +20,6 @@ object fmStyledCategoryButtons: TfmStyledCategoryButtons
     Height = 78
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 423
     object LeftPanel: TPanel
       Left = 1
       Top = 1
@@ -203,7 +202,6 @@ object fmStyledCategoryButtons: TfmStyledCategoryButtons
     SelectedButtonColor = 15132390
     TabOrder = 2
     OnButtonClicked = CategoryButtonsButtonClicked
-    ExplicitHeight = 423
   end
   object StyledCategoryButtons: TStyledCategoryButtons
     Left = 177
@@ -256,7 +254,6 @@ object fmStyledCategoryButtons: TfmStyledCategoryButtons
     SelectedButtonColor = 15132390
     TabOrder = 0
     OnButtonClicked = CategoryButtonsButtonClicked
-    ExplicitHeight = 423
   end
   object StyledCategoryButtonsBootstrap: TStyledCategoryButtons
     Left = 354
@@ -327,7 +324,6 @@ object fmStyledCategoryButtons: TfmStyledCategoryButtons
     StyleDrawType = btRounded
     StyleFamily = 'Bootstrap'
     OnGetNotificationBadgeInfo = StyledCategoryButtonsBootstrapGetNotificationBadgeInfo
-    ExplicitHeight = 423
   end
   object BadgeTimer: TTimer
     Interval = 5000

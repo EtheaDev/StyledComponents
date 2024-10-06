@@ -256,7 +256,6 @@ var
   LDrawName: string;
 begin
   Caption := Format(Caption, [StyledComponentsVersion]);
-(*
   for I := Low(TStyledButtonDrawType) to High(TStyledButtonDrawType) do
   begin
     LDrawName := GetEnumName(TypeInfo(TStyledButtonDrawType), Ord(I));
@@ -267,7 +266,6 @@ begin
   EnabledCheckBox.Checked := SourceButton.Enabled;
   RadiusTrackBar.Position := SourceButton.StyleRadius;
   FlatButtonCheckBox.Checked := SourceButton.Flat;
-*)
   UpdateDestFromGUI;
 end;
 

@@ -11,11 +11,9 @@ object WelcomeForm: TWelcomeForm
   Font.Height = -11
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = True
   Position = poScreenCenter
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object FramePanel: TPanel
     Left = 0
@@ -36,9 +34,9 @@ object WelcomeForm: TWelcomeForm
       TabOrder = 0
       object TitleLabel: TLabel
         AlignWithMargins = True
-        Left = 90
+        Left = 96
         Top = 21
-        Width = 430
+        Width = 424
         Height = 63
         Margins.Top = 20
         Align = alClient
@@ -53,10 +51,14 @@ object WelcomeForm: TWelcomeForm
       end
       object DelphiImage: TImage
         AlignWithMargins = True
-        Left = 4
-        Top = 4
+        Left = 11
+        Top = 11
         Width = 80
-        Height = 80
+        Height = 74
+        Margins.Left = 10
+        Margins.Top = 10
+        Margins.Right = 2
+        Margins.Bottom = 2
         Align = alLeft
         Picture.Data = {
           0954506E67496D61676589504E470D0A1A0A0000000D494844520000009A0000
@@ -312,15 +314,18 @@ object WelcomeForm: TWelcomeForm
         BevelOuter = bvNone
         TabOrder = 1
         object OkButton: TStyledButton
-          Left = 441
+          Left = 432
           Top = 3
-          Width = 75
+          Width = 84
           Height = 30
+          AutoClick = True
+          AutoClickDelay = 10000
           Cancel = True
           Caption = 'OK'
           Default = True
           ModalResult = 1
           TabOrder = 0
+          OnClick = OkButtonClick
         end
       end
     end

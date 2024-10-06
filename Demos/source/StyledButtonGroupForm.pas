@@ -28,6 +28,8 @@ unit StyledButtonGroupForm;
 
 interface
 
+{$INCLUDE StyledComponents.inc}
+
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ButtonStylesAttributes,
@@ -41,7 +43,7 @@ const
   //Params to check
   CAPTION_STR = 'Caption';
   BUTTON_WIDTH = 120;
-  BUTTON_HEIGHT = 40;
+  BUTTON_HEIGHT = 36;
   BUTTONGROUP_FULLSIZE = True;
   BUTTONGROUP_SHOW_CAPTIONS = True;
   BUTTON_GROUP_GROUP_STYLE = False;
@@ -85,6 +87,7 @@ type
     FButtonGroup: TButtonGroup;
     FStyledButtonGroup: TStyledButtonGroup;
     FNotificationCount: Integer;
+    function GetScaleFactor: Single;
     procedure CreateStyledButtonGroup;
     procedure CreateButtonGroups;
     procedure CreateButtonGroup;
@@ -198,8 +201,8 @@ begin
   UpdateSetFullSize(FStyledButtonGroup, BUTTONGROUP_FULLSIZE);
   UpdateSetGroupStyle(FStyledButtonGroup, BUTTON_GROUP_GROUP_STYLE);
   FStyledButtonGroup.Images := VirtualImageList;
-  FStyledButtonGroup.ButtonWidth := BUTTON_WIDTH;
-  FStyledButtonGroup.ButtonHeight := BUTTON_HEIGHT;
+  FStyledButtonGroup.ButtonWidth := Round(BUTTON_WIDTH*GetScaleFactor);
+  FStyledButtonGroup.ButtonHeight := Round(BUTTON_HEIGHT*GetScaleFactor);
   FStyledButtonGroup.OnButtonClicked := ButtonGroupButtonClicked;
 end;
 
@@ -213,8 +216,8 @@ begin
   UpdateSetFullSize(FButtonGroup, BUTTONGROUP_FULLSIZE);
   UpdateSetGroupStyle(FButtonGroup, BUTTON_GROUP_GROUP_STYLE);
   FButtonGroup.Images := VirtualImageList;
-  FButtonGroup.ButtonWidth := BUTTON_WIDTH;
-  FButtonGroup.ButtonHeight := BUTTON_HEIGHT;
+  FButtonGroup.ButtonWidth := Round(BUTTON_WIDTH*GetScaleFactor);
+  FButtonGroup.ButtonHeight := Round(BUTTON_HEIGHT*GetScaleFactor);
   FButtonGroup.OnButtonClicked := ButtonGroupButtonClicked;
 end;
 
@@ -243,8 +246,8 @@ begin
   AddStyledButtonToButtonGroup(FStyledButtonGroup, CAPTION_STR+'4', 10,
     BOOTSTRAP_FAMILY, btn_danger, BOOTSTRAP_OUTLINE);
 
-  tbWidth.Position := BUTTON_WIDTH;
-  tbHeight.Position := BUTTON_HEIGHT;
+  tbWidth.Position := Round(BUTTON_WIDTH*GetScaleFactor);
+  tbHeight.Position := Round(BUTTON_HEIGHT*GetScaleFactor);;
 end;
 
 procedure TfmStyledButtonGroup.FormCreate(Sender: TObject);
@@ -253,6 +256,11 @@ begin
   BuildCaptionAligmentList;
   BuildImageAlignment;
   ShowCaptionCheckBox.Checked := BUTTONGROUP_SHOW_CAPTIONS;
+end;
+
+function TfmStyledButtonGroup.GetScaleFactor: Single;
+begin
+  Result := {$IFDEF D10_3+}ScaleFactor{$ELSE}1{$ENDIF};
 end;
 
 procedure TfmStyledButtonGroup.BadgeTimerTimer(Sender: TObject);
@@ -286,7 +294,11 @@ begin
 end;
 
 procedure TfmStyledButtonGroup.UpdateButtonGroups(Sender: TObject);
+var
+  LButtonWidth, LButtonHeight: Integer;
 begin
+  LButtonWidth := Round(tbWidth.Position*GetScaleFactor);
+  LButtonHeight := Round(tbHeight.Position*GetScaleFactor);
   if Assigned(FStyledButtonGroup) then
   begin
     UpdateShowCaptions(FStyledButtonGroup, ShowCaptionCheckBox.Checked);
@@ -294,8 +306,8 @@ begin
     //UpdateSetGroupStyle(FStyledButtonGroup, GroupStyleCheckBox.Checked);
     UpdateShowIcon(FStyledButtonGroup, ShowIconCheckBox.Checked);
 
-    FStyledButtonGroup.ButtonWidth := tbWidth.Position;
-    FStyledButtonGroup.ButtonHeight := tbHeight.Position;
+    FStyledButtonGroup.ButtonWidth := LButtonWidth;
+    FStyledButtonGroup.ButtonHeight := LButtonHeight;
   end;
   if Assigned(FButtonGroup) then
   begin
@@ -303,32 +315,32 @@ begin
     UpdateSetFullSize(FButtonGroup, FullSizeCheckBox.Checked);
     //UpdateSetGroupStyle(FButtonGroup, GroupStyleCheckBox.Checked);
     UpdateShowIcon(FButtonGroup, ShowIconCheckBox.Checked);
-    FButtonGroup.ButtonWidth := tbWidth.Position;
-    FButtonGroup.ButtonHeight := tbHeight.Position;
+    FButtonGroup.ButtonWidth := LButtonWidth;
+    FButtonGroup.ButtonHeight := LButtonHeight;
   end;
   //Update VCL Button Group
   UpdateShowCaptions(ButtonGroup, ShowCaptionCheckBox.Checked);
   UpdateSetFullSize(ButtonGroup, FullSizeCheckBox.Checked);
   //UpdateSetGroupStyle(ButtonGroup, GroupStyleCheckBox.Checked);
   UpdateShowIcon(ButtonGroup, ShowIconCheckBox.Checked);
-  ButtonGroup.ButtonWidth := tbWidth.Position;
-  ButtonGroup.ButtonHeight := tbHeight.Position;
+  ButtonGroup.ButtonWidth := LButtonWidth;
+  ButtonGroup.ButtonHeight := LButtonHeight;
 
   //Update "classic" Styled Button Group
   UpdateShowCaptions(StyledButtonGroup, ShowCaptionCheckBox.Checked);
   UpdateSetFullSize(StyledButtonGroup, FullSizeCheckBox.Checked);
   //UpdateSetGroupStyle(StyledButtonGroup, GroupStyleCheckBox.Checked);
   UpdateShowIcon(StyledButtonGroup, ShowIconCheckBox.Checked);
-  StyledButtonGroup.ButtonWidth := tbWidth.Position;
-  StyledButtonGroup.ButtonHeight := tbHeight.Position;
+  StyledButtonGroup.ButtonWidth := LButtonWidth;
+  StyledButtonGroup.ButtonHeight := LButtonHeight;
 
   //Update "bootstrap" Styled Button Group
   UpdateShowCaptions(StyledButtonGroupBootstrap, ShowCaptionCheckBox.Checked);
   UpdateSetFullSize(StyledButtonGroupBootstrap, FullSizeCheckBox.Checked);
   //UpdateSetGroupStyle(StyledButtonGroupBootstrap, GroupStyleCheckBox.Checked);
   UpdateShowIcon(StyledButtonGroupBootstrap, ShowIconCheckBox.Checked);
-  StyledButtonGroupBootstrap.ButtonWidth := tbWidth.Position;
-  StyledButtonGroupBootstrap.ButtonHeight := tbHeight.Position;
+  StyledButtonGroupBootstrap.ButtonWidth := LButtonWidth;
+  StyledButtonGroupBootstrap.ButtonHeight := LButtonHeight;
 end;
 
 procedure TfmStyledButtonGroup.BuildCaptionAligmentList;
