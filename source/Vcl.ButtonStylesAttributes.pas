@@ -55,7 +55,7 @@ uses
   ;
 
 const
-  StyledComponentsVersion = '3.6.7';
+  StyledComponentsVersion = '3.6.8';
   DEFAULT_RADIUS = 6;
   RESOURCE_SHIELD_ICON = 'BUTTON_SHIELD_ADMIN';
   DEFAULT_MAX_BADGE_VALUE = 99;
@@ -311,7 +311,8 @@ procedure DrawBitBtnGlyph(const ACanvas: TCanvas; const ARect: TRect;
 procedure DrawButtonText(const ACanvas: TCanvas;
   const AText: string; const AAlignment: TAlignment;
   const ASpacing, ABorderWidth: Integer;
-  var ARect: TRect; ABidiFlags: Cardinal);
+  var ARect: TRect; ABidiFlags: Cardinal;
+  const PreserveBorders: Boolean = True);
 
 //drawing a Notification Badge on a Canvas
 procedure DrawButtonNotificationBadge(const ACanvas: TCanvas;
@@ -2032,7 +2033,8 @@ end;
 procedure DrawButtonText(const ACanvas: TCanvas;
   const AText: string; const AAlignment: TAlignment;
   const ASpacing, ABorderWidth: Integer;
-  var ARect: TRect; ABidiFlags: Cardinal);
+  var ARect: TRect; ABidiFlags: Cardinal;
+  const PreserveBorders: Boolean = True);
 var
   R: TRect;
   OldBKMode: Integer;
@@ -2050,14 +2052,22 @@ begin
   end;
   OldBKMode := SetBkMode(ACanvas.Handle, Winapi.Windows.TRANSPARENT);
   try
-    if ((DT_WORDBREAK and ABiDiFlags) = DT_WORDBREAK) then
+    if PreserveBorders then
     begin
-      if R.Top < ARect.Top + ABorderWidth + ASpacing then
-        R.Top := ARect.Top + ABorderWidth + ASpacing ;
-      if R.Bottom > ARect.Bottom - ABorderWidth - Aspacing then
-        R.Bottom := ARect.Bottom - ABorderWidth - Aspacing;
-      Winapi.Windows.DrawText(ACanvas.Handle, PChar(AText),
-        Length(AText), R, ABidiFlags or DT_END_ELLIPSIS);
+      if ((DT_WORDBREAK and ABiDiFlags) = DT_WORDBREAK) then
+      begin
+        if R.Top < ARect.Top + ABorderWidth + ASpacing then
+          R.Top := ARect.Top + ABorderWidth + ASpacing ;
+        if R.Bottom > ARect.Bottom - ABorderWidth - Aspacing then
+          R.Bottom := ARect.Bottom - ABorderWidth - Aspacing;
+        Winapi.Windows.DrawText(ACanvas.Handle, PChar(AText),
+          Length(AText), R, ABidiFlags or DT_END_ELLIPSIS);
+      end
+      else
+      begin
+        Winapi.Windows.DrawText(ACanvas.Handle, PChar(AText),
+          Length(AText), R, ABidiFlags {or DT_END_ELLIPSIS});
+      end;
     end
     else
     begin

@@ -2682,8 +2682,8 @@ begin
     if Style = bsCommandLink then
     begin
       CalcImageAndTextRect(ASurfaceRect, LCaption, LTextRect, LImageRect,
-        LImageWidth, LImageHeight, FImageAlignment, FImageMargins,
-        CalcMaxBorderWidth, GetOwnerScaleFactor);
+        LImageWidth, LImageHeight, iaLeft, FImageMargins,
+        0, GetOwnerScaleFactor);
       if Assigned(Images) then
       begin
         //A CommandLink Buttons Ignores ImageAlignment and ImagePosition
@@ -2756,7 +2756,7 @@ begin
     LTextFlags := DT_WORDBREAK;
     LTextRect.Top := Round(28*GetOwnerScaleFactor);
     DrawButtonText(ACanvas, LCaption, taLeftJustify, FSpacing, CalcMaxBorderWidth,
-      LTextRect, LTextFlags);
+      LTextRect, LTextFlags, False);
     if FCommandLinkHint <> '' then
     begin
       ACanvas.Font.Height := Round(-11*GetOwnerScaleFactor);
@@ -2772,7 +2772,7 @@ begin
       LTextFlags := DT_WORDBREAK;
       OffsetRect(LTextRect, 0, Round(15*GetOwnerScaleFactor));
       DrawButtonText(ACanvas, FCommandLinkHint, taLeftJustify, FSpacing, CalcMaxBorderWidth,
-        LTextRect, LTextFlags);
+        LTextRect, LTextFlags, False);
     end;
   end
   else
