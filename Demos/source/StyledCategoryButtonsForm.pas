@@ -216,7 +216,7 @@ begin
 
   //Create first Category
   LCategory := FCategoryButtons.Categories.Add;
-  LCategory.Caption := 'Category 1';
+  LCategory.Caption := 'VCL Category 1';
 
   //Add Buttons to first Category
   AddButtonToCategoryButtons(LCategory, CAPTION_STR+'1', 0);
@@ -224,7 +224,7 @@ begin
 
   //Create second Category
   LCategory := FCategoryButtons.Categories.Add;
-  LCategory.Caption := 'Category 2';
+  LCategory.Caption := 'VCL Category 2';
 
   //Add Buttons to second Category
   AddButtonToCategoryButtons(LCategory, CAPTION_STR+'3', 8);
@@ -235,7 +235,7 @@ begin
 
   //Create first Category
   LStyledCategory := FStyledCategoryButtons.Categories.Add;
-  LStyledCategory.Caption := 'Category 1';
+  LStyledCategory.Caption := 'Styled Category 1';
 
   //Add Buttons to first Category
   AddStyledButtonToCategoryButtons(LStyledCategory, CAPTION_STR+'1', 0,
@@ -245,7 +245,7 @@ begin
 
   //Create second Category
   LStyledCategory := FStyledCategoryButtons.Categories.Add;
-  LStyledCategory.Caption := 'Category 2';
+  LStyledCategory.Caption := 'Styled Category 2';
 
   //Add Buttons to second Category
   AddStyledButtonToCategoryButtons(LStyledCategory, CAPTION_STR+'3', 8,

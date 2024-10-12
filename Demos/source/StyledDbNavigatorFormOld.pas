@@ -97,6 +97,9 @@ type
     procedure UpdateDbNav(Sender: TObject);
     procedure PopUpMenuClick(Sender: TObject);
     procedure CustomImagesCheckBoxClick(Sender: TObject);
+    procedure StyledDBNavigatorEnableNavBtn(
+      const ADbNavigator: TCustomStyledDBNavigator;
+      const ABtn: TStyledNavButton; var AEnabled: Boolean);
   private
     FDbNavigator: TDbNavigator;
     FStyledDbNavigator: TStyledDbNavigator;
@@ -135,7 +138,8 @@ begin
   FStyledDbNavigator.Kind := DBNAV_KIND;
   FStyledDbNavigator.Height := DBNAV_HEIGHT;
   FStyledDbNavigator.Width := DBNAV_WIDTH;
-  FStyledDbNavigator.VisibleButtons := [TNavigateBtn.nbFirst, TNavigateBtn.nbPrior, TNavigateBtn.nbNext, TNavigateBtn.nbLast];
+  FStyledDbNavigator.VisibleButtons :=
+    [TNavigateBtn.nbFirst, TNavigateBtn.nbPrior, TNavigateBtn.nbNext, TNavigateBtn.nbLast];
   FStyledDbNavigator.DataSource := DataSource;
   FStyledDbNavigator.Parent := Self;
 end;
@@ -211,6 +215,15 @@ end;
 procedure TfmStyledDbNavigator.PopUpMenuClick(Sender: TObject);
 begin
   StyledShowMessage((Sender as TMenuItem).Caption);
+end;
+
+procedure TfmStyledDbNavigator.StyledDBNavigatorEnableNavBtn(
+  const ADbNavigator: TCustomStyledDBNavigator; const ABtn: TStyledNavButton;
+  var AEnabled: Boolean);
+begin
+  //Simple example to disable all buttons when the Quantity  is 3
+  if AEnabled and (ClientDataSetQuantity.Value = 3) then
+    AEnabled := False;
 end;
 
 procedure TfmStyledDbNavigator.ToolButtonclick(Sender: TObject);

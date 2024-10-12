@@ -57,5 +57,6 @@ begin
   TStyleManager.FormBorderStyle := TStyleManager.TFormBorderStyle.fbsSystemStyle;
   Application.CreateForm(TdmResources, dmResources);
   Application.CreateForm(TfrmMain, frmMain);
+  Application.OnException := frmMain.ShowError;
   Application.Run;
 end.

@@ -162,7 +162,7 @@ object fmStyledCategoryButtons: TfmStyledCategoryButtons
     ButtonOptions = [boFullSize, boGradientFill, boShowCaptions]
     Categories = <
       item
-        Caption = 'First'
+        Caption = 'VCL First'
         Color = 16771839
         Collapsed = False
         Items = <
@@ -180,7 +180,7 @@ object fmStyledCategoryButtons: TfmStyledCategoryButtons
           end>
       end
       item
-        Caption = 'Second'
+        Caption = 'VCL Second'
         Color = 16053492
         Collapsed = False
         Items = <
@@ -214,7 +214,7 @@ object fmStyledCategoryButtons: TfmStyledCategoryButtons
     ButtonOptions = [boFullSize, boGradientFill, boShowCaptions]
     Categories = <
       item
-        Caption = 'First'
+        Caption = 'Styled First'
         Color = 16771839
         Collapsed = False
         Items = <
@@ -232,7 +232,7 @@ object fmStyledCategoryButtons: TfmStyledCategoryButtons
           end>
       end
       item
-        Caption = 'Second'
+        Caption = 'Styled Second'
         Color = 16053492
         Collapsed = False
         Items = <
@@ -266,7 +266,7 @@ object fmStyledCategoryButtons: TfmStyledCategoryButtons
     ButtonOptions = [boFullSize, boGradientFill, boShowCaptions]
     Categories = <
       item
-        Caption = 'First'
+        Caption = 'Styled Rounded First'
         Color = 16771839
         Collapsed = False
         Items = <
@@ -290,7 +290,7 @@ object fmStyledCategoryButtons: TfmStyledCategoryButtons
           end>
       end
       item
-        Caption = 'Second'
+        Caption = 'Styled Rounded Second'
         Color = 16053492
         Collapsed = False
         Items = <

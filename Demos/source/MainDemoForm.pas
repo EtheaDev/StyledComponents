@@ -174,6 +174,7 @@ type
     property ActiveViewClass: TFormClass read GetActiveViewClass write SetActiveView;
     property MenuOpened: Boolean read FMenuOpened write SetMenuOpened;
     property SettingsOpened: Boolean read FSettingsOpened write SetSettingsOpened;
+	procedure ShowError(Sender: TObject; E: Exception);
   end;
 
 var
@@ -779,6 +780,36 @@ begin
     SelectThemeRadioGroup.OnClick := SelectThemeRadioGroupClick;
     SelectThemeRadioGroupClick(SelectThemeRadioGroup);
   end;
+end;
+
+procedure TfrmMain.ShowError(Sender: TObject; E: Exception);
+var
+  Buttons: TMsgDlgButtons;
+  Selection: Integer;
+  LTitle: string;
+  LMessage: string;
+  LHelpContext: Integer;
+  LUseTaskDialog: Boolean;
+begin
+  LTitle := GetErrorClassNameDesc(E.ClassName,
+    E is EAccessViolation);
+  LMessage := E.Message;
+  LHelpContext := 0;
+
+  if E.HelpContext <> 0 then
+    LHelpContext := Abs(E.HelpContext);
+
+  Buttons := [mbOK];
+  if LHelpContext <> 0 then
+    Buttons := Buttons + [mbHelp];
+  if E.InheritsFrom(EAccessViolation) then
+    Buttons := Buttons + [mbAbort];
+
+  Selection := StyledTaskMessageDlg(LTitle, LMessage, mtError, Buttons, LHelpContext, mbOK);
+  if Selection = mrAbort then
+    Application.Terminate
+  else if Selection = -1 then
+    Application.HelpContext(LHelpContext);
 end;
 
 initialization

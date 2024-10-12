@@ -495,7 +495,7 @@ begin
     RegisterThemeAttributes('Metropolis UI Green',ttDark,clWhite,clWhite,
       htmlToColor('#096C37'),htmlToColor('#247C4D'),
       clWhite,clWhite,btRect);
-    RegisterThemeAttributes('Obsidian',ttLight,clBlack,clBlack,
+    RegisterThemeAttributes('Obsidian',ttDark,clBlack,clBlack,
       htmlToColor('#cfd2d7'),htmlToColor('#ffd24e'),
       htmlToColor('#2f2f2f'),htmlToColor('#2f2f2f'),btRoundRect);
     RegisterThemeAttributes('Onyx Blue',ttLight,clBlack,clWhite,
@@ -535,6 +535,9 @@ begin
       htmlToColor('#f9fafc'),htmlToColor('#eef6fb'),
       htmlToColor('#dde1e4'),htmlToColor('#dde1e4'),btRoundRect);
     RegisterThemeAttributes('Tablet Dark',ttDark,clWhite,clBlack,
+      htmlToColor('#3d4a79'),htmlToColor('#1abc9c'),
+      htmlToColor('#3d4a79'),htmlToColor('#1abc9c'),btRoundRect);
+    RegisterThemeAttributes('TabletDark',ttDark,clWhite,clBlack,
       htmlToColor('#3d4a79'),htmlToColor('#1abc9c'),
       htmlToColor('#3d4a79'),htmlToColor('#1abc9c'),btRoundRect);
     RegisterThemeAttributes('Tablet Light',ttLight,clBlack,clWhite,

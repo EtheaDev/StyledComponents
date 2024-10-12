@@ -161,6 +161,7 @@ object fmStyledDbNavigator: TfmStyledDbNavigator
     Height = 50
     Align = alTop
     DataSource = DataSource
+    OnEnableNavBtn = StyledDBNavigatorEnableNavBtn
     TabOrder = 5
     VisibleButtons = [nbInsert, nbDelete, nbEdit, nbPost, nbCancel, nbRefresh, nbApplyUpdates, nbCancelUpdates]
     StyleDrawType = btRounded
@@ -173,6 +174,7 @@ object fmStyledDbNavigator: TfmStyledDbNavigator
     Align = alTop
     DataSource = BindSourceDB
     Flat = True
+    OnEnableNavBtn = StyledDBNavigatorEnableNavBtn
     TabOrder = 3
     VisibleButtons = [nbInsert, nbDelete, nbEdit, nbPost, nbCancel, nbRefresh, nbApplyUpdates, nbCancelUpdates]
   end
@@ -2202,7 +2204,7 @@ object fmStyledDbNavigator: TfmStyledDbNavigator
     Left = 476
     Top = 274
     Bitmap = {
-      494C01010C00B000140020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01010C00B000180020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000008000000001002000000000000000
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

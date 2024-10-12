@@ -159,6 +159,7 @@ object fmStyledDbNavigator: TfmStyledDbNavigator
     Height = 50
     Align = alTop
     DataSource = DataSource
+    OnEnableNavBtn = StyledDBNavigatorEnableNavBtn
     TabOrder = 5
     VisibleButtons = [nbInsert, nbDelete, nbEdit, nbPost, nbCancel, nbRefresh, nbApplyUpdates, nbCancelUpdates]
     StyleDrawType = btRounded
@@ -171,6 +172,7 @@ object fmStyledDbNavigator: TfmStyledDbNavigator
     Align = alTop
     DataSource = BindSourceDB
     Flat = True
+    OnEnableNavBtn = StyledDBNavigatorEnableNavBtn
     TabOrder = 3
     VisibleButtons = [nbInsert, nbDelete, nbEdit, nbPost, nbCancel, nbRefresh, nbApplyUpdates, nbCancelUpdates]
   end

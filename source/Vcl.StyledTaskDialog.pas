@@ -92,6 +92,7 @@ type
     procedure DoOnDialogCreated; override;
     procedure DoOnHelp; override;
   public
+    procedure DoOnExpandButtonClicked(Expanded: Boolean); override;
     procedure DoOnRadioButtonClicked(ButtonID: Integer); override;
     procedure DoOnHyperlinkClicked(const AURL: string); override;
     constructor Create(AOwner: TComponent); override;
@@ -318,6 +319,7 @@ begin
   LTaskDialog := TStyledTaskDialog.Create(nil);
   try
     //Reset default CommonButtons
+    LTaskDialog.Flags := LTaskDialog.Flags + [tfPositionRelativeToWindow];
     LTaskDialog.CommonButtons := [];
     LTaskDialog.AutoClick := AutoClickDelay > 0;
     if LTaskDialog.AutoClick then
@@ -512,7 +514,8 @@ end;
 function StyledMessageDlg(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer; overload;
 begin
-  Result := DoStyledTaskMessageDlgPosHelp('', Msg, DlgType, Buttons, HelpCtx);
+  Result := DoStyledTaskMessageDlgPosHelp('', Msg, DlgType, Buttons, HelpCtx,
+    -1, -1, _AutoClickDelay, _UseCommandLinks);
 end;
 
 function StyledMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
@@ -670,28 +673,28 @@ function StyledTaskMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer; overload;
 begin
   Result := DoStyledTaskMessageDlgPosHelp(Title, Msg, DlgType, Buttons, HelpCtx,
-    -1, -1, -1, _UseCommandLinks);
+    -1, -1, _AutoClickDelay, _UseCommandLinks);
 end;
 
 function StyledTaskMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn): Integer; overload;
 begin
   Result := DoStyledTaskMessageDlgPosHelp(Title, Msg, DlgType, Buttons, HelpCtx, DefaultButton,
-    -1, -1, -1, _UseCommandLinks, '');
+    -1, -1, _AutoClickDelay, _UseCommandLinks, '');
 end;
 
 function StyledTaskDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; X: Integer = -1; Y: Integer = -1): Integer;
 begin
   Result := DoStyledTaskMessageDlgPosHelp(Title, Msg, DlgType, Buttons, HelpCtx, X, Y,
-    -1, _UseCommandLinks, '');
+    _AutoClickDelay, _UseCommandLinks, '');
 end;
 
 function StyledTaskMessageDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; X: Integer; Y: Integer): Integer;
 begin
   Result := DoStyledTaskMessageDlgPosHelp(Title, Msg, DlgType, Buttons, HelpCtx, X, Y,
-    -1, _UseCommandLinks, '');
+    _AutoClickDelay, _UseCommandLinks, '');
 end;
 
 function StyledTaskDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
@@ -759,7 +762,6 @@ var
   LTaskDlgType: TMsgDlgType;
 begin
   LTaskDlgType := GetTaskDlgType(MainIcon);
-
   //Use a custom interface for StyledTaskDialog, if registered
   if Assigned(_TaskDialogExecute) then
     Result := _TaskDialogExecute.DoExecute(ParentWnd,
@@ -793,27 +795,15 @@ begin
     end;
 end;
 
+procedure TStyledTaskDialog.DoOnExpandButtonClicked(Expanded: Boolean);
+begin
+  inherited DoOnExpandButtonClicked(not Expanded);
+end;
+
 procedure TStyledTaskDialog.DoOnHelp;
 var
   LHelpFile: string;
   LHelpSystem: IHelpSystem;
-
-{$IFNDEF D12+}
-  procedure ShowHelpException(E: Exception);
-  var
-    Msg: string;
-    Flags: Integer;
-  begin
-    Flags := MB_OK or MB_ICONSTOP;
-    if Application.UseRightToLeftReading then
-      Flags := Flags or MB_RTLREADING;
-    Msg := E.Message;
-    if (Msg <> '') and (AnsiLastChar(Msg) > '.') then
-      Msg := Msg + '.';
-    MessageBox(Application.Handle, PChar(Msg), PChar(Application.Title), Flags);
-  end;
-{$ENDIF}
-
 begin
   if HelpContext <> 0 then
   begin

@@ -14,12 +14,10 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
   Font.Height = -11
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = True
   Position = poScreenCenter
   ShowHint = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  PixelsPerInch = 96
   TextHeight = 13
   object ExtraGroupBox: TGroupBox
     Left = 0
@@ -48,7 +46,7 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
       Alignment = taRightJustify
       Caption = 'Footer Text:'
     end
-    object Label1: TLabel
+    object VerificationTextLabel: TLabel
       Left = 26
       Top = 167
       Width = 84
@@ -177,7 +175,7 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
         Height = 13
         Caption = 'Message:'
       end
-      object Label2: TLabel
+      object DlgButtonTypeLabel: TLabel
         Left = 16
         Top = 186
         Width = 89
@@ -451,7 +449,7 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
         Width = 196
         Height = 195
         Anchors = [akLeft, akTop, akBottom]
-        ItemHeight = 13
+        ItemHeight = 17
         TabOrder = 1
       end
       object DefaultButtonComboBox: TComboBox
@@ -480,7 +478,12 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
         ModalResult = 14
       end>
     Caption = 'Caption'
-    Flags = [tfEnableHyperlinks, tfAllowDialogCancellation, tfUseCommandLinks, tfPositionRelativeToWindow]
+    ExpandedText = 
+      'The file was created: <A HREF="C:\Windows\System32\license.rtf">' +
+      'license.rtf</A> Expanded Text Expanded Text Expanded Text Expand' +
+      'ed Text Expanded Text Expanded Text Expanded Text Expanded Text ' +
+      'Expanded Text Expanded Text Expanded Text '
+    Flags = [tfEnableHyperlinks, tfAllowDialogCancellation, tfUseCommandLinks, tfExpandedByDefault, tfPositionRelativeToWindow]
     FooterIcon = 1
     FooterText = 
       'The file was created: <A HREF="C:\Windows\System32\license.rtf">' +
@@ -532,8 +535,12 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
         ModalResult = 14
       end>
     Caption = 'CAPTION OF DIALOG'
-    ExpandedText = 'Expanded Text'
-    Flags = [tfAllowDialogCancellation, tfUseCommandLinks, tfPositionRelativeToWindow]
+    ExpandedText = 
+      'The file was created: <A HREF="C:\Windows\System32\license.rtf">' +
+      'license.rtf</A> Expanded Text Expanded Text Expanded Text Expand' +
+      'ed Text Expanded Text Expanded Text Expanded Text Expanded Text ' +
+      'Expanded Text Expanded Text Expanded Text '
+    Flags = [tfAllowDialogCancellation, tfUseCommandLinks, tfExpandedByDefault, tfPositionRelativeToWindow]
     FooterIcon = 1
     FooterText = 
       'The file was created: <A HREF="C:\Windows\System32\license.rtf">' +

@@ -62,9 +62,15 @@ type
 
   TStyledTaskDialogForm = class(TForm)
     FooterPanel: TPanel;
+    ButtonsPanel: TPanel;
+    ExpandedPanel: TPanel;
+    VerificationPanel: TPanel;
+    CommandLinksPanel: TPanel;
     CenterPanel: TPanel;
     ImagePanel: TPanel;
-    ButtonsPanel: TPanel;
+    FooterIconPanel: TPanel;
+    IconContainer: TPanel;
+    RadioGroupPanel: TPanel;
     MessageScrollBox: TScrollBox;
     TitleLabel: TLabel;
     TextLabel: TLinkLabel;
@@ -81,13 +87,10 @@ type
     YesToAllButton: TStyledButton;
     HelpButton: TStyledButton;
     CloseButton: TStyledButton;
-    FooterIconPanel: TPanel;
     FooterTextLabel: TLinkLabel;
-    IconContainer: TPanel;
-    CommandLinksPanel: TPanel;
-    VerificationPanel: TPanel;
-    RadioGroupPanel: TPanel;
     VerificationCheckBox: TCheckBox;
+    ExpandButton: TStyledButton;
+    ExpandLabel: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure ButtonClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -99,6 +102,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure VerificationCheckBoxClick(Sender: TObject);
     procedure RadioButtonClick(Sender: TObject);
+    procedure ExpandButtonClick(Sender: TObject);
   private
     FFocusedButton: TStyledButton;
     FCustomIcons: TStyledDialogIcons;
@@ -120,8 +124,14 @@ type
     FAutoClickDelay: Integer;
     FRadioButton: TTaskDialogRadioButtonItem;
     FFlags: TTaskDialogFlags;
+    FExpandButtonCaption: string;
+    FText: string;
+    FExpandedText: string;
+    FHandle: HWND;
+    FTaskDialogExpanded: TNotifyEvent;
     //procedure GetIconNameAndIndex(ATaskDialog: TMsgDlgType;
     //  out AImageName: string; out AImageIndex: Integer); overload;
+    procedure TaskDialogExpanded(Sender: TObject);
     procedure GetIconNameAndIndex(ATaskDialogIcon: TTaskDialogIcon;
       out AImageName: string; out AImageIndex: Integer); overload;
     procedure ShowDialogForm;
@@ -143,6 +153,7 @@ type
     procedure SetFooterText(const AValue: string);
     function GetFooterText: string;
     procedure SetVerificationText(const AValue: string);
+    procedure SetExpandedText(const AValue: string);
     function GetVerificationText: string;
     function GetFocusedButton: TStyledButton;
     procedure InitDlgButtonsWithFamily(const AFamily: TStyledButtonFamily);
@@ -158,6 +169,9 @@ type
     procedure SetRadioButtons(const AValue: TTaskDialogButtons);
     function UsingCommandLinks: Boolean;
     procedure SetFlags(const AValue: TTaskDialogFlags);
+    procedure SetExpandButtonCaption(const Value: string);
+    function GetExpanded: Boolean;
+    procedure CalcMessageText(const AExpanded: Boolean);
   protected
   	function GetScaleFactor: Single; virtual;
     class function CanUseAnimations: Boolean; virtual; abstract;
@@ -184,6 +198,7 @@ type
     function FindButton(const AModalResult: TModalResult): TStyledButton;
     procedure SetDialogFont(const AFont: TFont); virtual;
     constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
     property AutoClick: Boolean read FAutoClick write FAutoClick default False;
     property AutoClickDelay: Integer read FAutoClickDelay write FAutoClickDelay default DEFAULT_AUTOCLICK_DELAY;
     property ButtonsWidth: Integer read GetButtonsWidth write SetButtonsWidth;
@@ -192,11 +207,11 @@ type
     property RadioButtons: TTaskDialogButtons read FRadioButtons write SetRadioButtons;
     property CommonButtons: TTaskDialogCommonButtons read FCommonButtons write FCommonButtons default [tcbOk, tcbCancel];
     property DefaultButton: TTaskDialogCommonButton read FDefaultButton write FDefaultButton default tcbOk;
-(*
-    property ExpandButtonCaption: string read FExpandButtonCaption write FExpandButtonCaption;
-    property Expanded: Boolean read FExpanded;
+    property ExpandButtonCaption: string read FExpandButtonCaption write SetExpandButtonCaption;
+    property Expanded: Boolean read GetExpanded;
     property ExpandedText: string read FExpandedText write SetExpandedText;
     property Handle: HWND read FHandle;
+(*
     property ProgressBar: TTaskDialogProgressBar read FProgressBar write FProgressBar;
     property URL: string read FURL;
 *)
@@ -427,7 +442,7 @@ procedure TStyledTaskDialogForm.SetFooterText(const AValue: string);
 var
   LRows: TStringList;
 begin
-  if AValue <> '' then
+  if Trim(AValue) <> '' then
   begin
     LRows := TStringList.Create;
     try
@@ -471,6 +486,11 @@ begin
   else
     Result := nil;
   end;
+end;
+
+function TStyledTaskDialogForm.GetExpanded: Boolean;
+begin
+  Result := FTaskDialog.Expanded;
 end;
 
 procedure TStyledTaskDialogForm.FocusDefaultButton;
@@ -517,6 +537,7 @@ var
   LRadioGroupPanelHeight: Integer;
   LCommandLinksPanelHeight: Integer;
   LVerificationPanelHeight: Integer;
+  LExpandedPanelHeight: Integer;
   LButtonsPanelHeight: Integer;
   LFooterPanelHeight: Integer;
   LMinHeight, LCalcHeight: Integer;
@@ -555,6 +576,11 @@ begin
   else
     LVerificationPanelHeight := 0;
 
+  if ExpandedPanel.Visible then
+    LExpandedPanelHeight := ExpandedPanel.Height + LMargins
+  else
+    LExpandedPanelHeight := 0;
+
   if CommandLinksPanel.Visible then
     LCommandLinksPanelHeight := CommandLinksPanel.Height + (LMargins * 2)
   else
@@ -571,6 +597,7 @@ begin
   LCalcHeight :=
     LTitleHeight +
     LMessageHeight +
+    LExpandedPanelHeight +
     LRadioGroupPanelHeight +
     LFooterPanelHeight +
     LVerificationPanelHeight +
@@ -581,6 +608,7 @@ begin
   LMinHeight :=
     LTitleHeight +
     LImageSize + LMargins +
+    LExpandedPanelHeight +
     LRadioGroupPanelHeight +
     LFooterPanelHeight +
     LVerificationPanelHeight +
@@ -601,6 +629,9 @@ begin
   if LCalcHeight > LHeight then
   begin
     MessageScrollBox.VertScrollBar.Visible := True;
+    {$IFDEF D10_1+}
+    MessageScrollBox.UseWheelForScrolling := True;
+    {$ENDIF}
     MessageScrollBox.VertScrollBar.Range := LMessageHeight + LTitleHeight + 100;
     TextLabel.Align := alClient;
   end
@@ -636,10 +667,39 @@ begin
   ClientWidth := Max(LWidth, LFormWidth);
 end;
 
+procedure TStyledTaskDialogForm.CalcMessageText(const AExpanded: Boolean);
+var
+  LMessage: string;
+begin
+  if not AExpanded then
+  begin
+    ExpandButton.Caption := '+';
+    if ExpandButtonCaption = '' then
+      ExpandLabel.Caption := SShowDetails;
+  end
+  else
+  begin
+    ExpandButton.Caption := '-';
+    if ExpandButtonCaption = '' then
+      ExpandLabel.Caption := SHideDetails;
+  end;
+  LMessage := FText;
+  if AExpanded and (FExpandedText <> '') then
+    LMessage := LMessage + sLineBreak + sLineBreak + FExpandedText;
+  if TextLabel.Caption <> LMessage then
+  begin
+    AutoSizeLabel.Caption := ClearHRefs(LMessage);
+    TextLabel.Caption := LMessage;
+  end;
+end;
+
 procedure TStyledTaskDialogForm.SetText(const AValue: string);
 begin
-  AutoSizeLabel.Caption := ClearHRefs(AValue);
-  TextLabel.Caption := AValue;
+  if AValue <> FText then
+  begin
+    FText := AValue;
+    CalcMessageText(Expanded);
+  end;
 end;
 
 procedure TStyledTaskDialogForm.SetTitle(const AValue: string);
@@ -654,7 +714,7 @@ procedure TStyledTaskDialogForm.SetVerificationText(const AValue: string);
 var
   LRows: TStringList;
 begin
-  if AValue <> '' then
+  if Trim(AValue) <> '' then
   begin
     LRows := TStringList.Create;
     try
@@ -668,7 +728,22 @@ begin
     end;
   end
   else
-    FooterPanel.Visible := False;
+    VerificationPanel.Visible := False;
+end;
+
+procedure TStyledTaskDialogForm.SetExpandButtonCaption(const Value: string);
+begin
+  FExpandButtonCaption := Value;
+end;
+
+procedure TStyledTaskDialogForm.SetExpandedText(const AValue: string);
+begin
+  if Trim(AValue) <> FExpandedText then
+  begin
+    FExpandedText := AValue;
+    ExpandedPanel.Visible := FExpandedText <> '';
+    CalcMessageText(Expanded);
+  end;
 end;
 
 procedure TStyledTaskDialogForm.LoadCustomFooterIcon(const AIcon: TIcon;
@@ -833,52 +908,55 @@ begin
     // Find if the Button is already present in the Form
     // for CommandLinks the buttons must be always created
     LStyledButton := FindButton(LButtonItem.ModalResult);
-    // Show the Button if not using Command Links
-    LStyledButton.Visible := Assigned(LStyledButton) and not LUsingCommandLinks;
-    if not Assigned(LStyledButton) or LUsingCommandLinks then
+    if Assigned(LStyledButton) then
     begin
-      LStyledButton := TStyledButton.Create(Self);
-      LStyledButton.OnClick := ButtonClick;
-      LStyledButton.SetButtonStyle(FDialogBtnFamily, LButtonItem.ModalResult);
-    end;
-    LStyledButton.Caption := LButtonItem.Caption;
-    LStyledButton.Default := LButtonItem.Default;
-    LStyledButton.ElevationRequired := LButtonItem.ElevationRequired;
-    LStyledButton.Enabled := LButtonItem.Enabled;
-    if LUsingCommandLinks then
-    begin
-      LStyledButton.Parent := CommandLinksPanel;
-      LStyledButton.TabOrder := 0;
-      LStyledButton.AlignWithMargins := True;
-      LStyledButton.Margins.Top := 1;
-      LStyledButton.Margins.Bottom := 1;
-      LStyledButton.Align := alBottom;
-      LStyledButton.Style := bsCommandLink;
-      LStyledButton.CommandLinkHint := LButtonItem.CommandLinkHint;
-      LStyledButton.Height := LCommandLinkHeight - 2;
-      CommandLinksPanel.Height := CommandLinksPanel.Height + LCommandLinkHeight;
-      if LButtonItem.Default then
+      // Show the Button if not using Command Links
+      LStyledButton.Visible := Assigned(LStyledButton) and not LUsingCommandLinks;
+      if not Assigned(LStyledButton) or LUsingCommandLinks then
       begin
-        LStyledButton.Default := True;
-        Self.ActiveControl := LStyledButton;
-        SetFocusToButton(LStyledButton);
+        LStyledButton := TStyledButton.Create(Self);
+        LStyledButton.OnClick := ButtonClick;
+        LStyledButton.SetButtonStyle(FDialogBtnFamily, LButtonItem.ModalResult);
       end;
-      if Assigned(LLastButton) then
+      LStyledButton.Caption := LButtonItem.Caption;
+      LStyledButton.Default := LButtonItem.Default;
+      LStyledButton.ElevationRequired := LButtonItem.ElevationRequired;
+      LStyledButton.Enabled := LButtonItem.Enabled;
+      if LUsingCommandLinks then
       begin
-        LStyledButton.TabOrder := LStyledButton.TabOrder -1;
-        LStyledButton.Top := LLastButton.Top - LLastButton.Height;
+        LStyledButton.Parent := CommandLinksPanel;
+        LStyledButton.TabOrder := 0;
+        LStyledButton.AlignWithMargins := True;
+        LStyledButton.Margins.Top := 1;
+        LStyledButton.Margins.Bottom := 1;
+        LStyledButton.Align := alBottom;
+        LStyledButton.Style := bsCommandLink;
+        LStyledButton.CommandLinkHint := LButtonItem.CommandLinkHint;
+        LStyledButton.Height := LCommandLinkHeight - 2;
+        CommandLinksPanel.Height := CommandLinksPanel.Height + LCommandLinkHeight;
+        if LButtonItem.Default then
+        begin
+          LStyledButton.Default := True;
+          Self.ActiveControl := LStyledButton;
+          SetFocusToButton(LStyledButton);
+        end;
+        if Assigned(LLastButton) then
+        begin
+          LStyledButton.TabOrder := LStyledButton.TabOrder -1;
+          LStyledButton.Top := LLastButton.Top - LLastButton.Height;
+        end;
+        LLastButton := LStyledButton;
+      end
+      else
+      begin
+        LStyledButton.Parent := ButtonsPanel;
+        LStyledButton.Align := alRight;
+        LStyledButton.AlignWithMargins := True;
+        LStyledButton.Margins.Assign(YesButton.Margins);
+        if Assigned(LLastButton) then
+          LStyledButton.Left := LLastButton.Left - LLastButton.Width;
+        LLastButton := LStyledButton;
       end;
-      LLastButton := LStyledButton;
-    end
-    else
-    begin
-      LStyledButton.Parent := ButtonsPanel;
-      LStyledButton.Align := alRight;
-      LStyledButton.AlignWithMargins := True;
-      LStyledButton.Margins.Assign(YesButton.Margins);
-      if Assigned(LLastButton) then
-        LStyledButton.Left := LLastButton.Left - LLastButton.Width;
-      LLastButton := LStyledButton;
     end;
   end;
   //Set Focus to Button assigning ActiveControl
@@ -903,42 +981,48 @@ var
   begin
     if AControl.Visible then
     begin
-      AControl.Top := LTop;
+      AControl.Top := LTop+1;
       Inc(LTop, AControl.Height);
-      if AControl.AlignWithMargins then
-        Inc(LTop, AControl.Margins.Top + AControl.Margins.Bottom);
+//      if AControl.AlignWithMargins then
+//        Inc(LTop, AControl.Margins.Top + AControl.Margins.Bottom);
     end;
   end;
 
 begin
   LTop := 0;
   //Calculating Top
+  AddHeight(ExpandedPanel);
   AddHeight(RadioGroupPanel);
   AddHeight(CommandLinksPanel);
-  AddHeight(VerificationPanel);
   AddHeight(ButtonsPanel);
+  AddHeight(VerificationPanel);
   AddHeight(FooterPanel);
   //Calculating Top as difference
   LTop := ClientHeight - LTop;
 
   //Setting Top for components starting from Top Visible Component
+  SetTop(ExpandedPanel);
   SetTop(RadioGroupPanel);
   SetTop(CommandLinksPanel);
-  SetTop(VerificationPanel);
   SetTop(ButtonsPanel);
+  SetTop(VerificationPanel);
   SetTop(FooterPanel);
 end;
 
 procedure TStyledTaskDialogForm.ShowDialogForm;
 begin
   //Initialize components based on ATaskDialog attributes
+  FTaskDialogExpanded := FTaskDialog.OnExpanded;
+  FTaskDialog.OnExpanded := TaskDialogExpanded;
+
   Caption := FTaskDialog.Caption;
   HelpContext := FTaskDialog.HelpContext;
   CommonButtons := FTaskDialog.CommonButtons;
   DefaultButton := FTaskDialog.DefaultButton;
   Buttons := FTaskDialog.Buttons;
-  RadioButtons := FTaskDialog.RadioButtons;
+  //RadioButtons := FTaskDialog.RadioButtons;
   AddCustomButtons(FTaskDialog.Buttons);
+
   UpdateButtonsVisibility;
   UpdateButtonsSize;
 
@@ -948,31 +1032,35 @@ begin
   MainIcon := FTaskDialog.MainIcon;
   CustomMainIcon := FTaskDialog.CustomMainIcon;
   FFlags := FTaskDialog.Flags;
-(*
-    property ExpandButtonCaption: string read FExpandButtonCaption write FExpandButtonCaption;
-    property Expanded: Boolean read FExpanded;
-    property ExpandedText: string read FExpandedText write SetExpandedText;
-    property Handle: HWND read FHandle;
-*)
-    CustomFooterIcon := FTaskDialog.CustomFooterIcon;
-    FooterIcon := FTaskDialog.FooterIcon;
-    FooterText := FTaskDialog.FooterText;
-    FRadioButton := FTaskDialog.RadioButton;
+  ExpandButtonCaption := FTaskDialog.ExpandButtonCaption;
+  ExpandedText := FTaskDialog.ExpandedText;
+  FHandle := FTaskDialog.Handle;
+  CustomFooterIcon := FTaskDialog.CustomFooterIcon;
+  FooterIcon := FTaskDialog.FooterIcon;
+  FooterText := FTaskDialog.FooterText;
+  FRadioButton := FTaskDialog.RadioButton;
 (*
     property ProgressBar: TTaskDialogProgressBar read FProgressBar write FProgressBar;
     property URL: string read FURL;
 *)
-    TextMessage := FTaskDialog.Text;
-    TitleMessage :=  FTaskDialog.Title;
-    VerificationText := FTaskDialog.VerificationText;
+  TextMessage := FTaskDialog.Text;
+  TitleMessage :=  FTaskDialog.Title;
+  VerificationText := FTaskDialog.VerificationText;
 
   if FTaskDialog is TStyledTaskDialog then
-  begin
     TStyledTaskDialog(FTaskDialog).OnFindDialogButton := FindButton;
-  end;
 
   //Load and show Image
   LoadDialogImage;
+end;
+
+procedure TStyledTaskDialogForm.TaskDialogExpanded(Sender: TObject);
+begin
+  CalcMessageText(Expanded);
+  AdjustHeight;
+  AdjustControlsTopPos;
+  if Assigned(FTaskDialogExpanded) then
+    FTaskDialogExpanded(Sender);
 end;
 
 function TStyledTaskDialogForm.TaskDialogIconToImageIndex(
@@ -1060,6 +1148,17 @@ begin
   AImageSize := Round(DEFAULT_MAIN_ICON_SIZE * LScaleFactor);
 end;
 
+destructor TStyledTaskDialogForm.Destroy;
+begin
+  inherited;
+end;
+
+procedure TStyledTaskDialogForm.ExpandButtonClick(Sender: TObject);
+begin
+  if FTaskDialog is TStyledTaskDialog then
+    TStyledTaskDialog(FTaskDialog).DoOnExpandButtonClicked(Expanded);
+end;
+
 procedure TStyledTaskDialogForm.FormClose(Sender: TObject;
   var Action: TCloseAction);
 var
@@ -1074,16 +1173,18 @@ end;
 
 procedure TStyledTaskDialogForm.FormCreate(Sender: TObject);
 begin
-  FooterPanel.Visible := False;
+  ;
 end;
 
 procedure TStyledTaskDialogForm.FormDestroy(Sender: TObject);
 begin
+  inherited;
   FCustomIcons[mtWarning].Free;
   FCustomIcons[mtError].Free;
   FCustomIcons[mtInformation].Free;
   FCustomIcons[mtConfirmation].Free;
   FCustomIcons[mtCustom].Free;
+  FTaskDialog.OnExpanded := FTaskDialogExpanded;
 end;
 
 function TStyledTaskDialogForm.GetFocusedButton: TStyledButton;
@@ -1146,6 +1247,18 @@ begin
     ShowDialogForm;
     AdjustWidth;
     AutoSizeLabel.AutoSize := True;
+    //Enlarge form when the message is very long
+    if AutoSizeLabel.Height > Self.Monitor.Height then
+    begin
+      AutoSizeLabel.AutoSize := False;
+      Width := Round(Self.Monitor.Height - 100 * GetScaleFactor);
+      AutoSizeLabel.AutoSize := True;
+    end;
+
+    //Expand panel if Flag is present
+    if (tfExpandedByDefault in FTaskDialog.Flags) then
+      ExpandButton.Click;
+
     AdjustHeight;
     AdjustControlsTopPos;
     PlayMessageDlgSound;
@@ -1203,7 +1316,7 @@ end;
 
 function TStyledTaskDialogForm.GetText: string;
 begin
-  Result := TextLabel.Caption;
+  Result := FText;
 end;
 
 function TStyledTaskDialogForm.GetTitle: string;

@@ -89,6 +89,8 @@ resourcestring
     SApplyUpdates = 'Memorizza tutte le modifiche';
     SCancelUpdates = 'Annulla tutte le modifiche';
     SDeleteRecordQuestion = 'Vuoi cancellare il record?';
+    SShowDetails = 'Visualizza dettagli';
+    SHideDetails = 'Nascondi dettagli';
 
 {$ELSEIF Defined(FraMessages)}
     STR_YES = '&Oui';
@@ -146,6 +148,8 @@ resourcestring
     SApplyUpdates = 'Appliquer les modifications';
     SCancelUpdates = 'Annuler les modifications';
     SDeleteRecordQuestion = 'Supprimer l''enregistrement?';
+    SShowDetails = 'Voir les détails';
+    SHideDetails = 'Masquer les détails';
 {$ELSE}
     STR_YES = '&Yes';
     STR_NO = '&No';
@@ -202,6 +206,8 @@ resourcestring
     SApplyUpdates = 'Apply updates';
     SCancelUpdates = 'Revert updates';
     SDeleteRecordQuestion = 'Delete record?';
+    SShowDetails = 'Show details';
+    SHideDetails = 'Hide details';
 {$ENDIF}
 
 function GetMsgDlgTitle(const AMsgDlgType: TMsgDlgType): string;

@@ -55,5 +55,6 @@ begin
   Application.Title := 'Styled Components Demos with Delphi XE8';
   Application.CreateForm(TdmResources, dmResources);
   Application.CreateForm(TfrmMain, frmMain);
+  Application.OnException := frmMain.ShowError;
   Application.Run;
 end.

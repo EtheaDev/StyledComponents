@@ -57,7 +57,7 @@ uses
 const
   StyledComponentsVersion = '3.6.8';
   DEFAULT_RADIUS = 6;
-  RESOURCE_SHIELD_ICON = 'BUTTON_SHIELD_ADMIN';
+  RESOURCE_SHIELD_ICON = 'STYLED_BUTTON_SHIELD_ADMIN';
   DEFAULT_MAX_BADGE_VALUE = 99;
   DEFAULT_BADGE_COLOR = clRed;
   DEFAULT_BADGE_FONT_COLOR = clWhite;
@@ -1678,22 +1678,29 @@ begin
     ATextRect := ASurfaceRect;
 
   //Preserve Border Spacing for ATextRect
-  if LImageAlignment in [iaCenter, iaLeft] then
+  if (LImageAlignment = iaCenter) or (AImageWidth = 0) then
+  begin
+    if ATextRect.Right > (ASurfaceRect.Right - ABorderWidth) then
+      ATextRect.Right := ASurfaceRect.Right - ABorderWidth;
+    if ATextRect.Left < (ASurfaceRect.Left + ABorderWidth) then
+      ATextRect.Left := ASurfaceRect.Left + ABorderWidth;
+  end;
+  if LImageAlignment = iaLeft then
   begin
     if ATextRect.Right > (ASurfaceRect.Width - ABorderWidth) then
       ATextRect.Right := ASurfaceRect.Width - ABorderWidth;
   end;
-  if LImageAlignment in [iaCenter, iaRight] then
+  if LImageAlignment = iaRight then
   begin
     if ATextRect.Left < (ASurfaceRect.Left + ABorderWidth) then
       ATextRect.Left := ASurfaceRect.Left + ABorderWidth;
   end;
-  if LImageAlignment in [iaTop] then
+  if LImageAlignment = iaTop then
   begin
     if ATextRect.Bottom > (ASurfaceRect.Height - ABorderWidth) then
       ATextRect.Bottom := ASurfaceRect.Height - ABorderWidth;
   end;
-  if LImageAlignment in [iaBottom] then
+  if LImageAlignment = iaBottom then
   begin
     if ATextRect.Top < (ASurfaceRect.Top + ABorderWidth) then
       ATextRect.Top := ASurfaceRect.Top + ABorderWidth;
@@ -2039,6 +2046,14 @@ var
   R: TRect;
   OldBKMode: Integer;
 begin
+(* for test
+  ACanvas.Brush.Color := clYellow;
+  ACanvas.FillRect(ARect);
+  ACanvas.Pen.Color := clRed;
+  ACanvas.Pen.Width := 1;
+  ACanvas.Pen.Style := psSolid;
+  ACanvas.Rectangle(ARect);
+*)
   R := ARect;
   Winapi.Windows.DrawText(ACanvas.Handle, PChar(AText), Length(AText),
     R, ABidiFlags or DT_CALCRECT);
@@ -2060,6 +2075,13 @@ begin
           R.Top := ARect.Top + ABorderWidth + ASpacing ;
         if R.Bottom > ARect.Bottom - ABorderWidth - Aspacing then
           R.Bottom := ARect.Bottom - ABorderWidth - Aspacing;
+      (* for test
+      ACanvas.Brush.Color := clRed;
+      ACanvas.FillRect(R);
+      ACanvas.Pen.Color := clBlue;
+      ACanvas.Pen.Width := 1;
+      ACanvas.Rectangle(R);
+      *)
         Winapi.Windows.DrawText(ACanvas.Handle, PChar(AText),
           Length(AText), R, ABidiFlags or DT_END_ELLIPSIS);
       end

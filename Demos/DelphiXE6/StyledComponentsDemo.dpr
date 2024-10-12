@@ -50,8 +50,11 @@ uses
 
 begin
   Application.Initialize;
+  Application.MainFormOnTaskBar := True;
+  Application.ActionUpdateDelay := 50;
   Application.Title := 'Styled Components Demos with Delphi XE6';
   Application.CreateForm(TdmResources, dmResources);
   Application.CreateForm(TfrmMain, frmMain);
+  Application.OnException := frmMain.ShowError;
   Application.Run;
 end.

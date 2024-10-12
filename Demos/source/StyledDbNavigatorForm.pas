@@ -99,6 +99,9 @@ type
     procedure UpdateDbNav(Sender: TObject);
     procedure PopUpMenuClick(Sender: TObject);
     procedure CustomImagesCheckBoxClick(Sender: TObject);
+    procedure StyledDBNavigatorEnableNavBtn(
+      const ADbNavigator: TCustomStyledDBNavigator;
+      const ABtn: TStyledNavButton; var AEnabled: Boolean);
   private
     FDbNavigator: TDbNavigator;
     FStyledDbNavigator: TStyledDbNavigator;
@@ -204,7 +207,7 @@ end;
 
 procedure TfmStyledDbNavigator.FormCreate(Sender: TObject);
 begin
-  Caption := Application.Title;
+  //Caption := Application.Title;
   FlatCheckBox.Checked := FLAT_BUTTONS;
   ShowCaptionsCheckBox.Checked := SHOW_CAPTIONS;
   tbWidth.Position := DBNAV_WIDTH;
@@ -216,10 +219,19 @@ begin
   StyledShowMessage((Sender as TMenuItem).Caption);
 end;
 
+procedure TfmStyledDbNavigator.StyledDBNavigatorEnableNavBtn(
+  const ADbNavigator: TCustomStyledDBNavigator; const ABtn: TStyledNavButton;
+  var AEnabled: Boolean);
+begin
+  //Simple example to disable all buttons when the Quantity  is 3
+  if AEnabled and (ClientDataSetQuantity.Value = 3) then
+    AEnabled := False;
+end;
+
 procedure TfmStyledDbNavigator.ToolButtonclick(Sender: TObject);
 begin
   if Sender is TToolButton then
-    ShowMessage(TToolButton(Sender).Caption)
+    StyledShowMessage(TToolButton(Sender).Caption)
   else if Sender is TStyledNavButton then
     EditStyledButton(TStyledNavButton(Sender));
 end;

@@ -45,7 +45,7 @@ type
     btUseNativeDialogComp: TButton;
     FooterTextLabel: TLabel;
     FooterTextMemo: TMemo;
-    Label1: TLabel;
+    VerificationTextLabel: TLabel;
     VerificationTextMemo: TMemo;
     rgMainIcon: TRadioGroup;
     CaptionLabel: TLabel;
@@ -68,7 +68,7 @@ type
     clbButtons: TCheckListBox;
     DefaultButtonComboBox: TComboBox;
     FamilyComboBox: TComboBox;
-    Label2: TLabel;
+    DlgButtonTypeLabel: TLabel;
     gbResult: TGroupBox;
     MRLabel: TLabel;
     AlphaBlendSpinEdit: TSpinEdit;

@@ -85,6 +85,7 @@ type
   TStyledNavButton = class;
   TStyledNavDataLink = class;
 
+  TEnableNavBtnProc = procedure(const ADbNavigator: TCustomStyledDBNavigator; const ABtn: TStyledNavButton; var AEnabled: Boolean) of Object;
   TButtonProc = reference to procedure (Button: TStyledNavButton);
   TNavButtons = array[TNavigateBtn] of TStyledNavButton;
 
@@ -119,6 +120,7 @@ type
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer); override;
   public
+    procedure EnabledNavBtn(AValue: Boolean);
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     property NavStyle: TNavButtonStyle read FNavStyle write FNavStyle;
@@ -176,10 +178,13 @@ type
     FCustomDrawType: Boolean;
     FStyleApplied: Boolean;
 
+    FNoCopyCursor: Boolean;
+
     //Imagelist support
     FImages: TCustomImageList;
     FDisabledImages: TCustomImageList;
     FShowCaptions: Boolean;
+    FOnEnableNavBtn: TEnableNavBtnProc;
 
     {$IFDEF D10_4+}
     FButtonImages: TVirtualImageList;
@@ -250,7 +255,10 @@ type
     function GetAsVCLComponent: Boolean;
     procedure SetAsVCLComponent(const AValue: Boolean);
     function GetButtonItem(AIndex: TNavigateBtn): TStyledNavButton;
+    procedure SetCursor(const AValue: TCursor);
+    function GetCursor: TCursor;
   protected
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
     function GetActiveStyleName: string;
     procedure ClickHandler(Sender: TObject); virtual; abstract;
     procedure InitHints; virtual;
@@ -302,6 +310,7 @@ type
     property Anchors;
     property ButtonItems[Index: TNavigateBtn]: TStyledNavButton read GetButtonItem;
     property Constraints;
+    property Cursor: TCursor read GetCursor write SetCursor default DEFAULT_CURSOR;
     property DragCursor;
     property DragKind;
     property DragMode;
@@ -336,8 +345,9 @@ type
     //Imagelist support
     property DisabledImages: TCustomImageList read FDisabledImages write SetDisabledImages;
     property Images: TCustomImageList read FImages write SetImages;
-
+    //new Properties
     property ShowCaptions: Boolean read FShowCaptions write SetShowCaptions default False;
+    property OnEnableNavBtn:  TEnableNavBtnProc read FOnEnableNavBtn write FOnEnableNavBtn;
     //StyledComponents Attributes
     property StyleRadius: Integer read FStyleRadius write SetStyleRadius stored IsCustomRadius;
     property StyleDrawType: TStyledButtonDrawType read FStyleDrawType write SetStyleDrawType stored IsCustomDrawType;
@@ -395,6 +405,7 @@ type
     property ParentShowHint;
     property PopupMenu;
     property ShowCaptions;
+	property OnEnableNavBtn;
     property ShowHint;
     property StyleElements;
     property TabOrder;
@@ -495,6 +506,7 @@ type
     property ParentShowHint;
     property PopupMenu;
     property ShowCaptions;
+	property OnEnableNavBtn;
     property ShowHint;
     property StyleElements;
     property TabOrder;
@@ -849,7 +861,10 @@ var
   I: TNavigateBtn;
 begin
   for I := Low(FButtons) to High(FButtons) do
-    AButtonProc(FButtons[I]);
+  begin
+    if Assigned(FButtons[I]) then
+      AButtonProc(FButtons[I]);
+  end;
 end;
 
 class procedure TCustomStyledDBNavigator.RegisterDefaultRenderingStyle(
@@ -881,11 +896,12 @@ begin
     Btn.Flat := Flat;
     Btn.Index := I;
     Btn.Visible := I in FVisibleButtons;
-    Btn.Enabled := True;
+    Btn.EnabledNavBtn(True);
     Btn.SetBounds (X, Y, FMinBtnSize.X, FMinBtnSize.Y);
     Btn.OnClick := ClickHandler;
     Btn.OnMouseDown := BtnMouseDown;
     Btn.Parent := Self;
+    Btn.Cursor := Cursor;
     FButtons[I] := Btn;
     if Kind = dbnHorizontal then
       X := X + FMinBtnSize.X
@@ -1028,6 +1044,21 @@ begin
     FCaptions.Assign(AValue);
 end;
 
+procedure TCustomStyledDBNavigator.SetCursor(const AValue: TCursor);
+begin
+  if AValue <> Cursor then
+  begin
+    inherited Cursor := AValue;
+    if not FNoCopyCursor then
+      ProcessButtons(
+        procedure (ABtn: TStyledNavButton)
+        begin
+          ABtn.Cursor := AValue;
+        end
+      );
+  end;
+end;
+
 procedure TCustomStyledDBNavigator.SetImages(const AValue: TCustomImageList);
 begin
   if FImages <> AValue then
@@ -1092,6 +1123,11 @@ procedure TCustomStyledDBNavigator.GetChildren(Proc: TGetChildProc; Root: TCompo
 begin
 //  for J := Low(FButtons) to High(FButtons) do
 //    Proc(FButtons[J]);
+end;
+
+function TCustomStyledDBNavigator.GetCursor: TCursor;
+begin
+  Result := inherited Cursor;
 end;
 
 procedure TCustomStyledDBNavigator.Notification(AComponent: TComponent;
@@ -1625,6 +1661,26 @@ begin
   InitHints;
 end;
 
+procedure TCustomStyledDBNavigator.MouseMove(Shift: TShiftState; X, Y: Integer);
+var
+  LControl: TControl;
+begin
+  inherited;
+  LControl := ControlAtPos(TPoint.Create(X,Y), True, True);
+  if (LControl is TStyledNavButton) then
+  begin
+    FNoCopyCursor := True;
+    try
+      if not LControl.Enabled then
+        Cursor := crDefault
+      else
+        Cursor := LControl.Cursor;
+    finally
+      FNoCopyCursor := False;
+    end;
+  end;
+end;
+
 { TStyledDBNavigator }
 
 procedure TStyledDBNavigator.ActiveChanged;
@@ -1633,7 +1689,7 @@ var
 begin
   if not (Enabled and FDataLink.Active) then
     for I := Low(FButtons) to High(FButtons) do
-      FButtons[I].Enabled := False
+      FButtons[I].EnabledNavBtn(False)
   else
   begin
     DataChanged;
@@ -1736,15 +1792,18 @@ begin
   CanRefresh := Enabled and FDataLink.Active and FDataLink.DataSet.CanRefresh;
   UpEnable := Enabled and FDataLink.Active and not FDataLink.DataSet.BOF;
   DnEnable := Enabled and FDataLink.Active and not FDataLink.DataSet.EOF;
-  FButtons[TNavigateBtn.nbFirst].Enabled := UpEnable;
-  FButtons[TNavigateBtn.nbPrior].Enabled := UpEnable;
-  FButtons[TNavigateBtn.nbNext].Enabled := DnEnable;
-  FButtons[TNavigateBtn.nbLast].Enabled := DnEnable;
-  FButtons[TNavigateBtn.nbDelete].Enabled := CanModify and
-    not (FDataLink.DataSet.BOF and FDataLink.DataSet.EOF);
-  FButtons[TNavigateBtn.nbRefresh].Enabled := CanRefresh;
-  FButtons[TNavigateBtn.nbApplyUpdates].Enabled := CanModify and Self.CanApplyUpdates;
-  FButtons[TNavigateBtn.nbCancelUpdates].Enabled := CanModify and Self.CanCancelUpdates;
+  FButtons[TNavigateBtn.nbFirst].EnabledNavBtn(UpEnable);
+  FButtons[TNavigateBtn.nbPrior].EnabledNavBtn(UpEnable);
+  FButtons[TNavigateBtn.nbNext].EnabledNavBtn(DnEnable);
+  FButtons[TNavigateBtn.nbLast].EnabledNavBtn(DnEnable);
+  FButtons[TNavigateBtn.nbInsert].EnabledNavBtn(CanModify);
+  FButtons[TNavigateBtn.nbEdit].EnabledNavBtn(CanModify and
+    not (FDataLink.DataSet.BOF and FDataLink.DataSet.EOF));
+  FButtons[TNavigateBtn.nbDelete].EnabledNavBtn(CanModify and
+    not (FDataLink.DataSet.BOF and FDataLink.DataSet.EOF));
+  FButtons[TNavigateBtn.nbRefresh].EnabledNavBtn(CanRefresh);
+  FButtons[TNavigateBtn.nbApplyUpdates].EnabledNavBtn(CanModify and Self.CanApplyUpdates);
+  FButtons[TNavigateBtn.nbCancelUpdates].EnabledNavBtn(CanModify and Self.CanCancelUpdates);
 end;
 
 destructor TStyledDBNavigator.Destroy;
@@ -1758,13 +1817,13 @@ var
   CanModify: Boolean;
 begin
   CanModify := Enabled and FDataLink.Active and FDataLink.DataSet.CanModify;
-  Buttons[TNavigateBtn.nbInsert].Enabled := CanModify;
-  Buttons[TNavigateBtn.nbEdit].Enabled := CanModify and not FDataLink.Editing;
-  Buttons[TNavigateBtn.nbPost].Enabled := CanModify and FDataLink.Editing;
-  Buttons[TNavigateBtn.nbCancel].Enabled := CanModify and FDataLink.Editing;
-  Buttons[TNavigateBtn.nbRefresh].Enabled := Enabled and (TNavigateBtn.nbRefresh in VisibleButtons) and FDataLink.Active and FDataLink.DataSet.CanRefresh;
-  Buttons[TNavigateBtn.nbApplyUpdates].Enabled := CanModify and (TNavigateBtn.nbApplyUpdates in VisibleButtons) and Self.CanApplyUpdates;
-  Buttons[TNavigateBtn.nbCancelUpdates].Enabled := CanModify and (TNavigateBtn.nbCancelUpdates in VisibleButtons) and Self.CanCancelUpdates;
+  Buttons[TNavigateBtn.nbInsert].EnabledNavBtn(CanModify);
+  Buttons[TNavigateBtn.nbEdit].EnabledNavBtn(CanModify and not FDataLink.Editing);
+  Buttons[TNavigateBtn.nbPost].EnabledNavBtn(CanModify and FDataLink.Editing);
+  Buttons[TNavigateBtn.nbCancel].EnabledNavBtn(CanModify and FDataLink.Editing);
+  Buttons[TNavigateBtn.nbRefresh].EnabledNavBtn(Enabled and (TNavigateBtn.nbRefresh in VisibleButtons) and FDataLink.Active and FDataLink.DataSet.CanRefresh);
+  Buttons[TNavigateBtn.nbApplyUpdates].EnabledNavBtn(CanModify and (TNavigateBtn.nbApplyUpdates in VisibleButtons) and Self.CanApplyUpdates);
+  Buttons[TNavigateBtn.nbCancelUpdates].EnabledNavBtn(CanModify and (TNavigateBtn.nbCancelUpdates in VisibleButtons) and Self.CanCancelUpdates);
 end;
 
 function TStyledDBNavigator.GetDataSource: TDataSource;
@@ -1981,6 +2040,14 @@ begin
   end;
 end;
 
+procedure TStyledNavButton.EnabledNavBtn(AValue: Boolean);
+begin
+  if Assigned(FDbNavigator) and Assigned(FDbNavigator.FOnEnableNavBtn) then
+    FDbNavigator.FOnEnableNavBtn(FDbNavigator, Self, AValue);
+  if AValue <> Enabled then
+    Enabled := AValue;
+end;
+
 procedure TStyledNavButton.SetImageAlignment(const AValue: TImageAlignment);
 begin
   if FImageAlignment <> AValue then
@@ -2056,14 +2123,14 @@ begin
     FController.DisableButtons(
       procedure(AButton: TNavigateButton; AEnabled: Boolean)
       begin
-        Buttons[AButton].Enabled := AEnabled;
+        Buttons[AButton].EnabledNavBtn(AEnabled);
       end)
   else
   begin
     FController.EnableButtons(NavigatorButtons, Self.Enabled,
       procedure(AButton: TNavigateButton; AEnabled: Boolean)
       begin
-        Buttons[AButton].Enabled := AEnabled;
+        Buttons[AButton].EnabledNavBtn(AEnabled);
       end)
   end;
 end;
@@ -2071,10 +2138,12 @@ end;
 procedure TStyledBindNavigator.DataChanged;
 begin
   FController.EnableButtons(NavigatorScrollButtons +
-    [nbDelete, nbApplyUpdates, nbCancelUpdates], Self.Enabled,
+    [nbFirst, nbPrior, nbNext, nbLast,
+     nbInsert, nbDelete, nbEdit, nbPost, nbCancel, nbRefresh, nbApplyUpdates,
+     nbCancelUpdates], Self.Enabled,
     procedure(AButton: TNavigateButton; AEnabled: Boolean)
     begin
-      Buttons[AButton].Enabled := AEnabled;
+      Buttons[AButton].EnabledNavBtn(AEnabled);
     end);
 end;
 
@@ -2089,7 +2158,7 @@ begin
   FController.EnableButtons(NavigatorEditButtons - [nbDelete], Enabled,
     procedure(AButton: TNavigateButton; AEnabled: Boolean)
     begin
-      Buttons[AButton].Enabled := AEnabled;
+      Buttons[AButton].EnabledNavBtn(AEnabled);
     end);
 end;
 

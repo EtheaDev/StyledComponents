@@ -2,7 +2,7 @@
 
 ## Components similar to Delphi VCL Buttons, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 3.6.8
+### Actual official version: 3.6.9
 
 ---
 ## A brief description
@@ -403,6 +403,15 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+12 Oct 2024: version 3.6.9
+- Added Expanded button and Panel in StyledTaskDialog Form
+- Changed Panel Order in StyledTaskDialog
+- Added OnEnableNavBtn event in StyledDbNavigator and StyledBindNavigator
+- Fixed Cursor in StyledDbNavButton when disabled
+- Fixed "Resource BUTTON_SHIELD_ADMIN not found" in StyledTaskDialog
+- Fixed Autoclick using StyledMessageDlg and StyledTaskMessageDlg
+- Fixed Caption position
+
 08 Oct 2024: version 3.6.8
 - Fixed rendering Buttons as CommandLink
 
