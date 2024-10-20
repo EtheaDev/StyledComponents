@@ -14,14 +14,12 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
   Font.Name = 'Segoe UI'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = True
   Position = poMainFormCenter
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 15
   object FooterPanel: TPanel
     AlignWithMargins = True
@@ -134,6 +132,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
         Align = alTop
         Caption = 'Title Text'
         WordWrap = True
+        ExplicitWidth = 46
       end
       object AutoSizeLabel: TLabel
         AlignWithMargins = True
@@ -256,6 +255,8 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Margins.Top = 4
       Margins.Bottom = 4
       Align = alClient
+      ExplicitWidth = 3
+      ExplicitHeight = 15
     end
     object ExpandButton: TStyledButton
       AlignWithMargins = True

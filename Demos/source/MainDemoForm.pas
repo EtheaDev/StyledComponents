@@ -57,7 +57,7 @@ uses
 
 const
 
-  MENU_COLLAPSED_WIDTH = 50;
+  MENU_COLLAPSED_WIDTH = 48;
   MENU_EXPANDED_WIDTH = 300;
   SETTINGS_EXPANDED_WIDTH = 400;
   MENU_LINES_HEIGHT = 40;
@@ -483,6 +483,7 @@ begin
     LMenuSize := Round(MENU_EXPANDED_WIDTH * GetScaleFactor);
     // When Menu is opened, Shows the Captions of Category Buttons
     catMenuItems.ButtonOptions := catMenuItems.ButtonOptions + [boShowCaptions];
+    catMenuItems.ImageAlignment := TImageAlignment.iaLeft;
     actMenu.Hint := 'Collapse Menu';
   end
   else
@@ -490,6 +491,7 @@ begin
     LMenuSize := Round(MENU_COLLAPSED_WIDTH * GetScaleFactor);
     // When Menu is closed, adjust ButtonOptions and Width
     catMenuItems.ButtonOptions := catMenuItems.ButtonOptions - [boShowCaptions];
+    catMenuItems.ImageAlignment := TImageAlignment.iaCenter;
     actMenu.Hint := 'Expand Menu';
   end;
   LeftPanel.SetBounds(0, LTopHeight, LMenuSize, ClientHeight-LTopHeight);
@@ -789,7 +791,6 @@ var
   LTitle: string;
   LMessage: string;
   LHelpContext: Integer;
-  LUseTaskDialog: Boolean;
 begin
   LTitle := GetErrorClassNameDesc(E.ClassName,
     E is EAccessViolation);

@@ -2,7 +2,7 @@ object fmStyledButtons: TfmStyledButtons
   Left = 0
   Top = 0
   ActiveControl = ShowEditButton
-  Caption = 'Styled Buttons Demo'
+  Caption = 'Styled Buttons - Family/Class/Appearance'
   ClientHeight = 691
   ClientWidth = 895
   Color = clWindow
@@ -1547,13 +1547,15 @@ object fmStyledButtons: TfmStyledButtons
         Height = 318
         Align = alClient
         TabOrder = 2
-        object GroupBox4: TGroupBox
+        object ClassicNormalGroupBox: TGroupBox
           Left = 0
           Top = 0
           Width = 883
           Height = 47
           Align = alTop
           Caption = 'Normal Classic Buttons (similar to VCL Styled Button)'
+          DoubleBuffered = False
+          ParentDoubleBuffered = False
           TabOrder = 0
           object ClassicNormalFlowPanel: TFlowPanel
             Left = 2
@@ -1567,13 +1569,15 @@ object fmStyledButtons: TfmStyledButtons
             OnResize = FlowPanelResize
           end
         end
-        object GroupBox5: TGroupBox
+        object ClassicOutlineGroupBox: TGroupBox
           Left = 0
           Top = 47
           Width = 883
           Height = 56
           Align = alTop
           Caption = 'Outline Classic Buttons (inspired to VCL Styled Button)'
+          DoubleBuffered = False
+          ParentDoubleBuffered = False
           TabOrder = 1
           object ClassicOutlineFlowPanel: TFlowPanel
             Left = 2
@@ -1611,6 +1615,8 @@ object fmStyledButtons: TfmStyledButtons
           Height = 185
           Align = alTop
           Caption = 'Normal Buttons'
+          DoubleBuffered = False
+          ParentDoubleBuffered = False
           TabOrder = 0
           object FlowPanelNormal: TFlowPanel
             Left = 2
@@ -1631,6 +1637,8 @@ object fmStyledButtons: TfmStyledButtons
           Height = 185
           Align = alTop
           Caption = 'Outline Buttons'
+          DoubleBuffered = False
+          ParentDoubleBuffered = False
           TabOrder = 1
           object FlowPanelOutLine: TFlowPanel
             Left = 2
@@ -1667,6 +1675,8 @@ object fmStyledButtons: TfmStyledButtons
           Height = 185
           Align = alTop
           Caption = 'Normal Buttons'
+          DoubleBuffered = False
+          ParentDoubleBuffered = False
           TabOrder = 0
           object SvgColorNormalFlowPanel: TFlowPanel
             Left = 2
@@ -1687,6 +1697,8 @@ object fmStyledButtons: TfmStyledButtons
           Height = 185
           Align = alTop
           Caption = 'Outline Buttons'
+          DoubleBuffered = False
+          ParentDoubleBuffered = False
           TabOrder = 1
           object SvgColorOutlineFlowPanel: TFlowPanel
             Left = 2

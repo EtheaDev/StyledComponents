@@ -332,27 +332,30 @@ begin
   for I := FButtons.Count -1 downto 0 do
   begin
     LTaskDialogButtonItem := FButtons[I];
-    case LTaskDialogButtonItem.ModalResult of
-      mrYes: LStyledButton := YesButton;
-      mrNo: LStyledButton := NoButton;
-      mrOk: LStyledButton := OKButton;
-      mrCancel: LStyledButton := CancelButton;
-      mrAbort: LStyledButton := AbortButton;
-      mrRetry: LStyledButton := RetryButton;
-      mrIgnore: LStyledButton := IgnoreButton;
-      mrAll: LStyledButton := AllButton;
-      mrNoToAll: LStyledButton := NoToAllButton;
-      mrYesToAll: LStyledButton := YesToAllButton;
-      mrClose: LStyledButton := CloseButton;
-      mrHelp: LStyledButton := HelpButton;
-    else
-      LStyledButton := HelpButton;
-    end;
-    if Assigned(LStyledButton) then
+    if Assigned(LTaskDialogButtonItem) then
     begin
-      TabOrder := LStyledButton.TabOrder -1;
-      if LTaskDialogButtonItem.Default then
-        SetFocusToButton(LStyledButton);
+      case LTaskDialogButtonItem.ModalResult of
+        mrYes: LStyledButton := YesButton;
+        mrNo: LStyledButton := NoButton;
+        mrOk: LStyledButton := OKButton;
+        mrCancel: LStyledButton := CancelButton;
+        mrAbort: LStyledButton := AbortButton;
+        mrRetry: LStyledButton := RetryButton;
+        mrIgnore: LStyledButton := IgnoreButton;
+        mrAll: LStyledButton := AllButton;
+        mrNoToAll: LStyledButton := NoToAllButton;
+        mrYesToAll: LStyledButton := YesToAllButton;
+        mrClose: LStyledButton := CloseButton;
+        mrHelp: LStyledButton := HelpButton;
+      else
+        LStyledButton := HelpButton;
+      end;
+      if Assigned(LStyledButton) then
+      begin
+        TabOrder := LStyledButton.TabOrder -1;
+        if LTaskDialogButtonItem.Default then
+          SetFocusToButton(LStyledButton);
+      end;
     end;
   end;
 end;
@@ -629,7 +632,8 @@ begin
   if LCalcHeight > LHeight then
   begin
     MessageScrollBox.VertScrollBar.Visible := True;
-    {$IFDEF D10_1+}
+    {$IFDEF D11+}
+    //You need Delphi 11 Update 3 to compile this row or remove it!
     MessageScrollBox.UseWheelForScrolling := True;
     {$ENDIF}
     MessageScrollBox.VertScrollBar.Range := LMessageHeight + LTitleHeight + 100;
@@ -831,7 +835,8 @@ procedure TStyledTaskDialogForm.UpdateButtonsVisibility;
     for I := FButtons.Count - 1 downto 0 do
     begin
       LTaskDialogButtonItem := FButtons[I];
-      if AButton.ModalResult = LTaskDialogButtonItem.ModalResult then
+      if Assigned(LTaskDialogButtonItem) and
+        (AButton.ModalResult = LTaskDialogButtonItem.ModalResult) then
       begin
         Result := True;
         break;

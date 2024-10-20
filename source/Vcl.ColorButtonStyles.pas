@@ -110,7 +110,7 @@ procedure TBasicColorButtonStyles.BasicClassToColors(const AClass: TStyledButton
   const AAppearance: TStyledButtonAppearance;
   var AFontColor, AButtonColor, ABorderColor: TColor; out AOutLine: Boolean);
 var
-  LColor: Integer;
+  LColor: integer;
 begin
   AOutLine := SameText(AAppearance, COLOR_BTN_OUTLINE);
   IdentToColor(AClass, LColor);
@@ -220,25 +220,40 @@ begin
   if LOutline then
   begin
     //Button Down: color as Button Color
-    APressedStyle.ButtonColor := LButtonColor;
-    APressedStyle.BorderColor := LBorderColor;
-    APressedStyle.BorderDrawStyle := brdSolid;
-    APressedStyle.BorderWidth := COLOR_BTN_WIDTH+2;
-    APressedStyle.FontColor   := LFontColor;
-    APressedStyle.ButtonDrawStyle  := btnSolid;
+    with APressedStyle do
+    begin
+      ButtonColor := DarkenColor(LButtonColor, 20);
+      BorderColor := LBorderColor;
+      BorderDrawStyle := brdSolid;
+      BorderWidth := COLOR_BTN_WIDTH+2;
+      FontColor   := LFontColor;
+      ButtonDrawStyle  := btnSolid;
+    end;
 
     //Button Hot: color as Button Color
-    AHotStyle.ButtonColor := LButtonColor;
-    AHotStyle.BorderDrawStyle := brdClear;
-    AHotStyle.BorderWidth := COLOR_BTN_WIDTH;
-    AHotStyle.FontColor := LFontColor;
-    AHotStyle.ButtonDrawStyle  := btnSolid;
+    with AHotStyle do
+    begin
+      ButtonColor := LButtonColor;
+      BorderDrawStyle := brdClear;
+      BorderWidth := COLOR_BTN_WIDTH;
+      FontColor := LFontColor;
+      ButtonDrawStyle  := btnSolid;
+    end;
 
     //Button Focused
-    ASelectedStyle.BorderDrawStyle := brdSolid;
-    ASelectedStyle.BorderWidth := COLOR_BTN_WIDTH+1;
-    ASelectedStyle.BorderColor := LBorderColor;
-    ASelectedStyle.ButtonDrawStyle  := btnClear;
+    with ASelectedStyle do
+    begin
+      ButtonColor := LButtonColor;
+      FontColor := LFontColor;
+      BorderDrawStyle := brdSolid;
+      BorderWidth := COLOR_BTN_WIDTH+1;
+      BorderColor := LBorderColor;
+      ButtonDrawStyle  := btnSolid;
+    end;
+
+    //Button Disabled
+    ADisabledStyle.BorderColor := LightenColor(ADisabledStyle.BorderColor, 50);
+    ADisabledStyle.FontColor := LightenColor(ADisabledStyle.FontColor, 50);
   end
   else
   begin
@@ -388,7 +403,7 @@ begin
     //Button Down: color as Button Color
     with APressedStyle do
     begin
-      ButtonColor := LButtonColor;
+      ButtonColor := DarkenColor(LButtonColor, 20);
       BorderColor := LBorderColor;
       BorderDrawStyle := brdSolid;
       BorderWidth := COLOR_BTN_WIDTH+2;
@@ -409,10 +424,12 @@ begin
     //Button Focused
     with ASelectedStyle do
     begin
+      ButtonColor := LButtonColor;
+      FontColor := LFontColor;
       BorderDrawStyle := brdSolid;
       BorderWidth := COLOR_BTN_WIDTH+1;
       BorderColor := LBorderColor;
-      ButtonDrawStyle  := btnClear;
+      ButtonDrawStyle  := btnSolid;
     end;
 
     //Button Disabled

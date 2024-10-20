@@ -22,9 +22,6 @@ object fmAnimatedButtons: TfmAnimatedButtons
     Height = 97
     Align = alBottom
     TabOrder = 0
-    ExplicitLeft = 88
-    ExplicitTop = 216
-    ExplicitWidth = 702
     object ImageAlignmentRadioGroup: TRadioGroup
       Left = 1
       Top = 1
@@ -43,9 +40,6 @@ object fmAnimatedButtons: TfmAnimatedButtons
         'Center')
       TabOrder = 0
       OnClick = ImageAlignmentRadioGroupClick
-      ExplicitLeft = 8
-      ExplicitTop = 6
-      ExplicitHeight = 91
     end
     object AutoAnimationRadioGroup: TRadioGroup
       Left = 186
@@ -55,9 +49,6 @@ object fmAnimatedButtons: TfmAnimatedButtons
       Align = alLeft
       Caption = 'AutoAnimationType'
       TabOrder = 1
-      ExplicitLeft = 199
-      ExplicitTop = -8
-      ExplicitHeight = 105
     end
     object cbAnimateOnClick: TCheckBox
       Left = 192
@@ -98,17 +89,20 @@ object fmAnimatedButtons: TfmAnimatedButtons
       OnClick = AutoAnimationClick
     end
     object StyledAnimatedButton: TStyledAnimatedButton
-      Left = 596
-      Top = 1
-      Width = 201
-      Height = 95
+      AlignWithMargins = True
+      Left = 544
+      Top = 11
+      Width = 243
+      Height = 75
+      Margins.Left = 10
+      Margins.Top = 10
+      Margins.Right = 10
+      Margins.Bottom = 10
       Align = alRight
       Caption = 'Animated &Button'
+      ImageMargins.Left = 20
       TabOrder = 6
       StyleRadius = 28
-      ExplicitLeft = 501
-      ExplicitTop = 6
-      ExplicitHeight = 91
       AnimationData = {
         1F8B0800000000000203ED7DDB92E3C891E5AFC8EA1984C5FDD21F30F3BA66BB
         6FB2B6B592BAA4AEED52675B5575CF6864FAF7F5733C4082247807329999D4D8

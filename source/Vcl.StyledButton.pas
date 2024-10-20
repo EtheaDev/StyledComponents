@@ -331,7 +331,7 @@ type
       X, Y: Integer);
     procedure Loaded;
     procedure ActionChange(Sender: TObject; CheckDefaults: Boolean);
-    procedure EraseBackground(const ACanvas: TCanvas);
+    procedure EraseBackground(const ACanvasHandle: HDC);
     procedure DrawButton(const ACanvas: TCanvas;
       const AEraseBackground: Boolean);
     procedure DrawCaptionAndImage(const ACanvas: TCanvas;
@@ -2451,7 +2451,7 @@ begin
 
   //Erase Background
   if AEraseBackground then
-    EraseBackground(ACanvas);
+    EraseBackground(ACanvas.Handle);
 
   //Don't draw button border for Flat Buttons
   if FFlat and not FMouseInControl and not Focused then
@@ -2574,7 +2574,7 @@ begin
 end;
 {$ENDIF}
 
-procedure TStyledButtonRender.EraseBackground(const ACanvas: TCanvas);
+procedure TStyledButtonRender.EraseBackground(const ACanvasHandle: HDC);
 var
   LStyle: TCustomStyleServices;
   LHandle: HWND;
@@ -2589,16 +2589,16 @@ begin
     if OwnerControl is TCustomStyledGraphicButton then
     begin
       if LStyle.Available and Transparent then
-        LStyle.DrawParentBackground(LHandle, ACanvas.Handle, nil, False)
+        LStyle.DrawParentBackground(LHandle, ACanvasHandle, nil, False)
       else
-        PerformEraseBackground(FOwnerControl, ACanvas.Handle);
+        PerformEraseBackground(FOwnerControl, ACanvasHandle);
     end
     else
     begin
       if LStyle.Available then
-        LStyle.DrawParentBackground(LHandle, ACanvas.Handle, nil, False)
+        LStyle.DrawParentBackground(LHandle, ACanvasHandle, nil, False)
       else
-        PerformEraseBackground(FOwnerControl, ACanvas.Handle);
+        PerformEraseBackground(FOwnerControl, ACanvasHandle);
     end;
   end;
 end;
@@ -6189,14 +6189,8 @@ end;
 procedure TCustomStyledButton.WMEraseBkGnd(var Message: TWmEraseBkgnd);
 begin
   inherited;
-  { Erase background if we're not doublebuffering or painting to memory. }
-  if not FDoubleBuffered or
-     (TMessage(Message).wParam = WPARAM(TMessage(Message).lParam)) then
-  begin
-    Brush.Color := FRender.GetBackGroundColor;
-    Brush.Style := bsSolid;
-    FillRect(Message.DC, ClientRect, Brush.Handle);
-  end;
+  //if (TMessage(Message).wParam = WPARAM(TMessage(Message).lParam)) then
+  //  FRender.EraseBackground(Message.DC);
   Message.Result := 1;
 end;
 
@@ -6272,8 +6266,7 @@ begin
         Inc(FPaintBufferUsers);
         try
           FPaintBuffer.SetSize(Self.Width, Self.Height);
-          FRender.EraseBackground(FPaintBuffer.Canvas);
-          FRender.DrawButton(FPaintBuffer.Canvas, MouseInControl);
+          FRender.DrawButton(FPaintBuffer.Canvas, True);
           // paint other controls
           PaintControls(FPaintBuffer.Canvas.Handle, nil);
           LCanvas.Draw(0, 0, FPaintBuffer);
@@ -6286,8 +6279,7 @@ begin
       begin
         if not DoubleBuffered and (FPaintBuffer <> nil) then
           ReleasePaintBuffer;
-        FRender.EraseBackground(LCanvas);
-        FRender.DrawButton(LCanvas, MouseInControl);
+        FRender.DrawButton(LCanvas, True);
         // paint other controls
         PaintControls(LCanvas.Handle, nil);
       end;

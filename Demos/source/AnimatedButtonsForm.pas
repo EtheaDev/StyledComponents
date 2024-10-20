@@ -131,7 +131,7 @@ begin
   LIconName := StringReplace(AImageName,'&','', [rfReplaceAll]);
   Result.Name := LIconName;
   Result.AutoSizeAnimationMargin := 20;
-  Result.SetBounds(ALeft,ATop,180,100);
+  Result.SetBounds(ALeft,ATop,220,80);
   Result.Parent := AParent;
   //Result.AnimationWidth := 42;
   //Result.AnimationHeight := 42;
@@ -178,10 +178,10 @@ begin
   Caption := Application.Title;
   CreateNewButton(Self, 10,  10,'&Information', 'Primary');
   CreateNewButton(Self, 10, 110,'&Warning', 'Danger');
-  CreateNewButton(Self, 210, 10,'&Error', 'Warning');
-  CreateNewButton(Self, 210,110,'&Question', 'Info');
-  CreateNewButton(Self, 410, 10,'&Notify', 'Secondary');
-  CreateNewButton(Self, 410,110,'&Custom', 'Dark');
+  CreateNewButton(Self, 250, 10,'&Error', 'Warning');
+  CreateNewButton(Self, 250,110,'&Question', 'Info');
+  CreateNewButton(Self, 490, 10,'&Notify', 'Secondary');
+  CreateNewButton(Self, 490,110,'&Custom', 'Dark');
 end;
 
 procedure TfmAnimatedButtons.FormDestroy(Sender: TObject);

@@ -223,6 +223,10 @@ procedure TfmStyledDbNavigator.StyledDBNavigatorEnableNavBtn(
   const ADbNavigator: TCustomStyledDBNavigator; const ABtn: TStyledNavButton;
   var AEnabled: Boolean);
 begin
+  //Simple example to disable Delete button (always)
+  if (ABtn.Index = TNavigateBtn.nbDelete) then
+    AEnabled := False;
+
   //Simple example to disable all buttons when the Quantity  is 3
   if AEnabled and (ClientDataSetQuantity.Value = 3) then
     AEnabled := False;

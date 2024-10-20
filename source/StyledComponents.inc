@@ -104,7 +104,7 @@
 {$IFDEF DXE6+}
   {$Define GDIPlusSupport}
   {.$Define DrawTextWithGDIPlus}
-  {.$Define DrawRectWithGDIPlus}
+  {$Define DrawRectWithGDIPlus}
 {$ENDIF}
 
 {$IFDEF D10_3+}

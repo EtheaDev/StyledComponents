@@ -197,9 +197,9 @@ type
     SvgColorOutlineGroupBox: TGroupBox;
     SvgColorOutlineFlowPanel: TFlowPanel;
     ClassicScrollBox: TScrollBox;
-    GroupBox4: TGroupBox;
+    ClassicNormalGroupBox: TGroupBox;
     ClassicNormalFlowPanel: TFlowPanel;
-    GroupBox5: TGroupBox;
+    ClassicOutlineGroupBox: TGroupBox;
     ClassicOutlineFlowPanel: TFlowPanel;
     ButtonSplit: TButton;
     StyledButtonSplit: TStyledButton;
