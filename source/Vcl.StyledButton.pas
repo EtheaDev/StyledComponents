@@ -331,7 +331,7 @@ type
       X, Y: Integer);
     procedure Loaded;
     procedure ActionChange(Sender: TObject; CheckDefaults: Boolean);
-    procedure EraseBackground(const ACanvasHandle: HDC);
+    procedure EraseBackground(const ACanvas: TCanvas);
     procedure DrawButton(const ACanvas: TCanvas;
       const AEraseBackground: Boolean);
     procedure DrawCaptionAndImage(const ACanvas: TCanvas;
@@ -1180,6 +1180,8 @@ type
     function GetAutoClickDelay: Integer;
     procedure SetAutoClick(const AValue: Boolean);
     procedure SetAutoClickDelay(const AValue: Integer);
+    //function GetTransparent: Boolean;
+    //procedure SetTransparent(const AValue: Boolean);
   protected
     procedure SetCursor(const AValue: TCursor); virtual;
     function CalcImageRect(var ATextRect: TRect;
@@ -1279,6 +1281,7 @@ type
     property Spacing: Integer read GetSpacing write SetSpacing default 0;
     property StyleElements stored IsStoredStyleElements;
     property TabStop default True;
+    //property Transparent: Boolean read GetTransparent write SetTransparent default False;
     property Caption: TCaption read GetText write SetText stored IsCaptionStored;
     property CaptionAlignment: TAlignment read GetCaptionAlignment write SetCaptionAlignment  Stored IsCaptionAlignmentStored;
     property ShowCaption: Boolean read GetShowCaption write SetShowCaption default True;
@@ -1914,8 +1917,12 @@ begin
   FButtonStyleDisabled.Name := 'Disabled';
   FNotificationBadge := TNotificationBadgeAttributes.Create(AOwner);
   FNotificationBadge.Name := 'NotificationBadge';
-  FOwnerControl.ControlStyle := [csOpaque, csCaptureMouse, csClickEvents,
-    csSetCaption, csDoubleClicks];
+  if FOwnerControl is TStyledGraphicButton then
+    FOwnerControl.ControlStyle := [csCaptureMouse, csClickEvents,
+      csSetCaption, csDoubleClicks]
+  else
+    FOwnerControl.ControlStyle := [csCaptureMouse, csClickEvents,
+      csSetCaption, csDoubleClicks, csOpaque];
   FImageChangeLink := TChangeLink.Create;
   FImageChangeLink.OnChange := ImageListChange;
   FImageMargins := TImageMargins.Create;
@@ -2250,17 +2257,17 @@ procedure TStyledButtonRender.SetAsVCLComponent(const AValue: Boolean);
 begin
   if AValue <> GetAsVCLComponent then
   begin
-    if AValue then
+    if FStyleFamily <> DEFAULT_CLASSIC_FAMILY then
     begin
       FStyleFamily := DEFAULT_CLASSIC_FAMILY;
       FStyleClass := DEFAULT_WINDOWS_CLASS;
       FStyleAppearance := DEFAULT_APPEARANCE;
-      FOwnerControl.StyleElements := FOwnerControl.StyleElements + [seClient];
-    end
-    else if FStyleFamily = DEFAULT_CLASSIC_FAMILY then
-    begin
-      FOwnerControl.StyleElements := FOwnerControl.StyleElements - [seClient];
     end;
+    if AValue then
+      FOwnerControl.StyleElements := FOwnerControl.StyleElements + [seClient]
+    else
+      FOwnerControl.StyleElements := FOwnerControl.StyleElements - [seClient];
+    FCustomDrawType := False;
     ApplyButtonStyle;
   end;
 end;
@@ -2451,7 +2458,7 @@ begin
 
   //Erase Background
   if AEraseBackground then
-    EraseBackground(ACanvas.Handle);
+    EraseBackground(ACanvas);
 
   //Don't draw button border for Flat Buttons
   if FFlat and not FMouseInControl and not Focused then
@@ -2574,13 +2581,15 @@ begin
 end;
 {$ENDIF}
 
-procedure TStyledButtonRender.EraseBackground(const ACanvasHandle: HDC);
+procedure TStyledButtonRender.EraseBackground(const ACanvas: TCanvas);
 var
   LStyle: TCustomStyleServices;
+  LStyleAvailable: Boolean;
   LHandle: HWND;
 begin
   LStyle := StyleServices;
-  if HasTransparentParts then
+  LStyleAvailable := LStyle.Available and (LStyle.Name <> 'Windows');
+  if HasTransparentParts or (ACanvas.Brush.Style = bsClear) then
   begin
     if FOwnerControl is TWinControl then
       LHandle := TWinControl(FOwnerControl).Handle
@@ -2588,17 +2597,17 @@ begin
       LHandle := 0;
     if OwnerControl is TCustomStyledGraphicButton then
     begin
-      if LStyle.Available and Transparent then
-        LStyle.DrawParentBackground(LHandle, ACanvasHandle, nil, False)
+      if LStyleAvailable then
+        LStyle.DrawParentBackground(LHandle, ACanvas.Handle, nil, False)
       else
-        PerformEraseBackground(FOwnerControl, ACanvasHandle);
+        PerformEraseBackground(FOwnerControl, ACanvas.Handle);
     end
     else
     begin
-      if LStyle.Available then
-        LStyle.DrawParentBackground(LHandle, ACanvasHandle, nil, False)
+      if LStyleAvailable then
+        LStyle.DrawParentBackground(LHandle, ACanvas.Handle, nil, False)
       else
-        PerformEraseBackground(FOwnerControl, ACanvasHandle);
+        PerformEraseBackground(FOwnerControl, ACanvas.Handle);
     end;
   end;
 end;
@@ -2881,7 +2890,7 @@ end;
 
 procedure TStyledButtonRender.SetStyleDrawType(const AValue: TStyledButtonDrawType);
 begin
-  if FStyleDrawType <> AValue then
+  if (FStyleDrawType <> AValue) or (csLoading in OwnerControl.ComponentState) then
   begin
     FStyleDrawType := AValue;
     FCustomDrawType := True;
@@ -4235,7 +4244,7 @@ end;
 
 procedure TCustomStyledGraphicButton.Paint;
 begin
-  FRender.DrawButton(Canvas, not Transparent);
+  FRender.DrawButton(Canvas, True);
 end;
 
 class procedure TCustomStyledGraphicButton.RegisterDefaultRenderingStyle(
@@ -5259,6 +5268,11 @@ begin
   Result := FRender.GetText;
 end;
 
+//function TCustomStyledButton.GetTransparent: Boolean;
+//begin
+//  Result := FRender.Transparent;
+//end;
+
 function TCustomStyledButton.GetKind: TBitBtnKind;
 begin
   Result := FRender.Kind;
@@ -5986,6 +6000,11 @@ begin
   FRender.Caption := AValue;
 end;
 
+//procedure TCustomStyledButton.SetTransparent(const AValue: Boolean);
+//begin
+//  FRender.Transparent := AValue;
+//end;
+
 function TCustomStyledButton.GetWordWrap: Boolean;
 begin
   Result := FRender.WordWrap;
@@ -6188,9 +6207,6 @@ end;
 
 procedure TCustomStyledButton.WMEraseBkGnd(var Message: TWmEraseBkgnd);
 begin
-  inherited;
-  //if (TMessage(Message).wParam = WPARAM(TMessage(Message).lParam)) then
-  //  FRender.EraseBackground(Message.DC);
   Message.Result := 1;
 end;
 
@@ -6250,45 +6266,42 @@ var
   LCanvas: TCanvas;
   PS: TPaintStruct;
 begin
-  //if FOverridePaint then
-  begin
-    DC := HDC(Message.WParam);
-    LCanvas := TCanvas.Create;
-    try
-      if DC <> 0 then
-        LCanvas.Handle := DC
-      else
-        LCanvas.Handle := BeginPaint(Self.Handle, PS);
-      if FDoubleBuffered and (DC = 0) then
-      begin
-        if FPaintBuffer = nil then
-          FPaintBuffer := TBitmap.Create;
-        Inc(FPaintBufferUsers);
-        try
-          FPaintBuffer.SetSize(Self.Width, Self.Height);
-          FRender.DrawButton(FPaintBuffer.Canvas, True);
-          // paint other controls
-          PaintControls(FPaintBuffer.Canvas.Handle, nil);
-          LCanvas.Draw(0, 0, FPaintBuffer);
-        finally
-          Dec(FPaintBufferUsers);
-          ReleasePaintBuffer;
-        end;
-      end
-      else
-      begin
-        if not DoubleBuffered and (FPaintBuffer <> nil) then
-          ReleasePaintBuffer;
-        FRender.DrawButton(LCanvas, True);
+  DC := HDC(Message.WParam);
+  LCanvas := TCanvas.Create;
+  try
+    if DC <> 0 then
+      LCanvas.Handle := DC
+    else
+      LCanvas.Handle := BeginPaint(Self.Handle, PS);
+    if FDoubleBuffered and (DC = 0) then
+    begin
+      if FPaintBuffer = nil then
+        FPaintBuffer := TBitmap.Create;
+      Inc(FPaintBufferUsers);
+      try
+        FPaintBuffer.SetSize(Self.Width, Self.Height);
+        FRender.DrawButton(FPaintBuffer.Canvas, True);
         // paint other controls
-        PaintControls(LCanvas.Handle, nil);
+        PaintControls(FPaintBuffer.Canvas.Handle, nil);
+        LCanvas.Draw(0, 0, FPaintBuffer);
+      finally
+        Dec(FPaintBufferUsers);
+        ReleasePaintBuffer;
       end;
-      if DC = 0 then
-        EndPaint(Self.Handle, PS);
-    finally
-      LCanvas.Handle := 0;
-      LCanvas.Free;
+    end
+    else
+    begin
+      if not DoubleBuffered and (FPaintBuffer <> nil) then
+        ReleasePaintBuffer;
+      FRender.DrawButton(LCanvas, True);
+      // paint other controls
+      PaintControls(LCanvas.Handle, nil);
     end;
+    if DC = 0 then
+      EndPaint(Self.Handle, PS);
+  finally
+    LCanvas.Handle := 0;
+    LCanvas.Free;
   end;
   Message.Result := 1;
 end;

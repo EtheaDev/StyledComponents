@@ -205,6 +205,8 @@ begin
 
       Result := ShowModal = mrOk;
       SavedBounds := BoundsRect;
+      if Result then
+        AButtonRender.OwnerControl.Invalidate;
     finally
       Free;
     end;

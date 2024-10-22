@@ -196,7 +196,7 @@ begin
   FStyledButtonGroup := TStyledButtonGroup.Create(Self);
   FStyledButtonGroup.Parent := Self;
   FStyledButtonGroup.Align := alLeft;
-  FStyledButtonGroup.Width := Round(BUTTON_WIDTH * 1.5);
+  FStyledButtonGroup.Width := Round(BUTTON_WIDTH * 1.5 * GetScaleFactor);
   UpdateShowCaptions(FStyledButtonGroup, BUTTONGROUP_SHOW_CAPTIONS);
   UpdateSetFullSize(FStyledButtonGroup, BUTTONGROUP_FULLSIZE);
   UpdateSetGroupStyle(FStyledButtonGroup, BUTTON_GROUP_GROUP_STYLE);
@@ -211,7 +211,7 @@ begin
   FButtonGroup := TButtonGroup.Create(Self);
   FButtonGroup.Parent := Self;
   FButtonGroup.Align := alLeft;
-  FButtonGroup.Width := Round(BUTTON_WIDTH * 1.5);
+  FButtonGroup.Width := Round(BUTTON_WIDTH * 1.5 * GetScaleFactor);
   UpdateShowCaptions(FButtonGroup, BUTTONGROUP_SHOW_CAPTIONS);
   UpdateSetFullSize(FButtonGroup, BUTTONGROUP_FULLSIZE);
   UpdateSetGroupStyle(FButtonGroup, BUTTON_GROUP_GROUP_STYLE);

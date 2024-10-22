@@ -1,10 +1,11 @@
 object WelcomeForm: TWelcomeForm
   Left = 426
   Top = 263
-  BorderStyle = bsNone
+  BorderIcons = []
+  BorderStyle = bsToolWindow
   Caption = 'Welcome'
-  ClientHeight = 321
-  ClientWidth = 526
+  ClientHeight = 294
+  ClientWidth = 528
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,8 +19,8 @@ object WelcomeForm: TWelcomeForm
   object FramePanel: TPanel
     Left = 0
     Top = 0
-    Width = 526
-    Height = 321
+    Width = 518
+    Height = 294
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 1
@@ -28,17 +29,18 @@ object WelcomeForm: TWelcomeForm
     object BackPanel: TPanel
       Left = 1
       Top = 1
-      Width = 524
-      Height = 319
+      Width = 516
+      Height = 292
       Align = alClient
       TabOrder = 0
       object TitleLabel: TLabel
         AlignWithMargins = True
-        Left = 96
+        Left = 94
         Top = 21
-        Width = 424
-        Height = 63
+        Width = 421
+        Height = 67
         Margins.Top = 20
+        Margins.Right = 10
         Align = alClient
         Alignment = taCenter
         AutoSize = False
@@ -55,8 +57,9 @@ object WelcomeForm: TWelcomeForm
         Top = 11
         Width = 80
         Height = 74
-        Margins.Left = 10
-        Margins.Top = 10
+        Height = 80
+        Margins.Left = 8
+        Margins.Top = 8
         Margins.Right = 2
         Margins.Bottom = 2
         Align = alLeft
@@ -292,9 +295,9 @@ object WelcomeForm: TWelcomeForm
       object Memo: TMemo
         AlignWithMargins = True
         Left = 7
-        Top = 93
-        Width = 510
-        Height = 182
+        Top = 97
+        Width = 502
+        Height = 151
         Margins.Left = 6
         Margins.Top = 6
         Margins.Right = 6
@@ -307,14 +310,14 @@ object WelcomeForm: TWelcomeForm
       end
       object BottomPanel: TPanel
         Left = 1
-        Top = 281
-        Width = 522
+        Top = 254
+        Width = 514
         Height = 37
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 1
         object OkButton: TStyledButton
-          Left = 432
+          Left = 434
           Top = 3
           Width = 84
           Height = 30

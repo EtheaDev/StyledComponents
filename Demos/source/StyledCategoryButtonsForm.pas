@@ -183,7 +183,7 @@ begin
   FStyledCategoryButtons := TStyledCategoryButtons.Create(Self);
   FStyledCategoryButtons.Parent := Self;
   FStyledCategoryButtons.Align := alLeft;
-  FStyledCategoryButtons.Width := Round(BUTTON_WIDTH * 1.5);
+  FStyledCategoryButtons.Width := Round(BUTTON_WIDTH * 1.5 * GetScaleFactor);
   UpdateShowCaptions(FStyledCategoryButtons, CATEGORYBUTTONS_SHOW_CAPTIONS);
   UpdateSetFullSize(FStyledCategoryButtons, CATEGORYBUTTONS_FULLSIZE);
   FStyledCategoryButtons.Images := VirtualImageList;
@@ -197,7 +197,7 @@ begin
   FCategoryButtons := TCategoryButtons.Create(Self);
   FCategoryButtons.Parent := Self;
   FCategoryButtons.Align := alLeft;
-  FCategoryButtons.Width := Round(BUTTON_WIDTH * 1.5);
+  FCategoryButtons.Width := Round(BUTTON_WIDTH * 1.5 * GetScaleFactor);
   UpdateShowCaptions(FCategoryButtons, CategoryButtons_SHOW_CAPTIONS);
   UpdateSetFullSize(FCategoryButtons, CategoryButtons_FULLSIZE);
   FCategoryButtons.Images := VirtualImageList;

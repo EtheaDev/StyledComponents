@@ -79,7 +79,6 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     Margins.Bottom = 4
     Align = alClient
     BevelOuter = bvNone
-    ParentBackground = False
     ParentColor = True
     TabOrder = 0
     object ImagePanel: TPanel
@@ -243,7 +242,6 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
     Margins.Bottom = 0
     Align = alBottom
     BevelOuter = bvNone
-    ParentBackground = False
     TabOrder = 1
     Visible = False
     object ExpandLabel: TLabel

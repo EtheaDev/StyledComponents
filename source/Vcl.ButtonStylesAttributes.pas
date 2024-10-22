@@ -55,7 +55,7 @@ uses
   ;
 
 const
-  StyledComponentsVersion = '3.7.0';
+  StyledComponentsVersion = '3.7.1';
   DEFAULT_RADIUS = 6;
   RESOURCE_SHIELD_ICON = 'STYLED_BUTTON_SHIELD_ADMIN';
   DEFAULT_MAX_BADGE_VALUE = 99;
@@ -2451,7 +2451,8 @@ begin
     LRect := Winapi.GDIPAPI.MakeRect(X, Y, W, H);
     GPInflateRectF(LRect, LBorderWidth);
     //GDI+ equivalent of FillRect and Rectangle
-    LGraphics.FillRectangle(LBrush, X, Y, W, H);
+    if ACanvas.Brush.Style = bsSolid then
+      LGraphics.FillRectangle(LBrush, X, Y, W, H);
     LGraphics.DrawRectangle(LPen, LRect);
   finally
     LBrush.Free;

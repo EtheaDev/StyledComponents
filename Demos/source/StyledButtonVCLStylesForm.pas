@@ -206,11 +206,16 @@ var
     AStyleName: string);
   var
     LButton: TStyledButton;
+    LAsVcl: Boolean;
   begin
+    LAsVcl := RenderRadioGroup.ItemIndex = RENDER_SAME_AS_VCL;
     LButton := TStyledButton.CreateStyled(Self,
       DEFAULT_CLASSIC_FAMILY,
       AStyleName,
-      DEFAULT_APPEARANCE);
+      DEFAULT_APPEARANCE,
+      DEFAULT_STYLEDRAWTYPE,
+      DEFAULT_CURSOR,
+      not LAsVcl);
 
     LButton.Enabled := EnabledCheckBox.Checked;
     LButton.SetBounds((AColumn * LWidth) + (BUTTON_MARGIN*AColumn),
