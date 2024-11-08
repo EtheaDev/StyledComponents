@@ -58,6 +58,8 @@ uses
 
 type
   TStyledTaskDialogAnimatedForm = class(TStyledTaskDialogForm)
+    SkFooterAnimatedImage: TSkAnimatedImage;
+    SkAnimatedImage: TSkAnimatedImage;
   private
     procedure InternalLoadImage(const AAnimatedImage: TSkAnimatedImage;
       const AImageIndex: TImageIndex; AImageName: string);
