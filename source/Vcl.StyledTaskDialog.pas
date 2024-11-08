@@ -60,6 +60,7 @@ const
 type
   TStyledDialogIcons = array[TMsgDlgType] of TIcon;
   TOnFindDialogButtonEvent = function (const AModalResult: TModalResult): TStyledButton of object;
+  EStyledTaskDialogException = class(Exception);
 
 {$WARN SYMBOL_PLATFORM OFF}
 { TaskDialog based message dialog; requires Windows Vista or later }
@@ -81,12 +82,15 @@ type
     FAutoClick: Boolean;
     FAutoClickDelay: Integer;
     FOnFindDialogButton: TOnFindDialogButtonEvent;
+    FUseAnimations: Boolean;
     function IsDefaultFamily: Boolean;
     procedure SetAutoClick(const AValue: Boolean);
     procedure SetAutoClickDelay(const AValue: Integer);
     procedure SetAlphaBlendValue(const AValue: Byte);
     procedure SetButtonsHeight(const AValue: Integer);
     procedure SetButtonsWidth(const AValue: Integer);
+    function GetFlags: TTaskDialogFlags;
+    procedure SetFlags(const AValue: TTaskDialogFlags);
   strict protected
     function DoExecute(ParentWnd: HWND): Boolean; override;
     procedure DoOnDialogCreated; override;
@@ -107,10 +111,12 @@ type
     property AutoClickDelay: Integer read FAutoClickDelay write SetAutoClickDelay default DEFAULT_AUTOCLICK_DELAY;
     property DialogButtonsFamily: TStyledButtonFamily read FDialogButtonsFamily write FDialogButtonsFamily stored IsDefaultFamily;
     property UseCommandLinks: Boolean read FUseCommandLinks write FUseCommandLinks default False;
+    property UseAnimations: Boolean read FUseAnimations write FUseAnimations default false;
     property UseTitleInMessageDlg: Boolean read FUseTitleInMessageDlg write FUseTitleInMessageDlg default True;
     property AlphaBlendValue: Byte read FAlphaBlendValue write SetAlphaBlendValue default DEFAULT_STYLEDDIALOG_ALPHABLEND;
     property ButtonsWidth: Integer read FButtonsWidth write SetButtonsWidth default DEFAULT_STYLEDDIALOG_BUTTONSWIDTH;
     property ButtonsHeight: Integer read FButtonsHeight write SetButtonsHeight default DEFAULT_STYLEDDIALOG_BUTTONSHEIGHT;
+    property Flags: TTaskDialogFlags read GetFlags write SetFlags default [tfAllowDialogCancellation, tfPositionRelativeToWindow];
   end;
 
   //Abstraction of a Dialog Launcher
@@ -214,6 +220,8 @@ function MsgDlgBtnToDefaultBtn(const ABtn: TMsgDlgBtn): TTaskDialogCommonButton;
 //Global Initialization procedures (different versions)
 procedure InitializeStyledTaskDialogs(AFont: TFont); overload;
 
+procedure InitializeStyledTaskDialogs(AUseAnimations: Boolean); overload;
+
 procedure InitializeStyledTaskDialogs(
   const ADialogButtonsFamily: TStyledButtonFamily = '';
   const AUseCommandLinks: Boolean = False;
@@ -247,6 +255,7 @@ uses
   , Vcl.StyledCmpMessages
   , Vcl.StandardButtonStyles
   , Vcl.StyledCmpStrUtils
+  , Vcl.StyledTaskDialogFormUnit
   , Vcl.StyledTaskDialogStdUnit
   ;
 
@@ -254,6 +263,7 @@ var
   _TaskDialogExecute: ITaskDialogLauncher;
   _DialogButtonsFamily: TStyledButtonFamily;
   _CustomIcons: TStyledDialogIcons;
+  _UseAnimations: Boolean;
   _DialogFont: TFont;
   _UseCommandLinks: Boolean;
   _UseTitleInMessageDlg: boolean;
@@ -321,6 +331,7 @@ begin
     //Reset default CommonButtons
     LTaskDialog.Flags := LTaskDialog.Flags + [tfPositionRelativeToWindow];
     LTaskDialog.CommonButtons := [];
+    LTaskDialog.UseAnimations :=  _UseAnimations;
     LTaskDialog.AutoClick := AutoClickDelay > 0;
     if LTaskDialog.AutoClick then
       LTaskDialog.AutoClickDelay := AutoClickDelay;
@@ -567,6 +578,11 @@ begin
     HelpCtx, DefaultButton, X, Y, -1, _UseCommandLinks, '');
 end;
 
+procedure InitializeStyledTaskDialogs(AUseAnimations: Boolean);
+begin
+  _UseAnimations  := AUseAnimations;
+end;
+
 procedure InitializeStyledTaskDialogs(AFont: TFont);
 begin
   if Assigned(AFont) then
@@ -739,7 +755,7 @@ end;
 constructor TStyledTaskDialog.Create(AOwner: TComponent);
 begin
   inherited;
-  DoOnDialogCreated;
+  Flags := [tfAllowDialogCancellation, tfPositionRelativeToWindow];
   FDialogButtonsFamily := _DialogButtonsFamily;
   FUseCommandLinks := _UseCommandLinks;
   FUseTitleInMessageDlg := _UseTitleInMessageDlg;
@@ -752,6 +768,7 @@ begin
   else
     FAutoClickDelay := DEFAULT_AUTOCLICK_DELAY;
   FMainIconSize := DEFAULT_MAIN_ICON_SIZE;
+  DoOnDialogCreated;
 end;
 
 function TStyledTaskDialog.DoExecute(ParentWnd: HWND): Boolean;
@@ -846,6 +863,11 @@ begin
     Result := nil;
 end;
 
+function TStyledTaskDialog.GetFlags: TTaskDialogFlags;
+begin
+  Result := inherited Flags;
+end;
+
 function TStyledTaskDialog.IsDefaultFamily: Boolean;
 begin
   Result := FDialogButtonsFamily <> DEFAULT_CLASSIC_FAMILY;
@@ -878,6 +900,11 @@ begin
   CheckValue('TStyledTaskDialog.SetButtonsWidth', AValue,
     MIN_STYLEDDIALOG_BUTTONSSIZE, MAX_STYLEDDIALOG_BUTTONSWIDTH);
   FButtonsWidth := AValue;
+end;
+
+procedure TStyledTaskDialog.SetFlags(const AValue: TTaskDialogFlags);
+begin
+  inherited Flags := AValue;
 end;
 
 function GetDialogTypeTitle(const DlgType: TMsgDlgType): string;
@@ -913,9 +940,11 @@ initialization
   _ButtonsWidth := DEFAULT_STYLEDDIALOG_BUTTONSWIDTH;
   _ButtonsHeight := DEFAULT_STYLEDDIALOG_BUTTONSHEIGHT;
   _DialogFont := nil;
+  RegisterTaskDialogFormClass(TStyledTaskDialogStd);
 
 finalization
   if Assigned(_DialogFont) then
     _DialogFont.Free;
+  UnRegisterTaskDialogFormClass(TStyledTaskDialogStd);
 
 end.

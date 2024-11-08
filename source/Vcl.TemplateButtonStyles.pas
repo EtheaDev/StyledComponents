@@ -123,6 +123,8 @@ begin
     mrTryAgain : begin AStyleClass := BTN_GREEN; AStyleAppearance := BTN_NORMAL; end;
     mrContinue : begin AStyleClass := BTN_YELLOW; AStyleAppearance := BTN_NORMAL; end;
     mrHelp     : begin AStyleClass := BTN_OFF; AStyleAppearance := BTN_NORMAL; end;
+  else
+    GetStyleByModalResult(mrNone, AStyleClass, AStyleAppearance);
   end;
 end;
 

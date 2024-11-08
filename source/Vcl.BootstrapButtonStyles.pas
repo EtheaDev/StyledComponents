@@ -196,6 +196,8 @@ begin
     mrTryAgain : begin AStyleClass := btn_warning; AStyleAppearance := BOOTSTRAP_NORMAL; end;
     mrContinue : begin AStyleClass := btn_secondary; AStyleAppearance := BOOTSTRAP_NORMAL; end;
     mrHelp     : begin AStyleClass := btn_info; AStyleAppearance := BOOTSTRAP_NORMAL; end;
+  else
+    GetStyleByModalResult(mrNone, AStyleClass, AStyleAppearance);
   end;
 end;
 

@@ -59,6 +59,8 @@ resourcestring
     ERR_ACCES_VIOL_DESC = 'Si è verificato un errore inatteso nel programma.'+sLineBreak+sLineBreak+'%s'+sLineBreak+sLineBreak+
                           'Si consiglia di uscire dal programma e riavviarlo (i dati già registrati non andranno perduti)'+sLineBreak+
                           'Se l''errore dovesse persistere contattare il supporto tecnico';
+    ERR_DIALOG_FORM_NOT_REGISTERED = 'Errore: La TaskDialog Form con le animazioni non è disponibile.'+sLineBreak+
+                          'Aggiungere "%s" Unit al progetto';
 
     //Navigator buttons Captions
     CaptionFirstRecord = 'Primo';
@@ -118,6 +120,8 @@ resourcestring
     ERR_ACCES_VIOL_DESC = 'Une erreur non gérée a été detectée.'+sLineBreak+sLineBreak+'%s'+sLineBreak+sLineBreak+
                           'Il est recommandé de fermer et de relancer l''application.'+sLineBreak+
                           'Si le programme persiste, contactez le support technique.';
+    ERR_DIALOG_FORM_NOT_REGISTERED = 'Erreur : le formulaire TaskDialog avec animations n''est pas disponible.'+sLineBreak+
+                          'Ajouter l''unité "%s" au projet';
 
     //Navigator buttons Captions
     CaptionFirstRecord = 'Premier';
@@ -176,7 +180,8 @@ resourcestring
     ERR_ACCES_VIOL_DESC = 'Unexpected error.'+sLineBreak+sLineBreak+'%s'+sLineBreak+sLineBreak+
                           'It is recommended to exit and reexecute the program.'+sLineBreak+
                           'If this error persists, please contact our technical support.';
-
+    ERR_DIALOG_FORM_NOT_REGISTERED = 'Error: Animated TaskDialog Form not registered!'+sLineBreak+
+                          'Please add "%s" Unit to the project';
     //Navigator buttons Captions
     CaptionFirstRecord = 'First';
     CaptionPriorRecord = 'Prior';

@@ -203,6 +203,8 @@ begin
     mrTryAgain : begin AStyleClass := btn_PrimaryDeepPurple; AStyleAppearance := FlatAttr; end;
     mrContinue : begin AStyleClass := btn_PrimaryDeepPurple; AStyleAppearance := FlatAttr; end;
     mrHelp     : begin AStyleClass := btn_Warn; AStyleAppearance := FlatAttr; end;
+  else
+    GetStyleByModalResult(mrNone, AStyleClass, AStyleAppearance);
   end;
 end;
 
@@ -393,6 +395,8 @@ begin
     mrTryAgain : begin AStyleClass := btn_PrimaryPurple; AStyleAppearance := FlatAttr; end;
     mrContinue : begin AStyleClass := btn_PrimaryPurple; AStyleAppearance := FlatAttr; end;
     mrHelp     : begin AStyleClass := btn_Warn; AStyleAppearance := FlatAttr; end;
+  else
+    GetStyleByModalResult(mrNone, AStyleClass, AStyleAppearance);
   end;
 end;
 

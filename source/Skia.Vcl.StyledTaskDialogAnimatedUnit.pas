@@ -52,14 +52,12 @@ uses
   , Vcl.ExtCtrls
   , Vcl.StdCtrls
   , System.UITypes
-  , Vcl.Skia
+  , Vcl.Skia //Warning: you cannot use Animated Style Dialog if you don't have Skia4Delphi!
   , System.Skia
   ;
 
 type
   TStyledTaskDialogAnimatedForm = class(TStyledTaskDialogForm)
-    SkFooterAnimatedImage: TSkAnimatedImage;
-    SkAnimatedImage: TSkAnimatedImage;
   private
     procedure InternalLoadImage(const AAnimatedImage: TSkAnimatedImage;
       const AImageIndex: TImageIndex; AImageName: string);
@@ -150,5 +148,9 @@ end;
 
 initialization
   RegisterTaskDialogFormClass(TStyledTaskDialogAnimatedForm);
+  InitializeStyledTaskDialogs(True);
+
+finalization
+  UnregisterTaskDialogFormClass(TStyledTaskDialogAnimatedForm);
 
 end.

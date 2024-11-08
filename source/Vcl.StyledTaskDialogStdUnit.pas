@@ -124,7 +124,4 @@ begin
   ImageList.GetBitmap(AImageIndex, AImage.Picture.Bitmap);
 end;
 
-initialization
-  RegisterTaskDialogFormClass(TStyledTaskDialogStd);
-
 end.

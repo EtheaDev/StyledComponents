@@ -241,12 +241,14 @@ procedure UseStyledDialogForm(const AActivate: Boolean);
 ///  Register the custom StyledTaskDialog passing the Form Class
 ///  The Form must inherits from TStyledTaskDialogForm
 /// </summary>
-procedure RegisterTaskDialogFormClass(AFormClass: TStyledTaskDialogFormClass);
+procedure RegisterTaskDialogFormClass(
+  AFormClass: TStyledTaskDialogFormClass);
 
 /// <summary>
 ///  Unregister the custom StyledTaskDialog to use Standard Task Dialog
 /// </summary>
-procedure UnregisterTaskDialogFormClass;
+procedure UnRegisterTaskDialogFormClass(
+  AFormClass: TStyledTaskDialogFormClass);
 
 implementation
 
@@ -263,23 +265,32 @@ uses
 
 var
   _DialogLauncher: ITaskDialogLauncher;
-  _AnimatedTaskDialogFormClass, _TaskDialogFormClass: TStyledTaskDialogFormClass;
+  _AnimatedTaskDialogFormClass: TStyledTaskDialogFormClass;
+  _TaskDialogFormClass: TStyledTaskDialogFormClass;
   _DlgButtonClasses: TButtonClasses;
   _DialogPosition: Vcl.Forms.TPosition;
 
-procedure RegisterTaskDialogFormClass(AFormClass: TStyledTaskDialogFormClass);
+procedure UnRegisterTaskDialogFormClass(
+  AFormClass: TStyledTaskDialogFormClass);
 begin
+  //Unregister handle
+  _DialogLauncher := nil;
+  if AFormClass = _AnimatedTaskDialogFormClass then
+    _AnimatedTaskDialogFormClass := nil;
+  if AFormClass = _TaskDialogFormClass then
+    _TaskDialogFormClass := nil;
+end;
+
+procedure RegisterTaskDialogFormClass(
+  AFormClass: TStyledTaskDialogFormClass);
+begin
+  //Create handler for execute custom TaskDialog Form
+  _DialogLauncher := TTaskDialogLauncherHandler.Create;
   if AFormClass.CanUseAnimations then
     _AnimatedTaskDialogFormClass := AFormClass
   else
     _TaskDialogFormClass := AFormClass;
   UseStyledDialogForm(True);
-end;
-
-procedure UnregisterTaskDialogFormClass;
-begin
-  _AnimatedTaskDialogFormClass := nil;
-  _TaskDialogFormClass := nil;
 end;
 
 procedure UseStyledDialogForm(const AActivate: Boolean);
@@ -348,7 +359,9 @@ begin
         mrClose: LStyledButton := CloseButton;
         mrHelp: LStyledButton := HelpButton;
       else
-        LStyledButton := HelpButton;
+        begin
+          LStyledButton := nil;
+        end;
       end;
       if Assigned(LStyledButton) then
       begin
@@ -913,55 +926,55 @@ begin
     // Find if the Button is already present in the Form
     // for CommandLinks the buttons must be always created
     LStyledButton := FindButton(LButtonItem.ModalResult);
-    if Assigned(LStyledButton) then
+    if not Assigned(LStyledButton) or LUsingCommandLinks then
+    begin
+      LStyledButton := TStyledButton.Create(Self);
+      LStyledButton.OnClick := ButtonClick;
+      LStyledButton.SetButtonStyle(FDialogBtnFamily, LButtonItem.ModalResult);
+    end
+    else
     begin
       // Show the Button if not using Command Links
       LStyledButton.Visible := Assigned(LStyledButton) and not LUsingCommandLinks;
-      if not Assigned(LStyledButton) or LUsingCommandLinks then
+    end;
+    LStyledButton.Caption := LButtonItem.Caption;
+    LStyledButton.Default := LButtonItem.Default;
+    LStyledButton.ElevationRequired := LButtonItem.ElevationRequired;
+    LStyledButton.Enabled := LButtonItem.Enabled;
+    if LUsingCommandLinks then
+    begin
+      LStyledButton.Parent := CommandLinksPanel;
+      LStyledButton.TabOrder := 0;
+      LStyledButton.AlignWithMargins := True;
+      LStyledButton.Margins.Top := 1;
+      LStyledButton.Margins.Bottom := 1;
+      LStyledButton.Align := alBottom;
+      LStyledButton.Style := bsCommandLink;
+      LStyledButton.CommandLinkHint := LButtonItem.CommandLinkHint;
+      LStyledButton.Height := LCommandLinkHeight - 2;
+      CommandLinksPanel.Height := CommandLinksPanel.Height + LCommandLinkHeight;
+      if LButtonItem.Default then
       begin
-        LStyledButton := TStyledButton.Create(Self);
-        LStyledButton.OnClick := ButtonClick;
-        LStyledButton.SetButtonStyle(FDialogBtnFamily, LButtonItem.ModalResult);
+        LStyledButton.Default := True;
+        Self.ActiveControl := LStyledButton;
+        SetFocusToButton(LStyledButton);
       end;
-      LStyledButton.Caption := LButtonItem.Caption;
-      LStyledButton.Default := LButtonItem.Default;
-      LStyledButton.ElevationRequired := LButtonItem.ElevationRequired;
-      LStyledButton.Enabled := LButtonItem.Enabled;
-      if LUsingCommandLinks then
+      if Assigned(LLastButton) then
       begin
-        LStyledButton.Parent := CommandLinksPanel;
-        LStyledButton.TabOrder := 0;
-        LStyledButton.AlignWithMargins := True;
-        LStyledButton.Margins.Top := 1;
-        LStyledButton.Margins.Bottom := 1;
-        LStyledButton.Align := alBottom;
-        LStyledButton.Style := bsCommandLink;
-        LStyledButton.CommandLinkHint := LButtonItem.CommandLinkHint;
-        LStyledButton.Height := LCommandLinkHeight - 2;
-        CommandLinksPanel.Height := CommandLinksPanel.Height + LCommandLinkHeight;
-        if LButtonItem.Default then
-        begin
-          LStyledButton.Default := True;
-          Self.ActiveControl := LStyledButton;
-          SetFocusToButton(LStyledButton);
-        end;
-        if Assigned(LLastButton) then
-        begin
-          LStyledButton.TabOrder := LStyledButton.TabOrder -1;
-          LStyledButton.Top := LLastButton.Top - LLastButton.Height;
-        end;
-        LLastButton := LStyledButton;
-      end
-      else
-      begin
-        LStyledButton.Parent := ButtonsPanel;
-        LStyledButton.Align := alRight;
-        LStyledButton.AlignWithMargins := True;
-        LStyledButton.Margins.Assign(YesButton.Margins);
-        if Assigned(LLastButton) then
-          LStyledButton.Left := LLastButton.Left - LLastButton.Width;
-        LLastButton := LStyledButton;
+        LStyledButton.TabOrder := LStyledButton.TabOrder -1;
+        LStyledButton.Top := LLastButton.Top - LLastButton.Height;
       end;
+      LLastButton := LStyledButton;
+    end
+    else
+    begin
+      LStyledButton.Parent := ButtonsPanel;
+      LStyledButton.Align := alRight;
+      LStyledButton.AlignWithMargins := True;
+      LStyledButton.Margins.Assign(YesButton.Margins);
+      if Assigned(LLastButton) then
+        LStyledButton.Left := LLastButton.Left - LLastButton.Width;
+      LLastButton := LStyledButton;
     end;
   end;
   //Set Focus to Button assigning ActiveControl
@@ -1422,8 +1435,15 @@ begin
     _DialogPosition := poOwnerFormCenter
   else
     _DialogPosition := poScreenCenter;
-  if Assigned(_AnimatedTaskDialogFormClass) then
-    LForm := _AnimatedTaskDialogFormClass.Create(nil)
+  if ATaskDialog.UseAnimations then
+  begin
+    if not Assigned(_AnimatedTaskDialogFormClass) then
+      raise EStyledTaskDialogException.CreateFmt(
+        ERR_DIALOG_FORM_NOT_REGISTERED,
+        ['Skia.Vcl.StyledTaskDialogAnimatedUnit.pas'])
+    else
+      LForm := _AnimatedTaskDialogFormClass.Create(nil)
+  end
   else
     LForm := _TaskDialogFormClass.Create(nil);
   try
@@ -1475,13 +1495,7 @@ begin
 end;
 
 initialization
-  _TaskDialogFormClass := TStyledTaskDialogForm;
-  //Create handler for execute custom TaskDialog Form
-  _DialogLauncher := TTaskDialogLauncherHandler.Create;
-
   _DialogPosition := poScreenCenter;
-  //Register the handler
-  //RegisterCustomExecute(_DialogLauncher);
   //Init default Dialog buttons Styles
   SetLength(_DlgButtonClasses, Ord(TMsgDlgBtn.mbClose)+1);
 

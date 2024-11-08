@@ -184,6 +184,8 @@ begin
     mrTryAgain : begin AStyleAppearance := DEFAULT_APPEARANCE; end;
     mrContinue : begin AStyleAppearance := DEFAULT_APPEARANCE; end;
     mrHelp     : begin AStyleAppearance := DEFAULT_APPEARANCE; end;
+  else
+    GetStyleByModalResult(mrNone, AStyleClass, AStyleAppearance);
   end;
 end;
 

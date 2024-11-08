@@ -172,6 +172,8 @@ begin
     mrTryAgain : begin AStyleClass := 'clYellow'; AStyleAppearance := COLOR_BTN_NORMAL; end;
     mrContinue : begin AStyleClass := 'clGray'; AStyleAppearance := COLOR_BTN_NORMAL; end;
     mrHelp     : begin AStyleClass := 'clYellow'; AStyleAppearance := COLOR_BTN_NORMAL; end;
+  else
+    GetStyleByModalResult(mrNone, AStyleClass, AStyleAppearance);
   end;
 end;
 
@@ -355,6 +357,8 @@ begin
     mrTryAgain : begin AStyleClass := 'Slategray'; AStyleAppearance := COLOR_BTN_NORMAL; end;
     mrContinue : begin AStyleClass := 'Lightseagreen'; AStyleAppearance := COLOR_BTN_NORMAL; end;
     mrHelp     : begin AStyleClass := 'Plum'; AStyleAppearance := COLOR_BTN_NORMAL; end;
+  else
+    GetStyleByModalResult(mrNone, AStyleClass, AStyleAppearance);
   end;
 end;
 
