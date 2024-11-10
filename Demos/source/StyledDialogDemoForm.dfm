@@ -76,7 +76,7 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
     end
     object btUseStyledDialogComp: TButton
       Left = 521
-      Top = 127
+      Top = 160
       Width = 195
       Height = 25
       Anchors = [akTop, akRight]
@@ -86,7 +86,7 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
     end
     object btUseNativeDialogComp: TButton
       Left = 521
-      Top = 158
+      Top = 191
       Width = 195
       Height = 25
       Anchors = [akTop, akRight]
@@ -109,8 +109,8 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
     object VerificationTextMemo: TMemo
       Left = 112
       Top = 168
-      Width = 387
-      Height = 56
+      Width = 384
+      Height = 48
       Anchors = [akLeft, akTop, akRight]
       Lines.Strings = (
         'Verification Text'
@@ -120,18 +120,19 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
     end
     object rgMainIcon: TRadioGroup
       Left = 521
-      Top = 13
+      Top = 10
       Width = 195
-      Height = 107
+      Height = 142
       Anchors = [akTop, akRight]
       Caption = 'Main Icon'
-      ItemIndex = 0
+      ItemIndex = 3
       Items.Strings = (
         'tdiNone'
         'tdiWarning'
         'tdiError'
         'tdiInformation'
-        'tdiShield')
+        'tdiShield'
+        'tdiQuestion')
       TabOrder = 4
     end
     object CaptionEdit: TEdit
@@ -342,7 +343,7 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
       object cbUseCommandLinks: TCheckBox
         Left = 339
         Top = 210
-        Width = 153
+        Width = 170
         Height = 17
         Anchors = [akLeft, akBottom]
         Caption = 'Use Command Links'
@@ -352,12 +353,10 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
       object cbUseTitleInMessageDlg: TCheckBox
         Left = 339
         Top = 245
-        Width = 153
+        Width = 170
         Height = 17
         Anchors = [akLeft, akBottom]
         Caption = 'Add Title in MessageDlg'
-        Checked = True
-        State = cbChecked
         TabOrder = 11
         OnClick = InitializeDialogsClick
       end
@@ -369,7 +368,7 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
         Anchors = [akLeft, akBottom]
         Caption = 'Native ShowMessage'
         TabOrder = 12
-        OnClick = DoShowMessage
+        OnClick = ShowDlg
       end
       object btStyledShowMessage: TButton
         Left = 173
@@ -379,7 +378,7 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
         Anchors = [akLeft, akBottom]
         Caption = 'Styled ShowMessage'
         TabOrder = 13
-        OnClick = DoShowMessage
+        OnClick = ShowDlg
       end
       object ButtonsWidthSpinEdit: TSpinEdit
         Left = 299

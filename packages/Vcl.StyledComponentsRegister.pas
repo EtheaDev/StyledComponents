@@ -126,6 +126,17 @@ Type
     procedure ExecuteVerb(Index: Integer); override;
   end;
 
+  TStyledTaskDialogIconPropertyEditor = class(TIntegerProperty)
+  private
+    function ValueToString(const AValue: Integer): string;
+    function StringToValue(const AValue: string): Integer;
+  public
+    function GetAttributes: TPropertyAttributes; override;
+    function GetValue: string; override;
+    procedure GetValues(Proc: TGetStrProc); override;
+    procedure SetValue(const Value: string); override;
+  end;
+
   TStyledComponentSelection = class (TSelectionEditor, ISelectionEditor)
   public
     procedure RequiresUnits(Proc: TGetStrProc); override;
@@ -168,6 +179,7 @@ implementation
 uses
   System.SysUtils
   , ToolsAPI
+  , Vcl.Dialogs
   , Vcl.StandardButtonStyles
   , Vcl.BootstrapButtonStyles
   , Vcl.AngularButtonStyles
@@ -441,6 +453,7 @@ begin
 end;
 
 { TStyledComponentSelection }
+
 procedure TStyledComponentSelection.RequiresUnits(Proc: TGetStrProc);
 begin
   inherited RequiresUnits(Proc);
@@ -783,6 +796,63 @@ begin
   Result := 2;
 end;
 
+{ TStyledTaskDialogIconPropertyEditor }
+
+function TStyledTaskDialogIconPropertyEditor.GetAttributes: TPropertyAttributes;
+begin
+  Result := [paValueList, paMultiSelect];
+end;
+
+function TStyledTaskDialogIconPropertyEditor.ValueToString(
+  const AValue: Integer): string;
+begin
+  case AValue of
+    tdiNone: Result := 'tdiNone';
+    tdiWarning: Result := 'tdiWarning';
+    tdiError: Result := 'Error';
+    tdiInformation: Result := 'tdiInformation';
+    tdiShield: Result := 'tdiShield';
+    tdiQuestion: Result := 'tdiQuestion';
+  else
+    Result := IntToStr(AValue);
+  end;
+end;
+
+function TStyledTaskDialogIconPropertyEditor.StringToValue(
+  const AValue: string): Integer;
+begin
+  if SameText(AValue, 'tdiNone') then Result := tdiNone
+  else if SameText(AValue, 'tdiWarning') then Result := tdiWarning
+  else if SameText(AValue, 'tdiError') then Result := tdiError
+  else if SameText(AValue, 'tdiInformation') then Result := tdiInformation
+  else if SameText(AValue, 'tdiShield') then Result := tdiShield
+  else if SameText(AValue, 'tdiQuestion') then Result := tdiQuestion
+  else
+    TryStrToInt(AValue, Result);
+end;
+
+function TStyledTaskDialogIconPropertyEditor.GetValue: string;
+var
+  I: Integer;
+begin
+  I := GetOrdValue;
+  Result := ValueToString(I);
+end;
+
+procedure TStyledTaskDialogIconPropertyEditor.GetValues(Proc: TGetStrProc);
+var
+  I: Integer;
+begin
+  inherited;
+  for I := tdiNone to tdiQuestion do
+    Proc(ValueToString(I));
+end;
+
+procedure TStyledTaskDialogIconPropertyEditor.SetValue(const Value: string);
+begin
+  SetOrdValue(StringToValue(Value));
+end;
+
 { TImageIndexPropertyEditor }
 
 function TImageIndexPropertyEditor.GetImageListAt(Index: Integer): TCustomImageList;
@@ -1035,6 +1105,12 @@ begin
     TStyledCategoryButtons, 'StyleAppearance', TStyledAppearancePropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStyledButtonAppearance),
     TStyledButtonItem, 'StyleAppearance', TStyledAppearancePropertyEditor);
+
+  //Property Editor for Icon Value of StyledTaskDialog
+  RegisterPropertyEditor(TypeInfo(TTaskDialogIcon),
+    TStyledTaskDialog, 'MainIcon', TStyledTaskDialogIconPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TTaskDialogIcon),
+    TStyledTaskDialog, 'FooterIcon', TStyledTaskDialogIconPropertyEditor);
 
   //Property Editor for ImageIndex
   RegisterPropertyEditor(TypeInfo(System.UITypes.TImageIndex),

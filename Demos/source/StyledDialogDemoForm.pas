@@ -102,7 +102,6 @@ type
     procedure TaskDialogRadioButtonClicked(Sender: TObject);
     procedure TaskDialogVerificationClicked(Sender: TObject);
     procedure InitializeDialogsClick(Sender: TObject);
-    procedure DoShowMessage(Sender: TObject);
   private
     FRadioButtonSelected: string;
     procedure ShowSelection(const AModalResult: TModalResult);
@@ -136,14 +135,6 @@ uses
 procedure TfmStyledTaskDialog.InitializeDialogsClick(Sender: TObject);
 begin
   InitializeDialogs;
-end;
-
-procedure TfmStyledTaskDialog.DoShowMessage(Sender: TObject);
-begin
-  if Sender = btNativeShowMessage then
-    ShowMessage(edMessage.Text)
-  else
-    StyledShowMessage(edMessage.Text);
 end;
 
 procedure TfmStyledTaskDialog.InitializeDialogs;
@@ -261,7 +252,13 @@ begin
 
   if LUseDefaultbutton then
   begin
-    if Sender = btNativeTaskDialog then
+    if Sender = btNativeShowMessage then
+      //Call Delphi MessageDlg
+      LResult := MessageDlg(edMessage.Text, LDlgType, LButtons, HelpContext, LDefaultButton)
+    else if Sender = btStyledShowMessage then
+      //Call Styled MessageDlg
+      LResult := StyledMessageDlg(edMessage.Text, LDlgType, LButtons, HelpContext, LDefaultButton)
+    else if Sender = btNativeTaskDialog then
       //Call Delphi TaskMessageDlg passing Default Button
       LResult := TaskMessageDlg(edTitle.Text, edMessage.Text, LDlgType, LButtons, HelpContext, LDefaultButton)
     else if Sender = btNativeMsgDialog then
@@ -278,7 +275,13 @@ begin
   end
   else
   begin
-    if Sender = btNativeTaskDialog then
+    if Sender = btNativeShowMessage then
+      //Call Delphi MessageDlg without Default Button
+      LResult := MessageDlg(edMessage.Text, LDlgType, LButtons, HelpContext)
+    else if Sender = btStyledShowMessage then
+      //Call Styled MessageDlg without Default Button
+      LResult := StyledMessageDlg(edMessage.Text, LDlgType, LButtons, HelpContext)
+    else if Sender = btNativeTaskDialog then
       //Call Delphi TaskMessageDlg without Default Button
       LResult := TaskMessageDlg(edTitle.Text, edMessage.Text, LDlgType, LButtons, HelpContext)
     else if Sender = btNativeMsgDialog then
@@ -395,6 +398,9 @@ begin
     StyledTaskDialog.AutoClickDelay := AutoClickDelaySpinEdit.Value;
     StyledTaskDialog.ButtonsWidth := ButtonsWidthSpinEdit.Value;
     StyledTaskDialog.Flags :=  StyledTaskDialog.Flags - [tfVerificationFlagChecked];
+    {$IFDEF SKIA}
+    StyledTaskDialog.UseAnimations := True;
+    {$ENDIF}
   end
   else
   begin

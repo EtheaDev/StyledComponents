@@ -57,7 +57,12 @@ const
   DEFAULT_MAIN_ICON_SIZE = 64;
   {$ENDIF}
 
+  tdiQuestion = 5;
+
 type
+  //A new TTaskDialogIcon Value for StyledComponents to
+  //include tdiQuestion Value
+
   TStyledDialogIcons = array[TMsgDlgType] of TIcon;
   TOnFindDialogButtonEvent = function (const AModalResult: TModalResult): TStyledButton of object;
   EStyledTaskDialogException = class(Exception);
@@ -83,6 +88,8 @@ type
     FAutoClickDelay: Integer;
     FOnFindDialogButton: TOnFindDialogButtonEvent;
     FUseAnimations: Boolean;
+    FUseMessageDefaultButton: Boolean;
+    FMessageDefaultButton: TMsgDlgBtn;
     function IsDefaultFamily: Boolean;
     procedure SetAutoClick(const AValue: Boolean);
     procedure SetAutoClickDelay(const AValue: Integer);
@@ -102,6 +109,8 @@ type
     constructor Create(AOwner: TComponent); override;
     function Execute(ParentWnd: HWND): Boolean; overload; override;
     function FindDialogButton(const AModalResult: TModalResult): TStyledButton;
+    property MessageDefaultButton: TMsgDlgBtn read FMessageDefaultButton;
+    property UseMessageDefaultButton: Boolean read FUseMessageDefaultButton;
     property HelpFile: string read FHelpFile write FHelpFile;
     property Position: TPoint read FPosition write FPosition;
     property MainIconSize: Integer read FMainIconSize write FMainIconSize default DEFAULT_MAIN_ICON_SIZE;
@@ -311,7 +320,7 @@ function InternalDoTaskMessageDlgPosHelp(const Instruction, Msg: string;
   const CustomButtonCaptions: array of string): Integer;
 const
   IconMap: array[TMsgDlgType] of TTaskDialogIcon = (tdiWarning, tdiError,
-    tdiInformation, tdiInformation, tdiNone);
+    tdiInformation, tdiQuestion, tdiShield);
   LModalResults: array[TMsgDlgBtn] of Integer = (mrYes, mrNo, mrOk, mrCancel,
     mrAbort, mrRetry, mrIgnore, mrAll, mrNoToAll, mrYesToAll, mrHelp, mrClose);
 var
@@ -331,6 +340,9 @@ begin
     //Reset default CommonButtons
     LTaskDialog.Flags := LTaskDialog.Flags + [tfPositionRelativeToWindow];
     LTaskDialog.CommonButtons := [];
+    //To inform the Dialog Form to use the Default Button specified in MessageDlg
+    LTaskDialog.FUseMessageDefaultButton := True;
+    LTaskDialog.FMessageDefaultButton := DefaultButton;
     LTaskDialog.UseAnimations :=  _UseAnimations;
     LTaskDialog.AutoClick := AutoClickDelay > 0;
     if LTaskDialog.AutoClick then
@@ -679,6 +691,8 @@ begin
     Result := TMsgDlgType.mtError
   else if AIcon = tdiInformation then
     Result := TMsgDlgType.mtInformation
+  else if AIcon = tdiQuestion then
+    Result := TMsgDlgType.mtConfirmation
   else if AIcon = tdiShield then
     Result := TMsgDlgType.mtCustom
   else
@@ -772,9 +786,6 @@ begin
 end;
 
 function TStyledTaskDialog.DoExecute(ParentWnd: HWND): Boolean;
-type
-  TTaskDialogIcon = (tdiWarning, tdiError,
-    tdiInformation, tdiShield, tdiNone);
 var
   LTaskDlgType: TMsgDlgType;
 begin
