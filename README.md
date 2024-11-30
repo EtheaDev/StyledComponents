@@ -2,7 +2,7 @@
 
 ## Components similar to Delphi VCL Buttons, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 3.7.4
+### Actual official version: 3.7.5
 
 ---
 ## A brief description
@@ -403,9 +403,15 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+30 Nov 2024: version 3.7.5
+- Added property HideSystemCloseButton to TStyledTaskDialog
+- Added property OnDialogShow
+- Fixed wordwrap for StyledBitBtn
+
 10 Nov 2024: version 3.7.4
 - Added tdiQuestion value to show a Question mark in TaskDialog
 - Use Question Mark (icon ora animation) for MessageDlg and TaskDialog of mtConfirmation type
+- Fixed Icon Size of Dialogs based on ScaleFactor
 - Fixed DefaultButton for StyledDialog using MessageDlg and TaskDialog
 
 08 Nov 2024: version 3.7.3

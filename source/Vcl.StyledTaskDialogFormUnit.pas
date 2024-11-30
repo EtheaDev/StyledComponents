@@ -151,7 +151,6 @@ type
     procedure PlayMessageDlgSound;
     procedure FocusDefaultButton;
     procedure LoadDialogImage;
-    procedure SetFocusToButton(AStyledButton: TStyledButton);
     procedure SetFooterText(const AValue: string);
     function GetFooterText: string;
     procedure SetVerificationText(const AValue: string);
@@ -369,7 +368,7 @@ begin
       begin
         TabOrder := LStyledButton.TabOrder -1;
         if LTaskDialogButtonItem.Default then
-          SetFocusToButton(LStyledButton);
+          FFocusedButton := LStyledButton;
       end;
     end;
   end;
@@ -417,15 +416,6 @@ begin
   begin
     FFlags := AValue;
     FTaskDialog.Flags := AValue;
-  end;
-end;
-
-procedure TStyledTaskDialogForm.SetFocusToButton(AStyledButton: TStyledButton);
-begin
-  if AStyledButton.CanFocus then
-  begin
-    AStyledButton.SetFocus;
-    FFocusedButton := AStyledButton;
   end;
 end;
 
@@ -537,16 +527,17 @@ procedure TStyledTaskDialogForm.FocusDefaultButton;
 var
   LButton: TStyledButton;
 begin
-  //if not Assigned(FFocusedButton) then
+  LButton := GetDefaultButton(DefaultButton);
+  if not Assigned(LButton) then
+    LButton := FFocusedButton;
+  if Assigned(LButton) then
   begin
-    LButton := GetDefaultButton(DefaultButton);
-    if Assigned(LButton) then
-      SetFocusToButton(LButton);
-  end;
-  if Assigned(FFocusedButton) then
-  begin
-    FFocusedButton.AutoClick := FAutoClick;
-    FFocusedButton.AutoClickDelay := FAutoClickDelay;
+    if LButton.CanFocus and Self.Visible then
+    begin
+      LButton.SetFocus;
+      LButton.AutoClick := FAutoClick;
+      LButton.AutoClickDelay := FAutoClickDelay;
+    end;
   end;
 end;
 
@@ -706,6 +697,11 @@ begin
   end;
   LFormWidth := LFormWidth + LMargins;
   ClientWidth := Max(LWidth, LFormWidth);
+  //Resize Image based on Scale Factor
+  ImagePanel.SetBounds(ImagePanel.Left, ImagePanel.Top,
+    LImageSize, LImageSize);
+  IconContainer.SetBounds(IconContainer.Left, IconContainer.Top,
+    LImageSize, LImageSize);
 end;
 
 procedure TStyledTaskDialogForm.CalcMessageText(const AExpanded: Boolean);
@@ -981,7 +977,7 @@ begin
       begin
         LStyledButton.Default := True;
         Self.ActiveControl := LStyledButton;
-        SetFocusToButton(LStyledButton);
+        FFocusedButton := LStyledButton;
       end;
       if Assigned(LLastButton) then
       begin
@@ -1018,7 +1014,7 @@ begin
   if (Self.ActiveControl = nil) and Assigned(LLastButton) and (LLastButton.CanFocus) then
   begin
     Self.ActiveControl := LLastButton;
-    SetFocusToButton(LLastButton);
+    FFocusedButton := LLastButton;
   end;
 end;
 
@@ -1065,6 +1061,8 @@ begin
 end;
 
 procedure TStyledTaskDialogForm.ShowDialogForm;
+var
+  LStyledDialog: TStyledTaskDialog;
 begin
   //Initialize components based on ATaskDialog attributes
   FTaskDialogExpanded := FTaskDialog.OnExpanded;
@@ -1076,10 +1074,14 @@ begin
   DefaultButton := FTaskDialog.DefaultButton;
   if FTaskDialog is TStyledTaskDialog then
   begin
-    FUseMessageDefaultButton := TStyledTaskDialog(FTaskDialog).UseMessageDefaultButton;
-    FMessageDefaultButton := TStyledTaskDialog(FTaskDialog).MessageDefaultButton;
-    ButtonsWidth := TStyledTaskDialog(FTaskDialog).ButtonsWidth;
-    ButtonsHeight := TStyledTaskDialog(FTaskDialog).ButtonsHeight;
+    LStyledDialog := TStyledTaskDialog(FTaskDialog);
+    //Hide Close button if required
+    if LStyledDialog.HideSystemCloseButton then
+      BorderIcons := [];
+    FUseMessageDefaultButton := LStyledDialog.UseMessageDefaultButton;
+    FMessageDefaultButton := LStyledDialog.MessageDefaultButton;
+    ButtonsWidth := LStyledDialog.ButtonsWidth;
+    ButtonsHeight := LStyledDialog.ButtonsHeight;
   end;
   Buttons := FTaskDialog.Buttons;
   //RadioButtons := FTaskDialog.RadioButtons;
@@ -1314,6 +1316,9 @@ begin
     VerificationCheckBox.Checked := tfVerificationFlagChecked in TaskDialog.Flags;
     if Assigned(FTaskDialog.OnDialogCreated) then
       FTaskDialog.OnDialogCreated(FTaskDialog);
+    if (FTaskDialog is TStyledTaskDialog) and
+      Assigned(TStyledTaskDialog(FTaskDialog).OnDialogShow) then
+      TStyledTaskDialog(FTaskDialog).OnDialogShow(Self);
   finally
     Screen.Cursor := crDefault;
   end;

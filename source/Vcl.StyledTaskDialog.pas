@@ -68,8 +68,11 @@ type
   EStyledTaskDialogException = class(Exception);
 
 {$WARN SYMBOL_PLATFORM OFF}
-{ TaskDialog based message dialog; requires Windows Vista or later }
+
 type
+  TTaskDialogShow = procedure(
+    const AStyledTaskDialogForm: TForm) of Object;
+
   { TStyledTaskDialog }
   [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledTaskDialog = class(TTaskDialog)
@@ -90,6 +93,8 @@ type
     FUseAnimations: Boolean;
     FUseMessageDefaultButton: Boolean;
     FMessageDefaultButton: TMsgDlgBtn;
+    FDefineDialogSize: TTaskDialogShow;
+    FHideSystemCloseButton: Boolean;
     function IsDefaultFamily: Boolean;
     procedure SetAutoClick(const AValue: Boolean);
     procedure SetAutoClickDelay(const AValue: Integer);
@@ -126,6 +131,8 @@ type
     property ButtonsWidth: Integer read FButtonsWidth write SetButtonsWidth default DEFAULT_STYLEDDIALOG_BUTTONSWIDTH;
     property ButtonsHeight: Integer read FButtonsHeight write SetButtonsHeight default DEFAULT_STYLEDDIALOG_BUTTONSHEIGHT;
     property Flags: TTaskDialogFlags read GetFlags write SetFlags default [tfAllowDialogCancellation, tfPositionRelativeToWindow];
+    property HideSystemCloseButton: Boolean read FHideSystemCloseButton write FHideSystemCloseButton default False;
+    property OnDialogShow: TTaskDialogShow read FDefineDialogSize write FDefineDialogSize;
   end;
 
   //Abstraction of a Dialog Launcher
