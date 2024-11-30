@@ -1506,7 +1506,7 @@ type
     property ModalResult;
     property NotificationBadge;
     property NumGlyphs;
-    property Style: TButtonStyle read FStyle write FStyle;
+    property Style: TButtonStyle read FStyle write FStyle default bsAutoDetect;
     property Spacing default 4;
     property TabOrder;
     property TabStop;
@@ -2654,6 +2654,7 @@ var
   LUseImageList: Boolean;
   LGlyphPos: TPoint;
   LCaption: TCaption;
+  LOldBKMode, LMaxBorderWidth: Integer;
 begin
   if FShowCaption then
     LCaption := GetCaptionToDraw
@@ -2785,8 +2786,24 @@ begin
     end;
   end
   else
-    DrawButtonText(ACanvas, LCaption, FCaptionAlignment, FSpacing, CalcMaxBorderWidth,
-      LTextRect, LTextFlags);
+  begin
+    LMaxBorderWidth := CalcMaxBorderWidth;
+    if FUseButtonLayout then
+    begin
+      LOldBKMode := SetBkMode(ACanvas.Handle, Winapi.Windows.TRANSPARENT);
+      try
+        Winapi.Windows.DrawText(ACanvas.Handle, PChar(LCaption),
+          Length(LCaption), LTextRect, LTextFlags or DT_END_ELLIPSIS);
+      finally
+        SetBkMode(ACanvas.Handle, LOldBKMode);
+      end;
+    end
+    else
+    begin
+      DrawButtonText(ACanvas, LCaption, FCaptionAlignment, FSpacing, LMaxBorderWidth,
+        LTextRect, LTextFlags);
+    end;
+  end;
 end;
 
 procedure TStyledButtonRender.DrawButton(const ACanvas: TCanvas;
@@ -6311,6 +6328,7 @@ end;
 constructor TStyledBitBtn.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  FStyle := bsAutoDetect;
   FRender.FUseButtonLayout := True;
   FRender.Spacing := 4;
 end;

@@ -1607,6 +1607,8 @@ var
   IW, IH, IX, IY: Integer;
   LImageAlignment: TImageAlignment;
 begin
+  //Calculate Image and Text Rect for Drawing using ImageAlignment and ImageMargins
+  //for StyledButton and StyledGraphicButton
   if ACaption = '' then
     LImageAlignment := iaCenter
   else
@@ -1722,6 +1724,8 @@ var
   LLayout: TButtonLayout;
   LMargin, LSpacing: Integer;
 begin
+  //Calculate Image and Text Rect for Drawing using ButtonLayout, Margin and Spacing
+  //For StyledSpeedButton and StyledBitBtn
   LLayout := ALayout;
   if (ABiDiFlags and DT_RIGHT) = DT_RIGHT then
   begin
@@ -1835,7 +1839,8 @@ begin
   Inc(AGlyphPos.X, ASurfaceRect.Left + AOffset.X);
   Inc(AGlyphPos.Y, ASurfaceRect.Top + AOffset.Y);
 
-  OffsetRect(ATextBounds, LTextPos.X + ASurfaceRect.Left + AOffset.X, LTextPos.Y + ASurfaceRect.Top + AOffset.Y);
+  OffsetRect(ATextBounds, LTextPos.X + ASurfaceRect.Left + AOffset.X,
+    LTextPos.Y + ASurfaceRect.Top + AOffset.Y);
 end;
 
 procedure DrawIconFromCommandLinkRes(ACanvas: TCanvas; ARect: TRect;
@@ -2044,7 +2049,7 @@ procedure DrawButtonText(const ACanvas: TCanvas;
   const PreserveBorders: Boolean = True);
 var
   R: TRect;
-  OldBKMode: Integer;
+  LOldBKMode: Integer;
 begin
 (* for test
   ACanvas.Brush.Color := clYellow;
@@ -2065,7 +2070,7 @@ begin
   else
     OffsetRect(R, (ARect.Width - R.Width) div 2, (ARect.Height - R.Height) div 2);
   end;
-  OldBKMode := SetBkMode(ACanvas.Handle, Winapi.Windows.TRANSPARENT);
+  LOldBKMode := SetBkMode(ACanvas.Handle, Winapi.Windows.TRANSPARENT);
   try
     if PreserveBorders then
     begin
@@ -2075,13 +2080,13 @@ begin
           R.Top := ARect.Top + ABorderWidth + ASpacing ;
         if R.Bottom > ARect.Bottom - ABorderWidth - Aspacing then
           R.Bottom := ARect.Bottom - ABorderWidth - Aspacing;
-      (* for test
-      ACanvas.Brush.Color := clRed;
-      ACanvas.FillRect(R);
-      ACanvas.Pen.Color := clBlue;
-      ACanvas.Pen.Width := 1;
-      ACanvas.Rectangle(R);
-      *)
+        (* for test
+        ACanvas.Brush.Color := clRed;
+        ACanvas.FillRect(R);
+        ACanvas.Pen.Color := clBlue;
+        ACanvas.Pen.Width := 1;
+        ACanvas.Rectangle(R);
+        *)
         Winapi.Windows.DrawText(ACanvas.Handle, PChar(AText),
           Length(AText), R, ABidiFlags or DT_END_ELLIPSIS);
       end
@@ -2097,7 +2102,7 @@ begin
         Length(AText), R, ABidiFlags);
     end;
   finally
-    SetBkMode(ACanvas.Handle, OldBKMode);
+    SetBkMode(ACanvas.Handle, LOldBKMode);
   end;
 end;
 
