@@ -3,7 +3,7 @@
 {  StyledToolbar: a Toolbar with TStyledToolButtons inside                     }
 {  Based on TFlowPanel and TStyledGraphicButton                                }
 {                                                                              }
-{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Copyright (c) 2022-2025 (Ethea S.r.l.)                                      }
 {  Author: Carlo Barazzetta                                                    }
 {  Contributors: Lance Rasmussen                                               }
 {                                                                              }
@@ -77,7 +77,6 @@ type
     FGrouped: Boolean;
     FMarked: Boolean;
     FStyle: TToolButtonStyle;
-    FEnabled: Boolean;
     FWidthLoaded: Boolean;
     FImageAlignment: TImageAlignment;
     FMenuItem: TMenuItem;
@@ -531,7 +530,7 @@ begin
     Height := DEFAULT_TOOLBUTTON_HEIGHT;
   end;
   ImageAlignment := iaTop;
-  FEnabled := True;
+  Enabled := True;
 end;
 
 procedure TStyledToolButton.MouseDown(Button: TMouseButton; Shift: TShiftState;
@@ -790,7 +789,6 @@ begin
     end
     else
     begin
-      inherited Enabled := FEnabled;
       inherited DisabledImages := FToolbar.DisabledImages;
       inherited Images := FToolbar.Images;
     end;
@@ -839,9 +837,9 @@ end;
 
 procedure TStyledToolButton.SetEnable(const AValue: Boolean);
 begin
-  if FEnabled <> AValue then
+  if Enabled <> AValue then
   begin
-    FEnabled := AValue;
+    inherited Enabled := AValue;
     UpdateButtonContent;
   end;
 end;

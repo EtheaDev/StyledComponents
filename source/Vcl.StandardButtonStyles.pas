@@ -3,7 +3,7 @@
 {  Standard Button Family: implementation of "standard" Family                 }
 {  attributes for StyledButton similar to VCL Styled Buttons                   }
 {                                                                              }
-{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Copyright (c) 2022-2025 (Ethea S.r.l.)                                      }
 {  Author: Carlo Barazzetta                                                    }
 {  Contributors: Ariel Montes, Lance Rasmussen                                 }
 {                                                                              }

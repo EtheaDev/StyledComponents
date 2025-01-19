@@ -3,7 +3,7 @@
 {  TStyledComponents Demo                                                      }
 {  Full demo of Styled Components and Styled TaskDialog/MessageDialog          }
 {                                                                              }
-{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Copyright (c) 2022-2025 (Ethea S.r.l.)                                      }
 {  Author: Carlo Barazzetta                                                    }
 {  Contributors:                                                               }
 {                                                                              }
@@ -46,6 +46,8 @@ uses
   StyledCategoryButtonsForm in '..\source\StyledCategoryButtonsForm.pas' {fmStyledCategoryButtons},
   StyledDbNavigatorForm in '..\source\StyledDbNavigatorForm.pas' {fmStyledDbNavigator},
   StyledDialogDemoForm in '..\source\StyledDialogDemoForm.pas' {fmStyledTaskDialog},
+  // This form is an example of Custom Form for TaskDialog
+  // StyledTaskDialogAnimCustomForm in '..\source\StyledTaskDialogAnimCustomForm.pas' {fmStyledTaskDialogAnimCustom},
   StyledToolbarForm in '..\source\StyledToolbarForm.pas' {fmStyledToolbar};
 
 {$R *.res}

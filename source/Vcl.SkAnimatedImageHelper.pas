@@ -2,7 +2,7 @@
 {                                                                              }
 {  SkAnimatedImageHelper: an helper class for TSkAnimatedImage                 }
 {                                                                              }
-{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Copyright (c) 2022-2025 (Ethea S.r.l.)                                      }
 {  Author: Carlo Barazzetta                                                    }
 {  Contributors:                                                               }
 {                                                                              }
@@ -144,8 +144,11 @@ begin
 end;
 
 procedure TSkAnimatedImageHelper.ClearAnimationData;
+var
+  LEmpty: TBytes;
 begin
-  Source.Data := [];
+  SetLength(LEmpty,0);
+  Source.Data := LEmpty;
 end;
 
 function TSkAnimatedImageHelper.GetProgressPercentage: SmallInt;
@@ -302,7 +305,7 @@ begin
       LBitmap.PixelFormat := pf32bit;
       LBitmap.AlphaFormat := afPremultiplied;
       LBitmap.SetSize(LWidth, LHeight);
-      LRect := TRect.Create(0,0,LWidth, LHeight);
+      LRect := TRectF.Create(0,0,LWidth, LHeight);
       LBitmap.SkiaDraw(
         procedure (const ASkCanvas: ISkCanvas)
         begin

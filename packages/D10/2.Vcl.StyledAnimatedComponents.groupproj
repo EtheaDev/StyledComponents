@@ -1,6 +1,6 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{B63739DA-5FD1-4E81-9A4A-4EB511A1674A}</ProjectGuid>
+        <ProjectGuid>{f823b15b-c12e-4b36-9351-b4aa5133e24d}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
         <Projects Include="StyledAnimatedComponents.dproj">
@@ -45,4 +45,18 @@
         <CallTarget Targets="StyledAnimatedComponents:Make;dclStyledAnimatedComponents:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+    <ItemGroup Condition="'$(BuildGroup)'=='ALL'">
+        <BuildGroupProject Include="StyledAnimatedComponents.dproj">
+            <ProjectGuid>{8ea51d2f-1e28-4617-840a-8b46c3fde9c5}</ProjectGuid>
+            <Configurations>Release</Configurations>
+            <Platforms>Win32;Win64</Platforms>
+            <Enabled>True</Enabled>
+        </BuildGroupProject>
+        <BuildGroupProject Include="dclStyledAnimatedComponents.dproj">
+            <ProjectGuid>{b497f87a-2b37-45dc-a1bc-a57682aeed44}</ProjectGuid>
+            <Configurations>Release</Configurations>
+            <Platforms>Win32</Platforms>
+            <Enabled>True</Enabled>
+        </BuildGroupProject>
+    </ItemGroup>
 </Project>

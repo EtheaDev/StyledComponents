@@ -3,7 +3,7 @@
 {  StyledCategoryButtons: a Styled CategoryButtons with TStyledButtonItem      }
 {  Based on TCategoryButtons and TButtonItem                                   }
 {                                                                              }
-{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Copyright (c) 2022-2025 (Ethea S.r.l.)                                      }
 {  Author: Carlo Barazzetta                                                    }
 {  Contributors:                                                               }
 {                                                                              }

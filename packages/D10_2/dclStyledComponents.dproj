@@ -2,7 +2,7 @@
     <PropertyGroup>
         <ProjectGuid>{49A75E3F-B3D0-459B-934B-190C7F52CEAE}</ProjectGuid>
         <MainSource>dclStyledComponents.dpk</MainSource>
-        <ProjectVersion>19.5</ProjectVersion>
+        <ProjectVersion>18.4</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Release</Config>
@@ -52,11 +52,10 @@
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
         <DCC_CBuilderOutput>All</DCC_CBuilderOutput>
         <SanitizedProjectName>dclStyledComponents</SanitizedProjectName>
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=Ethea S.r.l.;FileDescription=Styled Components;FileVersion=1.0.0.0;InternalName=;LegalCopyright=Copyright (c) Ethea S.r.l.;LegalTrademarks=;OriginalFilename=;ProgramID=;ProductName=Styled Components;ProductVersion=1.0;Comments=</VerInfo_Keys>
         <DCC_Description>Ethea Styled Components</DCC_Description>
-        <DllSuffix>D10_2</DllSuffix>
+        <DllSuffix>250</DllSuffix>
         <DCC_UnitSearchPath>..\..\Source;..\;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DesignOnlyPackage>true</DesignOnlyPackage>
         <DCC_OutputNeverBuildDcps>true</DCC_OutputNeverBuildDcps>

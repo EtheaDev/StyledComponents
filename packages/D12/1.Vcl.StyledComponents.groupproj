@@ -1,6 +1,6 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{C9317DFE-6EBA-4391-9380-5B9742A7D5EB}</ProjectGuid>
+        <ProjectGuid>{EDD8D142-65E5-48C2-83D1-BD82B331C67A}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
         <Projects Include="StyledComponents.dproj">
@@ -45,4 +45,18 @@
         <CallTarget Targets="StyledComponents:Make;dclStyledComponents:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+    <ItemGroup Condition="'$(BuildGroup)'=='ALL'">
+        <BuildGroupProject Include="StyledComponents.dproj">
+            <ProjectGuid>{F870FD7C-4984-4784-8B29-4CDB55E64524}</ProjectGuid>
+            <Configurations>Release</Configurations>
+            <Platforms>Win32;Win64</Platforms>
+            <Enabled>True</Enabled>
+        </BuildGroupProject>
+        <BuildGroupProject Include="dclStyledComponents.dproj">
+            <ProjectGuid>{03F938E4-4CBD-4FD4-86A2-084115D91AA9}</ProjectGuid>
+            <Configurations>Release</Configurations>
+            <Platforms>Win32</Platforms>
+            <Enabled>True</Enabled>
+        </BuildGroupProject>
+    </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@
 {                                                                              }
 {       StyledComponents: a set of Styled VCL Component                        }
 {                                                                              }
-{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
+{       Copyright (c) 2022-2025 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -50,8 +50,8 @@ package dclStyledComponents;
 {$IMAGEBASE $400000}
 {$DEFINE RELEASE}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Ethea Styled Components'}
-{$LIBSUFFIX 'D10_0'}
+{$DESCRIPTION 'Ethea Styled Components Library'}
+{$LIBSUFFIX '230'}
 {$DESIGNONLY}
 {$IMPLICITBUILD OFF}
 

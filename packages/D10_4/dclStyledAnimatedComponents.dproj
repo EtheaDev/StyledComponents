@@ -2,7 +2,7 @@
     <PropertyGroup>
         <ProjectGuid>{EBF448F0-3AF1-4B95-B1AD-5874F1BABAEC}</ProjectGuid>
         <MainSource>dclStyledAnimatedComponents.dpk</MainSource>
-        <ProjectVersion>19.5</ProjectVersion>
+        <ProjectVersion>19.2</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Release</Config>
@@ -55,7 +55,7 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=Ethea S.r.l.;FileDescription=Styled Components;FileVersion=1.0.0.0;InternalName=;LegalCopyright=Copyright (c) Ethea S.r.l.;LegalTrademarks=;OriginalFilename=;ProgramID=;ProductName=Styled Components;ProductVersion=1.0;Comments=</VerInfo_Keys>
-        <DCC_Description>Ethea Styled Animated Components</DCC_Description>
+        <DCC_Description>Ethea Styled Components with Animations by Skia4Delphi</DCC_Description>
         <DllSuffix>$(Auto)</DllSuffix>
         <DCC_UnitSearchPath>..\..\Source;..\;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DesignOnlyPackage>true</DesignOnlyPackage>
@@ -96,15 +96,15 @@
         <DCCReference Include="dclStyledComponents.dcp"/>
         <DCCReference Include="Skia.Package.VCL.Designtime.dcp"/>
         <DCCReference Include="..\Vcl.StyledAnimatedComponentsRegister.pas"/>
-        <BuildConfiguration Include="Release">
-            <Key>Cfg_2</Key>
-            <CfgParent>Base</CfgParent>
-        </BuildConfiguration>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_1</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Release">
+            <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
         </BuildConfiguration>
     </ItemGroup>

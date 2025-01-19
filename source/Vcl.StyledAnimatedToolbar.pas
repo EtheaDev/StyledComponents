@@ -3,7 +3,7 @@
 {  StyledToolbar: a Toolbar with TStyledAnimatedToolButtons inside             }
 {  Based on TStyledToolbar and animations using Skia4Delphi                    }
 {                                                                              }
-{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Copyright (c) 2022-2025 (Ethea S.r.l.)                                      }
 {  Author: Carlo Barazzetta                                                    }
 {  Contributors:                                                               }
 {                                                                              }

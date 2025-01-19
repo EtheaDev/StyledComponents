@@ -4,7 +4,7 @@
 {  for Styled Components                                                       }
 {  TNotificationBadgeAttributes: a set of Rendering attributes for Badge       }
 {                                                                              }
-{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Copyright (c) 2022-2025 (Ethea S.r.l.)                                      }
 {  Author: Carlo Barazzetta                                                    }
 {  Contributors:                                                               }
 {                                                                              }
@@ -55,7 +55,7 @@ uses
   ;
 
 const
-  StyledComponentsVersion = '3.7.5';
+  StyledComponentsVersion = '3.7.6';
   DEFAULT_RADIUS = 6;
   RESOURCE_SHIELD_ICON = 'STYLED_BUTTON_SHIELD_ADMIN';
   DEFAULT_MAX_BADGE_VALUE = 99;

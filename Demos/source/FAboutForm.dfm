@@ -20,7 +20,7 @@ object fmAbout: TfmAbout
     Width = 115
     Height = 13
     Anchors = [akLeft, akBottom]
-    Caption = 'Copyright '#169' 2022-2024'
+    Caption = 'Copyright '#169' 2022-2025'
   end
   object lbAppName: TLabel
     AlignWithMargins = True

@@ -3,7 +3,7 @@
 {  Main form used by two examples:                                             }
 {  StyledTaskDialogDemo and AnimatedTaskDialogDemo                             }
 {                                                                              }
-{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Copyright (c) 2022-2025 (Ethea S.r.l.)                                      }
 {  Author: Carlo Barazzetta                                                    }
 {  Contributors:                                                               }
 {                                                                              }

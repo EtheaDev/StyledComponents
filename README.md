@@ -2,7 +2,16 @@
 
 ## Components similar to Delphi VCL Buttons, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 3.7.5
+### Actual official version: 3.8.0
+
+---
+## New Setup for Installation of Components
+
+From 3.8.0 version a new "Installer" read-to-use is located in the Release area: [Download the Installer](https://github.com/EtheaDev/StyledComponents/releases/latest/download/StyledComponents_Setup.exe).
+
+The Installer automatically detect your Delphi versions, installa sources, build and installa packages and add source paths.
+
+![Setup](./Images/Setup.png)
 
 ---
 ## A brief description
@@ -403,6 +412,13 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+18 Jan 2025: version 3.8.0
+- Added example of Custom TaskDialog Form in Demo (for Delphi 12)
+- Fixed Clear Animation Data for Animated StyledButton
+- Fixed Enabled of TStyledToolButton
+- Changed PackageGrooup File Names
+- Updated Copyright 2025
+
 30 Nov 2024: version 3.7.5
 - Added property HideSystemCloseButton to TStyledTaskDialog
 - Added property OnDialogShow

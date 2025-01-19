@@ -1,15 +1,15 @@
 {******************************************************************************}
 {                                                                              }
-{   TStyledGraphicButton: a "styled" Button based on TGraphicControl           }
-{   TStyledButton: a "styled" Button Component similar to TButton              }
-{   TStyledSpeedButton: a "styled" Button Component similar to TSpeedButton    }
-{   TStyledBitBtn: a "styled" Button Component similar to TBitBtn              }
+{  TStyledGraphicButton: a "styled" Button based on TGraphicControl            }
+{  TStyledButton: a "styled" Button Component similar to TButton               }
+{  TStyledSpeedButton: a "styled" Button Component similar to TSpeedButton     }
+{  TStyledBitBtn: a "styled" Button Component similar to TBitBtn               }
 {                                                                              }
-{   Copyright (c) 2022-2024 (Ethea S.r.l.)                                     }
-{   Author: Carlo Barazzetta                                                   }
-{   Contributors:                                                              }
+{  Copyright (c) 2022-2025 (Ethea S.r.l.)                                      }
+{  Author: Carlo Barazzetta                                                    }
+{  Contributors:                                                               }
 {                                                                              }
-{   https://github.com/EtheaDev/StyledComponents                               }
+{  https://github.com/EtheaDev/StyledComponents                                }
 {                                                                              }
 {******************************************************************************}
 {                                                                              }

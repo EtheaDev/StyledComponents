@@ -30,7 +30,6 @@ object fmStyledToolbar: TfmStyledToolbar
     TabOrder = 1
     TabStop = True
     OnClick = ToolBarClick
-    ExplicitWidth = 731
     object ToolButton2: TToolButton
       Left = 0
       Top = 0
@@ -223,8 +222,6 @@ object fmStyledToolbar: TfmStyledToolbar
     Height = 78
     Align = alBottom
     TabOrder = 2
-    ExplicitTop = 455
-    ExplicitWidth = 737
     object LeftPanel: TPanel
       Left = 1
       Top = 1
@@ -341,8 +338,6 @@ object fmStyledToolbar: TfmStyledToolbar
     Height = 312
     Align = alClient
     TabOrder = 3
-    ExplicitWidth = 737
-    ExplicitHeight = 313
   end
   object PopupMenu: TPopupMenu
     Left = 525

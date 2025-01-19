@@ -1,0 +1,62 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{413A2CE3-DAFB-44F6-80CB-7566B6960077}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="StyledComponents.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="dclStyledComponents.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="StyledComponents">
+        <MSBuild Projects="StyledComponents.dproj"/>
+    </Target>
+    <Target Name="StyledComponents:Clean">
+        <MSBuild Projects="StyledComponents.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="StyledComponents:Make">
+        <MSBuild Projects="StyledComponents.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="dclStyledComponents">
+        <MSBuild Projects="dclStyledComponents.dproj"/>
+    </Target>
+    <Target Name="dclStyledComponents:Clean">
+        <MSBuild Projects="dclStyledComponents.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dclStyledComponents:Make">
+        <MSBuild Projects="dclStyledComponents.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="StyledComponents;dclStyledComponents"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="StyledComponents:Clean;dclStyledComponents:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="StyledComponents:Make;dclStyledComponents:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+    <ItemGroup Condition="'$(BuildGroup)'=='ALL'">
+        <BuildGroupProject Include="StyledComponents.dproj">
+            <ProjectGuid>{4D8D786F-6932-46C7-BB6B-91C475C6C314}</ProjectGuid>
+            <Configurations>Release</Configurations>
+            <Platforms>Win32;Win64</Platforms>
+            <Enabled>True</Enabled>
+        </BuildGroupProject>
+        <BuildGroupProject Include="dclStyledComponents.dproj">
+            <ProjectGuid>{5DB04467-4528-412B-ADCF-7A39A75BA92C}</ProjectGuid>
+            <Configurations>Release</Configurations>
+            <Platforms>Win32</Platforms>
+            <Enabled>True</Enabled>
+        </BuildGroupProject>
+    </ItemGroup>
+</Project>

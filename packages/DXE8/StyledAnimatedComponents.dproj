@@ -2,7 +2,7 @@
     <PropertyGroup>
         <ProjectGuid>{3581cefd-d2fb-454a-9487-0194cf654713}</ProjectGuid>
         <MainSource>StyledAnimatedComponents.dpk</MainSource>
-        <ProjectVersion>20.1</ProjectVersion>
+        <ProjectVersion>17.2</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Release</Config>
@@ -52,12 +52,11 @@
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
         <DCC_CBuilderOutput>All</DCC_CBuilderOutput>
         <SanitizedProjectName>StyledAnimatedComponents</SanitizedProjectName>
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=Ethea S.r.l.;FileDescription=Styled Components;FileVersion=1.0.0.0;InternalName=;LegalCopyright=Copyright (c) Ethea S.r.l.;LegalTrademarks=;OriginalFilename=;ProgramID=;ProductName=Styled Components;ProductVersion=1.0;Comments=</VerInfo_Keys>
-        <DCC_Description>Ethea Styled Animated Components</DCC_Description>
+        <DCC_Description>Ethea Styled Components with Animations by Skia4Delphi</DCC_Description>
         <RuntimeOnlyPackage>true</RuntimeOnlyPackage>
-        <DllSuffix>DXE8</DllSuffix>
+        <DllSuffix>220</DllSuffix>
         <DCC_OutputNeverBuildDcps>true</DCC_OutputNeverBuildDcps>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
@@ -97,7 +96,6 @@
         <DCCReference Include="StyledComponents.dcp"/>
         <DCCReference Include="Skia.Package.VCL.dcp"/>
         <DCCReference Include="Skia.Package.RTL.dcp"/>
-        <DCCReference Include="vclwinx.dcp"/>
         <DCCReference Include="..\..\source\Vcl.SkAnimatedImageHelper.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledAnimatedButton.pas"/>
         <DCCReference Include="..\..\source\Vcl.StyledAnimatedTaskDialog.pas"/>
@@ -105,15 +103,15 @@
             <Form>StyledTaskDialogAnimated</Form>
         </DCCReference>
         <DCCReference Include="..\..\source\Vcl.StyledAnimatedToolbar.pas"/>
-        <BuildConfiguration Include="Release">
-            <Key>Cfg_2</Key>
-            <CfgParent>Base</CfgParent>
-        </BuildConfiguration>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_1</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Release">
+            <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
         </BuildConfiguration>
     </ItemGroup>

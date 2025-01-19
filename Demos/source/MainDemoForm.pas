@@ -3,7 +3,7 @@
 {  TStyledComponents Demo                                                      }
 {  Main Form                                                                   }
 {                                                                              }
-{  Copyright (c) 2022-2024 (Ethea S.r.l.)                                      }
+{  Copyright (c) 2022-2025 (Ethea S.r.l.)                                      }
 {  Author: Carlo Barazzetta                                                    }
 {  Contributors:                                                               }
 {                                                                              }
@@ -374,7 +374,7 @@ var
 begin
   AssignImages;
   //Caption and fonts
-  Caption := Application.Title + Format(' - Ver.%s - © 2021-2024 Ethea S.r.l.',
+  Caption := Application.Title + Format(' - Ver.%s - © 2021-2025 Ethea S.r.l.',
     [StyledComponentsVersion]);
   lblTitle.Caption := Application.Title;
   //Collapse Menu

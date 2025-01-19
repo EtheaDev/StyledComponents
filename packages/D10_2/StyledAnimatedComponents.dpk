@@ -3,7 +3,7 @@
 {       StyledAnimatedComponents: a set of StyledComponents with animations    }
 {       using Skia4Delphi (needs Skia Package already installed                }
 {                                                                              }
-{       Copyright (c) 2022-2024 (Ethea S.r.l.)                                 }
+{       Copyright (c) 2022-2025 (Ethea S.r.l.)                                 }
 {       Author: Carlo Barazzetta                                               }
 {       Contributors:                                                          }
 {                                                                              }
@@ -54,8 +54,8 @@ package StyledAnimatedComponents;
 {$IMAGEBASE $400000}
 {$DEFINE RELEASE}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Ethea Styled Animated Components'}
-{$LIBSUFFIX 'D10_2'}
+{$DESCRIPTION 'Ethea Styled Components with Animations by Skia4Delphi'}
+{$LIBSUFFIX '250'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
 
