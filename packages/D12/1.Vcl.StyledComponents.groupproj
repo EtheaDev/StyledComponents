@@ -55,7 +55,7 @@
         <BuildGroupProject Include="dclStyledComponents.dproj">
             <ProjectGuid>{03F938E4-4CBD-4FD4-86A2-084115D91AA9}</ProjectGuid>
             <Configurations>Release</Configurations>
-            <Platforms>Win32</Platforms>
+            <Platforms>Win32;Win64</Platforms>
             <Enabled>True</Enabled>
         </BuildGroupProject>
     </ItemGroup>

@@ -55,7 +55,7 @@
         <BuildGroupProject Include="dclStyledAnimatedComponents.dproj">
             <ProjectGuid>{EBF448F0-3AF1-4B95-B1AD-5874F1BABAEC}</ProjectGuid>
             <Configurations>Release</Configurations>
-            <Platforms>Win32</Platforms>
+            <Platforms>Win32;Win64</Platforms>
             <Enabled>True</Enabled>
         </BuildGroupProject>
     </ItemGroup>

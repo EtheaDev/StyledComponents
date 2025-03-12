@@ -55,7 +55,7 @@ uses
   ;
 
 const
-  StyledComponentsVersion = '3.7.6';
+  StyledComponentsVersion = '3.8.1';
   DEFAULT_RADIUS = 6;
   RESOURCE_SHIELD_ICON = 'STYLED_BUTTON_SHIELD_ADMIN';
   DEFAULT_MAX_BADGE_VALUE = 99;
@@ -2051,14 +2051,14 @@ var
   R: TRect;
   LOldBKMode: Integer;
 begin
-(* for test
+{$IFDEF DEBUG_TEST}
   ACanvas.Brush.Color := clYellow;
   ACanvas.FillRect(ARect);
   ACanvas.Pen.Color := clRed;
   ACanvas.Pen.Width := 1;
   ACanvas.Pen.Style := psSolid;
   ACanvas.Rectangle(ARect);
-*)
+{$ENDIF}
   R := ARect;
   Winapi.Windows.DrawText(ACanvas.Handle, PChar(AText), Length(AText),
     R, ABidiFlags or DT_CALCRECT);
@@ -2080,13 +2080,13 @@ begin
           R.Top := ARect.Top + ABorderWidth + ASpacing ;
         if R.Bottom > ARect.Bottom - ABorderWidth - Aspacing then
           R.Bottom := ARect.Bottom - ABorderWidth - Aspacing;
-        (* for test
+        {$IFDEF DEBUG_TEST}
         ACanvas.Brush.Color := clRed;
         ACanvas.FillRect(R);
         ACanvas.Pen.Color := clBlue;
         ACanvas.Pen.Width := 1;
         ACanvas.Rectangle(R);
-        *)
+        {$ENDIF}
         Winapi.Windows.DrawText(ACanvas.Handle, PChar(AText),
           Length(AText), R, ABidiFlags or DT_END_ELLIPSIS);
       end

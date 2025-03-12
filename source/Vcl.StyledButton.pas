@@ -95,6 +95,30 @@ type
   TSetParentFont = procedure (const AParentFont: Boolean) of Object;
   TGetParentFont = function: Boolean of Object;
 
+  TStyledImageMargins = class(TImageMargins)
+  private
+    FRender: TStyledButtonRender;
+    function StoreLeft: Boolean;
+    function GetBottom: Integer;
+    function GetLeft: Integer;
+    function GetRight: Integer;
+    function GetTop: Integer;
+    procedure SetBottom(const AValue: Integer);
+    procedure SetLeft(const AValue: Integer);
+    procedure SetRight(const AValue: Integer);
+    procedure SetTop(const AValue: Integer);
+    function StoreBottom: Boolean;
+    function StoreRight: Boolean;
+    function StoreTop: Boolean;
+  public
+    constructor CreateForRender(const ARender: TStyledButtonRender);
+  published
+    property Left: Integer read GetLeft write SetLeft stored StoreLeft;
+    property Top: Integer read GetTop write SetTop stored StoreTop;
+    property Right: Integer read GetRight write SetRight stored StoreRight;
+    property Bottom: Integer read GetBottom write SetBottom stored StoreBottom;
+  end;
+
   { TStyledButtonRender }
   TStyledButtonRender = class(TObject)
   strict private
@@ -1925,7 +1949,7 @@ begin
       csSetCaption, csDoubleClicks, csOpaque];
   FImageChangeLink := TChangeLink.Create;
   FImageChangeLink.OnChange := ImageListChange;
-  FImageMargins := TImageMargins.Create;
+  FImageMargins := TStyledImageMargins.CreateForRender(Self);
   FImageMargins.Left := DEFAULT_IMAGE_HMARGIN;
   FImageMargins.OnChange := ImageMarginsChange;
   FImageAlignment := iaLeft;
@@ -2787,7 +2811,7 @@ begin
   end
   else
   begin
-    LMaxBorderWidth := CalcMaxBorderWidth;
+    //FUseButtonLayout is used by TStyledBitBtn and TStyledSpeedButton
     if FUseButtonLayout then
     begin
       LOldBKMode := SetBkMode(ACanvas.Handle, Winapi.Windows.TRANSPARENT);
@@ -2800,6 +2824,8 @@ begin
     end
     else
     begin
+      //LMaxBorderWidth := CalcMaxBorderWidth;
+      LMaxBorderWidth := 1;
       DrawButtonText(ACanvas, LCaption, FCaptionAlignment, FSpacing, LMaxBorderWidth,
         LTextRect, LTextFlags);
     end;
@@ -3992,7 +4018,8 @@ end;
 procedure TCustomStyledGraphicButton.CMDialogChar(var Message: TCMDialogChar);
 begin
   with Message do
-    if IsAccel(CharCode, Caption) and Visible then
+    if IsAccel(CharCode, Caption) and Visible and Enabled and
+      (Parent <> nil) and Parent.Showing then
     begin
       Click;
       Result := 1;
@@ -4821,25 +4848,24 @@ end;
 procedure TCustomStyledGraphicButton.MouseDown(Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
-  FRender.MouseDown(Button, Shift, X, Y);
-  if Enabled then
-    inherited;
+  if Assigned(FRender) then
+    FRender.MouseDown(Button, Shift, X, Y);
+  inherited;
 end;
 
 procedure TCustomStyledGraphicButton.MouseMove(Shift: TShiftState; X, Y: Integer);
 begin
+  if Assigned(FRender) then
+    FRender.MouseMove(Shift, X, Y);
   inherited;
-  FRender.MouseMove(Shift, X, Y);
 end;
 
 procedure TCustomStyledGraphicButton.MouseUp(Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
-  if Enabled then
-  begin
+  if Assigned(FRender) then
     FRender.MouseUp(Button, Shift, X, Y);
-    inherited;
-  end;
+  inherited;
 end;
 
 procedure TCustomStyledGraphicButton.ControlClick(Sender: TObject);
@@ -6055,25 +6081,24 @@ end;
 procedure TCustomStyledButton.MouseDown(Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
-  FRender.MouseDown(Button, Shift, X, Y);
-  if Enabled then
-    inherited;
+  if Assigned(FRender) then
+    FRender.MouseDown(Button, Shift, X, Y);
+  inherited;
 end;
 
 procedure TCustomStyledButton.MouseMove(Shift: TShiftState; X, Y: Integer);
 begin
+  if Assigned(FRender) then
+    FRender.MouseMove(Shift, X, Y);
   inherited;
-  FRender.MouseMove(Shift, X, Y);
 end;
 
 procedure TCustomStyledButton.MouseUp(Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
-  if Enabled then
-  begin
+  if Assigned(FRender) then
     FRender.MouseUp(Button, Shift, X, Y);
-    inherited;
-  end;
+  inherited;
 end;
 
 procedure TCustomStyledButton.ControlClick(Sender: TObject);
@@ -6336,6 +6361,87 @@ end;
 function TStyledBitBtn.IsCaptionStored: Boolean;
 begin
   Result := AnsiCompareStr(Caption, FRender.BitBtnCaptions(FRender.Kind)) <> 0;
+end;
+
+{ TStyledImageMargins }
+
+constructor TStyledImageMargins.CreateForRender(
+  const ARender: TStyledButtonRender);
+begin
+  inherited Create;
+  FRender := ARender;
+end;
+
+function TStyledImageMargins.GetBottom: Integer;
+begin
+  Result := inherited Bottom;
+end;
+
+function TStyledImageMargins.GetLeft: Integer;
+begin
+  Result := inherited Left;
+end;
+
+function TStyledImageMargins.GetRight: Integer;
+begin
+  Result := inherited Right;
+end;
+
+function TStyledImageMargins.GetTop: Integer;
+begin
+  Result := inherited Top;
+end;
+
+procedure TStyledImageMargins.SetBottom(const AValue: Integer);
+begin
+  inherited Bottom := AValue;
+end;
+
+procedure TStyledImageMargins.SetLeft(const AValue: Integer);
+begin
+  inherited Left := AValue;
+end;
+
+procedure TStyledImageMargins.SetRight(const AValue: Integer);
+begin
+  inherited Right := AValue;
+end;
+
+procedure TStyledImageMargins.SetTop(const AValue: Integer);
+begin
+  inherited Top := AValue;
+end;
+
+function TStyledImageMargins.StoreBottom: Boolean;
+begin
+  if FRender.ImageAlignment = iaBottom then
+    Result := Bottom <> DEFAULT_IMAGE_VMARGIN
+  else
+    Result := Bottom <> 0;
+end;
+
+function TStyledImageMargins.StoreLeft: Boolean;
+begin
+  if FRender.ImageAlignment = iaLeft then
+    Result := Left <> DEFAULT_IMAGE_HMARGIN
+  else
+    Result := Left <> 0;
+end;
+
+function TStyledImageMargins.StoreRight: Boolean;
+begin
+  if FRender.ImageAlignment = iaRight then
+    Result := Right <> DEFAULT_IMAGE_HMARGIN
+  else
+    Result := Right <> 0;
+end;
+
+function TStyledImageMargins.StoreTop: Boolean;
+begin
+  if FRender.ImageAlignment = iaTop then
+    Result := Top <> DEFAULT_IMAGE_VMARGIN
+  else
+    Result := Top <> 0;
 end;
 
 initialization
