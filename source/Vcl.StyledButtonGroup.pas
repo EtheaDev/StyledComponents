@@ -541,17 +541,13 @@ end;
 
 function TStyledButtonGroup.StyledButtonState(const AIndex: Integer;
   const AState: TButtonDrawState): TStyledButtonState;
-var
-  LButtonItem: TStyledGrpButtonItem;
 begin
-  LButtonItem := Items[AIndex] as TStyledGrpButtonItem;
-  Assert(Assigned(LButtonItem));
   //Calculate Styled State based on State
   if (bdsHot in AState) and not (bdsDown in AState) then
     Result := bsmHot
   else if bdsDown in AState then
     Result := bsmPressed
-  else if bdsFocused in AState then
+  else if (bdsFocused in AState) or (bdsSelected in AState) then
     Result := bsmSelected
   else if not Enabled then
     Result := bsmDisabled
@@ -590,9 +586,6 @@ begin
     OnDrawButton(Self, AIndex, Canvas, ARect, AState)
   else
   begin
-    if Assigned(OnBeforeDrawButton) then
-      OnBeforeDrawButton(Self, AIndex, ACanvas, ARect, AState);
-
     LState := StyledButtonState(AIndex, AState);
 
     LOldParentFont := ParentFont;
@@ -628,6 +621,9 @@ begin
         if LState in [bsmDisabled, bsmNormal] then
           ACanvas.Brush.Style := bsClear;
       end;
+
+      if Assigned(OnBeforeDrawButton) then
+        OnBeforeDrawButton(Self, AIndex, ACanvas, ARect, AState);
 
       DrawBackgroundAndBorder(ACanvas, ARect, LDropDownRect,
         LButtonItem.StyleDrawType, LButtonItem.StyleRadius, LButtonItem.StyleRoundedCorners);

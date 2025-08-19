@@ -3,7 +3,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
   Top = 0
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
-  ClientHeight = 286
+  ClientHeight = 311
   ClientWidth = 992
   Color = clWindow
   Constraints.MinHeight = 200
@@ -131,7 +131,6 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
         Align = alTop
         Caption = 'Title Text'
         WordWrap = True
-        ExplicitWidth = 46
       end
       object AutoSizeLabel: TLabel
         AlignWithMargins = True
@@ -170,7 +169,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
   object CommandLinksPanel: TPanel
     AlignWithMargins = True
     Left = 4
-    Top = 130
+    Top = 155
     Width = 984
     Height = 62
     Margins.Left = 4
@@ -186,7 +185,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
   object VerificationPanel: TPanel
     AlignWithMargins = True
     Left = 4
-    Top = 236
+    Top = 261
     Width = 984
     Height = 24
     Margins.Left = 4
@@ -217,7 +216,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
   object RadioGroupPanel: TPanel
     AlignWithMargins = True
     Left = 4
-    Top = 105
+    Top = 130
     Width = 984
     Height = 21
     Margins.Left = 4
@@ -253,8 +252,6 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       Margins.Top = 4
       Margins.Bottom = 4
       Align = alClient
-      ExplicitWidth = 3
-      ExplicitHeight = 15
     end
     object ExpandButton: TStyledButton
       AlignWithMargins = True
@@ -273,7 +270,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
   object ButtonsPanel: TPanel
     AlignWithMargins = True
     Left = 4
-    Top = 196
+    Top = 221
     Width = 984
     Height = 40
     Margins.Left = 4
@@ -453,6 +450,30 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       ModalResult = 8
       TabOrder = 11
       OnClick = ButtonClick
+    end
+  end
+  object ProgressBarPanel: TPanel
+    AlignWithMargins = True
+    Left = 4
+    Top = 105
+    Width = 984
+    Height = 25
+    Margins.Left = 4
+    Margins.Top = 0
+    Margins.Right = 4
+    Margins.Bottom = 0
+    Align = alBottom
+    BevelOuter = bvNone
+    TabOrder = 7
+    Visible = False
+    object InternalProgressBar: TProgressBar
+      AlignWithMargins = True
+      Left = 3
+      Top = 3
+      Width = 978
+      Height = 19
+      Align = alClient
+      TabOrder = 0
     end
   end
 end

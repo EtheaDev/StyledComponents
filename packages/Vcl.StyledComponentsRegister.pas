@@ -192,7 +192,7 @@ uses
   , System.UITypes
   , Winapi.ShellAPI
   , Winapi.Windows
-  , PngImage;
+  , Vcl.Imaging.PngImage;
 
 const
   {$IFDEF D11+}

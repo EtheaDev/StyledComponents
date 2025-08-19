@@ -73,6 +73,11 @@ type
   TTaskDialogShow = procedure(
     const AStyledTaskDialogForm: TForm) of Object;
 
+  { TStyledTaskDialogProgressBar }
+  [ComponentPlatforms(pidWin32 or pidWin64)]
+  TStyledTaskDialogProgressBar = class(TTaskDialogProgressBar)
+  end;
+
   { TStyledTaskDialog }
   [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledTaskDialog = class(TTaskDialog)
@@ -103,10 +108,13 @@ type
     procedure SetButtonsWidth(const AValue: Integer);
     function GetFlags: TTaskDialogFlags;
     procedure SetFlags(const AValue: TTaskDialogFlags);
+    function GetHandle: HWND;
+    procedure SetHandle(const AValue: HWND);
   strict protected
     function DoExecute(ParentWnd: HWND): Boolean; override;
     procedure DoOnDialogCreated; override;
     procedure DoOnHelp; override;
+  protected
   public
     procedure DoOnExpandButtonClicked(Expanded: Boolean); override;
     procedure DoOnRadioButtonClicked(ButtonID: Integer); override;
@@ -132,6 +140,7 @@ type
     property ButtonsHeight: Integer read FButtonsHeight write SetButtonsHeight default DEFAULT_STYLEDDIALOG_BUTTONSHEIGHT;
     property Flags: TTaskDialogFlags read GetFlags write SetFlags default [tfAllowDialogCancellation, tfPositionRelativeToWindow];
     property HideSystemCloseButton: Boolean read FHideSystemCloseButton write FHideSystemCloseButton default False;
+    property Handle: HWND read GetHandle write SetHandle;
     property OnDialogShow: TTaskDialogShow read FDefineDialogSize write FDefineDialogSize;
   end;
 
@@ -258,6 +267,7 @@ uses
   System.TypInfo
   , System.Math
   , System.Types
+  , System.Rtti
   , Vcl.Themes
   , Winapi.CommCtrl
   , System.WideStrUtils
@@ -773,6 +783,7 @@ begin
 end;
 
 { TStyledTaskDialog }
+
 constructor TStyledTaskDialog.Create(AOwner: TComponent);
 begin
   inherited;
@@ -886,6 +897,11 @@ begin
   Result := inherited Flags;
 end;
 
+function TStyledTaskDialog.GetHandle: HWND;
+begin
+  Result := inherited Handle;
+end;
+
 function TStyledTaskDialog.IsDefaultFamily: Boolean;
 begin
   Result := FDialogButtonsFamily <> DEFAULT_CLASSIC_FAMILY;
@@ -923,6 +939,23 @@ end;
 procedure TStyledTaskDialog.SetFlags(const AValue: TTaskDialogFlags);
 begin
   inherited Flags := AValue;
+end;
+
+procedure TStyledTaskDialog.SetHandle(const AValue: HWND);
+var
+  Context: TRttiContext;
+  RttiType: TRttiType;
+  Field: TRttiField;
+begin
+  Context := TRttiContext.Create;
+  try
+    RttiType := Context.GetType(Self.ClassType);
+    Field := RttiType.GetField('FHandle');
+    if Assigned(Field) then
+      Field.SetValue(Self, AValue);
+  finally
+    Context.Free;
+  end;
 end;
 
 function GetDialogTypeTitle(const DlgType: TMsgDlgType): string;

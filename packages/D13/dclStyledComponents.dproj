@@ -1,15 +1,15 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{F870FD7C-4984-4784-8B29-4CDB55E64524}</ProjectGuid>
-        <MainSource>StyledComponents.dpk</MainSource>
-        <ProjectVersion>20.2</ProjectVersion>
+        <ProjectGuid>{FBDCB03E-CBFB-4ED4-BFCE-C145F3840403}</ProjectGuid>
+        <MainSource>dclStyledComponents.dpk</MainSource>
+        <ProjectVersion>20.3</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Package</AppType>
-        <ProjectName Condition="'$(ProjectName)'==''">StyledComponents</ProjectName>
+        <ProjectName Condition="'$(ProjectName)'==''">dclStyledComponents</ProjectName>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
         <Base>true</Base>
@@ -29,19 +29,13 @@
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
-    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
-        <Cfg_1_Win32>true</Cfg_1_Win32>
-        <CfgParent>Cfg_1</CfgParent>
-        <Cfg_1>true</Cfg_1>
-        <Base>true</Base>
-    </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_2)'!=''">
         <Cfg_2>true</Cfg_2>
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <DCC_DcuOutput>..\..\Lib\D12\$(Platform)\$(Config)</DCC_DcuOutput>
+        <DCC_DcuOutput>..\..\Lib\D13\$(Platform)\$(Config)</DCC_DcuOutput>
         <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
         <DCC_E>false</DCC_E>
         <DCC_N>false</DCC_N>
@@ -52,21 +46,22 @@
         <GenPackage>true</GenPackage>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
         <DCC_CBuilderOutput>All</DCC_CBuilderOutput>
-        <SanitizedProjectName>StyledComponents</SanitizedProjectName>
+        <SanitizedProjectName>dclStyledComponents</SanitizedProjectName>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=Ethea S.r.l.;FileDescription=Styled Components;FileVersion=1.0.0.0;InternalName=;LegalCopyright=Copyright (c) Ethea S.r.l.;LegalTrademarks=;OriginalFilename=;ProgramID=;ProductName=Styled Components;ProductVersion=1.0;Comments=</VerInfo_Keys>
         <DCC_Description>Ethea Styled Components Library</DCC_Description>
-        <RuntimeOnlyPackage>true</RuntimeOnlyPackage>
         <DllSuffix>$(Auto)</DllSuffix>
+        <DCC_UnitSearchPath>..\..\Source;..\;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DesignOnlyPackage>true</DesignOnlyPackage>
         <DCC_OutputNeverBuildDcps>true</DCC_OutputNeverBuildDcps>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <BT_BuildType>Debug</BT_BuildType>
+        <DCC_UsePackage>StyledComponents;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
-        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
-        <BT_BuildType>Debug</BT_BuildType>
+        <DCC_UsePackage>StyledComponents;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
@@ -78,9 +73,6 @@
         <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
         <DCC_RangeChecking>true</DCC_RangeChecking>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <DCC_RemoteDebug>false</DCC_RemoteDebug>
-    </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
         <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
@@ -91,35 +83,13 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="..\StyledButton.dcr"/>
-        <DCCReference Include="..\StyledTaskDialog.dcr"/>
-        <DCCReference Include="..\StyledToolbar.dcr"/>
-        <DCCReference Include="..\StyledDbNavigator.dcr"/>
-        <DCCReference Include="..\StyledButtonGroup.dcr"/>
-        <DCCReference Include="..\StyledCategoryButtons.dcr"/>
-        <DCCReference Include="rtl.dcp"/>
-        <DCCReference Include="vcl.dcp"/>
-        <DCCReference Include="vclimg.dcp"/>
-        <DCCReference Include="dbrtl.dcp"/>
-        <DCCReference Include="vcldb.dcp"/>
-        <DCCReference Include="bindcomp.dcp"/>
-        <DCCReference Include="..\..\source\Vcl.StyledButton.pas"/>
-        <DCCReference Include="..\..\source\Vcl.ButtonStylesAttributes.pas"/>
-        <DCCReference Include="..\..\source\Vcl.StandardButtonStyles.pas"/>
-        <DCCReference Include="..\..\source\Vcl.ColorButtonStyles.pas"/>
-        <DCCReference Include="..\..\source\Vcl.BootstrapButtonStyles.pas"/>
-        <DCCReference Include="..\..\source\Vcl.AngularButtonStyles.pas"/>
-        <DCCReference Include="..\..\source\Vcl.StyledTaskDialog.pas"/>
-        <DCCReference Include="..\..\source\Vcl.StyledCmpMessages.pas"/>
-        <DCCReference Include="..\..\source\Vcl.StyledCmpStrUtils.pas"/>
-        <DCCReference Include="..\..\source\Vcl.StyledTaskDialogStdUnit.pas"/>
-        <DCCReference Include="..\..\source\Vcl.StyledTaskDialogFormUnit.pas">
-            <Form>StyledTaskDialogForm</Form>
+        <DCCReference Include="DesignIDE.dcp"/>
+        <DCCReference Include="StyledComponents.dcp"/>
+        <DCCReference Include="..\Vcl.StyledComponentsRegister.pas"/>
+        <DCCReference Include="..\Vcl.StyledButtonEditorUnit.pas">
+            <Form>StyledButtonEditor</Form>
+            <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="..\..\source\Vcl.StyledToolbar.pas"/>
-        <DCCReference Include="..\..\source\Vcl.StyledDbNavigator.pas"/>
-        <DCCReference Include="..\..\source\Vcl.StyledButtonGroup.pas"/>
-        <DCCReference Include="..\..\source\Vcl.StyledCategoryButtons.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -138,11 +108,9 @@
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">StyledComponents.dpk</Source>
+                    <Source Name="MainSource">dclStyledComponents.dpk</Source>
                 </Source>
                 <Excluded_Packages/>
-                <WelcomePageFile Path="..\..\README.htm"/>
-                <WelcomePageFolder/>
             </Delphi.Personality>
             <Platforms>
                 <Platform value="Win32">True</Platform>

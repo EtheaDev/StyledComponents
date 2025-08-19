@@ -2,7 +2,7 @@
 
 ## Components similar to Delphi VCL Buttons, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 3.8.1
+### Actual official version: 3.8.2
 
 ---
 ## New Setup for Installation of Components
@@ -12,6 +12,10 @@ From 3.8.1 version a new "Installer" read-to-use is located in the Release area:
 The Installer automatically detect your Delphi versions, installa sources, build and installa packages and add source paths.
 
 ![Setup](./Images/Setup.png)
+
+## Documentation
+
+Follow the [Project Site](https://ethea.it/docs/styledcomponents/) to known how to use those components to modernize your Delphi VCL using those components.
 
 ---
 ## A brief description
@@ -107,26 +111,6 @@ Those components uses some properties to Draw Icon and Caption in a different wa
 | ![OK_ANIMATED_BUTTON_128.png](./Images/OK_ANIMATED_BUTTON_128.png) | **TStyledAnimatedButton** is Styled Button with with "animated icon" using a Skia TSkAnimatedImage component inside. You can select the events that starts the animation, like: _AnimateOnMouseOver_, _AnimateOnClick_, _AnimateAlways_, _AnimateOnFocus_. |
 
 ---
-
-## Installation ##
-
-### Installation of Packages for Delphi/VCL (from XE6 to Delphi 12) ###
-
-Open the package group **Vcl.StyledComponents.groupproj** from the correct folder of your Delphi version (eg. \StyledComponents\Packages\D12).
-
-Then build the run-time package: **StyledComponentsXXX** and install the design-time package: **dclStyledComponentsXXX**.
-
-Remember to add the **"{Folder}\StyledComponents\source"** path to use the components in your application or the library path **"{Folder}\StyledComponents\Lib\DXX\WinXX\Release"**
-
-### Installation of Animated Components for Delphi/VCL (from XE7 to Delphi 12) ###
-
-If you want to use also the Animated Components, you need Skia4Delphi previously installed in your IDE (In Delphi 12 it's already installed).
-
-Open the package group **Vcl.StyledAnimatedComponents.groupproj** from the correct folder of your Delphi version (eg. \StyledComponents\Packages\D12).
-
-Then build the run-time package: **StyledAnimatedComponentsXXX** and install the design-time package: **dclStyledAnimatedComponentsXXX**.
-
-*if you need package for other Delphi version not included (newer than XE6) please add a new [Issue](https://github.com/EtheaDev/StyledComponents/issues)*
 
 ## Description of Styled Buttons ##
 
@@ -278,7 +262,7 @@ A simple way to show StyledRoundedCorners options applied to many Styled Compone
 
 ---
 
-## Description of StyledToolBar ##
+## Description of StyledToolBar
 
 TStyledToolbar (and TStyledToolButtons) shows a Toolbar like a classic TToolbar but with the same Style attributes that can be assigned to Styled Graphic Buttons.
 
@@ -294,7 +278,7 @@ In the StyledToolbar the dimension is always defined by "ButtonWidth" property.
 
 ---
 
-## Description of StyledDbNavigator and StyledBindNavigator ##
+## Description of StyledDbNavigator and StyledBindNavigator
 
 TStyledDbNavigator (with TStyledNavButton buttons) shows a Navigator like a classic TDbNavigator but with the same Style attributes that can be assigned to Styled Graphic Buttons.
 
@@ -314,7 +298,7 @@ The major differences are:
 
 ---
 
-## Description of StyledButtonGroup and StyledCategoryButtons ##
+## Description of StyledButtonGroup and StyledCategoryButtons
 
 TStyledButtonGroup and TStyledCategoryButtons shows a list of buttons with flow or full-size layout, like a classic TButtonGroup or TCategoryButtons.
 You can define StylesFamily/StyleClass/StyleAppearance for every buttons at component level or change the Style on a single "Button" Item.
@@ -337,7 +321,7 @@ The major differences are:
 
 ---
 
-## Description of StyledTaskDialog ##
+## Description of StyledTaskDialog
 
 **TStyledTaskDialog** is designed to expand message/task dialog functionalities, fully customizable and also animation.
 
@@ -345,7 +329,7 @@ You can test Styled Dialogs with different "StyledButton set" (Classic, Angular,
 
 Also, you can use a custom form (inherited from "TStyledTaskDialogForm") to show your complete custom Dialog.
 
-## How to replace standard MessageDlg and TaskDialogs ##
+## How to replace standard MessageDlg and TaskDialogs
 
 You can use the StyledTaskDialog in you application to replace MessageDlg and and TaskDialogs.
 
@@ -357,7 +341,7 @@ then you must add the unit **Vcl.StyledTaskDialog** to your units and change the
 MessageDlg -> StyledMessageDlg
 TaskDialog -> StyledTaskDialog
 
-## How to change Dialogs attributes (Font/Buttons Style) ##
+## How to change Dialogs attributes (Font/Buttons Style)
 
 By default, StyledDialogs uses Segoe UI Font with Size 9 (stored into Vcl.StyledTaskDialogFormUnit.dfm). If you want to use another font/size you can call InitializeStyledTaskDialogs like in this example:
 
@@ -399,19 +383,26 @@ To activate button captions is to change StyledComponents.inc file and activate 
 
 ![ShieldButtonDemo.jpg](./Images/ShieldDialog.jpg)
 
-## Demo of AnimatedStyledTaskDialog ##
+## Demo of AnimatedStyledTaskDialog
 
 If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDemo, with nice animations:
 
 ![AnimatedStyledDialog.gif](./Images/AnimatedStyledDialog.gif)
 
-### Available from Delphi XE6 to Delphi 12 (32bit and 64bit platforms)
+### Available from Delphi XE6 to Delphi 13 (32bit and 64bit platforms)
 
 ![Delphi Support](./Images/SupportingDelphi.jpg)
 
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+19 Aug 2025 - Version 3.8.2
+- Added progressbar to StyledDialog component
+- Fixed Sort for TStyledToolButtons in 64 bit
+- Fix painting of StyledCategoryButton when selected
+- Added support for Delphi 13 Florence
+- Setup Updated for Delphi 13 Florence
+
 12 Mar 2025 - Version 3.8.1
 - Added support for Delphi 12 64bit IDE
 - Fix storing default ImageMargins of StyledButtons

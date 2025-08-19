@@ -37,6 +37,7 @@ uses
   System.Classes,
   Vcl.Graphics,
   Vcl.Controls,
+  Vcl.ComCtrls,
   Vcl.Forms,
   Vcl.Dialogs,
   Vcl.StdCtrls,
@@ -91,6 +92,8 @@ type
     VerificationCheckBox: TCheckBox;
     ExpandButton: TStyledButton;
     ExpandLabel: TLabel;
+    ProgressBarPanel: TPanel;
+    InternalProgressBar: TProgressBar;
     procedure FormCreate(Sender: TObject);
     procedure ButtonClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -125,12 +128,14 @@ type
     FAutoClick: Boolean;
     FAutoClickDelay: Integer;
     FRadioButton: TTaskDialogRadioButtonItem;
+    FProgressBar: TTaskDialogProgressBar;
     FFlags: TTaskDialogFlags;
     FExpandButtonCaption: string;
     FText: string;
     FExpandedText: string;
-    FHandle: HWND;
     FTaskDialogExpanded: TNotifyEvent;
+    FTimer: TTimer;
+    FTickCount: Cardinal;
     //procedure GetIconNameAndIndex(ATaskDialog: TMsgDlgType;
     //  out AImageName: string; out AImageIndex: Integer); overload;
     procedure TaskDialogExpanded(Sender: TObject);
@@ -173,7 +178,10 @@ type
     procedure SetExpandButtonCaption(const Value: string);
     function GetExpanded: Boolean;
     procedure CalcMessageText(const AExpanded: Boolean);
+    procedure SetProgressBar(const AValue: TTaskDialogProgressBar);
   protected
+    procedure WndProc(var Message: TMessage); override;
+    procedure TimerEvent(Sender: TObject);
   	function GetScaleFactor: Single; virtual;
     class function CanUseAnimations: Boolean; virtual; abstract;
     function GetButtonsHeight: Integer; virtual;
@@ -211,9 +219,8 @@ type
     property ExpandButtonCaption: string read FExpandButtonCaption write SetExpandButtonCaption;
     property Expanded: Boolean read GetExpanded;
     property ExpandedText: string read FExpandedText write SetExpandedText;
-    property Handle: HWND read FHandle;
+    property ProgressBar: TTaskDialogProgressBar read FProgressBar write SetProgressBar;
 (*
-    property ProgressBar: TTaskDialogProgressBar read FProgressBar write FProgressBar;
     property URL: string read FURL;
 *)
     property Flags: TTaskDialogFlags read FFlags write SetFlags default [tfAllowDialogCancellation];
@@ -260,6 +267,7 @@ uses
   , Vcl.Themes
   , System.HelpIntfs
   , Winapi.ShellAPI
+  , Winapi.CommCtrl
   , Vcl.StyledCmpMessages
   , System.Typinfo
   ;
@@ -308,16 +316,21 @@ procedure TStyledTaskDialogForm.SetRadioButtons(const AValue: TTaskDialogButtons
 var
   I: Integer;
   LTaskDialogRadioButtonItem: TTaskDialogRadioButtonItem;
-  LRadioButton, LLastButton: TRadioButton;
+  LRadioButton, LLastButton, LFirstButton: TRadioButton;
   LHeight: Integer;
+  LDefaultAssigned: Boolean;
 begin
   LHeight := RadioGroupPanel.Height;
   FRadioButtons := AValue;
   LLastButton := nil;
+  LFirstButton := nil;
+  LDefaultAssigned := False;
   for I := 0 to FRadioButtons.Count -1 do
   begin
     LTaskDialogRadioButtonItem := FRadioButtons[I] as TTaskDialogRadioButtonItem;
     LRadioButton := TRadioButton.Create(Self);
+    if I = 0 then
+      LFirstButton := LRadioButton;
     LRadioButton.Tag := 100+I;
     LRadioButton.Caption := LTaskDialogRadioButtonItem.Caption;
     LRadioButton.Parent := RadioGroupPanel;
@@ -327,10 +340,19 @@ begin
       LRadioButton.Top := LLastButton.Top + LLastButton.Height;
     LRadioButton.OnClick := RadioButtonClick;
     if LTaskDialogRadioButtonItem.Default then
+    begin
       LRadioButton.Checked := True;
+      LDefaultAssigned := True;
+    end;
     RadioGroupPanel.Visible := True;
     RadioGroupPanel.Height := LHeight * (I+1);
     LLastButton := LRadioButton;
+  end;
+  if (FRadioButtons.Count > 0) then
+  begin
+    RadioGroupPanel.Height := RadioGroupPanel.Height + (LHeight div 3);
+    if not LDefaultAssigned then
+      LFirstButton.Checked := True;
   end;
 end;
 
@@ -416,6 +438,9 @@ begin
   begin
     FFlags := AValue;
     FTaskDialog.Flags := AValue;
+    ProgressBarPanel.Visible := (tfShowProgressBar in Flags) or (tfShowMarqueeProgressBar in Flags);
+    if tfShowMarqueeProgressBar in Flags then
+      InternalProgressBar.Style := pbstMarquee;
   end;
 end;
 
@@ -435,6 +460,17 @@ begin
     ImagePanel.Width := AValue;
     IconContainer.Height := AValue;
   end;
+end;
+
+procedure TStyledTaskDialogForm.SetProgressBar(
+  const AValue: TTaskDialogProgressBar);
+begin
+  FProgressBar := AValue;
+  InternalProgressBar.Min := FProgressBar.Min;
+  InternalProgressBar.Max := FProgressBar.Max;
+  InternalProgressBar.Position := FProgressBar.Position;
+  InternalProgressBar.MarqueeInterval := FProgressBar.MarqueeSpeed;
+  InternalProgressBar.State := FProgressBar.State;
 end;
 
 procedure TStyledTaskDialogForm.SetFooterIcon(const AValue: TTaskDialogIcon);
@@ -568,6 +604,7 @@ var
   LRadioGroupPanelHeight: Integer;
   LCommandLinksPanelHeight: Integer;
   LVerificationPanelHeight: Integer;
+  LProgressBarPanelHeight: Integer;
   LExpandedPanelHeight: Integer;
   LButtonsPanelHeight: Integer;
   LFooterPanelHeight: Integer;
@@ -607,6 +644,11 @@ begin
   else
     LVerificationPanelHeight := 0;
 
+  if ProgressBarPanel.Visible then
+    LProgressBarPanelHeight := ProgressBarPanel.Height + LMargins
+  else
+    LProgressBarPanelHeight := 0;
+
   if ExpandedPanel.Visible then
     LExpandedPanelHeight := ExpandedPanel.Height + LMargins
   else
@@ -632,17 +674,19 @@ begin
     LRadioGroupPanelHeight +
     LFooterPanelHeight +
     LVerificationPanelHeight +
+    LProgressBarPanelHeight +
     LButtonsPanelHeight +
     LCommandLinksPanelHeight;
 
   //Minumum Height based on size of Image
   LMinHeight :=
     LTitleHeight +
-    LImageSize + LMargins +
+    LImageSize + //LMargins +
     LExpandedPanelHeight +
     LRadioGroupPanelHeight +
     LFooterPanelHeight +
     LVerificationPanelHeight +
+    LProgressBarPanelHeight +
     LButtonsPanelHeight +
     LCommandLinksPanelHeight;
 
@@ -817,6 +861,7 @@ begin
     Inc(LMargins, ImagePanel.Width);
   RadioGroupPanel.Margins.Left := LMargins;
   CommandLinksPanel.Margins.Left := LMargins;
+  ProgressBarPanel.Margins.Left := LMargins;
 end;
 
 function TStyledTaskDialogForm.FindButton(const AModalResult: TModalResult): TStyledButton;
@@ -1068,7 +1113,11 @@ begin
   FTaskDialogExpanded := FTaskDialog.OnExpanded;
   FTaskDialog.OnExpanded := TaskDialogExpanded;
 
-  Caption := FTaskDialog.Caption;
+  if FTaskDialog.Caption <> '' then
+    Caption := FTaskDialog.Caption
+  else
+    Caption := ExtractFileName(Application.ExeName);
+
   HelpContext := FTaskDialog.HelpContext;
   CommonButtons := FTaskDialog.CommonButtons;
   DefaultButton := FTaskDialog.DefaultButton;
@@ -1084,7 +1133,7 @@ begin
     ButtonsHeight := LStyledDialog.ButtonsHeight;
   end;
   Buttons := FTaskDialog.Buttons;
-  //RadioButtons := FTaskDialog.RadioButtons;
+  RadioButtons := FTaskDialog.RadioButtons;
   AddCustomButtons(FTaskDialog.Buttons);
 
   UpdateButtonsVisibility;
@@ -1095,16 +1144,15 @@ begin
 
   MainIcon := FTaskDialog.MainIcon;
   CustomMainIcon := FTaskDialog.CustomMainIcon;
-  FFlags := FTaskDialog.Flags;
+  Flags := FTaskDialog.Flags;
   ExpandButtonCaption := FTaskDialog.ExpandButtonCaption;
   ExpandedText := FTaskDialog.ExpandedText;
-  FHandle := FTaskDialog.Handle;
   CustomFooterIcon := FTaskDialog.CustomFooterIcon;
   FooterIcon := FTaskDialog.FooterIcon;
   FooterText := FTaskDialog.FooterText;
   FRadioButton := FTaskDialog.RadioButton;
+  ProgressBar := FTaskDialog.ProgressBar;
 (*
-    property ProgressBar: TTaskDialogProgressBar read FProgressBar write FProgressBar;
     property URL: string read FURL;
 *)
   TextMessage := FTaskDialog.Text;
@@ -1160,6 +1208,17 @@ begin
     ShellExecute(Self.Handle, 'open' , PChar(Link), nil, nil, SW_SHOW );
 end;
 
+procedure TStyledTaskDialogForm.TimerEvent(Sender: TObject);
+var
+  LReset: Boolean;
+begin
+  Inc(FTickCount, FTimer.Interval);
+  LReset := False;
+  FOnTimer(Sender, FTickCount, LReset);
+  if LReset then
+    FTickCount := 0;
+end;
+
 procedure TStyledTaskDialogForm.VerificationCheckBoxClick(Sender: TObject);
 begin
   if VerificationCheckBox.Checked then
@@ -1168,6 +1227,15 @@ begin
     FTaskDialog.Flags := FTaskDialog.Flags - [tfVerificationFlagChecked];
   if Assigned(FTaskDialog.OnVerificationClicked) then
     FTaskDialog.OnVerificationClicked(FTaskDialog);
+end;
+
+procedure TStyledTaskDialogForm.WndProc(var Message: TMessage);
+begin
+  inherited;
+  if Message.Msg = TDM_SET_PROGRESS_BAR_POS then
+  begin
+    InternalProgressBar.Position := Message.WParam;
+  end;
 end;
 
 procedure TStyledTaskDialogForm.ButtonClick(Sender: TObject);
@@ -1223,7 +1291,7 @@ end;
 
 procedure TStyledTaskDialogForm.FormCreate(Sender: TObject);
 begin
-  ;
+  TextLabel.Caption := '';
 end;
 
 procedure TStyledTaskDialogForm.FormDestroy(Sender: TObject);
@@ -1235,6 +1303,7 @@ begin
   FCustomIcons[mtConfirmation].Free;
   FCustomIcons[mtCustom].Free;
   FTaskDialog.OnExpanded := FTaskDialogExpanded;
+  FTimer.Free;
 end;
 
 function TStyledTaskDialogForm.GetFocusedButton: TStyledButton;
@@ -1293,6 +1362,9 @@ procedure TStyledTaskDialogForm.FormShow(Sender: TObject);
 begin
   Screen.Cursor := crHourGlass;
   try
+    if FTaskDialog is TStyledTaskDialog then
+      TStyledTaskDialog(FTaskDialog).Handle := Self.Handle;
+
     AdjustButtonsCaption;
     ShowDialogForm;
     AdjustWidth;
@@ -1319,6 +1391,16 @@ begin
     if (FTaskDialog is TStyledTaskDialog) and
       Assigned(TStyledTaskDialog(FTaskDialog).OnDialogShow) then
       TStyledTaskDialog(FTaskDialog).OnDialogShow(Self);
+
+    //Start Timer for ProgressBar
+    if ProgressBarPanel.Visible and (tfCallbackTimer in FFlags) then
+    begin
+      FTimer := TTimer.Create(Self);
+      FTimer.Interval := 200;
+      FTimer.OnTimer := TimerEvent;
+      FTickCount := 0;
+      FTimer.Enabled := True;
+    end;
   finally
     Screen.Cursor := crDefault;
   end;
@@ -1469,11 +1551,11 @@ begin
     if Assigned(ATaskDialog.OnDialogConstructed) then
       ATaskDialog.OnDialogConstructed(ATaskDialog);
 
-    //Assign all events of TaskDialog
-    LForm.OnTimer := ATaskDialog.OnTimer;
-
     //Assign called TaskDialog component
     LForm.FTaskDialog := ATaskDialog;
+
+    //Assign all events of TaskDialog
+    LForm.OnTimer := ATaskDialog.OnTimer;
 
     //Assign Size of Main Icon
     LForm.MainIconSize := ATaskDialog.MainIconSize;

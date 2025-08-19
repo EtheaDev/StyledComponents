@@ -63,6 +63,9 @@ uses
   , Vcl.VirtualImageList
   , Vcl.ImageCollection
 {$ENDIF}
+{$IFDEF D13+}
+  , Vcl.Buttons
+{$ENDIF}
   ;
 
 resourcestring

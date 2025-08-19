@@ -1,0 +1,62 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{F0F63C30-954D-4DCA-9AE6-A680FDF1E890}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="StyledAnimatedComponents.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="dclStyledAnimatedComponents.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="StyledAnimatedComponents">
+        <MSBuild Projects="StyledAnimatedComponents.dproj"/>
+    </Target>
+    <Target Name="StyledAnimatedComponents:Clean">
+        <MSBuild Projects="StyledAnimatedComponents.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="StyledAnimatedComponents:Make">
+        <MSBuild Projects="StyledAnimatedComponents.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="dclStyledAnimatedComponents">
+        <MSBuild Projects="dclStyledAnimatedComponents.dproj"/>
+    </Target>
+    <Target Name="dclStyledAnimatedComponents:Clean">
+        <MSBuild Projects="dclStyledAnimatedComponents.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dclStyledAnimatedComponents:Make">
+        <MSBuild Projects="dclStyledAnimatedComponents.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="StyledAnimatedComponents;dclStyledAnimatedComponents"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="StyledAnimatedComponents:Clean;dclStyledAnimatedComponents:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="StyledAnimatedComponents:Make;dclStyledAnimatedComponents:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+    <ItemGroup Condition="'$(BuildGroup)'=='ALL'">
+        <BuildGroupProject Include="StyledAnimatedComponents.dproj">
+            <ProjectGuid>{304C1159-7EBD-49C6-B97C-34D8764E5E62}</ProjectGuid>
+            <Configurations>Release</Configurations>
+            <Platforms>Win32;Win64</Platforms>
+            <Enabled>True</Enabled>
+        </BuildGroupProject>
+        <BuildGroupProject Include="dclStyledAnimatedComponents.dproj">
+            <ProjectGuid>{53C0431B-B098-4665-9C3C-189698B0344B}</ProjectGuid>
+            <Configurations>Release</Configurations>
+            <Platforms>Win32;Win64</Platforms>
+            <Enabled>True</Enabled>
+        </BuildGroupProject>
+    </ItemGroup>
+</Project>

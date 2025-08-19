@@ -1,0 +1,90 @@
+{******************************************************************************}
+{                                                                              }
+{       StyledComponents: a set of Styled VCL Component                        }
+{                                                                              }
+{       Copyright (c) 2022-2025 (Ethea S.r.l.)                                 }
+{       Author: Carlo Barazzetta                                               }
+{       Contributors:                                                          }
+{                                                                              }
+{       https://github.com/EtheaDev/StyledComponents                           }
+{                                                                              }
+{******************************************************************************}
+{                                                                              }
+{  Licensed under the Apache License, Version 2.0 (the "License");             }
+{  you may not use this file except in compliance with the License.            }
+{  You may obtain a copy of the License at                                     }
+{                                                                              }
+{      http://www.apache.org/licenses/LICENSE-2.0                              }
+{                                                                              }
+{  Unless required by applicable law or agreed to in writing, software         }
+{  distributed under the License is distributed on an "AS IS" BASIS,           }
+{  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.    }
+{  See the License for the specific language governing permissions and         }
+{  limitations under the License.                                              }
+{                                                                              }
+{******************************************************************************}
+package StyledComponents;
+
+{$R *.res}
+{$R '..\StyledButton.dcr'}
+{$R '..\StyledTaskDialog.dcr'}
+{$R '..\StyledToolbar.dcr'}
+{$R '..\StyledDbNavigator.dcr'}
+{$R '..\StyledButtonGroup.dcr'}
+{$R '..\StyledCategoryButtons.dcr'}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE RELEASE}
+{$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'Ethea Styled Components Library'}
+{$LIBSUFFIX AUTO}
+{$RUNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  rtl,
+  vcl,
+  vclimg,
+  dbrtl,
+  vcldb,
+  bindcomp;
+
+contains
+  Vcl.StyledButton in '..\..\source\Vcl.StyledButton.pas',
+  Vcl.ButtonStylesAttributes in '..\..\source\Vcl.ButtonStylesAttributes.pas',
+  Vcl.StandardButtonStyles in '..\..\source\Vcl.StandardButtonStyles.pas',
+  Vcl.ColorButtonStyles in '..\..\source\Vcl.ColorButtonStyles.pas',
+  Vcl.BootstrapButtonStyles in '..\..\source\Vcl.BootstrapButtonStyles.pas',
+  Vcl.AngularButtonStyles in '..\..\source\Vcl.AngularButtonStyles.pas',
+  Vcl.StyledTaskDialog in '..\..\source\Vcl.StyledTaskDialog.pas',
+  Vcl.StyledCmpMessages in '..\..\source\Vcl.StyledCmpMessages.pas',
+  Vcl.StyledCmpStrUtils in '..\..\source\Vcl.StyledCmpStrUtils.pas',
+  Vcl.StyledTaskDialogStdUnit in '..\..\source\Vcl.StyledTaskDialogStdUnit.pas',
+  Vcl.StyledTaskDialogFormUnit in '..\..\source\Vcl.StyledTaskDialogFormUnit.pas' {StyledTaskDialogForm},
+  Vcl.StyledToolbar in '..\..\source\Vcl.StyledToolbar.pas',
+  Vcl.StyledDbNavigator in '..\..\source\Vcl.StyledDbNavigator.pas',
+  Vcl.StyledButtonGroup in '..\..\source\Vcl.StyledButtonGroup.pas',
+  Vcl.StyledCategoryButtons in '..\..\source\Vcl.StyledCategoryButtons.pas';
+
+end.
+

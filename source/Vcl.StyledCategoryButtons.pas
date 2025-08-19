@@ -563,7 +563,7 @@ begin
     Result := bsmHot
   else if bdsDown in AState then
     Result := bsmPressed
-  else if bdsFocused in AState then
+  else if (bdsFocused in AState) or (bdsSelected in AState) then
     Result := bsmSelected
   else if not Enabled then
     Result := bsmDisabled
@@ -602,9 +602,6 @@ begin
     OnDrawButton(Self, LButtonItem, ACanvas, ARect, AState)
   else
   begin
-    if Assigned(OnBeforeDrawButton) then
-      OnBeforeDrawButton(Self, LButtonItem, ACanvas, ARect, AState);
-
     LState := StyledButtonState(AState);
 
     LOldParentFont := ParentFont;
@@ -640,6 +637,9 @@ begin
         if LState in [bsmDisabled, bsmNormal] then
           ACanvas.Brush.Style := bsClear;
       end;
+
+      if Assigned(OnBeforeDrawButton) then
+        OnBeforeDrawButton(Self, LButtonItem, ACanvas, ARect, AState);
 
       DrawBackgroundAndBorder(ACanvas, ARect, LDropDownRect,
         LButtonItem.StyleDrawType, LButtonItem.StyleRadius, LButtonItem.StyleRoundedCorners);

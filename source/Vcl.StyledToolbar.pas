@@ -1240,50 +1240,44 @@ end;
 procedure TStyledToolbar.SortBySortOrder;
 var
   I: Integer;
-  ControlList: TList;
-  Control: TControl;
-
-  // Use for sort
-  function CompareToolButtonsBySortOrder(Item1, Item2: Pointer): Integer;
-  begin
-    // Check we are comparing TStyledToolButtons
-    if (TControl(Item1) is TStyledToolButton) and (TControl(Item2) is TStyledToolButton) then
-      Result := TStyledToolButton(TControl(Item1)).SortOrder - TStyledToolButton(TControl(Item2)).SortOrder
-    else
-      Result := 0;
-  end;
-
+  LControlList: TList;
+  LControl: TControl;
 begin
- // Create a list to hold the controls
-  ControlList := TList.Create;
+  //Create a list to hold the controls
+  LControlList := TList.Create;
   try
-    // Add the controls to the list
+    //Add the controls to the list
     for I := 0 to self.ControlCount - 1 do
-    begin
-      ControlList.Add(self.Controls[I]);
-    end;
+      LControlList.Add(self.Controls[I]);
 
-    // Sort the list based on the SortOrder property
-    ControlList.Sort(@CompareToolButtonsBySortOrder);
+    //Sort the list based on the SortOrder property
+    LControlList.SortList(
+      function (Item1, Item2: Pointer): Integer
+      begin
+        //Check we are comparing TStyledToolButtons
+        if (TControl(Item1) is TStyledToolButton) and (TControl(Item2) is TStyledToolButton) then
+          Result := TStyledToolButton(Item1).SortOrder - TStyledToolButton(Item2).SortOrder
+        else
+          Result := 0;
+      end
+    );
 
-    // Remove all controls from the StyledToolBar
-    for I := self.ControlCount - 1 downto 0 do
-    begin
+    //Remove all controls from the StyledToolBar
+    for I := self.ControlCount -1 downto 0 do
       self.Controls[I].Parent := nil;
-    end;
 
-    // Add the controls back to the StyledToolBar in the sorted order
-    for I := 0 to ControlList.Count - 1 do
+    //Add the controls back to the StyledToolBar in the sorted order
+    for I := 0 to LControlList.Count - 1 do
     begin
-      Control := TControl(ControlList[I]);
-      Control.Parent := Self;
-      Control.Left := I * Control.Width;  // Reposition
+      LControl := TControl(LControlList[I]);
+      LControl.Parent := Self;
+      LControl.Left := I * LControl.Width;  // Reposition
     end;
 
-    // Rearrange controls in the StyledToolBar
+    //Rearrange controls in the StyledToolBar
     self.Realign;
   finally
-    ControlList.Free;
+    LControlList.Free;
   end;
 end;
 

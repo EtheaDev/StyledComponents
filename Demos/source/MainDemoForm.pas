@@ -359,7 +359,7 @@ procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   if StyledTaskMessageDlg('Exit from StyledComponents Demo',
     'If you need more info about StyledComponents read the '+
-      StringToHRef('https://github.com/EtheaDev/StyledComponents/wiki/','wiki section')+' of the project.'+sLineBreak+
+      StringToHRef('https://ethea.it/docs/styledcomponents/','Documentation Site')+' of the project.'+sLineBreak+
     sLineBreak+
     'Do you want to exit now?',
     mtConfirmation,
