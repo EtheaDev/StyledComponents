@@ -507,13 +507,8 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
       't laborum.'
     Title = 'Task Dialog Tester'
     VerificationText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit'
-    OnButtonClicked = TaskDialogButtonClicked
-    OnDialogConstructed = TaskDialogDialogConstructed
     OnDialogCreated = TaskDialogDialogCreated
-    OnDialogDestroyed = TaskDialogDialogDestroyed
-    OnExpanded = TaskDialogExpanded
     OnHyperlinkClicked = TaskDialogHyperlinkClicked
-    OnNavigated = TaskDialogNavigated
     OnRadioButtonClicked = TaskDialogRadioButtonClicked
     OnTimer = TaskDialogTimer
     OnVerificationClicked = TaskDialogVerificationClicked
@@ -564,13 +559,8 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
       't laborum.'
     Title = 'Task Dialog Tester'
     VerificationText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit'
-    OnButtonClicked = TaskDialogButtonClicked
-    OnDialogConstructed = TaskDialogDialogConstructed
     OnDialogCreated = TaskDialogDialogCreated
-    OnDialogDestroyed = TaskDialogDialogDestroyed
-    OnExpanded = TaskDialogExpanded
     OnHyperlinkClicked = TaskDialogHyperlinkClicked
-    OnNavigated = TaskDialogNavigated
     OnRadioButtonClicked = TaskDialogRadioButtonClicked
     OnTimer = TaskDialogTimer
     OnVerificationClicked = TaskDialogVerificationClicked

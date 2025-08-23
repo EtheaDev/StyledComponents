@@ -207,6 +207,7 @@ type
     procedure SetDialogFont(const AFont: TFont); virtual;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    procedure SetPosition(const X, Y: Integer); virtual;
     property AutoClick: Boolean read FAutoClick write FAutoClick default False;
     property AutoClickDelay: Integer read FAutoClickDelay write FAutoClickDelay default DEFAULT_AUTOCLICK_DELAY;
     property ButtonsWidth: Integer read GetButtonsWidth write SetButtonsWidth;
@@ -268,6 +269,7 @@ uses
   , System.HelpIntfs
   , Winapi.ShellAPI
   , Winapi.CommCtrl
+  , Winapi.MultiMon
   , Vcl.StyledCmpMessages
   , System.Typinfo
   ;
@@ -681,7 +683,7 @@ begin
   //Minumum Height based on size of Image
   LMinHeight :=
     LTitleHeight +
-    LImageSize + //LMargins +
+    LImageSize + LMargins +
     LExpandedPanelHeight +
     LRadioGroupPanelHeight +
     LFooterPanelHeight +
@@ -1386,6 +1388,7 @@ begin
     PlayMessageDlgSound;
     FocusDefaultButton;
     VerificationCheckBox.Checked := tfVerificationFlagChecked in TaskDialog.Flags;
+    //Call event handler OnDialogCreated
     if Assigned(FTaskDialog.OnDialogCreated) then
       FTaskDialog.OnDialogCreated(FTaskDialog);
     if (FTaskDialog is TStyledTaskDialog) and
@@ -1517,6 +1520,32 @@ begin
   UpdateButtonStyle(CloseButton);
 end;
 
+procedure TStyledTaskDialogForm.SetPosition(const X, Y: Integer);
+var
+  Rect: TRect;
+  LX, LY: Integer;
+  LHandle: HMONITOR;
+  LMonitorInfo: TMonitorInfo;
+begin
+  LX := X;
+  LY := Y;
+  Assert(Owner is TForm);
+  LHandle := MonitorFromWindow(TForm(Owner).Handle, MONITOR_DEFAULTTONEAREST);
+  LMonitorInfo.cbSize := SizeOf(LMonitorInfo);
+  if GetMonitorInfo(LHandle, {$IFNDEF CLR}@{$ENDIF}LMonitorInfo) then
+    with LMonitorInfo do
+    begin
+      GetWindowRect(Self.Handle, Rect);
+      if LX < 0 then
+        LX := ((rcWork.Right - rcWork.Left) - (Rect.Right - Rect.Left)) div 2;
+      if LY < 0 then
+        LY := ((rcWork.Bottom - rcWork.Top) - (Rect.Bottom - Rect.Top)) div 2;
+      Inc(LX, rcWork.Left);
+      Inc(LY, rcWork.Top);
+      SetWindowPos(Handle, 0, LX, LY, 0, 0, SWP_NOACTIVATE or SWP_NOSIZE or SWP_NOZORDER);
+    end;
+end;
+
 { TTaskDialogLauncherHandler }
 
 function TTaskDialogLauncherHandler.DoExecute(ParentWnd: HWND;
@@ -1525,6 +1554,8 @@ function TTaskDialogLauncherHandler.DoExecute(ParentWnd: HWND;
   const ADialogBtnFamily: TStyledButtonFamily): Boolean;
 var
   LForm: TStyledTaskDialogForm;
+  LParentControl: TControl;
+  LOwnerForm: TForm;
   LFont: TFont;
   LDlgBtnFamily: TStyledButtonFamily;
 begin
@@ -1536,6 +1567,19 @@ begin
     _DialogPosition := poOwnerFormCenter
   else
     _DialogPosition := poScreenCenter;
+
+  LOwnerForm := nil;
+  if ParentWnd <> 0 then
+  begin
+    LParentControl := FindControl(ParentWnd);
+    while Assigned(LParentControl) do
+    begin
+      if LParentControl is TForm then
+        LOwnerForm := TForm(LParentControl);
+      LParentControl := LParentControl.Parent;
+    end;
+  end;
+
   if ATaskDialog.UseAnimations then
   begin
     if not Assigned(_AnimatedTaskDialogFormClass) then
@@ -1543,13 +1587,20 @@ begin
         ERR_DIALOG_FORM_NOT_REGISTERED,
         ['Skia.Vcl.StyledTaskDialogAnimatedUnit.pas'])
     else
-      LForm := _AnimatedTaskDialogFormClass.Create(nil)
+      LForm := _AnimatedTaskDialogFormClass.Create(LOwnerForm)
   end
   else
-    LForm := _TaskDialogFormClass.Create(nil);
+    LForm := _TaskDialogFormClass.Create(LOwnerForm);
   try
+    //Call event handler OnDialogConstructed
     if Assigned(ATaskDialog.OnDialogConstructed) then
       ATaskDialog.OnDialogConstructed(ATaskDialog);
+
+    if ATaskDialog.IsCustomPosition then
+    begin
+      LForm.Position := poDefault;
+      LForm.SetPosition(ATaskDialog.Position.X, ATaskDialog.Position.Y);
+    end;
 
     //Assign called TaskDialog component
     LForm.FTaskDialog := ATaskDialog;
@@ -1581,12 +1632,6 @@ begin
     ATaskDialog.ModalResult := LForm.ModalResult;
     ATaskDialog.Button := TTaskDialogButtonItem(ATaskDialog.Buttons.FindButton(ATaskDialog.ModalResult));
     //ATaskDialog.RadioButton := TTaskDialogRadioButtonItem(ATaskDialog.RadioButtons.FindButton(LRadioButton));
-(*
-    if LVerificationChecked then
-      Include(FFlags, tfVerificationFlagChecked)
-    else
-      Exclude(FFlags, tfVerificationFlagChecked);
-*)
     Result := True;
   finally
     LForm.Free;

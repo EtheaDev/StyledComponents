@@ -91,14 +91,8 @@ type
     procedure UseStyleDialogCompClick(Sender: TObject);
     procedure FontComboBoxSelect(Sender: TObject);
     procedure RaiseDatabaseError(Sender: TObject);
-    procedure TaskDialogButtonClicked(Sender: TObject;
-      ModalResult: TModalResult; var CanClose: Boolean);
-    procedure TaskDialogDialogConstructed(Sender: TObject);
     procedure TaskDialogDialogCreated(Sender: TObject);
-    procedure TaskDialogDialogDestroyed(Sender: TObject);
-    procedure TaskDialogExpanded(Sender: TObject);
     procedure TaskDialogHyperlinkClicked(Sender: TObject);
-    procedure TaskDialogNavigated(Sender: TObject);
     procedure TaskDialogRadioButtonClicked(Sender: TObject);
     procedure TaskDialogVerificationClicked(Sender: TObject);
     procedure InitializeDialogsClick(Sender: TObject);
@@ -469,30 +463,9 @@ begin
   ShowSelection(LTaskDialog.ModalResult);
 end;
 
-procedure TfmStyledTaskDialog.TaskDialogButtonClicked(Sender: TObject;
-  ModalResult: TModalResult; var CanClose: Boolean);
-begin
-  ;
-end;
-
-procedure TfmStyledTaskDialog.TaskDialogDialogConstructed(Sender: TObject);
-begin
-  ;
-end;
-
 procedure TfmStyledTaskDialog.TaskDialogDialogCreated(Sender: TObject);
 begin
   EnableAndFocusOKButton(Sender as TCustomTaskDialog);
-end;
-
-procedure TfmStyledTaskDialog.TaskDialogDialogDestroyed(Sender: TObject);
-begin
-  ;
-end;
-
-procedure TfmStyledTaskDialog.TaskDialogExpanded(Sender: TObject);
-begin
-  ;
 end;
 
 procedure TfmStyledTaskDialog.TaskDialogHyperlinkClicked(Sender: TObject);
@@ -501,11 +474,6 @@ var
 begin
   LURL := (Sender as TTaskDialog).URL;
   ShellExecute(Self.Handle, 'open' , PChar(LURL), nil, nil, SW_SHOW );
-end;
-
-procedure TfmStyledTaskDialog.TaskDialogNavigated(Sender: TObject);
-begin
-  ;
 end;
 
 procedure TfmStyledTaskDialog.TaskDialogRadioButtonClicked(Sender: TObject);
@@ -522,10 +490,7 @@ end;
 
 procedure TfmStyledTaskDialog.TaskDialogTimer(Sender: TObject; TickCount: Cardinal; var Reset: Boolean);
 begin
-   // TaskDialog1.ProgressBar.Position := MyThread.CurrentProgressPercent;
-   // Demo
-   //TaskDialog.ProgressBar.Position :=  TaskDialog.ProgressBar.Position + 1;
-   TaskDialog.Execute(Self.Handle);
+  TaskDialog.Execute(Self.Handle);
 end;
 
 function TfmStyledTaskDialog.EnableAndFocusOKButton(const ATaskDialog: TCustomTaskDialog): Boolean;
