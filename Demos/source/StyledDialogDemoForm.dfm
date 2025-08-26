@@ -17,7 +17,6 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
   Position = poScreenCenter
   ShowHint = True
   OnCreate = FormCreate
-  OnDestroy = FormDestroy
   TextHeight = 13
   object ExtraGroupBox: TGroupBox
     Left = 0
@@ -31,25 +30,25 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
       727
       230)
     object ExpandedTextLabel: TLabel
-      Left = 33
+      Left = 34
       Top = 43
-      Width = 77
+      Width = 76
       Height = 13
       Alignment = taRightJustify
       Caption = 'Expanded Text:'
     end
     object FooterTextLabel: TLabel
-      Left = 50
+      Left = 51
       Top = 105
-      Width = 60
+      Width = 59
       Height = 13
       Alignment = taRightJustify
       Caption = 'Footer Text:'
     end
     object VerificationTextLabel: TLabel
-      Left = 26
+      Left = 27
       Top = 167
-      Width = 84
+      Width = 83
       Height = 13
       Alignment = taRightJustify
       Caption = 'Verification Text:'
@@ -76,7 +75,7 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
     end
     object btUseStyledDialogComp: TButton
       Left = 521
-      Top = 160
+      Top = 158
       Width = 195
       Height = 25
       Anchors = [akTop, akRight]
@@ -165,7 +164,7 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
       object TitleLabel: TLabel
         Left = 7
         Top = 5
-        Width = 25
+        Width = 24
         Height = 13
         Caption = 'Title:'
       end
@@ -177,9 +176,9 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
         Caption = 'Message:'
       end
       object DlgButtonTypeLabel: TLabel
-        Left = 16
+        Left = 15
         Top = 186
-        Width = 89
+        Width = 90
         Height = 13
         Alignment = taRightJustify
         Anchors = [akLeft, akBottom]
@@ -196,7 +195,7 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
       object ButtonsWidthLabel: TLabel
         Left = 299
         Top = 7
-        Width = 60
+        Width = 61
         Height = 13
         Anchors = [akTop, akRight]
         Caption = 'Btns Width:'
@@ -426,9 +425,9 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
         214
         341)
       object DefaultButtonLabel: TLabel
-        Left = 5
+        Left = 21
         Top = 316
-        Width = 79
+        Width = 80
         Height = 13
         Alignment = taRightJustify
         Anchors = [akLeft, akBottom]
@@ -448,13 +447,13 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
         Width = 196
         Height = 195
         Anchors = [akLeft, akTop, akBottom]
-        ItemHeight = 17
+        ItemHeight = 13
         TabOrder = 1
       end
       object DefaultButtonComboBox: TComboBox
-        Left = 90
+        Left = 104
         Top = 313
-        Width = 115
+        Width = 101
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akBottom]
@@ -534,7 +533,7 @@ object fmStyledTaskDialog: TfmStyledTaskDialog
       'license.rtf</A> Expanded Text Expanded Text Expanded Text Expand' +
       'ed Text Expanded Text Expanded Text Expanded Text Expanded Text ' +
       'Expanded Text Expanded Text Expanded Text '
-    Flags = [tfAllowDialogCancellation, tfUseCommandLinks, tfExpandedByDefault, tfPositionRelativeToWindow]
+    Flags = [tfAllowDialogCancellation, tfExpandedByDefault, tfPositionRelativeToWindow]
     FooterIcon = 1
     FooterText = 
       'The file was created: <A HREF="C:\Windows\System32\license.rtf">' +

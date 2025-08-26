@@ -48,7 +48,7 @@ uses
   , Vcl.StyledButtonGroup
   , System.Actions
   , uSettings
-  {$IFDEF SKIA}
+  {$IFDEF SKIA2}
   , Skia.Vcl.StyledTaskDialogAnimatedUnit
   {$ELSE}
   , Vcl.StyledTaskDialogStdUnit

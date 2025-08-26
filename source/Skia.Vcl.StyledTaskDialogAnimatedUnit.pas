@@ -51,6 +51,7 @@ uses
   , Vcl.StyledTaskDialogFormUnit
   , Vcl.ExtCtrls
   , Vcl.StdCtrls
+  , Vcl.ComCtrls
   , System.UITypes
   , Vcl.Skia //Warning: you cannot use Animated Style Dialog if you don't have Skia4Delphi!
   , System.Skia
@@ -124,7 +125,7 @@ begin
   if AImageName = '' then
     Exit;
   //Using ..\Animations\Animations.rc file compiled into Animations.RES file
-  LImageName := UpperCase('LOTTIE_'+AImageName);
+  LImageName := UpperCase('STYLEDTASKLOTTIE_'+AImageName);
   LStream := TResourceStream.Create(HInstance, LImageName, RT_RCDATA);
   try
     AAnimatedImage.LoadFromStream(LStream);

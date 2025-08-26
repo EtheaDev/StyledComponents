@@ -85,7 +85,6 @@ type
     procedure FormCreate(Sender: TObject);
     procedure ShowDlg(Sender: TObject);
     procedure RaiseError(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure TaskDialogTimer(Sender: TObject; TickCount: Cardinal;
       var Reset: Boolean);
     procedure UseStyleDialogCompClick(Sender: TObject);
@@ -293,19 +292,14 @@ begin
   ShowSelection(LResult);
 end;
 
-procedure TfmStyledTaskDialog.FormDestroy(Sender: TObject);
-begin
-  ;
-end;
-
 procedure TfmStyledTaskDialog.Loaded;
 begin
-  //Font.Assign(Screen.IconFont);
-  //Screen.MessageFont.Assign(Font);
+  //Fix Memo text loaded from .dfm
+  FooterTextMemo.Text := TrimRight(FooterTextMemo.Text);
+  ExpandedTextMemo.Text := TrimRight(ExpandedTextMemo.Text);
+  VerificationTextMemo.Text := TrimRight(VerificationTextMemo.Text);
   inherited;
 end;
-
-
 
 procedure TfmStyledTaskDialog.RaiseDatabaseError(Sender: TObject);
 begin
@@ -426,7 +420,6 @@ begin
         TMsgDlgBtn.mbNo: AddCommonButton(tcbNo);
         TMsgDlgBtn.mbOK: AddCommonButton(tcbOK);
         TMsgDlgBtn.mbCancel: AddCommonButton(tcbCancel);
-        TMsgDlgBtn.mbRetry: AddCommonButton(tcbRetry);
         TMsgDlgBtn.mbClose: AddCommonButton(tcbClose);
       else
         //For other buttons add "Custom button"
@@ -437,6 +430,7 @@ begin
         begin
           case db of
             TMsgDlgBtn.mbAbort: LCustomButton.CommandLinkHint := 'Abort operation and undo all changes...';
+            TMsgDlgBtn.mbRetry: LCustomButton.CommandLinkHint := 'Retry the operation...';
             TMsgDlgBtn.mbIgnore: LCustomButton.CommandLinkHint := 'Ignore operation and continue...';
             TMsgDlgBtn.mbAll: LCustomButton.CommandLinkHint := 'Include all items in operation...';
             TMsgDlgBtn.mbNoToAll: LCustomButton.CommandLinkHint := 'Discard operation to all items...';

@@ -136,6 +136,7 @@ type
     FTaskDialogExpanded: TNotifyEvent;
     FTimer: TTimer;
     FTickCount: Cardinal;
+    FMainIconSize: Integer;
     //procedure GetIconNameAndIndex(ATaskDialog: TMsgDlgType;
     //  out AImageName: string; out AImageIndex: Integer); overload;
     procedure TaskDialogExpanded(Sender: TObject);
@@ -171,7 +172,6 @@ type
     procedure SetMainIcon(const AValue: TTaskDialogIcon);
     procedure AddCustomButtons(const AButtons: TTaskDialogButtons);
     procedure SetMainIconSize(const AValue: Integer);
-    function GetMainIconSize: Integer;
     procedure SetRadioButtons(const AValue: TTaskDialogButtons);
     function UsingCommandLinks: Boolean;
     procedure SetFlags(const AValue: TTaskDialogFlags);
@@ -227,7 +227,7 @@ type
     property Flags: TTaskDialogFlags read FFlags write SetFlags default [tfAllowDialogCancellation];
     property MainIcon: TTaskDialogIcon read FMainIcon write SetMainIcon default tdiInformation;
     property CustomMainIcon: TIcon read FCustomMainIcon write SetCustomMainIcon;
-    property MainIconSize: Integer read GetMainIconSize write SetMainIconSize default DEFAULT_MAIN_ICON_SIZE;
+    property MainIconSize: Integer read FMainIconSize write SetMainIconSize default DEFAULT_MAIN_ICON_SIZE;
     property CustomFooterIcon: TIcon read FCustomFooterIcon write SetCustomFooterIcon;
     property FooterIcon: TTaskDialogIcon read FFooterIcon write SetFooterIcon default tdiNone;
     property FooterText: string read GetFooterText write SetFooterText;
@@ -457,11 +457,8 @@ end;
 
 procedure TStyledTaskDialogForm.SetMainIconSize(const AValue: Integer);
 begin
-  if AValue <> ImagePanel.Width then
-  begin
-    ImagePanel.Width := AValue;
-    IconContainer.Height := AValue;
-  end;
+  if AValue <> FMainIconSize then
+    FMainIconSize := AValue;
 end;
 
 procedure TStyledTaskDialogForm.SetProgressBar(
@@ -604,6 +601,7 @@ procedure TStyledTaskDialogForm.AdjustHeight;
 var
   LTitleHeight: Integer;
   LRadioGroupPanelHeight: Integer;
+  LImagePanelHeight: Integer;
   LCommandLinksPanelHeight: Integer;
   LVerificationPanelHeight: Integer;
   LProgressBarPanelHeight: Integer;
@@ -615,15 +613,19 @@ var
 begin
   LMargins := CenterPanel.Margins.Top * 2;
   DefaultDialogSize(LWidth, LHeight, LImageSize);
+  LImagePanelHeight := LImageSize +
+    IconContainer.Margins.Top + IconContainer.Margins.Bottom +
+    ImagePanel.Margins.Top + ImagePanel.Margins.Bottom;
 
   //Height of Buttons
   if FButtonsHeight <> DEFAULT_STYLEDDIALOG_BUTTONSHEIGHT then
-    ButtonsPanel.Height := FButtonsHeight + LMargins + 2;
+    ButtonsPanel.Height := FButtonsHeight;
 
   //Calculate Height of Form, based on Visible Components
   if TitleLabel.Caption <> '' then
   begin
-    LTitleHeight := TitleLabel.Height + LMargins;
+    LTitleHeight := TitleLabel.Height +
+      TitleLabel.Margins.Top + TitleLabel.Margins.Bottom;
   end
   else
   begin
@@ -632,41 +634,47 @@ begin
   end;
 
   if RadioGroupPanel.Visible then
-    LRadioGroupPanelHeight := RadioGroupPanel.Height + LMargins
+    LRadioGroupPanelHeight := RadioGroupPanel.Height
   else
     LRadioGroupPanelHeight := 0;
 
   if FooterPanel.Visible then
-    LFooterPanelHeight := FooterPanel.Height + LMargins
+    LFooterPanelHeight := FooterPanel.Height
   else
     LFooterPanelHeight := 0;
 
   if VerificationPanel.Visible then
-    LVerificationPanelHeight := VerificationPanel.Height + LMargins
+    LVerificationPanelHeight := VerificationPanel.Height
   else
     LVerificationPanelHeight := 0;
 
   if ProgressBarPanel.Visible then
-    LProgressBarPanelHeight := ProgressBarPanel.Height + LMargins
+    LProgressBarPanelHeight := ProgressBarPanel.Height
   else
     LProgressBarPanelHeight := 0;
 
   if ExpandedPanel.Visible then
-    LExpandedPanelHeight := ExpandedPanel.Height + LMargins
+    LExpandedPanelHeight := ExpandedPanel.Height
   else
     LExpandedPanelHeight := 0;
 
   if CommandLinksPanel.Visible then
-    LCommandLinksPanelHeight := CommandLinksPanel.Height + (LMargins * 2)
+    LCommandLinksPanelHeight := CommandLinksPanel.Height + LMargins
   else
     LCommandLinksPanelHeight := 0;
 
   if ButtonsPanel.Visible then
-    LButtonsPanelHeight := ButtonsPanel.Height + LMargins
+    LButtonsPanelHeight := ButtonsPanel.Height
   else
     LButtonsPanelHeight := 0;
 
-  LMessageHeight := AutoSizeLabel.Height + LMargins;
+  LMessageHeight := AutoSizeLabel.Height +
+    AutoSizeLabel.Margins.Top + AutoSizeLabel.Margins.Bottom +
+    MessageScrollBox.Margins.Top + MessageScrollBox.Margins.Bottom +
+    LMargins;
+
+  LMessageHeight := Max(LMessageHeight,
+    LImagePanelHeight - LTitleHeight);
 
   //Actual Height based on size of Message
   LCalcHeight :=
@@ -681,24 +689,26 @@ begin
     LCommandLinksPanelHeight;
 
   //Minumum Height based on size of Image
-  LMinHeight :=
+  LMinHeight := Max(
+    LImagePanelHeight +
+    LButtonsPanelHeight
+    ,
     LTitleHeight +
-    LImageSize + LMargins +
     LExpandedPanelHeight +
     LRadioGroupPanelHeight +
     LFooterPanelHeight +
     LVerificationPanelHeight +
     LProgressBarPanelHeight +
     LButtonsPanelHeight +
-    LCommandLinksPanelHeight;
+    LCommandLinksPanelHeight);
 
-  Constraints.MinHeight := LMinHeight +
-    Height - ClientHeight;
-
-  LHeight := Min(Self.Monitor.Height - 100,
+  LHeight := Min(Self.Monitor.Height - Round(150 * GetScaleFactor),
     Max(LCalcHeight, LMinHeight));
 
   ClientHeight := LHeight;
+
+  Constraints.MinHeight := LMinHeight +
+    Height - ClientHeight;
 
   TextLabel.Font.Assign(AutoSizeLabel.Font);
   TextLabel.Height := LMessageHeight;
@@ -714,7 +724,11 @@ begin
     TextLabel.Align := alClient;
   end
   else
+  begin
     MessageScrollBox.VertScrollBar.Visible := False;
+    TextLabel.Margins.Top := Max(0,
+      (CenterPanel.Height - AutoSizeLabel.Height - LTitleHeight) div 2);
+  end;
 
   AutoSizeLabel.Visible := False;
 end;
@@ -727,6 +741,8 @@ var
   LImageSize, LWidth, LHeight: Integer;
 begin
   DefaultDialogSize(LWidth, LHeight, LImageSize);
+
+  ImagePanel.Width := Round(LImageSize * GetScaleFactor);
   LMargins := ButtonsPanel.Margins.Left;
   LFormWidth := LMargins;
   if ButtonsPanel.Visible then
@@ -959,8 +975,7 @@ end;
 
 function TStyledTaskDialogForm.UsingCommandLinks: Boolean;
 begin
-  Result := (tfUseCommandLinks in FTaskDialog.Flags) and
-    (FTaskDialog.Title <> '');
+  Result := (tfUseCommandLinks in FTaskDialog.Flags);
 end;
 
 procedure TStyledTaskDialogForm.AddCustomButtons(const AButtons: TTaskDialogButtons);
@@ -1020,12 +1035,6 @@ begin
       LStyledButton.CommandLinkHint := LButtonItem.CommandLinkHint;
       LStyledButton.Height := LCommandLinkHeight - 2;
       CommandLinksPanel.Height := CommandLinksPanel.Height + LCommandLinkHeight;
-      if LButtonItem.Default then
-      begin
-        LStyledButton.Default := True;
-        Self.ActiveControl := LStyledButton;
-        FFocusedButton := LStyledButton;
-      end;
       if Assigned(LLastButton) then
       begin
         LStyledButton.TabOrder := LLastButton.TabOrder +1;
@@ -1055,6 +1064,13 @@ begin
         LStyledButton.Left := YesButton.Left - ButtonsWidth;
       end;
       LLastButton := LStyledButton;
+    end;
+    if Assigned(LButtonItem) and (LButtonItem.Default) and
+      Assigned(LStyledButton) and (LStyledButton.Visible) then
+    begin
+      LStyledButton.Default := True;
+      Self.ActiveControl := LStyledButton;
+      FFocusedButton := LStyledButton;
     end;
   end;
   //Set Focus to Button assigning ActiveControl
@@ -1264,8 +1280,8 @@ begin
   LScaleFactor := GetScaleFactor;
   //Values for 96 DPI
   AClientWidth := Round(DEFAULT_STYLEDDIALOG_MIN_WIDTH * LScaleFactor);
-  AClientHeight := Round(DEFAULT_STYLEDDIALOG_MIN_HEIGHT * LScaleFactor);
-  AImageSize := Round(DEFAULT_MAIN_ICON_SIZE * LScaleFactor);
+  AClientHeight := Round(DEFAULT_STYLEDDIALOG_MIN_HEIGHT);
+  AImageSize := Round(MainIconSize * LScaleFactor);
 end;
 
 destructor TStyledTaskDialogForm.Destroy;
@@ -1365,8 +1381,11 @@ begin
   Screen.Cursor := crHourGlass;
   try
     if FTaskDialog is TStyledTaskDialog then
+    begin
       TStyledTaskDialog(FTaskDialog).Handle := Self.Handle;
-
+      //Assign Size of Main Icon
+      MainIconSize := TStyledTaskDialog(FTaskDialog).MainIconSize;
+    end;
     AdjustButtonsCaption;
     ShowDialogForm;
     AdjustWidth;
@@ -1424,11 +1443,6 @@ procedure TStyledTaskDialogForm.GetIconNameAndIndex(
 begin
   AImageIndex := TaskDialogIconToImageIndex(ATaskDialogIcon);
   AImageName := TaskDialogIconToImageName(ATaskDialogIcon);
-end;
-
-function TStyledTaskDialogForm.GetMainIconSize: Integer;
-begin
-  Result := ImagePanel.Width;
 end;
 
 function TStyledTaskDialogForm.GetScaleFactor: Single;
@@ -1592,6 +1606,7 @@ begin
   else
     LForm := _TaskDialogFormClass.Create(LOwnerForm);
   try
+    LForm.PopupParent := LOwnerForm;
     //Call event handler OnDialogConstructed
     if Assigned(ATaskDialog.OnDialogConstructed) then
       ATaskDialog.OnDialogConstructed(ATaskDialog);
@@ -1607,10 +1622,6 @@ begin
 
     //Assign all events of TaskDialog
     LForm.OnTimer := ATaskDialog.OnTimer;
-
-    //Assign Size of Main Icon
-    LForm.MainIconSize := ATaskDialog.MainIconSize;
-
     LForm.FDialogType := ADialogType;
     LForm.FDialogBtnFamily := ADialogBtnFamily;
     LForm.FButtonsWidth := ATaskDialog.ButtonsWidth;

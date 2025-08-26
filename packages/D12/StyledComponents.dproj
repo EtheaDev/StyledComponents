@@ -2,7 +2,7 @@
     <PropertyGroup>
         <ProjectGuid>{F870FD7C-4984-4784-8B29-4CDB55E64524}</ProjectGuid>
         <MainSource>StyledComponents.dpk</MainSource>
-        <ProjectVersion>20.2</ProjectVersion>
+        <ProjectVersion>20.3</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Release</Config>

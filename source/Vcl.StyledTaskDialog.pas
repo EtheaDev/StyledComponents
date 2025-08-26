@@ -87,7 +87,6 @@ type
     FPosition: TPoint;
     FMainIconSize: Integer;
     FDialogButtonsFamily: TStyledButtonFamily;
-    FUseCommandLinks: Boolean;
     FUseTitleInMessageDlg: Boolean;
     FAlphaBlendValue: Byte;
     FButtonsWidth: Integer;
@@ -108,6 +107,9 @@ type
     procedure SetButtonsWidth(const AValue: Integer);
     function GetHandle: HWND;
     procedure SetHandle(const AValue: HWND);
+    procedure SetUseCommandLinks(const AValue: Boolean);
+    function GetUseCommandLinks: Boolean;
+    procedure SetMainIconSize(const AValue: Integer);
   strict protected
     function DoExecute(ParentWnd: HWND): Boolean; override;
     procedure DoOnHelp; override;
@@ -130,7 +132,7 @@ type
     property AutoClick: Boolean read FAutoClick write SetAutoClick default False;
     property AutoClickDelay: Integer read FAutoClickDelay write SetAutoClickDelay default DEFAULT_AUTOCLICK_DELAY;
     property DialogButtonsFamily: TStyledButtonFamily read FDialogButtonsFamily write FDialogButtonsFamily stored IsDefaultFamily;
-    property UseCommandLinks: Boolean read FUseCommandLinks write FUseCommandLinks default False;
+    property UseCommandLinks: Boolean read GetUseCommandLinks write SetUseCommandLinks default False;
     property UseAnimations: Boolean read FUseAnimations write FUseAnimations default false;
     property UseTitleInMessageDlg: Boolean read FUseTitleInMessageDlg write FUseTitleInMessageDlg default True;
     property AlphaBlendValue: Byte read FAlphaBlendValue write SetAlphaBlendValue default DEFAULT_STYLEDDIALOG_ALPHABLEND;
@@ -138,7 +140,7 @@ type
     property ButtonsHeight: Integer read FButtonsHeight write SetButtonsHeight default DEFAULT_STYLEDDIALOG_BUTTONSHEIGHT;
     property HideSystemCloseButton: Boolean read FHideSystemCloseButton write FHideSystemCloseButton default False;
     property Position: TPoint read FPosition write FPosition stored IsCustomPosition;
-    property MainIconSize: Integer read FMainIconSize write FMainIconSize default DEFAULT_MAIN_ICON_SIZE;
+    property MainIconSize: Integer read FMainIconSize write SetMainIconSize default DEFAULT_MAIN_ICON_SIZE;
     property OnDialogShow: TTaskDialogShow read FOnDialogShow write FOnDialogShow;
   end;
 
@@ -275,6 +277,7 @@ uses
   , Vcl.StdCtrls
   , Vcl.ExtCtrls
   , Vcl.Consts
+  , System.RTLConsts
   , Winapi.ShellApi
   , Vcl.StyledCmpMessages
   , Vcl.StandardButtonStyles
@@ -789,7 +792,7 @@ begin
   //Default Position: -1, -1 (is not a custom position)
   FPosition := TPoint.Create(-1,-1);
   FDialogButtonsFamily := _DialogButtonsFamily;
-  FUseCommandLinks := _UseCommandLinks;
+  UseCommandLinks := _UseCommandLinks;
   FUseTitleInMessageDlg := _UseTitleInMessageDlg;
   AlphaBlendValue := _AlphaBlendValue;
   ButtonsWidth := _ButtonsWidth;
@@ -872,6 +875,11 @@ begin
   Result := inherited Handle;
 end;
 
+function TStyledTaskDialog.GetUseCommandLinks: Boolean;
+begin
+  Result := TTaskDialogFlag.tfUseCommandLinks in Flags;
+end;
+
 function TStyledTaskDialog.IsCustomPosition: Boolean;
 begin
   Result := (FPosition.X <> -1) and (FPosition.Y <> -1);
@@ -926,6 +934,21 @@ begin
   finally
     Context.Free;
   end;
+end;
+
+procedure TStyledTaskDialog.SetMainIconSize(const AValue: Integer);
+begin
+  if AValue < 0 then
+    raise EArgumentOutOfRangeException.CreateRes(@SArgumentOutOfRange);
+  FMainIconSize := AValue;
+end;
+
+procedure TStyledTaskDialog.SetUseCommandLinks(const AValue: Boolean);
+begin
+  if AValue then
+    Flags :=  Flags + [TTaskDialogFlag.tfUseCommandLinks]
+  else
+    Flags :=  Flags - [TTaskDialogFlag.tfUseCommandLinks];
 end;
 
 function GetDialogTypeTitle(const DlgType: TMsgDlgType): string;

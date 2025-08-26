@@ -28,6 +28,7 @@ unit Vcl.StyledTaskDialogStdUnit;
 
 interface
 
+{$R IconsPNG.RES}
 {$INCLUDE StyledComponents.inc}
 
 uses
@@ -56,7 +57,6 @@ uses
 
 type
   TStyledTaskDialogStd = class(TStyledTaskDialogForm)
-    ImageList: TImageList;
     FooterImage: TImage;
     Image: TImage;
   private
@@ -113,15 +113,26 @@ end;
 procedure TStyledTaskDialogStd.InternalLoadImage(const AImage: TImage;
   const AImageIndex: TImageIndex; AImageName: string);
 var
-  LBackGroundColor: TColor;
+  LStream: TResourceStream;
+  LImageName: string;
+  LPngImage: TPngImage;
 begin
-  LBackGroundColor := TStyleManager.ActiveStyle.GetSystemColor(clWindow);
-  AImage.Picture.Bitmap.Canvas.Brush.Color := LBackGroundColor;
-  AImage.Picture.Bitmap.Canvas.FillRect(Rect(0, 0,
-    ImageList.Width, ImageList.Height));
-  AImage.Picture.Bitmap.PixelFormat := pf32bit;
-  AImage.Picture.Bitmap.Transparent := True;
-  ImageList.GetBitmap(AImageIndex, AImage.Picture.Bitmap);
+  if AImageName = '' then
+    Exit;
+  //Using IconsPNG.res
+  LImageName := UpperCase('STYLEDTASKICON_'+AImageName);
+  LStream := TResourceStream.Create(HInstance, LImageName, RT_RCDATA);
+  try
+    LPngImage := TPngImage.Create;
+    try
+      LPngImage.LoadFromStream(LStream);
+      AImage.Picture.Assign(LPngImage);
+    finally
+      LPngImage.Free;
+    end;
+  finally
+    LStream.Free;
+  end;
 end;
 
 end.
