@@ -471,7 +471,7 @@ end;
 procedure TStyledButtonEditor.HelpButtonClick(Sender: TObject);
 begin
   ShellExecute(handle, 'open',
-    PChar(GetProjectWikiURL), nil, nil, SW_SHOWNORMAL)
+    PChar(GetProjectURL), nil, nil, SW_SHOWNORMAL)
 end;
 
 procedure TStyledButtonEditor.Loaded;

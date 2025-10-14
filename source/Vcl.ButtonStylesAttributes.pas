@@ -55,7 +55,7 @@ uses
   ;
 
 const
-  StyledComponentsVersion = '3.8.5';
+  StyledComponentsVersion = '3.8.6';
   DEFAULT_RADIUS = 6;
   RESOURCE_SHIELD_ICON = 'STYLED_BUTTON_SHIELD_ADMIN';
   DEFAULT_MAX_BADGE_VALUE = 99;
@@ -295,10 +295,10 @@ procedure CalcImageAndTextRect(const ASurfaceRect: TRect;
 procedure CalcImageAndTextRect(const ACanvas: TCanvas;
   const ACaption: string; const ASurfaceRect: TRect;
   const AOffset: TPoint;
-  out AGlyphPos: TPoint; out ATextBounds: TRect;
+  out AGlyphPos: TPoint; out ATextRect: TRect;
   const AImageWidth, AImageHeight: Integer;
   const ALayout: TButtonLayout;
-  const AMargin, ASpacing: Integer;
+  const AMargin, ASpacing, ABorderWidth: Integer;
   const ABiDiFlags: Cardinal); overload;
 
 //draw of Glyph
@@ -1616,6 +1616,9 @@ begin
   //Text Rect as whole surface Rect (if there is no Image)
   ATextRect := ASurfaceRect;
 
+  //Reduce ATextRect inside Border of button
+  InflateRect(ATextRect, -ABorderWidth, -ABorderWidth);
+
   //Calc Image Rect and Change ATextRect
   IH := AImageHeight;
   IW := AImageWidth;
@@ -1677,45 +1680,19 @@ begin
   AImageRect.Height := IH;
 
   if ATextRect.IsEmpty then
+  begin
     ATextRect := ASurfaceRect;
-
-  //Preserve Border Spacing for ATextRect
-  if (LImageAlignment = iaCenter) or (AImageWidth = 0) then
-  begin
-    if ATextRect.Right > (ASurfaceRect.Right - ABorderWidth) then
-      ATextRect.Right := ASurfaceRect.Right - ABorderWidth;
-    if ATextRect.Left < (ASurfaceRect.Left + ABorderWidth) then
-      ATextRect.Left := ASurfaceRect.Left + ABorderWidth;
-  end;
-  if LImageAlignment = iaLeft then
-  begin
-    if ATextRect.Right > (ASurfaceRect.Width - ABorderWidth) then
-      ATextRect.Right := ASurfaceRect.Width - ABorderWidth;
-  end;
-  if LImageAlignment = iaRight then
-  begin
-    if ATextRect.Left < (ASurfaceRect.Left + ABorderWidth) then
-      ATextRect.Left := ASurfaceRect.Left + ABorderWidth;
-  end;
-  if LImageAlignment = iaTop then
-  begin
-    if ATextRect.Bottom > (ASurfaceRect.Height - ABorderWidth) then
-      ATextRect.Bottom := ASurfaceRect.Height - ABorderWidth;
-  end;
-  if LImageAlignment = iaBottom then
-  begin
-    if ATextRect.Top < (ASurfaceRect.Top + ABorderWidth) then
-      ATextRect.Top := ASurfaceRect.Top + ABorderWidth;
+    InflateRect(ATextRect, -ABorderWidth, -ABorderWidth);
   end;
 end;
 
 procedure CalcImageAndTextRect(const ACanvas: TCanvas;
   const ACaption: string; const ASurfaceRect: TRect;
   const AOffset: TPoint;
-  out AGlyphPos: TPoint; out ATextBounds: TRect;
+  out AGlyphPos: TPoint; out ATextRect: TRect;
   const AImageWidth, AImageHeight: Integer;
   const ALayout: TButtonLayout;
-  const AMargin, ASpacing: Integer;
+  const AMargin, ASpacing, ABorderWidth: Integer;
   const ABiDiFlags: Cardinal);
 var
   LTextPos: TPoint;
@@ -1742,16 +1719,17 @@ begin
 
   if Length(ACaption) > 0 then
   begin
-    ATextBounds := Rect(0, 0, ASurfaceRect.Right - ASurfaceRect.Left, 0);
-    DrawText(ACanvas.Handle, ACaption, Length(ACaption), ATextBounds,
+    ATextRect := Rect(0, 0, ASurfaceRect.Right - ASurfaceRect.Left, 0);
+    //InflateRect(ATextRect, -ABorderWidth, -ABorderWidth);
+    DrawText(ACanvas.Handle, ACaption, Length(ACaption), ATextRect,
       DT_CALCRECT or ABiDiFlags);
     LTextSize := Point(
-      ATextBounds.Right - ATextBounds.Left,
-      ATextBounds.Bottom - ATextBounds.Top);
+      ATextRect.Right - ATextRect.Left,
+      ATextRect.Bottom - ATextRect.Top);
   end
   else
   begin
-    ATextBounds := Rect(0, 0, 0, 0);
+    ATextRect := Rect(0, 0, 0, 0);
     LTextSize := Point(0,0);
   end;
 
@@ -1839,7 +1817,7 @@ begin
   Inc(AGlyphPos.X, ASurfaceRect.Left + AOffset.X);
   Inc(AGlyphPos.Y, ASurfaceRect.Top + AOffset.Y);
 
-  OffsetRect(ATextBounds, LTextPos.X + ASurfaceRect.Left + AOffset.X,
+  OffsetRect(ATextRect, LTextPos.X + ASurfaceRect.Left + AOffset.X,
     LTextPos.Y + ASurfaceRect.Top + AOffset.Y);
 end;
 
@@ -2083,9 +2061,6 @@ begin
         {$IFDEF DEBUG_TEST}
         ACanvas.Brush.Color := clRed;
         ACanvas.FillRect(R);
-        ACanvas.Pen.Color := clBlue;
-        ACanvas.Pen.Width := 1;
-        ACanvas.Rectangle(R);
         {$ENDIF}
         Winapi.Windows.DrawText(ACanvas.Handle, PChar(AText),
           Length(AText), R, ABidiFlags or DT_END_ELLIPSIS);

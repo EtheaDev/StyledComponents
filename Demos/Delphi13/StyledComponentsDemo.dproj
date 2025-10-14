@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{17D66ECA-B271-4EE6-9415-DF94E80C26FA}</ProjectGuid>
-        <ProjectVersion>20.4</ProjectVersion>
+        <ProjectVersion>20.3</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
@@ -93,11 +93,9 @@
         </DCCReference>
         <DCCReference Include="..\source\DemoWelcomeForm.pas">
             <Form>WelcomeForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\source\FAboutForm.pas">
             <Form>fmAbout</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\source\AutoClickForm.pas">
             <Form>fmAutoClick</Form>

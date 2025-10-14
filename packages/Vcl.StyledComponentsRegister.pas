@@ -41,6 +41,7 @@ uses
   , Vcl.Controls
   , Vcl.ComCtrls
   , System.Types
+  , Vcl.CategoryButtons
   , Vcl.StyledButton
   , Vcl.StyledToolbar
   , Vcl.StyledDbNavigator
@@ -71,6 +72,19 @@ Type
     procedure GetValues(Proc: TGetStrProc); override;
   end;
 
+  TInheritedComponentEditor = class(TComponentEditor)
+  strict private
+    FInheritedCompEditor: TComponentEditor;
+    function InheritedCompEditor: TComponentEditor;
+  protected
+    function GetInheritedClass: TComponentClass; virtual;
+  public
+    function GetVerbCount: Integer; override;
+    function GetVerb(Index: Integer): string; override;
+    procedure ExecuteVerb(Index: Integer); override;
+    destructor Destroy; override;
+  end;
+
   TStyledButtonComponentEditor = class(TComponentEditor)
   private
     function GetButton: TControl;
@@ -99,7 +113,7 @@ Type
     procedure ExecuteVerb(Index: Integer); override;
   end;
 
-  TStyledButtonGroupComponentEditor = class(TComponentEditor)
+  TStyledButtonGroupComponentEditor = class(TInheritedComponentEditor)
   private
     function GetButtonGroup: TStyledButtonGroup;
   public
@@ -108,7 +122,7 @@ Type
     procedure ExecuteVerb(Index: Integer); override;
   end;
 
-  TStyledCategoryButtonsComponentEditor = class(TComponentEditor)
+  TStyledCategoryButtonsComponentEditor = class(TInheritedComponentEditor)
   private
     function GetCategoryButtons: TStyledCategoryButtons;
   public
@@ -187,7 +201,6 @@ uses
   , Vcl.StyledCmpStrUtils
   , Vcl.DbCtrls
   , Vcl.ButtonGroup
-  , Vcl.CategoryButtons
   , System.Contnrs
   , System.UITypes
   , Winapi.ShellAPI
@@ -444,7 +457,7 @@ begin
   if Index = 0 then
     Result := 'Styled Button Editor...'
   else if Index = 1 then
-    Result := 'Project page on GitHub...';
+    Result := Format('Ver. %s - © Ethea S.r.l. - Open Web Help...',[StyledComponentsVersion]);
 end;
 
 function TStyledButtonComponentEditor.GetVerbCount: Integer;
@@ -545,7 +558,7 @@ begin
   else if Index = 2 then
     Result := 'Add StyledToolbar Separator'
   else if Index = 3 then
-    Result := 'Project page on GitHub...';
+    Result := Format('Ver. %s - © Ethea S.r.l. - Open Web Help...',[StyledComponentsVersion]);
 end;
 
 function TStyledToolbarComponentEditor.GetVerbCount: Integer;
@@ -560,7 +573,6 @@ var
   LDbNavigator: TCustomStyledDbNavigator;
   LNavButton: TStyledNavButton;
 begin
-  inherited;
   if Index = 0 then
   begin
     LDbNavigator := GetDbNavigator;
@@ -608,7 +620,7 @@ begin
   if Index = 0 then
     Result := 'Styled DbNavigator Editor...'
   else if Index = 1 then
-    Result := 'Project page on GitHub...';
+    Result := Format('Ver. %s - © Ethea S.r.l. - Open Web Help...',[StyledComponentsVersion]);
 end;
 
 function TStyledNavigatorComponentEditor.GetVerbCount: Integer;
@@ -660,7 +672,9 @@ begin
   end
   else if Index = 1 then
   ShellExecute(0, 'open',
-    PChar(GetProjectURL), nil, nil, SW_SHOWNORMAL);
+    PChar(GetProjectURL), nil, nil, SW_SHOWNORMAL)
+  else
+    inherited ExecuteVerb(Index-2);
 end;
 
 function TStyledButtonGroupComponentEditor.GetButtonGroup: TStyledButtonGroup;
@@ -678,12 +692,67 @@ begin
   if Index = 0 then
     Result := 'Styled ButtonGroup Editor...'
   else if Index = 1 then
-    Result := 'Project page on GitHub...';
+    Result := Format('Ver. %s - © Ethea S.r.l. - Open Web Help...',[StyledComponentsVersion])
+  else
+    Result := Inherited GetVerb(Index-2);
 end;
 
 function TStyledButtonGroupComponentEditor.GetVerbCount: Integer;
 begin
-  Result := 2;
+  Result := Inherited GetVerbCount+2;
+end;
+
+{ TInheritedComponentEditor }
+
+destructor TInheritedComponentEditor.Destroy;
+begin
+  inherited;
+  FInheritedCompEditor := nil;
+end;
+
+procedure TInheritedComponentEditor.ExecuteVerb(Index: Integer);
+begin
+  InheritedCompEditor.ExecuteVerb(Index);
+end;
+
+function TInheritedComponentEditor.GetInheritedClass: TComponentClass;
+begin
+  Result := TComponentClass(GetComponent.ClassParent);
+end;
+
+function TInheritedComponentEditor.GetVerb(Index: Integer): string;
+begin
+  Result := InheritedCompEditor.GetVerb(Index);
+end;
+
+function TInheritedComponentEditor.GetVerbCount: Integer;
+begin
+  Result := InheritedCompEditor.GetVerbCount;
+end;
+
+function TInheritedComponentEditor.InheritedCompEditor: TComponentEditor;
+var
+  LComponentEditor: TObject;
+  LInheritedCompEditor: IComponentEditor;
+  LInheritedComponent: TComponent;
+begin
+  if not Assigned(FInheritedCompEditor) then
+  begin
+    LInheritedComponent := GetInheritedClass.Create(nil);
+    try
+      LInheritedCompEditor := GetComponentEditor(
+        LInheritedComponent, Designer);
+      LComponentEditor := LInheritedCompEditor as TObject;
+      if LComponentEditor.InheritsFrom(TComponentEditor) then
+      begin
+        FInheritedCompEditor := TComponentEditor(LComponentEditor).Create(
+          Self.GetComponent, Self.Designer);
+      end;
+    finally
+      LInheritedComponent.Free;
+    end;
+  end;
+  Result := FInheritedCompEditor;
 end;
 
 { TStyledCategoryButtonsComponentEditor }
@@ -729,8 +798,12 @@ begin
     end;
   end
   else if Index = 1 then
-  ShellExecute(0, 'open',
-    PChar(GetProjectURL), nil, nil, SW_SHOWNORMAL);
+  begin
+    ShellExecute(0, 'open',
+      PChar(GetProjectURL), nil, nil, SW_SHOWNORMAL);
+  end
+  else
+    inherited ExecuteVerb(Index-2);
 end;
 
 function TStyledCategoryButtonsComponentEditor.GetCategoryButtons: TStyledCategoryButtons;
@@ -748,12 +821,14 @@ begin
   if Index = 0 then
     Result := 'Styled CategoryButtons Editor...'
   else if Index = 1 then
-    Result := 'Project page on GitHub...';
+    Result := Format('Ver. %s - © Ethea S.r.l. - Open Web Help...',[StyledComponentsVersion])
+  else
+    Result := Inherited GetVerb(Index-2);
 end;
 
 function TStyledCategoryButtonsComponentEditor.GetVerbCount: Integer;
 begin
-  Result := 2;
+  Result := Inherited GetVerbCount+2;
 end;
 
 { TStyledTaskDialogComponentEditor }
@@ -788,7 +863,7 @@ begin
   if Index = 0 then
     Result := 'Test Dialog...'
   else if Index = 1 then
-    Result := 'Project page on GitHub...';
+    Result := Format('Ver. %s - © Ethea S.r.l. - Open Web Help...',[StyledComponentsVersion]);
 end;
 
 function TStyledTaskDialogComponentEditor.GetVerbCount: Integer;
@@ -807,12 +882,12 @@ function TStyledTaskDialogIconPropertyEditor.ValueToString(
   const AValue: Integer): string;
 begin
   case AValue of
-    tdiNone: Result := 'tdiNone';
-    tdiWarning: Result := 'tdiWarning';
+    tdiNone: Result := 'None';
+    tdiWarning: Result := 'Warning';
     tdiError: Result := 'Error';
-    tdiInformation: Result := 'tdiInformation';
-    tdiShield: Result := 'tdiShield';
-    tdiQuestion: Result := 'tdiQuestion';
+    tdiInformation: Result := 'Information';
+    tdiShield: Result := 'Shield';
+    tdiQuestion: Result := 'Question';
   else
     Result := IntToStr(AValue);
   end;
@@ -821,12 +896,12 @@ end;
 function TStyledTaskDialogIconPropertyEditor.StringToValue(
   const AValue: string): Integer;
 begin
-  if SameText(AValue, 'tdiNone') then Result := tdiNone
-  else if SameText(AValue, 'tdiWarning') then Result := tdiWarning
-  else if SameText(AValue, 'tdiError') then Result := tdiError
-  else if SameText(AValue, 'tdiInformation') then Result := tdiInformation
-  else if SameText(AValue, 'tdiShield') then Result := tdiShield
-  else if SameText(AValue, 'tdiQuestion') then Result := tdiQuestion
+  if SameText(AValue, 'None') then Result := tdiNone
+  else if SameText(AValue, 'Warning') then Result := tdiWarning
+  else if SameText(AValue, 'Error') then Result := tdiError
+  else if SameText(AValue, 'Information') then Result := tdiInformation
+  else if SameText(AValue, 'Shield') then Result := tdiShield
+  else if SameText(AValue, 'Question') then Result := tdiQuestion
   else
     TryStrToInt(AValue, Result);
 end;

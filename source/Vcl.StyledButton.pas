@@ -2705,7 +2705,8 @@ begin
     //Calculate LTextRect and LImageRect using Margin, Spacing and ButtonLayout
     CalcImageAndTextRect(ACanvas, LCaption, ASurfaceRect,
       TPoint.Create(0,0), LGlyphPos, LTextRect,
-      LImageWidth, LImageHeight, FButtonLayout, FMargin, FSpacing, LTextFlags);
+      LImageWidth, LImageHeight, FButtonLayout, FMargin, FSpacing,
+      CalcMaxBorderWidth, LTextFlags);
     LImageRect.Left := LGlyphPos.X;
     LImageRect.Top := LGlyphPos.Y;
     LImageRect.Width := LImageWidth;

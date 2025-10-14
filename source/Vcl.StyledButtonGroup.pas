@@ -211,10 +211,6 @@ type
     procedure SetCaptionAlignment(const AValue: TAlignment);
     function GetImageSize(out AWidth, AHeight: Integer;
       out AImageList: TCustomImageList): boolean;
-    procedure DrawText(const ASurfaceRect: TRect;
-      const ACanvas: TCanvas; const AText: string;
-      const AAlignment: TAlignment; const ASpacing: Integer; var ARect: TRect;
-      AFlags: Cardinal);
     procedure SetSpacing(const AValue: Integer);
     procedure SetFlat(const AValue: Boolean);
     function IsStyleEnabled: Boolean;
@@ -430,42 +426,6 @@ begin
     Result := False;
 end;
 
-procedure TStyledButtonGroup.DrawText(
-  const ASurfaceRect: TRect;
-  const ACanvas: TCanvas;
-  const AText: string; const AAlignment: TAlignment;
-  const ASpacing: Integer;
-  var ARect: TRect; AFlags: Cardinal);
-var
-  R: TRect;
-  LText: string;
-begin
-  //Drawing Caption
-  R := ARect;
-  LText := AText;
-  Winapi.Windows.DrawText(ACanvas.Handle, PChar(AText), Length(AText),
-    R, AFlags or DT_CALCRECT);
-  case AAlignment of
-    taLeftJustify:
-    begin
-      OffsetRect(R, ASpacing, (ARect.Height - R.Height) div 2);
-    end;
-    taRightJustify:
-    begin
-      OffsetRect(R, ARect.Width - R.Width - ASpacing, (ARect.Height - R.Height) div 2);
-    end;
-    else
-    begin
-      OffsetRect(R, (ARect.Width - R.Width) div 2, (ARect.Height - R.Height) div 2);
-    end;
-  end;
-  if ASurfaceRect.Right < R.Right + ASpacing then
-    R.Right := ASurfaceRect.Right - ASpacing;
-  if ASurfaceRect.Left > R.Left - ASpacing then
-    R.Left := ASurfaceRect.Left + ASpacing;
-  ACanvas.TextRect(R, LText, [TTextFormats.tfEndEllipsis]);
-end;
-
 procedure TStyledButtonGroup.DrawCaptionAndImage(
   const ACanvas: TCanvas; const ASurfaceRect: TRect;
   const ACaption: TCaption; const AImageIndex: Integer);
@@ -509,8 +469,8 @@ begin
   end;
 
   if gboShowCaptions in ButtonOptions then
-    DrawText(ASurfaceRect, ACanvas, ACaption, FCaptionAlignment, FSpacing,
-      LTextRect, LTextFlags);
+    DrawButtonText(ACanvas, ACaption, FCaptionAlignment, FSpacing,
+      CalcMaxBorderWidth, LTextRect, LTextFlags);
 end;
 
 function TStyledButtonGroup.IndexOfButtonAt(const X, Y: Integer): Integer;

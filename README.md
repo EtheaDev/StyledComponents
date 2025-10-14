@@ -2,7 +2,7 @@
 
 ## Components similar to Delphi VCL Buttons, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 3.8.5
+### Actual official version: 3.8.6
 
 ---
 ## New Setup for Installation of Components
@@ -164,7 +164,7 @@ You can also use [Interposer Unit (Vcl.StyledComponentsHooks.pas)](https://githu
 
 ***Template unit to create your custom Family Styles***
 
-With the unit "Vcl.TemplateButtonStyles.pas" you can create your own Family of Button Styles, [as explained here](https://github.com/EtheaDev/StyledComponents/wiki/HowtoBuildYourCustomStyle)
+With the unit "Vcl.TemplateButtonStyles.pas" you can create your own Family of Button Styles, [as explained here](http://ethea.it/docs/styledcomponents/HowtoBuildYourCustomStyle.html)
 
 ---
 ---
@@ -204,7 +204,7 @@ All styled Buttons can show **NotificationBadge** above them, with custom label/
 
 ![NotificationBadge](./Images/NotificationBadge.jpg)
 
-Read [Notification Badge guide](https://github.com/EtheaDev/StyledComponents/wiki/Notification-Badge-guide) to explorer how it works...
+Read [Notification Badge guide](https://ethea.it/docs/styledcomponents/Notification-Badge-guide.html) to explorer how it works...
 
 ***AutoClick/AutoClickDelay for buttons***
 
@@ -214,7 +214,7 @@ Also the StyledTaskdialog can use this function to AutoClick and close the Dialo
 
 ![AutoClickDemo](./Images/AutoClickDemo.gif)
 
-Read [AutoClick/Delay guide](https://github.com/EtheaDev/StyledComponents/wiki/AutoClick-Delay-guide) to explorer how it works...
+Read [AutoClick/Delay guide](https://ethea.it/docs/styledcomponents/AutoClick-Delay-guide.html) to explorer how it works...
 
 ***Rounded Button Style***
 
@@ -396,6 +396,11 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+14 Oct 2025 - version 3.8.6
+- Fixed Caption position for StyledCategoryButtons
+- Added standard Component Editor to StyledButtonGroup
+- Added standard Component Editor to StyledCategoryButtons
+
 31 Aug 2025 - version 3.8.5
 - Fixed StyledComponents_Setup.exe
 
