@@ -137,6 +137,8 @@ type
     FTimer: TTimer;
     FTickCount: Cardinal;
     FMainIconSize: Integer;
+    FAnimationLoop: Boolean;
+    FAnimationInverse: Boolean;
     //procedure GetIconNameAndIndex(ATaskDialog: TMsgDlgType;
     //  out AImageName: string; out AImageIndex: Integer); overload;
     procedure TaskDialogExpanded(Sender: TObject);
@@ -237,6 +239,10 @@ type
     property TextMessage: string read GetText write SetText;
     property TitleMessage: string read GetTitle write SetTitle;
     property OnTimer: TTaskDlgTimerEvent read FOnTimer write FOnTimer;
+
+    //Used by Animated Form
+    property AnimationLoop: Boolean read FAnimationLoop write FAnimationLoop;
+    property AnimationInverse: Boolean read FAnimationInverse write FAnimationInverse;
   end;
 
   TStyledTaskDialogFormClass = class of TStyledTaskDialogForm;
@@ -250,14 +256,17 @@ procedure UseStyledDialogForm(const AActivate: Boolean);
 ///  Register the custom StyledTaskDialog passing the Form Class
 ///  The Form must inherits from TStyledTaskDialogForm
 /// </summary>
-procedure RegisterTaskDialogFormClass(
-  AFormClass: TStyledTaskDialogFormClass);
+procedure RegisterTaskDialogFormClass(AFormClass: TStyledTaskDialogFormClass);
 
 /// <summary>
 ///  Unregister the custom StyledTaskDialog to use Standard Task Dialog
 /// </summary>
-procedure UnRegisterTaskDialogFormClass(
-  AFormClass: TStyledTaskDialogFormClass);
+procedure UnRegisterTaskDialogFormClass(AFormClass: TStyledTaskDialogFormClass);
+
+/// <summary>
+///  Returns True if an Animated Task Dialog form is registered
+/// </summary>
+function AnimatedTaskDialogFormRegistered: Boolean;
 
 implementation
 
@@ -280,6 +289,11 @@ var
   _TaskDialogFormClass: TStyledTaskDialogFormClass;
   _DlgButtonClasses: TButtonClasses;
   _DialogPosition: Vcl.Forms.TPosition;
+
+function AnimatedTaskDialogFormRegistered: Boolean;
+begin
+  Result := Assigned(_AnimatedTaskDialogFormClass);
+end;
 
 procedure UnRegisterTaskDialogFormClass(
   AFormClass: TStyledTaskDialogFormClass);
@@ -1596,12 +1610,16 @@ begin
 
   if ATaskDialog.UseAnimations then
   begin
-    if not Assigned(_AnimatedTaskDialogFormClass) then
+    if not AnimatedTaskDialogFormRegistered then
       raise EStyledTaskDialogException.CreateFmt(
         ERR_DIALOG_FORM_NOT_REGISTERED,
         ['Skia.Vcl.StyledTaskDialogAnimatedUnit.pas'])
     else
-      LForm := _AnimatedTaskDialogFormClass.Create(LOwnerForm)
+    begin
+      LForm := _AnimatedTaskDialogFormClass.Create(LOwnerForm);
+      TStyledTaskDialogForm(LForm).AnimationLoop := ATaskDialog.UseAnimationLoop;
+      TStyledTaskDialogForm(LForm).AnimationInverse := ATaskDialog.UseAnimationInverse;
+    end;
   end
   else
     LForm := _TaskDialogFormClass.Create(LOwnerForm);

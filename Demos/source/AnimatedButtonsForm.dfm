@@ -732,6 +732,24 @@ object fmAnimatedButtons: TfmAnimatedButtons
         6D585DE7F7793BE217B8BD2551176BF3F6C7D3B7EFD375D5A77CBA1FFFFDFF01
         DA8C4CA1AC820200}
     end
+    object LoopCheckBox: TCheckBox
+      Left = 377
+      Top = 16
+      Width = 128
+      Height = 17
+      Caption = 'Animation in loop'
+      TabOrder = 7
+      OnClick = LoopCheckBoxClick
+    end
+    object InverseCheckBox: TCheckBox
+      Left = 377
+      Top = 39
+      Width = 154
+      Height = 17
+      Caption = 'Animation inverse mode'
+      TabOrder = 8
+      OnClick = InverseCheckBoxClick
+    end
   end
   object ActionList: TActionList
     Images = Images

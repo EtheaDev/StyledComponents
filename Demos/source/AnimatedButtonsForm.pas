@@ -29,6 +29,8 @@ type
     cbAnimateAlways: TCheckBox;
     cbAnimateOnMouseOver: TCheckBox;
     StyledAnimatedButton: TStyledAnimatedButton;
+    LoopCheckBox: TCheckBox;
+    InverseCheckBox: TCheckBox;
     procedure ButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure VCLButtonKeyDown(Sender: TObject; var Key: Word;
@@ -37,6 +39,8 @@ type
     procedure ImageAlignmentRadioGroupClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure AutoAnimationClick(Sender: TObject);
+    procedure LoopCheckBoxClick(Sender: TObject);
+    procedure InverseCheckBoxClick(Sender: TObject);
   private
     FStyleNames: TStringList;
     function CreateNewButton(const AParent: TWinControl;
@@ -133,15 +137,9 @@ begin
   Result.AutoSizeAnimationMargin := 20;
   Result.SetBounds(ALeft,ATop,220,80);
   Result.Parent := AParent;
-  //Result.AnimationWidth := 42;
-  //Result.AnimationHeight := 42;
-  //Result.Images := VirtualImageList;
-  //Result.ImageName := AImageName;
-  //Result.ImageAlignment := TImageAlignment.iaTop;
   LFileName := Format(ExtractFilePath(Application.ExeName)+'..\..\..\..\Animations\%s.json', [LIconName]);
-  LResName := UpperCase(Format('LOTTIE_%s',[LIconName]));
+  LResName := UpperCase(Format('STYLEDTASKLOTTIE_%s',[AnsiUpperCase(LIconName)]));
   Result.LoadAnimationFromResource(LResName);
-  //Result.LoadAnimationFromFile(LFileName);
   Result.Caption := AImageName;
   Result.StyleClass := AStyle;
   Result.AutoAnimationTypes := GetAnimTypes;
@@ -206,6 +204,24 @@ begin
         AButton.Images := Images;
         AButton.ImageAlignment := LAlignment;
       end;
+    end);
+end;
+
+procedure TfmAnimatedButtons.InverseCheckBoxClick(Sender: TObject);
+begin
+  ProcessButtons(
+    procedure (AButton: TStyledAnimatedButton)
+    begin
+      AButton.AnimationInverse := InverseCheckBox.Checked;
+    end);
+end;
+
+procedure TfmAnimatedButtons.LoopCheckBoxClick(Sender: TObject);
+begin
+  ProcessButtons(
+    procedure (AButton: TStyledAnimatedButton)
+    begin
+      AButton.AnimationLoop := LoopCheckBox.Checked;
     end);
 end;
 

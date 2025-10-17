@@ -116,7 +116,7 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
         AlignWithMargins = True
         Left = 4
         Top = 4
-        Width = 909
+        Width = 47
         Height = 15
         Margins.Left = 4
         Margins.Top = 4
@@ -240,8 +240,8 @@ object StyledTaskDialogForm: TStyledTaskDialogForm
       AlignWithMargins = True
       Left = 29
       Top = 4
-      Width = 952
-      Height = 16
+      Width = 3
+      Height = 15
       Margins.Top = 4
       Margins.Bottom = 4
       Align = alClient

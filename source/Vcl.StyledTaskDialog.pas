@@ -95,6 +95,8 @@ type
     FAutoClickDelay: Integer;
     FOnFindDialogButton: TOnFindDialogButtonEvent;
     FUseAnimations: Boolean;
+    FUseAnimationLoop: Boolean;
+    FUseAnimationInverse: Boolean;
     FUseMessageDefaultButton: Boolean;
     FMessageDefaultButton: TMsgDlgBtn;
     FOnDialogShow: TTaskDialogShow;
@@ -110,6 +112,9 @@ type
     procedure SetUseCommandLinks(const AValue: Boolean);
     function GetUseCommandLinks: Boolean;
     procedure SetMainIconSize(const AValue: Integer);
+    procedure SetUseAnimationInverse(const AValue: Boolean);
+    procedure SetUseAnimationLoop(const AValue: Boolean);
+    procedure SetUseAnimations(const AValue: Boolean);
   strict protected
     function DoExecute(ParentWnd: HWND): Boolean; override;
     procedure DoOnHelp; override;
@@ -133,7 +138,9 @@ type
     property AutoClickDelay: Integer read FAutoClickDelay write SetAutoClickDelay default DEFAULT_AUTOCLICK_DELAY;
     property DialogButtonsFamily: TStyledButtonFamily read FDialogButtonsFamily write FDialogButtonsFamily stored IsDefaultFamily;
     property UseCommandLinks: Boolean read GetUseCommandLinks write SetUseCommandLinks default False;
-    property UseAnimations: Boolean read FUseAnimations write FUseAnimations default false;
+    property UseAnimations: Boolean read FUseAnimations write SetUseAnimations default false;
+    property UseAnimationLoop: Boolean read FUseAnimationLoop write SetUseAnimationLoop default False;
+    property UseAnimationInverse: Boolean read FUseAnimationInverse write SetUseAnimationInverse default False;
     property UseTitleInMessageDlg: Boolean read FUseTitleInMessageDlg write FUseTitleInMessageDlg default True;
     property AlphaBlendValue: Byte read FAlphaBlendValue write SetAlphaBlendValue default DEFAULT_STYLEDDIALOG_ALPHABLEND;
     property ButtonsWidth: Integer read FButtonsWidth write SetButtonsWidth default DEFAULT_STYLEDDIALOG_BUTTONSWIDTH;
@@ -895,6 +902,26 @@ begin
   FAlphaBlendValue := AValue;
 end;
 
+procedure TStyledTaskDialog.SetUseAnimationInverse(const AValue: Boolean);
+begin
+  if FUseAnimationInverse <> AValue then
+  begin
+    if AValue then
+      UseAnimations := True;
+    FUseAnimationInverse := AValue;
+  end;
+end;
+
+procedure TStyledTaskDialog.SetUseAnimationLoop(const AValue: Boolean);
+begin
+  if FUseAnimationLoop <> AValue then
+  begin
+    if AValue then
+      UseAnimations := True;
+    FUseAnimationLoop := AValue;
+  end;
+end;
+
 procedure TStyledTaskDialog.SetAutoClick(const AValue: Boolean);
 begin
   FAutoClick := AValue;
@@ -941,6 +968,18 @@ begin
   if AValue < 0 then
     raise EArgumentOutOfRangeException.CreateRes(@SArgumentOutOfRange);
   FMainIconSize := AValue;
+end;
+
+procedure TStyledTaskDialog.SetUseAnimations(const AValue: Boolean);
+begin
+  if FUseAnimations <> AValue then
+  begin
+    if AValue and not AnimatedTaskDialogFormRegistered then
+      raise EStyledTaskDialogException.CreateFmt(
+        ERR_DIALOG_FORM_NOT_REGISTERED,
+        ['Skia.Vcl.StyledTaskDialogAnimatedUnit.pas']);
+    FUseAnimations := AValue;
+  end;
 end;
 
 procedure TStyledTaskDialog.SetUseCommandLinks(const AValue: Boolean);
