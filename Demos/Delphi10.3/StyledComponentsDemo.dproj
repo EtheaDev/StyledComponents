@@ -112,6 +112,9 @@
         <DCCReference Include="..\source\StyledButtonsForm.pas">
             <Form>fmStyledButtons</Form>
         </DCCReference>
+        <DCCReference Include="..\source\StyledButtonVCLStylesForm.pas">
+            <Form>fmStyledButtonVCLStyles</Form>
+        </DCCReference>
         <DCCReference Include="..\source\StyledCategoryButtonsForm.pas">
             <Form>fmStyledCategoryButtons</Form>
         </DCCReference>
@@ -120,6 +123,9 @@
         </DCCReference>
         <DCCReference Include="..\source\StyledDialogDemoForm.pas">
             <Form>fmStyledTaskDialog</Form>
+        </DCCReference>
+        <DCCReference Include="..\source\StyledPanelForm.pas">
+            <Form>fmStyledPanel</Form>
         </DCCReference>
         <DCCReference Include="..\source\StyledToolbarForm.pas">
             <Form>fmStyledToolbar</Form>

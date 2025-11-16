@@ -41,9 +41,11 @@ uses
   RoundedCornersFormOld in '..\source\RoundedCornersFormOld.pas' {fmRoundedCorners},
   StyledButtonGroupFormOld in '..\source\StyledButtonGroupFormOld.pas' {fmStyledButtonGroup},
   StyledButtonsFormOld in '..\source\StyledButtonsFormOld.pas' {fmStyledButtons},
+  StyledButtonVCLStylesFormOld in '..\source\StyledButtonVCLStylesFormOld.pas' {fmStyledButtonVCLStyles},
   StyledCategoryButtonsFormOld in '..\source\StyledCategoryButtonsFormOld.pas' {fmStyledCategoryButtons},
   StyledDbNavigatorFormOld in '..\source\StyledDbNavigatorFormOld.pas' {fmStyledDbNavigator},
   StyledDialogDemoForm in '..\source\StyledDialogDemoForm.pas' {fmStyledTaskDialog},
+  StyledPanelFormOld in '..\source\StyledPanelFormOld.pas' {fmStyledPanel},
   StyledToolbarFormOld in '..\source\StyledToolbarFormOld.pas' {fmStyledToolbar};
 
 {$R *.res}

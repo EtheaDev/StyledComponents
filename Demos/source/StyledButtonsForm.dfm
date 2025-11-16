@@ -37,6 +37,7 @@ object fmStyledButtons: TfmStyledButtons
       Font.Height = -16
       Font.Name = 'Arial'
       Font.Style = []
+      ImageName = 'Basic-Color'
       Images = VirtualImageList32
       ParentFont = False
       PopupMenu = PopupMenu
@@ -50,6 +51,7 @@ object fmStyledButtons: TfmStyledButtons
       Height = 50
       ImageAlignment = iaCenter
       ImageIndex = 11
+      ImageName = 'launch-white'
       Images = VirtualImageList32
       TabOrder = 1
       OnClick = StyledButtonSquareClick
@@ -63,6 +65,7 @@ object fmStyledButtons: TfmStyledButtons
       Height = 50
       ImageAlignment = iaCenter
       ImageIndex = 18
+      ImageName = 'home-black'
       Images = VirtualImageList32
       TabOrder = 2
       OnClick = StyledButtonCircularClick
@@ -103,13 +106,14 @@ object fmStyledButtons: TfmStyledButtons
     Top = 70
     Width = 895
     Height = 621
-    ActivePage = tsBootstrap
+    ActivePage = tsAngular
     Align = alClient
     Images = VirtualImageList32
     TabOrder = 1
     object tsBootstrap: TTabSheet
       Caption = 'Bootstrap Buttons'
       ImageIndex = 20
+      ImageName = 'Bootstrap-logo'
       object BootStrapLinkLabel: TLinkLabel
         AlignWithMargins = True
         Left = 3
@@ -601,6 +605,7 @@ object fmStyledButtons: TfmStyledButtons
     object tsAngular: TTabSheet
       Caption = 'Angular Buttons'
       ImageIndex = 19
+      ImageName = 'Angular-logo'
       object AngularLinkLabel: TLinkLabel
         AlignWithMargins = True
         Left = 3
@@ -966,6 +971,7 @@ object fmStyledButtons: TfmStyledButtons
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 0
+          ImageName = 'home-deeppurple'
           Images = VirtualImageList32
           NotificationBadge.Color = clFuchsia
           NotificationBadge.NotificationCount = 100
@@ -986,6 +992,7 @@ object fmStyledButtons: TfmStyledButtons
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 10
+          ImageName = 'dots-vertical-black'
           Images = VirtualImageList32
           NotificationBadge.CustomText = '!'
           TabOrder = 0
@@ -1005,6 +1012,7 @@ object fmStyledButtons: TfmStyledButtons
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 4
+          ImageName = 'menu-amber'
           Images = VirtualImageList32
           NotificationBadge.NotificationCount = 5
           NotificationBadge.Size = nbsSmallDot
@@ -1025,6 +1033,7 @@ object fmStyledButtons: TfmStyledButtons
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 14
+          ImageName = 'trash-black'
           Images = VirtualImageList32
           NotificationBadge.Color = clTeal
           NotificationBadge.NotificationCount = 5
@@ -1046,6 +1055,7 @@ object fmStyledButtons: TfmStyledButtons
           Enabled = False
           ImageAlignment = iaCenter
           ImageIndex = 12
+          ImageName = 'launch-black'
           Images = VirtualImageList32
           TabOrder = 4
           StyleDrawType = btEllipse
@@ -1063,6 +1073,7 @@ object fmStyledButtons: TfmStyledButtons
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 8
+          ImageName = 'heart'
           Images = VirtualImageList32
           NotificationBadge.Color = clOlive
           NotificationBadge.NotificationCount = 12
@@ -1093,6 +1104,7 @@ object fmStyledButtons: TfmStyledButtons
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 13
+          ImageName = 'trash-white'
           Images = VirtualImageList32
           TabOrder = 1
           StyleRadius = 8
@@ -1110,6 +1122,7 @@ object fmStyledButtons: TfmStyledButtons
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 16
+          ImageName = 'bookmark-black'
           Images = VirtualImageList32
           TabOrder = 2
           StyleDrawType = btEllipse
@@ -1127,6 +1140,7 @@ object fmStyledButtons: TfmStyledButtons
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 17
+          ImageName = 'home-white'
           Images = VirtualImageList32
           TabOrder = 3
           StyleDrawType = btEllipse
@@ -1145,6 +1159,7 @@ object fmStyledButtons: TfmStyledButtons
           Enabled = False
           ImageAlignment = iaCenter
           ImageIndex = 8
+          ImageName = 'heart'
           Images = VirtualImageList32
           TabOrder = 0
           StyleDrawType = btEllipse
@@ -1296,6 +1311,7 @@ object fmStyledButtons: TfmStyledButtons
     object tsClassic: TTabSheet
       Caption = 'Classic Buttons (VCL Styled)'
       ImageIndex = 21
+      ImageName = 'Delphi-Logo'
       object GroupBox3: TGroupBox
         Left = 0
         Top = 0
@@ -1571,7 +1587,7 @@ object fmStyledButtons: TfmStyledButtons
         end
         object ClassicOutlineGroupBox: TGroupBox
           Left = 0
-          Top = 47
+          Top = 121
           Width = 883
           Height = 130
           Align = alTop
@@ -1596,6 +1612,7 @@ object fmStyledButtons: TfmStyledButtons
     object tsBasicColor: TTabSheet
       Caption = 'Basic-Color Buttons'
       ImageIndex = 22
+      ImageName = 'Basic-Color'
       object BasicColorScrollBox: TScrollBox
         AlignWithMargins = True
         Left = 3
@@ -1639,7 +1656,7 @@ object fmStyledButtons: TfmStyledButtons
           Caption = 'Outline Buttons'
           TabOrder = 1
           object FlowPanelOutLine: TFlowPanel
-            Left = 1
+            Left = 2
             Top = 15
             Width = 877
             Height = 143
@@ -1657,6 +1674,7 @@ object fmStyledButtons: TfmStyledButtons
     object tsSVGColor: TTabSheet
       Caption = 'SVG-Color Buttons'
       ImageIndex = 23
+      ImageName = 'SVG-Color'
       object SvgColorScrollBox: TScrollBox
         AlignWithMargins = True
         Left = 3
@@ -1699,7 +1717,7 @@ object fmStyledButtons: TfmStyledButtons
           Caption = 'Outline Buttons'
           TabOrder = 1
           object SvgColorOutlineFlowPanel: TFlowPanel
-            Left = 1
+            Left = 2
             Top = 15
             Width = 877
             Height = 143
@@ -1729,6 +1747,7 @@ object fmStyledButtons: TfmStyledButtons
       Caption = 'Show Editor'
       Hint = 'Hint of Action'
       ImageIndex = 22
+      ImageName = 'Basic-Color'
       OnExecute = TestActionExecute
     end
   end

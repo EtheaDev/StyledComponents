@@ -10,10 +10,8 @@ object fmStyledCategoryButtons: TfmStyledCategoryButtons
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = True
   ShowHint = True
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 15
   object BottomPanel: TPanel
     Left = 0
@@ -22,7 +20,6 @@ object fmStyledCategoryButtons: TfmStyledCategoryButtons
     Height = 78
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 423
     object LeftPanel: TPanel
       Left = 1
       Top = 1
@@ -165,7 +162,7 @@ object fmStyledCategoryButtons: TfmStyledCategoryButtons
     ButtonOptions = [boFullSize, boGradientFill, boShowCaptions]
     Categories = <
       item
-        Caption = 'First'
+        Caption = 'VCL First'
         Color = 16771839
         Collapsed = False
         Items = <
@@ -183,7 +180,7 @@ object fmStyledCategoryButtons: TfmStyledCategoryButtons
           end>
       end
       item
-        Caption = 'Second'
+        Caption = 'VCL Second'
         Color = 16053492
         Collapsed = False
         Items = <
@@ -205,9 +202,6 @@ object fmStyledCategoryButtons: TfmStyledCategoryButtons
     SelectedButtonColor = 15132390
     TabOrder = 2
     OnButtonClicked = CategoryButtonsButtonClicked
-    ExplicitLeft = 1
-    ExplicitTop = -2
-    ExplicitHeight = 423
   end
   object StyledCategoryButtons: TStyledCategoryButtons
     Left = 177
@@ -220,7 +214,7 @@ object fmStyledCategoryButtons: TfmStyledCategoryButtons
     ButtonOptions = [boFullSize, boGradientFill, boShowCaptions]
     Categories = <
       item
-        Caption = 'First'
+        Caption = 'Styled First'
         Color = 16771839
         Collapsed = False
         Items = <
@@ -238,7 +232,7 @@ object fmStyledCategoryButtons: TfmStyledCategoryButtons
           end>
       end
       item
-        Caption = 'Second'
+        Caption = 'Styled Second'
         Color = 16053492
         Collapsed = False
         Items = <
@@ -260,7 +254,6 @@ object fmStyledCategoryButtons: TfmStyledCategoryButtons
     SelectedButtonColor = 15132390
     TabOrder = 0
     OnButtonClicked = CategoryButtonsButtonClicked
-    ExplicitHeight = 423
   end
   object StyledCategoryButtonsBootstrap: TStyledCategoryButtons
     Left = 354
@@ -331,7 +324,6 @@ object fmStyledCategoryButtons: TfmStyledCategoryButtons
     StyleDrawType = btRounded
     StyleFamily = 'Bootstrap'
     OnGetNotificationBadgeInfo = StyledCategoryButtonsBootstrapGetNotificationBadgeInfo
-    ExplicitHeight = 423
   end
   object BadgeTimer: TTimer
     Interval = 5000

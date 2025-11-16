@@ -45,6 +45,7 @@ uses
   StyledCategoryButtonsForm in '..\source\StyledCategoryButtonsForm.pas' {fmStyledCategoryButtons},
   StyledDbNavigatorForm in '..\source\StyledDbNavigatorForm.pas' {fmStyledDbNavigator},
   StyledDialogDemoForm in '..\source\StyledDialogDemoForm.pas' {fmStyledTaskDialog},
+  StyledPanelForm in '..\source\StyledPanelForm.pas' {fmStyledPanel},
   {$IFDEF SKIA}
   Skia.Vcl.StyledTaskDialogAnimatedUnit,
   // This form is an example of Custom Form for TaskDialog

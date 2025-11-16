@@ -2,7 +2,7 @@ object frmMain: TfrmMain
   Left = 254
   Top = 225
   Caption = 'Styled Components Demos'
-  ClientHeight = 661
+  ClientHeight = 701
   ClientWidth = 1059
   Color = clWindow
   Constraints.MinHeight = 690
@@ -12,6 +12,7 @@ object frmMain: TfrmMain
   Font.Height = -11
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OldCreateOrder = True
   Position = poScreenCenter
   ShowHint = True
   OnActivate = FormActivate
@@ -19,12 +20,13 @@ object frmMain: TfrmMain
   OnCreate = FormCreate
   OnResize = FormResize
   OnShow = FormShow
+  PixelsPerInch = 96
   TextHeight = 13
   object WorkPanel: TPanel
     Left = 200
     Top = 44
     Width = 459
-    Height = 617
+    Height = 657
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
@@ -33,7 +35,7 @@ object frmMain: TfrmMain
       Left = 0
       Top = 0
       Width = 459
-      Height = 617
+      Height = 657
       Margins.Left = 0
       Margins.Top = 0
       Margins.Right = 0
@@ -63,7 +65,7 @@ object frmMain: TfrmMain
     Left = 0
     Top = 44
     Width = 200
-    Height = 617
+    Height = 657
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 1
@@ -71,7 +73,7 @@ object frmMain: TfrmMain
       Left = 0
       Top = 0
       Width = 200
-      Height = 617
+      Height = 657
       Align = alClient
       BackgroundGradientDirection = gdVertical
       BevelInner = bvNone
@@ -126,12 +128,15 @@ object frmMain: TfrmMain
             end>
         end
         item
-          Caption = 'Dialogs'
+          Caption = 'Dialogs and Panels'
           Color = clNone
           Collapsed = False
           Items = <
             item
               Action = acStyledTaskDialog
+            end
+            item
+              Action = acStyledPanel
             end>
         end
         item
@@ -173,6 +178,7 @@ object frmMain: TfrmMain
       Align = alLeft
       Caption = 'Styled Components Demos'
       Layout = tlCenter
+      ExplicitHeight = 13
     end
     object SettingsToolBar: TStyledToolbar
       AlignWithMargins = True
@@ -236,7 +242,7 @@ object frmMain: TfrmMain
     Left = 659
     Top = 44
     Width = 400
-    Height = 617
+    Height = 657
     Align = alRight
     BevelOuter = bvNone
     ParentColor = True
@@ -245,7 +251,7 @@ object frmMain: TfrmMain
       Left = 0
       Top = 0
       Width = 400
-      Height = 576
+      Height = 616
       ActivePage = tsFont
       Align = alClient
       TabOrder = 0
@@ -255,7 +261,7 @@ object frmMain: TfrmMain
         ImageIndex = 1
         DesignSize = (
           392
-          548)
+          588)
         object FontLabel: TLabel
           Left = 8
           Top = 33
@@ -345,7 +351,7 @@ object frmMain: TfrmMain
           Left = 0
           Top = 143
           Width = 392
-          Height = 405
+          Height = 445
           Align = alClient
           Caption = 'Theme Selection'
           Columns = 2
@@ -434,7 +440,7 @@ object frmMain: TfrmMain
     end
     object SettingsButtonsPanel: TPanel
       Left = 0
-      Top = 576
+      Top = 616
       Width = 400
       Height = 41
       Align = alBottom
@@ -525,10 +531,10 @@ object frmMain: TfrmMain
     end
     object acStyledButtonVCLStyles: TAction
       Category = 'Example'
-      Caption = 'Styled Buttons vs VCL Styles'
+      Caption = 'Styled Controls vs VCL Styles'
       Hint = 
-        'Compare standard VCL Button with "per-control" Style and same VC' +
-        'L style applied to StyledButtons'
+        'Compare standard VCL Controls with "per-control" Style and same ' +
+        'VCL style applied to StyledButtons and StyledPanels'
       ImageIndex = 21
       OnExecute = acExampleExecute
     end
@@ -580,6 +586,13 @@ object frmMain: TfrmMain
         'Demonstrate use of Rounded Corners in different Styled Component' +
         's'
       ImageIndex = 32
+      OnExecute = acExampleExecute
+    end
+    object acStyledPanel: TAction
+      Category = 'Example'
+      Caption = 'StyledPanel'
+      Hint = 'Use StyledPanel with different Family/Class/Appearance.'
+      ImageIndex = 46
       OnExecute = acExampleExecute
     end
     object acApplySettings: TAction

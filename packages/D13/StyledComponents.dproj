@@ -1,4 +1,4 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{6C0F7A40-62C8-47B0-92C9-9AF178585686}</ProjectGuid>
         <MainSource>StyledComponents.dpk</MainSource>
@@ -97,6 +97,7 @@
         <DCCReference Include="..\StyledDbNavigator.dcr"/>
         <DCCReference Include="..\StyledButtonGroup.dcr"/>
         <DCCReference Include="..\StyledCategoryButtons.dcr"/>
+        <DCCReference Include="..\StyledPanel.dcr"/>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="vclimg.dcp"/>
@@ -104,6 +105,7 @@
         <DCCReference Include="vcldb.dcp"/>
         <DCCReference Include="bindcomp.dcp"/>
         <DCCReference Include="..\..\source\Vcl.StyledButton.pas"/>
+        <DCCReference Include="..\..\source\Vcl.StyledPanel.pas"/>
         <DCCReference Include="..\..\source\Vcl.ButtonStylesAttributes.pas"/>
         <DCCReference Include="..\..\source\Vcl.StandardButtonStyles.pas"/>
         <DCCReference Include="..\..\source\Vcl.ColorButtonStyles.pas"/>

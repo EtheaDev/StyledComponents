@@ -1,4 +1,4 @@
-{******************************************************************************}
+﻿{******************************************************************************}
 {                                                                              }
 {  TStyledComponents Demo                                                      }
 {  Main Form                                                                   }
@@ -95,6 +95,7 @@ type
     acStyledCategoryButtons: TAction;
     acStyledTaskDialog: TAction;
     acRoundedCorners: TAction;
+    acStyledPanel: TAction;
     RightPanel: TPanel;
     pc: TPageControl;
     tsFont: TTabSheet;
@@ -200,6 +201,7 @@ uses
   , StyledButtonsForm
   , AutoClickForm
   , StyledToolbarForm
+  , StyledPanelForm
   , StyledDbNavigatorForm
   , StyledButtonGroupForm
   , StyledCategoryButtonsForm
@@ -207,17 +209,19 @@ uses
   , DResources
   , Vcl.VirtualImageList
   , Vcl.ImageCollection
+  , StyledButtonVCLStylesForm
   {$ELSE}
   , StyledButtonsFormOld
   , AutoClickFormOld
   , StyledToolbarFormOld
+  , StyledPanelFormOld
   , StyledDbNavigatorFormOld
   , StyledButtonGroupFormOld
   , StyledCategoryButtonsFormOld
   , RoundedCornersFormOld
   , DResourcesOld
+  , StyledButtonVCLStylesFormOld
   {$ENDIF}
-  , StyledButtonVCLStylesForm
   {$IFDEF D11+}
   , ControlListForm
   {$ENDIF}
@@ -311,6 +315,8 @@ begin
     ActiveViewClass := TfmStyledTaskDialog
   else if FActiveAction = acRoundedCorners then
     ActiveViewClass := TfmRoundedCorners
+  else if FActiveAction = acStyledPanel then
+    ActiveViewClass := TfmStyledPanel
   else if FActiveAction = acAnimatedStyledButton then
   {$IFDEF SKIA}
     ActiveViewClass := TfmAnimatedButtons
@@ -374,7 +380,7 @@ var
 begin
   AssignImages;
   //Caption and fonts
-  Caption := Application.Title + Format(' - Ver.%s - � 2021-2025 Ethea S.r.l.',
+  Caption := Application.Title + Format(' - Ver.%s - © 2021-2025 Ethea S.r.l.',
     [StyledComponentsVersion]);
   lblTitle.Caption := Application.Title;
   //Collapse Menu

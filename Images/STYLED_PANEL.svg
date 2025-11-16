@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<svg version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FFD700;stroke:white;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st1{fill:#FFA500;stroke:white;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st2{fill:#FFD700;stroke:#E6C200;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st3{fill:none;stroke:#8B6914;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round;}
+</style>
+<!-- Panel background -->
+<rect class="st2" x="2" y="8" width="28" height="16" rx="1.5" ry="1.5"/>
+<!-- PANEL text (centered) -->
+<!-- Letter P -->
+<path class="st3" d="M5.5,13 L5.5,19 M5.5,13 L8,13 C8.8,13,9,13.8,9,15 C9,16.2,8.8,17,8,17 L5.5,17"/>
+<!-- Letter A -->
+<path class="st3" d="M10,19 L12,13 L14,19 M10.5,16.5 L13.5,16.5"/>
+<!-- Letter N -->
+<path class="st3" d="M15.5,19 L15.5,13 L18.5,19 L18.5,13"/>
+<!-- Letter E -->
+<path class="st3" d="M20,13 L23,13 M20,13 L20,19 L23,19 M20,16 L22.5,16"/>
+<!-- Letter L -->
+<path class="st3" d="M24.5,13 L24.5,19 L27.5,19"/>
+</svg>

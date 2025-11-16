@@ -13,28 +13,26 @@ object fmAutoClick: TfmAutoClick
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = True
   Position = poScreenCenter
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 15
   object lbAutoClickDelay: TLabel
     Left = 266
-    Top = 19
+    Top = 16
     Width = 59
     Height = 15
     Caption = 'Delay (ms):'
   end
   object Label1: TLabel
-    Left = 264
-    Top = 75
+    Left = 266
+    Top = 72
     Width = 59
     Height = 15
     Caption = 'Delay (ms):'
   end
   object Label2: TLabel
-    Left = 264
-    Top = 135
+    Left = 266
+    Top = 132
     Width = 59
     Height = 15
     Caption = 'Delay (ms):'
@@ -70,7 +68,7 @@ object fmAutoClick: TfmAutoClick
     Width = 239
     Height = 41
     Caption = 'DarkRed Auto Click Button'
-    ImageIndex = 5
+    ImageIndex = 4
     Images = ImageList32
     TabOrder = 2
     OnClick = AutoClick
@@ -87,7 +85,7 @@ object fmAutoClick: TfmAutoClick
     OnClick = StartStyledButtonClick
   end
   object RoundedSpinEdit: TSpinEdit
-    Left = 268
+    Left = 266
     Top = 33
     Width = 62
     Height = 24

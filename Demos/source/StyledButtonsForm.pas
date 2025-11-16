@@ -42,19 +42,19 @@ uses
   Vcl.Dialogs,
   Vcl.ExtCtrls,
   Vcl.StdCtrls,
-  System.ImageList,
   Vcl.ImgList,
+  System.ImageList,
   Vcl.VirtualImageList,
   Vcl.BaseImageCollection,
+  Vcl.ImageCollection,
+  DResources,
   Vcl.StyledButton,
   System.Actions,
   Vcl.ActnList,
   Vcl.ButtonStylesAttributes,
   Vcl.StyledButtonEditorUnit,
-  Vcl.ImageCollection,
   Vcl.Menus,
   Vcl.ComCtrls,
-  DResources,
   Vcl.Buttons;
 
 type
@@ -267,7 +267,7 @@ end;
 
 procedure TfmStyledButtons.FlowPanelResize(Sender: TObject);
 begin
-  TFlowPanel(Sender).Parent.Height := TFlowPanel(Sender).Height + 20;
+  TFlowPanel(Sender).Parent.Height := TFlowPanel(Sender).Height + Round(20 * ScaleFactor);
 end;
 
 procedure TfmStyledButtons.FormAfterMonitorDpiChanged(Sender: TObject; OldDPI,

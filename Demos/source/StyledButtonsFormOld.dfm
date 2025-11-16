@@ -12,6 +12,7 @@ object fmStyledButtons: TfmStyledButtons
   Font.Height = -11
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OldCreateOrder = True
   ShowHint = True
   OnCreate = FormCreate
   PixelsPerInch = 96
@@ -102,7 +103,7 @@ object fmStyledButtons: TfmStyledButtons
     Top = 70
     Width = 895
     Height = 621
-    ActivePage = tsBootstrap
+    ActivePage = tsAngular
     Align = alClient
     Images = ImageList32
     TabOrder = 1
@@ -1765,7 +1766,7 @@ object fmStyledButtons: TfmStyledButtons
     Left = 460
     Top = 542
     Bitmap = {
-      494C01011800B000A00020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01011800B000A80020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000080000000E0000000010020000000000000C0
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

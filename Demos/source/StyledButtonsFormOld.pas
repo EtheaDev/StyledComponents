@@ -216,6 +216,7 @@ type
     procedure BadgeTimerTimer(Sender: TObject);
   private
     FNotificationCount: Integer;
+    function GetScaleFactor: Single;
     procedure RepaintAngularBtnWithMR(const AFamily: TStyledButtonFamily);
     procedure BuildFamilyPreview(const AFamily: TStyledButtonFamily;
       const AAppearance: TStyledButtonAppearance;
@@ -258,7 +259,7 @@ end;
 
 procedure TfmStyledButtons.FlowPanelResize(Sender: TObject);
 begin
-  TFlowPanel(Sender).Parent.Height := TFlowPanel(Sender).Height + 20;
+  TFlowPanel(Sender).Parent.Height := TFlowPanel(Sender).Height + Round(20 * GetScaleFactor);
 end;
 
 procedure TfmStyledButtons.FormCreate(Sender: TObject);
@@ -307,6 +308,11 @@ begin
   btn_AngularClose.StyleFamily := AFamily;
   btn_AngularHelp.StyleFamily := AFamily;
   btn_AngularAll.StyleFamily := AFamily;
+end;
+
+function TfmStyledButtons.GetScaleFactor: Single;
+begin
+  Result := {$IFDEF D10_3+}ScaleFactor{$ELSE}1{$ENDIF};
 end;
 
 procedure TfmStyledButtons.rgAngularDarkThemesClick(Sender: TObject);

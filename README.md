@@ -1,8 +1,8 @@
 ﻿# Delphi VCL StyledComponents [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 
-## Components similar to Delphi VCL Buttons, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
+## Components similar to Delphi VCL Buttons, Panels, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 3.9.0
+### Actual official version: 3.9.1
 
 ---
 ## New Setup for Installation of Components
@@ -88,6 +88,7 @@ Notice: by default the cursor for all Styled Buttons is crHandPoint.
 | ![TStyledButtonGroup](./Images/BUTTON_GROUP_128.png) | **TStyledButtonGroup** is a special "ButtonGroup" component with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) plus ImagePosition, CaptionAlignment and Flat properties, for adding more controls to the appearance of Buttons.|
 | ![TStyledCategoryButtons](./Images/CATEGORY_BUTTONS_128.png) | **TStyledCategoryButtons** is a special "CategoryButtons" component with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) plus ImagePosition, CaptionAlignment and Flat properties, for adding more controls to the appearance of Buttons.|
 | ![TStyledTaskDialog](./Images/StyledTaskDialog_128.png) | **TStyledTaskDialog** is a special "TaskDialog" component (to replace MessageDlg and TaskDlg) with custom Button Captions and Icons. Using a special Form you can show a full customizable Dialog. Using Skia4Delpghi you can show animated dialogs!|
+| ![TStyledPanel](./Images/STYLED_PANEL_128.png) | **TStyledPanel** a styled container control based on TCustomPanel with support for Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color). It provides full control over background rendering with customizable shape (Rounded, RoundRect, Rect, Ellipse), colors and borders for Normal and Disabled states. Features include Caption alignment, customizable margins, and the ability to switch between styled and VCL rendering.|
 
 ---
 
@@ -396,6 +397,12 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+
+16 Nov 2025 - version 3.9.1
+- Added **TStyledPanel** component: a styled container control based on TCustomPanel
+- TStyledPanel features: StyleFamily, StyleClass, StyleAppearance support for background rendering
+- TStyledPanel supports Normal and Disabled states with full color customization
+- Developed using Vibe Coding technique with Claude Code
 
 17 Oct 2025 - version 3.9.0
 - Added UseAnimationLoop property to TStyledTaskDialog

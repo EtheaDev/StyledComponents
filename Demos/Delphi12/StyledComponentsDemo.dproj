@@ -4,7 +4,7 @@
         <ProjectVersion>20.2</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <ProjectName Condition="'$(ProjectName)'==''">StyledComponentsDemo</ProjectName>
         <TargetedPlatforms>3</TargetedPlatforms>
@@ -126,6 +126,9 @@
         </DCCReference>
         <DCCReference Include="..\source\StyledDialogDemoForm.pas">
             <Form>fmStyledTaskDialog</Form>
+        </DCCReference>
+        <DCCReference Include="..\source\StyledPanelForm.pas">
+            <Form>fmStyledPanel</Form>
         </DCCReference>
         <DCCReference Include="..\source\StyledToolbarForm.pas">
             <Form>fmStyledToolbar</Form>

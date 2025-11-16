@@ -4,7 +4,7 @@
         <ProjectVersion>18.4</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <ProjectName Condition="'$(ProjectName)'==''">StyledComponentsDemo</ProjectName>
         <TargetedPlatforms>3</TargetedPlatforms>
@@ -112,6 +112,9 @@
         <DCCReference Include="..\source\StyledButtonsFormOld.pas">
             <Form>fmStyledButtons</Form>
         </DCCReference>
+        <DCCReference Include="..\source\StyledButtonVCLStylesFormOld.pas">
+            <Form>fmStyledButtonVCLStyles</Form>
+        </DCCReference>
         <DCCReference Include="..\source\StyledCategoryButtonsFormOld.pas">
             <Form>fmStyledCategoryButtons</Form>
         </DCCReference>
@@ -120,6 +123,9 @@
         </DCCReference>
         <DCCReference Include="..\source\StyledDialogDemoForm.pas">
             <Form>fmStyledTaskDialog</Form>
+        </DCCReference>
+        <DCCReference Include="..\source\StyledPanelFormOld.pas">
+            <Form>fmStyledPanel</Form>
         </DCCReference>
         <DCCReference Include="..\source\StyledToolbarFormOld.pas">
             <Form>fmStyledToolbar</Form>

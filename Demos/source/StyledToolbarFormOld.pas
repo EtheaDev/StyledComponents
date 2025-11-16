@@ -28,12 +28,14 @@ unit StyledToolbarFormOld;
 
 interface
 
+{$I StyledComponents.inc}
+
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ButtonStylesAttributes,
   Vcl.StandardButtonStyles, Vcl.AngularButtonStyles, Vcl.BootstrapButtonStyles, Vcl.ColorButtonStyles,
   Vcl.StyledButton, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnMan,
-  Vcl.ActnCtrls, Vcl.ImgList, Vcl.StdCtrls, Vcl.StyledToolbar, Vcl.Menus;
+  Vcl.StdCtrls, Vcl.StyledToolbar, Vcl.Menus, Vcl.ActnCtrls, Vcl.ImgList;
 
 const
   //Params to check
@@ -217,8 +219,6 @@ begin
 end;
 
 procedure TfmStyledToolbar.CreateToolbars;
-//var
-// LButton: TStyledToolButton;
 begin
   //Create Standard Toolbar
   CreateToolBar;
@@ -233,20 +233,20 @@ begin
   //Create Styled Toolbar
   CreateStyledToolBar;
   //Add StyledButtons, Separators and Dividers with Styles
-  AddStyledButtonToToolbar(FStyledToolBar, 'Caption1', tbsButton, 0,
+  AddStyledButtonToToolbar(FStyledToolBar, CAPTION_STR+'1', tbsButton, 0,
     BOOTSTRAP_FAMILY, btn_primary, BOOTSTRAP_OUTLINE);
 
-  AddStyledButtonToToolbar(FStyledToolBar, 'Caption2', tbsButton, 5,
+  AddStyledButtonToToolbar(FStyledToolBar, CAPTION_STR+'2', tbsButton, 5,
     BOOTSTRAP_FAMILY, btn_secondary, BOOTSTRAP_OUTLINE);
 
   AddStyledButtonToToolbar(FStyledToolBar, '', tbsDivider);
 
-  AddStyledButtonToToolbar(FStyledToolBar, 'Caption3', tbsButton, 8,
+  AddStyledButtonToToolbar(FStyledToolBar, CAPTION_STR+'3', tbsButton, 8,
     BOOTSTRAP_FAMILY, btn_success, BOOTSTRAP_OUTLINE);
 
   AddStyledButtonToToolbar(FStyledToolBar, '', tbsSeparator);
 
-  AddStyledButtonToToolbar(FStyledToolBar, 'Caption4', tbsButton, 10,
+  AddStyledButtonToToolbar(FStyledToolBar, CAPTION_STR+'4', tbsButton, 10,
     BOOTSTRAP_FAMILY, btn_danger, BOOTSTRAP_OUTLINE);
 
   tbWidth.Position := BUTTON_WIDTH;

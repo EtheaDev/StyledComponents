@@ -34,9 +34,9 @@ uses
   Vcl.StandardButtonStyles, Vcl.AngularButtonStyles, Vcl.BootstrapButtonStyles, Vcl.ColorButtonStyles,
   Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnMan,
   Vcl.ActnCtrls, Vcl.ImgList, Vcl.StdCtrls, Vcl.ButtonGroup, Vcl.Menus,
-  DResources, System.Actions, Vcl.ActnList, Vcl.StdActns,
+  System.Actions, Vcl.ActnList, Vcl.StdActns,
   Vcl.StyledButton, Vcl.StyledToolbar, Vcl.StyledButtonGroup, Vcl.CategoryButtons, Vcl.StyledCategoryButtons,
-  System.ImageList, Vcl.VirtualImageList;
+  DResources, System.ImageList, Vcl.VirtualImageList;
 
 type
   TfmRoundedCorners = class(TForm)

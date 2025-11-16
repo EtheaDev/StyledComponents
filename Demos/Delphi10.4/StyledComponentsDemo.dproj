@@ -124,6 +124,9 @@
         <DCCReference Include="..\source\StyledDialogDemoForm.pas">
             <Form>fmStyledTaskDialog</Form>
         </DCCReference>
+        <DCCReference Include="..\source\StyledPanelForm.pas">
+            <Form>fmStyledPanel</Form>
+        </DCCReference>
         <DCCReference Include="..\source\StyledToolbarForm.pas">
             <Form>fmStyledToolbar</Form>
         </DCCReference>

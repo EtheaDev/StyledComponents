@@ -28,6 +28,8 @@ unit StyledDbNavigatorFormOld;
 
 interface
 
+{$I StyledComponents.inc}
+
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
@@ -104,6 +106,7 @@ type
     FDbNavigator: TDbNavigator;
     FStyledDbNavigator: TStyledDbNavigator;
     FStyledBindNavigator: TStyledBindNavigator;
+    function GetScaleFactor: Single;
     procedure CreateStyledDbNavigator;
     procedure CreateStyledBindNavigator;
     procedure CreateDbNavigators;
@@ -212,6 +215,11 @@ begin
   tbHeight.Position := DBNAV_HEIGHT;
 end;
 
+function TfmStyledDbNavigator.GetScaleFactor: Single;
+begin
+  Result := {$IFDEF D10_3+}ScaleFactor{$ELSE}1{$ENDIF};
+end;
+
 procedure TfmStyledDbNavigator.PopUpMenuClick(Sender: TObject);
 begin
   StyledShowMessage((Sender as TMenuItem).Caption);
@@ -221,6 +229,10 @@ procedure TfmStyledDbNavigator.StyledDBNavigatorEnableNavBtn(
   const ADbNavigator: TCustomStyledDBNavigator; const ABtn: TStyledNavButton;
   var AEnabled: Boolean);
 begin
+  //Simple example to disable Delete button (always)
+  if (ABtn.Index = TNavigateBtn.nbDelete) then
+    AEnabled := False;
+
   //Simple example to disable all buttons when the Quantity  is 3
   if AEnabled and (ClientDataSetQuantity.Value = 3) then
     AEnabled := False;
@@ -235,41 +247,45 @@ begin
 end;
 
 procedure TfmStyledDbNavigator.UpdateDbNav(Sender: TObject);
+var
+  LWidth, LHeight: Integer;
 begin
+  LWidth := Round(tbWidth.Position * GetScaleFactor);
+  LHeight := Round(tbHeight.Position * GetScaleFactor);
   if Assigned(FStyledDbNavigator) then
   begin
     FStyledDbNavigator.Flat := FlatCheckBox.Checked;
     FStyledDbNavigator.ShowCaptions := ShowCaptionsCheckBox.Checked;
-    FStyledDbNavigator.Height := tbHeight.Position;
-    FStyledDbNavigator.Width := tbWidth.Position;
+    FStyledDbNavigator.Height := LWidth;
+    FStyledDbNavigator.Width := LWidth;
   end;
   if Assigned(FStyledBindNavigator) then
   begin
     FStyledBindNavigator.Flat := FlatCheckBox.Checked;
     FStyledBindNavigator.ShowCaptions := ShowCaptionsCheckBox.Checked;
-    FStyledBindNavigator.Height := tbHeight.Position;
-    FStyledBindNavigator.Width := tbWidth.Position;
+    FStyledBindNavigator.Height := LWidth;
+    FStyledBindNavigator.Width := LWidth;
   end;
   if Assigned(FDbNavigator) then
   begin
     FDbNavigator.Flat := FlatCheckBox.Checked;
-    FDbNavigator.Width := tbWidth.Position;
-    FDbNavigator.Height := tbHeight.Position;
+    FDbNavigator.Width := LWidth;
+    FDbNavigator.Height := LHeight;
   end;
   DbNavigator.Flat := FlatCheckBox.Checked;
-  DbNavigator.Width := tbWidth.Position;
-  DbNavigator.Height := tbHeight.Position;
+  DbNavigator.Width := LWidth;
+  DbNavigator.Height := LHeight;
   BindNavigator.Flat := FlatCheckBox.Checked;
-  BindNavigator.Width := tbWidth.Position;
-  BindNavigator.Height := tbHeight.Position;
+  BindNavigator.Width := LWidth;
+  BindNavigator.Height := LHeight;
   StyledDbNavigator.Flat := FlatCheckBox.Checked;
   StyledDbNavigator.ShowCaptions := ShowCaptionsCheckBox.Checked;
-  StyledDbNavigator.Height := tbHeight.Position;
-  StyledDbNavigator.Width := tbWidth.Position;
+  StyledDbNavigator.Height := LHeight;
+  StyledDbNavigator.Width := LWidth;
   StyledBindNavigator.Flat := FlatCheckBox.Checked;
   StyledBindNavigator.ShowCaptions := ShowCaptionsCheckBox.Checked;
-  StyledBindNavigator.Height := tbHeight.Position;
-  StyledBindNavigator.Width := tbWidth.Position;
+  StyledBindNavigator.Height := LHeight;
+  StyledBindNavigator.Width := LWidth;
 end;
 
 end.

@@ -51,6 +51,7 @@ uses
   {$ENDIF}
   Vcl.ImgList,
   Vcl.StyledButton,
+  Vcl.StyledPanel,
   Vcl.ButtonStylesAttributes,
   Vcl.ActnList,
   Vcl.StyledButtonEditorUnit,
@@ -59,8 +60,11 @@ uses
 
 const
   BUTTON_HEIGHT = 28;
-  BUTTON_WIDTH = 140;
+  BUTTON_WIDTH = 150;
   BUTTON_MARGIN = 4;
+  PANEL_HEIGHT = 28;
+  PANEL_WIDTH = 150;
+  PANEL_MARGIN = 4;
   VERT_SCROLL_WIDTH = 20;
   COMMANDLINK_HINT = 'CommandLink Hint very long.';
 
@@ -82,18 +86,33 @@ type
     Save1: TMenuItem;
     SaveAs1: TMenuItem;
     Exit1: TMenuItem;
+    MainPageControl: TPageControl;
+    tsStyledButtons: TTabSheet;
+    tsStyledPanels: TTabSheet;
     TopPanel: TPanel;
-    LeftPanel: TPanel;
-    LeftScrollBox: TScrollBox;
-    RightPanel: TPanel;
-    RightScrollBox: TScrollBox;
-    Panel1: TPanel;
-    TopRightPanel: TPanel;
     RenderRadioGroup: TRadioGroup;
     StyleRadioGroup: TRadioGroup;
     GroupBox1: TGroupBox;
     EnabledCheckBox: TCheckBox;
     OutlineCheckBox: TCheckBox;
+    LeftPanel: TPanel;
+    LeftScrollBox: TScrollBox;
+    Panel1: TPanel;
+    RightPanel: TPanel;
+    RightScrollBox: TScrollBox;
+    TopRightPanel: TPanel;
+    VirtualImageList: TVirtualImageList;
+    PanelTopPanel: TPanel;
+    PanelRenderRadioGroup: TRadioGroup;
+    PanelAttributesGroup: TGroupBox;
+    PanelShowCaptionCheckBox: TCheckBox;
+    PanelOutlineCheckBox: TCheckBox;
+    PanelLeftPanel: TPanel;
+    PanelLeftScrollBox: TScrollBox;
+    PanelLeftTopPanel: TPanel;
+    PanelRightPanel: TPanel;
+    PanelRightScrollBox: TScrollBox;
+    PanelRightTopPanel: TPanel;
     procedure FormCreate(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -107,13 +126,19 @@ type
     FStyleNames: TStringList;
     FImageList: TCustomImageList;
     FButtonsInColumn: Integer;
+    FPanelsInColumn: Integer;
     procedure CreateAllButtons(const AForce: Boolean = True);
+    procedure CreateAllPanels(const AForce: Boolean = True);
     function GetScaleFactor: Single;
     procedure GetButtonSize(out AWidth, AHeight: Integer);
+    procedure GetPanelSize(out AWidth, AHeight: Integer);
     procedure BuildStyleList;
     procedure CreateButtons(const AVcl: Boolean; const AButtonsInColumn: Integer);
+    procedure CreatePanels(const AVcl: Boolean; const APanelsInColumn: Integer);
     procedure ClearButtons(AScrollBox: TScrollBox);
+    procedure ClearPanels(AScrollBox: TScrollBox);
     procedure ButtonClick(Sender: TObject);
+    procedure PanelClick(Sender: TObject);
   protected
   end;
 
@@ -284,7 +309,10 @@ end;
 
 procedure TfmStyledButtonVCLStyles.EnabledCheckBoxClick(Sender: TObject);
 begin
-  CreateAllButtons;
+  if MainPageControl.ActivePage = tsStyledButtons then
+    CreateAllButtons
+  else if MainPageControl.ActivePage = tsStyledPanels then
+    CreateAllPanels;
 end;
 
 procedure TfmStyledButtonVCLStyles.FormCreate(Sender: TObject);
@@ -298,6 +326,7 @@ begin
   //Caption := Application.Title + ' - ' + Caption;
   BuildStyleList;
   CreateAllButtons;
+  CreateAllPanels;
   {$IFDEF D10_3+}
   FImageList := TVirtualImageList.Create(Self);
   TVirtualImageList(FImageList).ImageCollection := dmResources.ImageCollection;
@@ -320,10 +349,21 @@ end;
 
 procedure TfmStyledButtonVCLStyles.FormResize(Sender: TObject);
 begin
-  if LeftPanel.Width <> ClientWidth div 2 then
+  if MainPageControl.ActivePage = tsStyledButtons then
   begin
-    LeftPanel.Width := ClientWidth div 2;
-    CreateAllButtons(False);
+    if LeftPanel.Width <> ClientWidth div 2 then
+    begin
+      LeftPanel.Width := ClientWidth div 2;
+      CreateAllButtons(False);
+    end;
+  end
+  else if MainPageControl.ActivePage = tsStyledPanels then
+  begin
+    if PanelLeftPanel.Width <> ClientWidth div 2 then
+    begin
+      PanelLeftPanel.Width := ClientWidth div 2;
+      CreateAllPanels(False);
+    end;
   end;
 end;
 
@@ -358,7 +398,10 @@ end;
 
 procedure TfmStyledButtonVCLStyles.RadioGroupClick(Sender: TObject);
 begin
-  CreateAllButtons;
+  if MainPageControl.ActivePage = tsStyledButtons then
+    CreateAllButtons
+  else if MainPageControl.ActivePage = tsStyledPanels then
+    CreateAllPanels;
 end;
 
 procedure TfmStyledButtonVCLStyles.ScrollBoxMouseWheel(Sender: TObject;
@@ -383,11 +426,27 @@ begin
   n := Mouse.WheelScrollLines * 4; //Speed Up scrolling
   For i:= 1 to n Do
   begin
-    LeftScrollBox.Perform( msg, code, 0 );
-    RightScrollBox.Perform( msg, code, 0 );
+    if MainPageControl.ActivePage = tsStyledButtons then
+    begin
+      LeftScrollBox.Perform( msg, code, 0 );
+      RightScrollBox.Perform( msg, code, 0 );
+    end
+    else if MainPageControl.ActivePage = tsStyledPanels then
+    begin
+      PanelLeftScrollBox.Perform( msg, code, 0 );
+      PanelRightScrollBox.Perform( msg, code, 0 );
+    end;
   end;
-  LeftScrollBox.Perform( msg, SB_ENDSCROLL, 0 );
-  RightScrollBox.Perform( msg, SB_ENDSCROLL, 0 );
+  if MainPageControl.ActivePage = tsStyledButtons then
+  begin
+    LeftScrollBox.Perform( msg, SB_ENDSCROLL, 0 );
+    RightScrollBox.Perform( msg, SB_ENDSCROLL, 0 );
+  end
+  else if MainPageControl.ActivePage = tsStyledPanels then
+  begin
+    PanelLeftScrollBox.Perform( msg, SB_ENDSCROLL, 0 );
+    PanelRightScrollBox.Perform( msg, SB_ENDSCROLL, 0 );
+  end;
 end;
 
 procedure TfmStyledButtonVCLStyles.SplitButtonsCheckBoxClick(Sender: TObject);
@@ -411,6 +470,152 @@ begin
     StyledShowMessage(TButton(Sender).Caption)
   else if Sender is TStyledButton then
     StyledShowMessage(TStyledButton(Sender).Caption);
+end;
+
+procedure TfmStyledButtonVCLStyles.ClearPanels(AScrollBox: TScrollBox);
+begin
+  //Clear previous Panels
+  AScrollBox.Visible := False;
+  try
+    while AScrollBox.ControlCount > 0 do
+      AScrollBox.Controls[AScrollBox.ControlCount-1].Free;
+  finally
+    AScrollBox.Visible := True;
+  end;
+end;
+
+procedure TfmStyledButtonVCLStyles.CreateAllPanels(const AForce: Boolean = True);
+var
+  LPanelsInColumn: Integer;
+  LContainerWidth, LWidth, LHeight: Integer;
+begin
+  if AForce then
+    FPanelsInColumn := 0;
+  GetPanelSize(LWidth, LHeight);
+  LContainerWidth := PanelLeftPanel.Width - Round(VERT_SCROLL_WIDTH * GetScaleFactor);
+  LPanelsInColumn := Trunc(LContainerWidth / GetScaleFactor) div (LWidth+PANEL_MARGIN);
+  if LPanelsInColumn <> FPanelsInColumn then
+  begin
+    try
+      CreatePanels(True, LPanelsInColumn);
+      CreatePanels(False, LPanelsInColumn);
+    finally
+      FPanelsInColumn := LPanelsInColumn;
+    end;
+  end;
+end;
+
+procedure TfmStyledButtonVCLStyles.CreatePanels(const AVcl: Boolean;
+  const APanelsInColumn: Integer);
+var
+  I, LRow: integer;
+  LStyleName: string;
+  LColumn: Integer;
+  LWidth, LHeight: Integer;
+
+  procedure CreateVCLPanel(AColumn, ATop: Integer;
+    AStyleName: string);
+  var
+    LPanel: TPanel;
+  begin
+    LPanel := TPanel.Create(Self);
+    LPanel.SetBounds((AColumn * LWidth) + (PANEL_MARGIN*AColumn),
+      ATop, LWidth, LHeight);
+    LPanel.ParentBackground := False; //Required to apply VCL style colors
+    {$IFDEF D10_4+}
+    LPanel.StyleName := AStyleName;
+    {$ENDIF}
+    if PanelShowCaptionCheckBox.Checked then
+      LPanel.Caption := AStyleName
+    else
+      LPanel.Caption := '';
+    LPanel.ShowCaption := PanelShowCaptionCheckBox.Checked;
+    LPanel.Hint := AStyleName;
+    LPanel.Parent := PanelLeftScrollBox;
+    LPanel.PopupMenu := Self.PopupMenu;
+    LPanel.OnClick := PanelClick;
+  end;
+
+  procedure CreateStyledPanel(AColumn, ATop: Integer;
+    AStyleName: string);
+  var
+    LPanel: TStyledPanel;
+    LAsVcl: Boolean;
+  begin
+    LAsVcl := PanelRenderRadioGroup.ItemIndex = RENDER_SAME_AS_VCL;
+    LPanel := TStyledPanel.CreateStyled(Self,
+      DEFAULT_CLASSIC_FAMILY,
+      AStyleName,
+      DEFAULT_APPEARANCE);
+
+    LPanel.SetBounds((AColumn * LWidth) + (PANEL_MARGIN*AColumn),
+      ATop, LWidth, LHeight);
+    LPanel.ParentBackground := False; //Required to apply VCL style colors
+
+    //Set AsVCLComponent based on render option
+    if LAsVcl then
+      LPanel.AsVCLComponent := True;
+
+    case PanelRenderRadioGroup.ItemIndex of
+      RENDER_ROUNDED: LPanel.StyleDrawType := btRounded; //All panels Rounded
+      RENDER_ROUNDRECT: LPanel.StyleDrawType := btRoundRect; //All panels RoundRect
+      RENDER_RECTANGLE: LPanel.StyleDrawType := btRect; //All panels Rect
+    end;
+
+    if PanelShowCaptionCheckBox.Checked then
+      LPanel.Caption := AStyleName
+    else
+      LPanel.Caption := '';
+    LPanel.ShowCaption := PanelShowCaptionCheckBox.Checked;
+
+    if PanelOutlineCheckBox.Checked then
+      LPanel.StyleAppearance := 'Outline'
+    else
+      LPanel.StyleAppearance := 'Normal';
+
+    LPanel.Hint := AStyleName;
+    LPanel.Parent := PanelRightScrollBox;
+    LPanel.PopupMenu := Self.PopupMenu;
+    LPanel.OnClick := PanelClick;
+  end;
+
+begin
+  GetPanelSize(LWidth, LHeight);
+  Screen.Cursor := crHourGlass;
+  try
+    //Clear previous Panels
+    if AVcl then
+      ClearPanels(PanelLeftScrollBox)
+    else
+      ClearPanels(PanelRightScrollBox);
+    //Create VCL Panels or Styled Panels
+    for I := 0 to FStyleNames.Count -1 do
+    begin
+      LStyleName := FStyleNames.Strings[I];
+      LColumn := (I mod APanelsInColumn);
+      LRow := (I div APanelsInColumn);
+      if AVcl then
+        CreateVCLPanel(LColumn, LRow*(LHeight+PANEL_MARGIN), LStyleName)
+      else
+        CreateStyledPanel(LColumn, LRow*(LHeight+PANEL_MARGIN), LStyleName)
+    end;
+  finally
+    Screen.Cursor := crDefault;
+  end;
+end;
+
+procedure TfmStyledButtonVCLStyles.GetPanelSize(out AWidth, AHeight: Integer);
+begin
+  AWidth := PANEL_WIDTH;
+  AHeight := PANEL_HEIGHT;
+end;
+
+procedure TfmStyledButtonVCLStyles.PanelClick(Sender: TObject);
+begin
+  if Sender is TPanel then
+    StyledShowMessage(TPanel(Sender).Hint)
+  else if Sender is TStyledPanel then
+    StyledShowMessage(TStyledPanel(Sender).Hint);
 end;
 
 end.

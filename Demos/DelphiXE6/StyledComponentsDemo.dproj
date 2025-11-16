@@ -4,8 +4,8 @@
         <ProjectVersion>20.2</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">Win32</Platform>
+        <Config Condition="'$(Config)'==''">Release</Config>
+        <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <ProjectName Condition="'$(ProjectName)'==''">StyledComponentsDemo</ProjectName>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -113,6 +113,9 @@
         <DCCReference Include="..\source\StyledButtonsFormOld.pas">
             <Form>fmStyledButtons</Form>
         </DCCReference>
+        <DCCReference Include="..\source\StyledButtonVCLStylesFormOld.pas">
+            <Form>fmStyledButtonVCLStyles</Form>
+        </DCCReference>
         <DCCReference Include="..\source\StyledCategoryButtonsFormOld.pas">
             <Form>fmStyledCategoryButtons</Form>
         </DCCReference>
@@ -122,18 +125,21 @@
         <DCCReference Include="..\source\StyledDialogDemoForm.pas">
             <Form>fmStyledTaskDialog</Form>
         </DCCReference>
+        <DCCReference Include="..\source\StyledPanelFormOld.pas">
+            <Form>fmStyledPanel</Form>
+        </DCCReference>
         <DCCReference Include="..\source\StyledToolbarFormOld.pas">
             <Form>fmStyledToolbar</Form>
         </DCCReference>
-        <BuildConfiguration Include="Release">
-            <Key>Cfg_2</Key>
-            <CfgParent>Base</CfgParent>
-        </BuildConfiguration>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_1</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Release">
+            <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
         </BuildConfiguration>
     </ItemGroup>

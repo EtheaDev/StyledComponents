@@ -32,9 +32,10 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  DResources, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.CategoryButtons, System.ImageList,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.CategoryButtons,
   Vcl.StandardButtonStyles, Vcl.AngularButtonStyles, Vcl.BootstrapButtonStyles, Vcl.ColorButtonStyles,
-  Vcl.ImgList, Vcl.VirtualImageList, Vcl.StyledCategoryButtons,
+  Vcl.ImgList, Vcl.StyledCategoryButtons,
+  DResources, System.ImageList, Vcl.VirtualImageList, 
   Vcl.ButtonStylesAttributes, System.Actions, Vcl.ActnList, Vcl.StdActns,
   Vcl.StdCtrls, Vcl.ComCtrls, Vcl.StyledButton, Vcl.ExtCtrls;
 const

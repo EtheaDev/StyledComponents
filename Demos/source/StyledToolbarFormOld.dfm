@@ -2,28 +2,26 @@ object fmStyledToolbar: TfmStyledToolbar
   Left = 0
   Top = 0
   Caption = 'StyledToolbar Test'
-  ClientHeight = 533
-  ClientWidth = 737
+  ClientHeight = 532
+  ClientWidth = 733
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = True
   ShowHint = True
   OnClick = ToolButtonclick
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 15
   object ToolBar: TToolBar
     AlignWithMargins = True
     Left = 3
     Top = 71
-    Width = 731
-    Height = 64
+    Width = 727
+    Height = 68
     AutoSize = True
-    ButtonHeight = 62
+    ButtonHeight = 66
     ButtonWidth = 77
     Caption = 'ToolBar Caption'
     Flat = False
@@ -103,7 +101,7 @@ object fmStyledToolbar: TfmStyledToolbar
       Left = 420
       Top = 0
       Width = 121
-      Height = 62
+      Height = 66
       TabOrder = 0
       Text = 'Edit1'
     end
@@ -119,7 +117,7 @@ object fmStyledToolbar: TfmStyledToolbar
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 731
+    Width = 727
     Height = 62
     ButtonHeight = 60
     ButtonWidth = 77
@@ -219,8 +217,8 @@ object fmStyledToolbar: TfmStyledToolbar
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 455
-    Width = 737
+    Top = 454
+    Width = 733
     Height = 78
     Align = alBottom
     TabOrder = 2
@@ -335,9 +333,9 @@ object fmStyledToolbar: TfmStyledToolbar
   end
   object ClientPanel: TPanel
     Left = 0
-    Top = 138
-    Width = 737
-    Height = 317
+    Top = 142
+    Width = 733
+    Height = 312
     Align = alClient
     TabOrder = 3
   end

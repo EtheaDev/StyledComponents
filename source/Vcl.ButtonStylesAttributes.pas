@@ -6,7 +6,7 @@
 {                                                                              }
 {  Copyright (c) 2022-2025 (Ethea S.r.l.)                                      }
 {  Author: Carlo Barazzetta                                                    }
-{  Contributors:                                                               }
+{  Contributors: Claude Code                                                   }
 {                                                                              }
 {  https://github.com/EtheaDev/StyledComponents                                }
 {                                                                              }
@@ -55,7 +55,7 @@ uses
   ;
 
 const
-  StyledComponentsVersion = '3.9.0';
+  StyledComponentsVersion = '3.9.1';
   DEFAULT_RADIUS = 6;
   RESOURCE_SHIELD_ICON = 'STYLED_BUTTON_SHIELD_ADMIN';
   DEFAULT_MAX_BADGE_VALUE = 99;
@@ -1106,19 +1106,6 @@ end;
 function TStyledButtonAttributes.AssignStyledAttributes(
   const ASource: TStyledButtonAttributes): Boolean;
 begin
-  //Assign internal "custom" variable
-(*
-  FCustomDrawType := ASource.FCustomDrawType;
-  FCustomBorderWidth := ASource.FCustomBorderWidth;
-  FCustomBorderDrawStyle := ASource.FCustomBorderDrawStyle;
-  FCustomButtonDrawStyle := ASource.FCustomButtonDrawStyle;
-  FCustomBorderColor := ASource.FCustomBorderColor;
-  FCustomFontColor := ASource.FCustomFontColor;
-  FCustomFontStyle := ASource.FCustomFontStyle;
-  FCustomButtonColor := ASource.FCustomButtonColor;
-  FCustomRadius := ASource.FCustomRadius;
-  FCustomRoundedCorners := ASource.FCustomRoundedCorners;
-*)
   //Assign internal variable
   FDrawType := ASource.FDrawType;
   FBorderWidth := ASource.FBorderWidth;

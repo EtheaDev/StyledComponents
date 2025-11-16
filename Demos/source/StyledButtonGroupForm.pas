@@ -35,9 +35,11 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ButtonStylesAttributes,
   Vcl.StandardButtonStyles, Vcl.AngularButtonStyles, Vcl.BootstrapButtonStyles, Vcl.ColorButtonStyles,
   Vcl.StyledButton, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnMan,
-  Vcl.ActnCtrls, System.ImageList, Vcl.ImgList, Vcl.VirtualImageList,
-  DResources, Vcl.StdCtrls, Vcl.Menus, Vcl.StyledButtonGroup,
-  Vcl.ButtonGroup, System.Actions, Vcl.ActnList, Vcl.StdActns;
+  Vcl.ActnCtrls, Vcl.ImgList, Vcl.StdCtrls,
+  Vcl.Menus, Vcl.StyledButtonGroup,
+  System.Actions, Vcl.ActnList, Vcl.StdActns,
+  Vcl.VirtualImageList, DResources, 
+  Vcl.ButtonGroup; 
 
 const
   //Params to check
@@ -390,10 +392,5 @@ begin
   StyledButtonGroupBootstrap.ImageAlignment := LImageAlignment;
   FStyledButtonGroup.ImageAlignment := LImageAlignment;
 end;
-
-initialization
-{$IFDEF DEBUG}
-  ReportMemoryLeaksOnShutdown := True;
-{$ENDIF}
 
 end.

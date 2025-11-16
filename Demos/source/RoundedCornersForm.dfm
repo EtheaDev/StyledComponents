@@ -20,7 +20,6 @@ object fmRoundedCorners: TfmRoundedCorners
     Height = 72
     Align = alBottom
     TabOrder = 0
-    ExplicitTop = 313
     object WidthLabel: TLabel
       Left = 284
       Top = 10
@@ -111,7 +110,6 @@ object fmRoundedCorners: TfmRoundedCorners
     Height = 346
     Align = alClient
     TabOrder = 1
-    ExplicitHeight = 313
     object ButtonGroup: TStyledButtonGroup
       Left = 1
       Top = 41
@@ -131,6 +129,7 @@ object fmRoundedCorners: TfmRoundedCorners
         item
           Caption = 'Close'
           ImageIndex = 0
+          ImageName = 'home-deeppurple'
           StyleFamily = 'Bootstrap'
           StyleClass = 'Warning'
           StyleAppearance = 'Normal'
@@ -138,6 +137,7 @@ object fmRoundedCorners: TfmRoundedCorners
         item
           Caption = 'Button'
           ImageIndex = 6
+          ImageName = 'menu-Blue-grey'
           StyleFamily = 'Bootstrap'
           StyleClass = 'Success'
           StyleAppearance = 'Normal'
@@ -146,7 +146,6 @@ object fmRoundedCorners: TfmRoundedCorners
       StyleDrawType = btRounded
       StyleRoundedCorners = [rcTopRight, rcBottomRight]
       StyleFamily = 'Bootstrap'
-      ExplicitHeight = 271
     end
     object Toolbar: TStyledToolbar
       Left = 1
@@ -165,7 +164,7 @@ object fmRoundedCorners: TfmRoundedCorners
         Caption = 'Home'
         ImageAlignment = iaLeft
         ImageIndex = 2
-        ImageMargins.Left = 8
+        ImageName = 'home-pink'
         ImageMargins.Right = 8
         StyleFamily = 'SVG-Colors'
         StyleClass = 'Aquamarine'
@@ -174,6 +173,7 @@ object fmRoundedCorners: TfmRoundedCorners
         Left = 120
         Top = 0
         ImageIndex = 1
+        ImageName = 'home-indigo'
         StyleDrawType = btRoundRect
         Style = tbsSeparator
       end
@@ -186,7 +186,9 @@ object fmRoundedCorners: TfmRoundedCorners
         ImageIndex = 24
         PressedImageIndex = 27
         SelectedImageIndex = 27
-        ImageMargins.Left = 8
+        ImageName = 'ic_format_align_left_black'
+        PressedImageName = 'ic_check_black'
+        SelectedImageName = 'ic_check_black'
         ImageMargins.Right = 8
         StyleRoundedCorners = [rcTopLeft, rcBottomLeft]
         StyleFamily = 'SVG-Colors'
@@ -202,7 +204,9 @@ object fmRoundedCorners: TfmRoundedCorners
         ImageIndex = 25
         PressedImageIndex = 27
         SelectedImageIndex = 27
-        ImageMargins.Left = 8
+        ImageName = 'ic_format_align_center_black'
+        PressedImageName = 'ic_check_black'
+        SelectedImageName = 'ic_check_black'
         ImageMargins.Right = 8
         StyleRoundedCorners = []
         StyleFamily = 'SVG-Colors'
@@ -218,7 +222,9 @@ object fmRoundedCorners: TfmRoundedCorners
         ImageIndex = 26
         PressedImageIndex = 27
         SelectedImageIndex = 27
-        ImageMargins.Left = 8
+        ImageName = 'ic_format_align_right_black'
+        PressedImageName = 'ic_check_black'
+        SelectedImageName = 'ic_check_black'
         ImageMargins.Right = 8
         StyleRoundedCorners = [rcTopRight, rcBottomRight]
         StyleFamily = 'SVG-Colors'
@@ -247,6 +253,7 @@ object fmRoundedCorners: TfmRoundedCorners
             item
               Caption = 'Home'
               ImageIndex = 2
+              ImageName = 'home-pink'
               StyleFamily = 'Angular-Light'
               StyleClass = 'DeepPurple'
               StyleAppearance = 'Raised'
@@ -260,16 +267,19 @@ object fmRoundedCorners: TfmRoundedCorners
             item
               Caption = 'Left'
               ImageIndex = 24
+              ImageName = 'ic_format_align_left_black'
               StyleRoundedCorners = [rcTopLeft, rcTopRight]
             end
             item
               Caption = 'Center'
               ImageIndex = 25
+              ImageName = 'ic_format_align_center_black'
               StyleRoundedCorners = []
             end
             item
               Caption = 'Right'
               ImageIndex = 26
+              ImageName = 'ic_format_align_right_black'
               StyleRoundedCorners = [rcBottomRight, rcBottomLeft]
             end>
         end>
@@ -282,7 +292,6 @@ object fmRoundedCorners: TfmRoundedCorners
       StyleFamily = 'Angular-Light'
       StyleClass = 'Amber'
       StyleAppearance = 'Raised'
-      ExplicitHeight = 271
     end
     object CenterPanel: TPanel
       Left = 121
@@ -291,7 +300,6 @@ object fmRoundedCorners: TfmRoundedCorners
       Height = 304
       Align = alClient
       TabOrder = 3
-      ExplicitHeight = 271
       object TopPanel: TPanel
         Left = 1
         Top = 1
@@ -310,6 +318,7 @@ object fmRoundedCorners: TfmRoundedCorners
           Down = True
           Caption = 'Angular'
           ImageIndex = 19
+          ImageName = 'Angular-logo'
           Images = VirtualImageList
           TabOrder = 0
           StyleRoundedCorners = [rcTopLeft, rcBottomLeft]
@@ -325,6 +334,7 @@ object fmRoundedCorners: TfmRoundedCorners
           GroupIndex = 1
           Caption = 'Bootstrap'
           ImageIndex = 20
+          ImageName = 'Bootstrap-logo'
           Images = VirtualImageList
           TabOrder = 1
           StyleRoundedCorners = []
@@ -340,6 +350,7 @@ object fmRoundedCorners: TfmRoundedCorners
           GroupIndex = 1
           Caption = 'Colored'
           ImageIndex = 23
+          ImageName = 'SVG-Color'
           Images = VirtualImageList
           TabOrder = 2
           StyleRoundedCorners = []
@@ -355,6 +366,7 @@ object fmRoundedCorners: TfmRoundedCorners
           GroupIndex = 1
           Caption = 'Classic'
           ImageIndex = 21
+          ImageName = 'Delphi-Logo'
           Images = VirtualImageList
           TabOrder = 3
           StyleRoundedCorners = [rcTopRight, rcBottomRight]
@@ -381,6 +393,7 @@ object fmRoundedCorners: TfmRoundedCorners
           Caption = 'Angular'
           Images = VirtualImageList
           ImageIndex = 19
+          ImageName = 'Angular-logo'
           StyleRoundedCorners = [rcTopLeft, rcBottomLeft]
           StyleDrawType = btRounded
           StyleAppearance = 'Outline'
@@ -396,6 +409,7 @@ object fmRoundedCorners: TfmRoundedCorners
           Caption = 'Bootstrap'
           Images = VirtualImageList
           ImageIndex = 20
+          ImageName = 'Bootstrap-logo'
           StyleRoundedCorners = []
           StyleDrawType = btRounded
           StyleAppearance = 'Outline'
@@ -412,6 +426,7 @@ object fmRoundedCorners: TfmRoundedCorners
           Caption = 'Classic'
           Images = VirtualImageList
           ImageIndex = 21
+          ImageName = 'Delphi-Logo'
           StyleRoundedCorners = [rcTopRight, rcBottomRight]
           StyleDrawType = btRounded
           StyleAppearance = 'Outline'
@@ -427,6 +442,7 @@ object fmRoundedCorners: TfmRoundedCorners
           Caption = 'Colored'
           Images = VirtualImageList
           ImageIndex = 23
+          ImageName = 'SVG-Color'
           StyleRoundedCorners = []
           StyleDrawType = btRounded
           StyleAppearance = 'Outline'
@@ -452,6 +468,7 @@ object fmRoundedCorners: TfmRoundedCorners
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 13
+          ImageName = 'trash-white'
           Images = VirtualImageList
           TabOrder = 0
           StyleRadius = 30
@@ -470,6 +487,7 @@ object fmRoundedCorners: TfmRoundedCorners
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 16
+          ImageName = 'bookmark-black'
           Images = VirtualImageList
           TabOrder = 1
           StyleRoundedCorners = [rcTopRight, rcBottomLeft]
@@ -488,6 +506,7 @@ object fmRoundedCorners: TfmRoundedCorners
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 17
+          ImageName = 'home-white'
           Images = VirtualImageList
           TabOrder = 2
           StyleRoundedCorners = [rcTopLeft, rcBottomRight]
@@ -506,6 +525,7 @@ object fmRoundedCorners: TfmRoundedCorners
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 8
+          ImageName = 'heart'
           Images = VirtualImageList
           TabOrder = 3
           StyleRoundedCorners = [rcTopLeft, rcTopRight]
@@ -533,6 +553,7 @@ object fmRoundedCorners: TfmRoundedCorners
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 0
+          ImageName = 'home-deeppurple'
           Images = VirtualImageList
           NotificationBadge.Color = clFuchsia
           NotificationBadge.NotificationCount = 100
@@ -554,6 +575,7 @@ object fmRoundedCorners: TfmRoundedCorners
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 10
+          ImageName = 'dots-vertical-black'
           Images = VirtualImageList
           NotificationBadge.CustomText = '!'
           TabOrder = 0
@@ -574,6 +596,7 @@ object fmRoundedCorners: TfmRoundedCorners
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 4
+          ImageName = 'menu-amber'
           Images = VirtualImageList
           NotificationBadge.NotificationCount = 5
           NotificationBadge.Size = nbsSmallDot
@@ -595,6 +618,7 @@ object fmRoundedCorners: TfmRoundedCorners
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 14
+          ImageName = 'trash-black'
           Images = VirtualImageList
           NotificationBadge.Color = clTeal
           NotificationBadge.NotificationCount = 5
@@ -615,6 +639,7 @@ object fmRoundedCorners: TfmRoundedCorners
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 12
+          ImageName = 'launch-black'
           Images = VirtualImageList
           TabOrder = 4
           StyleDrawType = btRounded
@@ -633,6 +658,7 @@ object fmRoundedCorners: TfmRoundedCorners
           Align = alLeft
           ImageAlignment = iaCenter
           ImageIndex = 8
+          ImageName = 'heart'
           Images = VirtualImageList
           NotificationBadge.Color = clOlive
           NotificationBadge.NotificationCount = 12

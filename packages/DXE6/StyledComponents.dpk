@@ -32,6 +32,7 @@ package StyledComponents;
 {$R '..\StyledDbNavigator.dcr'}
 {$R '..\StyledButtonGroup.dcr'}
 {$R '..\StyledCategoryButtons.dcr'}
+{$R '..\StyledPanel.dcr'}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -72,6 +73,7 @@ requires
 
 contains
   Vcl.StyledButton in '..\..\source\Vcl.StyledButton.pas',
+  Vcl.StyledPanel in '..\..\source\Vcl.StyledPanel.pas',
   Vcl.ButtonStylesAttributes in '..\..\source\Vcl.ButtonStylesAttributes.pas',
   Vcl.StandardButtonStyles in '..\..\source\Vcl.StandardButtonStyles.pas',
   Vcl.ColorButtonStyles in '..\..\source\Vcl.ColorButtonStyles.pas',

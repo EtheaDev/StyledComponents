@@ -10,10 +10,8 @@ object fmStyledButtonGroup: TfmStyledButtonGroup
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = True
   ShowHint = True
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 15
   object BottomPanel: TPanel
     Left = 0

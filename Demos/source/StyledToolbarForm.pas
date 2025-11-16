@@ -35,8 +35,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ButtonStylesAttributes,
   Vcl.StandardButtonStyles, Vcl.AngularButtonStyles, Vcl.BootstrapButtonStyles, Vcl.ColorButtonStyles,
   Vcl.StyledButton, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnMan,
-  Vcl.ActnCtrls, System.ImageList, Vcl.ImgList, Vcl.VirtualImageList,
-  DResources, Vcl.StdCtrls, Vcl.StyledToolbar, Vcl.Menus;
+  Vcl.StdCtrls, Vcl.StyledToolbar, Vcl.Menus, Vcl.ActnCtrls, Vcl.ImgList,
+  System.ImageList, Vcl.VirtualImageList, DResources;
 
 const
   //Params to check
@@ -220,8 +220,6 @@ begin
 end;
 
 procedure TfmStyledToolbar.CreateToolbars;
-//var
-//  LButton: TStyledToolButton;
 begin
   //Create Standard Toolbar
   CreateToolBar;

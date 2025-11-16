@@ -49,6 +49,7 @@ uses
   , Vcl.StyledCategoryButtons
   , Vcl.ButtonStylesAttributes
   , Vcl.StyledTaskDialog
+  , Vcl.StyledPanel
   ;
 
 Type
@@ -337,7 +338,9 @@ begin
   else if AComponent is TStyledCategoryButtons then
     LFamily := TStyledCategoryButtons(AComponent).StyleFamily
   else if AComponent is TStyledButtonItem then
-    LFamily := TStyledButtonItem(AComponent).StyleFamily;
+    LFamily := TStyledButtonItem(AComponent).StyleFamily
+  else if AComponent is TStyledPanel then
+    LFamily := TStyledPanel(AComponent).StyleFamily;
   if LFamily <> '' then
   begin
     Result := True;
@@ -370,7 +373,6 @@ begin
       Proc(GetButtonFamilyName(I));
   end;
 end;
-
 
 { TStyledClassPropertyEditor }
 
@@ -1096,7 +1098,8 @@ begin
      TStyledDbNavigator,
      TStyledBindNavigator,
      TStyledButtonGroup,
-     TStyledCategoryButtons]);
+     TStyledCategoryButtons,
+     TStyledPanel]);
 
   RegisterPropertyEditor(TypeInfo(string),
     TStyledTaskDialog, 'Caption', TStringProperty);
@@ -1127,6 +1130,8 @@ begin
   RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
     TStyledButtonItem, 'StyleFamily', TStyledFamilyPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
+    TStyledPanel, 'StyleFamily', TStyledFamilyPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonFamily),
     TStyledTaskDialog, 'DialogButtonsFamily', TStyledFamilyPropertyEditor);
 
   //Property Editor for StyleClass
@@ -1154,6 +1159,8 @@ begin
     TStyledCategoryButtons, 'StyleClass', TStyledClassPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStyledButtonClass),
     TStyledButtonItem, 'StyleClass', TStyledClassPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledButtonClass),
+    TStyledPanel, 'StyleClass', TStyledClassPropertyEditor);
 
   //Property Editor for StyleAppearance
   RegisterPropertyEditor(TypeInfo(TStyledButtonAppearance),
@@ -1179,6 +1186,8 @@ begin
   RegisterPropertyEditor(TypeInfo(TStyledButtonAppearance),
     TStyledCategoryButtons, 'StyleAppearance', TStyledAppearancePropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStyledButtonAppearance),
+    TStyledButtonItem, 'StyleAppearance', TStyledAppearancePropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStyledPanel),
     TStyledButtonItem, 'StyleAppearance', TStyledAppearancePropertyEditor);
 
   //Property Editor for Icon Value of StyledTaskDialog
@@ -1243,6 +1252,7 @@ begin
   RegisterComponentEditor(TStyledButton, TStyledButtonComponentEditor);
   RegisterComponentEditor(TStyledBitBtn, TStyledButtonComponentEditor);
   RegisterComponentEditor(TStyledToolButton, TStyledButtonComponentEditor);
+  RegisterComponentEditor(TStyledPanel, TStyledButtonComponentEditor);
 
   //Register custom Components editors
   RegisterComponentEditor(TStyledToolbar, TStyledToolbarComponentEditor);
@@ -1263,6 +1273,7 @@ begin
   RegisterSelectionEditor(TStyledBindNavigator, TStyledComponentSelection);
   RegisterSelectionEditor(TStyledButtonGroup, TStyledComponentSelection);
   RegisterSelectionEditor(TStyledCategoryButtons, TStyledComponentSelection);
+  RegisterSelectionEditor(TStyledPanel, TStyledComponentSelection);
 end;
 
 initialization

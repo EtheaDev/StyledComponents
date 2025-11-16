@@ -103,7 +103,7 @@ object StyledButtonCustomEditor: TStyledButtonCustomEditor
       AlignWithMargins = True
       Left = 423
       Top = 4
-      Width = 508
+      Width = 423
       Height = 93
       Align = alClient
       Caption = 'NEW'
@@ -133,15 +133,15 @@ object StyledButtonCustomEditor: TStyledButtonCustomEditor
     object AttributesGroupBox: TGroupBox
       Left = 0
       Top = 0
-      Width = 929
+      Width = 844
       Height = 59
       Align = alClient
       Caption = 'Button Attributes'
       TabOrder = 0
       object StyleDrawTypeLabel: TLabel
-        Left = 19
+        Left = 20
         Top = 26
-        Width = 77
+        Width = 76
         Height = 13
         Alignment = taRightJustify
         Caption = 'StyleDrawType:'
