@@ -54,13 +54,28 @@ uses
   Vcl.ButtonGroup;
 
 type
+  /// <summary>Default implementation of ITaskDialogLauncher interface</summary>
+  /// <remarks>Handles the execution and display of styled task dialogs</remarks>
   TTaskDialogLauncherHandler = class(TInterfacedObject, ITaskDialogLauncher)
+    /// <summary>Executes and displays the task dialog</summary>
+    /// <param name="ParentWnd">Handle to the parent window</param>
+    /// <param name="ADialogType">The type of dialog to display</param>
+    /// <param name="ATaskDialog">The TStyledTaskDialog instance</param>
+    /// <param name="ADialogBtnFamily">The button style family</param>
+    /// <returns>True if dialog was executed successfully</returns>
     function DoExecute(ParentWnd: HWND;
       const ADialogType: TMsgDlgType;
       const ATaskDialog: TStyledTaskDialog;
       const ADialogBtnFamily: TStyledButtonFamily): Boolean;
   end;
 
+  /// <summary>Base form class for styled task dialogs</summary>
+  /// <remarks>
+  ///   TStyledTaskDialogForm is the visual form that displays styled task dialogs.
+  ///   It contains all the UI elements including buttons, icons, text labels,
+  ///   progress bars, radio buttons, and more. Inherit from this class to create
+  ///   custom dialog forms with different visual appearances.
+  /// </remarks>
   TStyledTaskDialogForm = class(TForm)
     FooterPanel: TPanel;
     ButtonsPanel: TPanel;
@@ -114,6 +129,9 @@ type
     FButtonsWidth: Integer;
     FButtonsHeight: Integer;
     FDialogBtnFamily: TStyledButtonFamily;
+    FDialogBtnDrawType: TStyledButtonDrawType;
+    FDialogBtnRadius: Integer;
+    FDialogBtnRoundedCorners: TRoundedCorners;
     FCommonButtons: TTaskDialogCommonButtons;
     FDefaultButton: TTaskDialogCommonButton;
     FUseMessageDefaultButton: Boolean;
@@ -203,69 +221,107 @@ type
     function GetDefaultButton(const ADefaultButton: TTaskDialogCommonButton): TStyledButton; virtual;
     property TaskDialog: TCustomTaskDialog read FTaskDialog;
   public
+    /// <summary>Converts a modal result to a task dialog common button</summary>
+    /// <param name="AModalResult">The modal result to convert</param>
+    /// <param name="ACommonButton">Output: the corresponding common button</param>
+    /// <returns>True if conversion was successful</returns>
     function ModalResultToCommonButton(const AModalResult: TModalResult;
       out ACommonButton: TTaskDialogCommonButton): Boolean;
+    /// <summary>Finds a button by its modal result value</summary>
+    /// <param name="AModalResult">The modal result to search for</param>
+    /// <returns>The TStyledButton with the specified modal result, or nil</returns>
     function FindButton(const AModalResult: TModalResult): TStyledButton;
+    /// <summary>Sets the font for all dialog elements</summary>
+    /// <param name="AFont">The font to apply</param>
     procedure SetDialogFont(const AFont: TFont); virtual;
+    /// <summary>Creates a new instance of the dialog form</summary>
+    /// <param name="AOwner">The component owner</param>
     constructor Create(AOwner: TComponent); override;
+    /// <summary>Destroys the dialog form instance</summary>
     destructor Destroy; override;
+    /// <summary>Sets the screen position of the dialog</summary>
+    /// <param name="X">X coordinate in screen pixels</param>
+    /// <param name="Y">Y coordinate in screen pixels</param>
     procedure SetPosition(const X, Y: Integer); virtual;
+    /// <summary>Enables automatic button click after a delay</summary>
     property AutoClick: Boolean read FAutoClick write FAutoClick default False;
+    /// <summary>Delay in milliseconds before auto-clicking the default button</summary>
     property AutoClickDelay: Integer read FAutoClickDelay write FAutoClickDelay default DEFAULT_AUTOCLICK_DELAY;
+    /// <summary>Width of dialog buttons in pixels</summary>
     property ButtonsWidth: Integer read GetButtonsWidth write SetButtonsWidth;
+    /// <summary>Height of dialog buttons in pixels</summary>
     property ButtonsHeight: Integer read GetButtonsHeight write SetButtonsHeight;
+    /// <summary>Collection of custom buttons for the dialog</summary>
     property Buttons: TTaskDialogButtons read FButtons write SetButtons;
+    /// <summary>Collection of radio buttons for the dialog</summary>
     property RadioButtons: TTaskDialogButtons read FRadioButtons write SetRadioButtons;
+    /// <summary>Standard common buttons to display (Ok, Cancel, Yes, No, etc.)</summary>
     property CommonButtons: TTaskDialogCommonButtons read FCommonButtons write FCommonButtons default [tcbOk, tcbCancel];
+    /// <summary>The default button that receives focus</summary>
     property DefaultButton: TTaskDialogCommonButton read FDefaultButton write FDefaultButton default TTaskDialogCommonButton.tcbOk;
+    /// <summary>Default button when using message dialog style</summary>
     property MessageDefaultButton: TMsgDlgBtn read FMessageDefaultButton write FMessageDefaultButton default TMsgDlgBtn.mbOK;
+    /// <summary>Caption for the expand/collapse button</summary>
     property ExpandButtonCaption: string read FExpandButtonCaption write SetExpandButtonCaption;
+    /// <summary>Returns True if the expandable content is currently shown</summary>
     property Expanded: Boolean read GetExpanded;
+    /// <summary>Additional text shown when dialog is expanded</summary>
     property ExpandedText: string read FExpandedText write SetExpandedText;
+    /// <summary>Progress bar settings for the dialog</summary>
     property ProgressBar: TTaskDialogProgressBar read FProgressBar write SetProgressBar;
 (*
     property URL: string read FURL;
 *)
+    /// <summary>Dialog behavior flags</summary>
     property Flags: TTaskDialogFlags read FFlags write SetFlags default [tfAllowDialogCancellation];
+    /// <summary>Main icon displayed in the dialog (tdiWarning, tdiError, tdiInformation, etc.)</summary>
     property MainIcon: TTaskDialogIcon read FMainIcon write SetMainIcon default tdiInformation;
+    /// <summary>Custom icon to display instead of standard icons</summary>
     property CustomMainIcon: TIcon read FCustomMainIcon write SetCustomMainIcon;
+    /// <summary>Size of the main icon in pixels</summary>
     property MainIconSize: Integer read FMainIconSize write SetMainIconSize default DEFAULT_MAIN_ICON_SIZE;
+    /// <summary>Custom icon for the footer area</summary>
     property CustomFooterIcon: TIcon read FCustomFooterIcon write SetCustomFooterIcon;
+    /// <summary>Standard icon displayed in the footer</summary>
     property FooterIcon: TTaskDialogIcon read FFooterIcon write SetFooterIcon default tdiNone;
+    /// <summary>Text displayed in the footer area</summary>
     property FooterText: string read GetFooterText write SetFooterText;
+    /// <summary>Text for the verification checkbox</summary>
     property VerificationText: string read GetVerificationText write SetVerificationText;
+    /// <summary>Help context ID for F1 help</summary>
     property HelpContext: Integer read GetHelpContext write SetHelpContext default 0;
+    /// <summary>The currently selected radio button item</summary>
     property RadioButton: TTaskDialogRadioButtonItem read FRadioButton;
+    /// <summary>The main message text displayed in the dialog</summary>
     property TextMessage: string read GetText write SetText;
+    /// <summary>The title/instruction text displayed at the top</summary>
     property TitleMessage: string read GetTitle write SetTitle;
+    /// <summary>Timer event fired periodically while dialog is shown</summary>
     property OnTimer: TTaskDlgTimerEvent read FOnTimer write FOnTimer;
-
-    //Used by Animated Form
+    /// <summary>When True, loops the icon animation continuously (requires Skia4Delphi)</summary>
     property AnimationLoop: Boolean read FAnimationLoop write FAnimationLoop;
+    /// <summary>When True, plays the icon animation in reverse (requires Skia4Delphi)</summary>
     property AnimationInverse: Boolean read FAnimationInverse write FAnimationInverse;
   end;
 
+  /// <summary>Class reference type for TStyledTaskDialogForm descendants</summary>
   TStyledTaskDialogFormClass = class of TStyledTaskDialogForm;
 
-/// <summary>
-///  To activate or deactivate use of Custom Task Dialog
-/// </summary>
+/// <summary>Activates or deactivates use of styled task dialogs</summary>
+/// <param name="AActivate">True to use styled dialogs, False to use standard Windows dialogs</param>
 procedure UseStyledDialogForm(const AActivate: Boolean);
 
-/// <summary>
-///  Register the custom StyledTaskDialog passing the Form Class
-///  The Form must inherits from TStyledTaskDialogForm
-/// </summary>
+/// <summary>Registers a custom styled task dialog form class</summary>
+/// <param name="AFormClass">The form class to register (must inherit from TStyledTaskDialogForm)</param>
+/// <remarks>Use this to register custom dialog forms or animated dialog forms</remarks>
 procedure RegisterTaskDialogFormClass(AFormClass: TStyledTaskDialogFormClass);
 
-/// <summary>
-///  Unregister the custom StyledTaskDialog to use Standard Task Dialog
-/// </summary>
+/// <summary>Unregisters a previously registered task dialog form class</summary>
+/// <param name="AFormClass">The form class to unregister</param>
 procedure UnRegisterTaskDialogFormClass(AFormClass: TStyledTaskDialogFormClass);
 
-/// <summary>
-///  Returns True if an Animated Task Dialog form is registered
-/// </summary>
+/// <summary>Returns True if an animated task dialog form is registered</summary>
+/// <returns>True if an animated form class (with Skia4Delphi support) is registered</returns>
 function AnimatedTaskDialogFormRegistered: Boolean;
 
 implementation
@@ -1027,6 +1083,9 @@ begin
       LStyledButton := TStyledButton.Create(Self);
       LStyledButton.OnClick := ButtonClick;
       LStyledButton.SetButtonStyle(FDialogBtnFamily, LButtonItem.ModalResult);
+      LStyledButton.StyleDrawType := FDialogBtnDrawType;
+      LStyledButton.StyleRadius := FDialogBtnRadius;
+      LStyledButton.StyleRoundedCorners := FDialogBtnRoundedCorners;
     end
     else
     begin
@@ -1285,6 +1344,9 @@ begin
   FCommonButtons := [tcbOk, tcbCancel];
   FDefaultButton := tcbOk;
   FDialogBtnFamily := DEFAULT_CLASSIC_FAMILY;
+  FDialogBtnDrawType := btRoundRect;
+  FDialogBtnRadius := DEFAULT_RADIUS;
+  FDialogBtnRoundedCorners := ALL_ROUNDED_CORNERS;
 end;
 
 procedure TStyledTaskDialogForm.DefaultDialogSize(out AClientWidth, AClientHeight, AImageSize: Integer);
@@ -1530,7 +1592,12 @@ procedure TStyledTaskDialogForm.InitDlgButtonsWithFamily(const AFamily: TStyledB
   procedure UpdateButtonStyle(const AButton: TStyledButton);
   begin
     if AButton.Visible then
+    begin
       AButton.SetButtonStyle(AFamily, AButton.ModalResult);
+      AButton.StyleDrawType := FDialogBtnDrawType;
+      AButton.StyleRadius := FDialogBtnRadius;
+      AButton.StyleRoundedCorners := FDialogBtnRoundedCorners;
+    end;
   end;
 
 begin
@@ -1642,6 +1709,9 @@ begin
     LForm.OnTimer := ATaskDialog.OnTimer;
     LForm.FDialogType := ADialogType;
     LForm.FDialogBtnFamily := ADialogBtnFamily;
+    LForm.FDialogBtnDrawType := ATaskDialog.DialogButtonsDrawType;
+    LForm.FDialogBtnRadius := ATaskDialog.DialogButtonsRadius;
+    LForm.FDialogBtnRoundedCorners := ATaskDialog.DialogButtonsRoundedCorners;
     LForm.FButtonsWidth := ATaskDialog.ButtonsWidth;
     LForm.FButtonsHeight := ATaskDialog.ButtonsHeight;
     LForm.FAutoClickDelay := ATaskDialog.AutoClickDelay;

@@ -57,20 +57,36 @@ resourcestring
   ERROR_SETTING_CATEGORYBUTTONS_STYLE = 'Error setting CategoryButtons Style: %s/%s/%s not available';
 
 type
+  /// <summary>Exception class for styled category buttons errors</summary>
   EStyledCategoryButtonsError = Exception;
 
   TStyledCategoryButtons = class;
+  /// <summary>Class reference type for TStyledCategoryButtons descendants</summary>
   TStyledCategoryButtonsClass = class of TStyledCategoryButtons;
   TStyledButtonItem = class;
+  /// <summary>Class reference type for TStyledButtonItem descendants</summary>
   TStyledButtonItemClass = class of TButtonItem;
   TStyledButtonCategory = class;
+  /// <summary>Class reference type for TStyledButtonCategory descendants</summary>
   TStyledButtonCategoryClass = class of TStyledButtonCategory;
   TStyledButtonCategories = class;
+  /// <summary>Class reference type for TStyledButtonCategories descendants</summary>
   TStyledButtonCategoriesClass = class of TStyledButtonCategories;
 
 
+  /// <summary>Callback procedure for iterating category button items</summary>
+  /// <param name="Button">The current button item being processed</param>
   TButtonProc = reference to procedure (Button: TStyledButtonItem);
 
+  /// <summary>Event handler for retrieving notification badge information</summary>
+  /// <param name="ACategoryIndex">Index of the category</param>
+  /// <param name="AButtonItemIndex">Index of the button item within the category</param>
+  /// <param name="ABadgeContent">Badge text content</param>
+  /// <param name="ASize">Badge size</param>
+  /// <param name="APosition">Badge position on the button</param>
+  /// <param name="AColor">Badge background color</param>
+  /// <param name="AFontColor">Badge text color</param>
+  /// <param name="AFontStyle">Badge font style</param>
   TGetCategoryButtonsBadgeInfo = procedure (
     const ACategoryIndex: Integer;
     const AButtonItemIndex: Integer;
@@ -81,14 +97,24 @@ type
     var AFontColor: TColor;
     var AFontStyle: TFontStyles) of Object;
 
-  { TStyledButtonCategory }
+  /// <summary>Styled button category for organizing button items</summary>
+  /// <remarks>
+  ///   TStyledButtonCategory represents a group of related buttons within
+  ///   a TStyledCategoryButtons component. Categories can be collapsed/expanded
+  ///   and provide visual grouping with header text.
+  /// </remarks>
   TStyledButtonCategory = class(TButtonCategory)
   protected
   public
     constructor Create(Collection: TCollection); override;
   end;
 
-  { TStyledButtonCategories }
+  /// <summary>Collection class for styled button categories</summary>
+  /// <remarks>
+  ///   TStyledButtonCategories is a collection that holds TStyledButtonCategory
+  ///   objects, each containing one or more TStyledButtonItem objects. This
+  ///   provides a two-level hierarchy for organizing buttons.
+  /// </remarks>
   TStyledButtonCategories = class(TButtonCategories)
   private
     function GetStyledCategoryButtons: TStyledCategoryButtons;
@@ -101,7 +127,13 @@ type
     property Items[Index: Integer]: TStyledButtonCategory read GetItem write SetItem; default;
   end;
 
-  { TStyledButtonItem }
+  /// <summary>Styled button item with individual style support</summary>
+  /// <remarks>
+  ///   TStyledButtonItem represents a single button within a category.
+  ///   Each item can have its own StyleFamily, StyleClass, StyleAppearance,
+  ///   StyleDrawType, StyleRadius, and StyleRoundedCorners properties,
+  ///   allowing individual buttons to have different appearances.
+  /// </remarks>
   TStyledButtonItem = class(TButtonItem)
   private
     FCollection: TButtonCollection;
@@ -146,7 +178,16 @@ type
   end;
 
 
-  { TStyledCategoryButtons }
+  /// <summary>Styled category buttons component with modern appearance</summary>
+  /// <remarks>
+  ///   TStyledCategoryButtons is a styled alternative to TCategoryButtons that
+  ///   provides modern visual appearance through the StyledComponents styling
+  ///   system. Organizes buttons into collapsible categories with headers.
+  ///   Supports custom button styles (StyleFamily, StyleClass, StyleAppearance),
+  ///   notification badges via OnGetNotificationBadgeInfo, and all standard
+  ///   category buttons features. Individual items can override the component's
+  ///   default style. Use RegisterDefaultRenderingStyle to set global defaults.
+  /// </remarks>
   [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledCategoryButtons = class(TCategoryButtons)
   private
@@ -329,7 +370,7 @@ constructor TStyledCategoryButtons.CreateStyled(AOwner: TComponent;
   const AFamily: TStyledButtonFamily; const AClass: TStyledButtonClass;
   const AAppearance: TStyledButtonAppearance);
 begin
-  Assert(Assigned(AOwner));
+//  Assert(Assigned(AOwner));
   inherited Create(AOwner);
 
   //new properties for StyledCategoryButtons

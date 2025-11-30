@@ -58,14 +58,29 @@ resourcestring
   ERROR_CANNOT_USE_RENDER = 'Error: cannot use TStyledButtonRender in this context';
 
 type
+  /// <summary>Exception class for styled button errors</summary>
   EStyledButtonError = Exception;
 
+  /// <summary>Enumeration of button visual states</summary>
+  /// <remarks>
+  ///   bsmNormal: Default state
+  ///   bsmPressed: Button is being clicked
+  ///   bsmSelected: Button has focus or is selected
+  ///   bsmHot: Mouse is hovering over the button
+  ///   bsmDisabled: Button is disabled
+  /// </remarks>
   TStyledButtonState = (bsmNormal, bsmPressed, bsmSelected, bsmHot, bsmDisabled);
 
   TStyledButtonRender = class;
+  /// <summary>Class reference type for TStyledButtonRender descendants</summary>
   TStyledButtonRenderClass = class of TStyledButtonRender;
 
-  { TGraphicButtonActionLink }
+  /// <summary>Action link class for graphic styled buttons</summary>
+  /// <remarks>
+  ///   Connects TCustomStyledGraphicButton to TAction, enabling automatic
+  ///   synchronization of button properties (Enabled, ImageIndex, Checked)
+  ///   with action properties.
+  /// </remarks>
   TGraphicButtonActionLink = class(TControlActionLink)
   strict private
     function ClientRender: TStyledButtonRender;
@@ -87,14 +102,26 @@ type
     function IsGlyphLinked(Index: TImageIndex): Boolean; virtual;
   end;
 
+  /// <summary>Callback procedure for accessing owner control's font</summary>
+  /// <param name="AFont">Returns the owner control's font</param>
   TControlFont = procedure (var AFont: TFont) of Object;
 
+  /// <summary>Callback procedure for setting owner control's caption</summary>
+  /// <param name="ACaption">Caption text to set</param>
   TSetCaption = procedure (const ACaption: TCaption) of Object;
+  /// <summary>Callback function for getting owner control's caption</summary>
+  /// <returns>Current caption text</returns>
   TGetCaption = function : TCaption of Object;
 
+  /// <summary>Callback procedure for setting owner control's ParentFont property</summary>
+  /// <param name="AParentFont">Value to set</param>
   TSetParentFont = procedure (const AParentFont: Boolean) of Object;
+  /// <summary>Callback function for getting owner control's ParentFont property</summary>
+  /// <returns>Current ParentFont value</returns>
   TGetParentFont = function: Boolean of Object;
 
+  /// <summary>Image margins class with render integration</summary>
+  /// <remarks>Extends TImageMargins to notify the button render when margins change</remarks>
   TStyledImageMargins = class(TImageMargins)
   private
     FRender: TStyledButtonRender;
@@ -111,15 +138,28 @@ type
     function StoreRight: Boolean;
     function StoreTop: Boolean;
   public
+    /// <summary>Creates image margins associated with a button render</summary>
     constructor CreateForRender(const ARender: TStyledButtonRender);
   published
+    /// <summary>Left margin in pixels</summary>
     property Left: Integer read GetLeft write SetLeft stored StoreLeft;
+    /// <summary>Top margin in pixels</summary>
     property Top: Integer read GetTop write SetTop stored StoreTop;
+    /// <summary>Right margin in pixels</summary>
     property Right: Integer read GetRight write SetRight stored StoreRight;
+    /// <summary>Bottom margin in pixels</summary>
     property Bottom: Integer read GetBottom write SetBottom stored StoreBottom;
   end;
 
-  { TStyledButtonRender }
+  /// <summary>Core rendering class for all styled buttons</summary>
+  /// <remarks>
+  ///   TStyledButtonRender is the central non-visual class that handles all button
+  ///   rendering logic. Every styled button component (TStyledButton, TStyledGraphicButton,
+  ///   TStyledSpeedButton, TStyledBitBtn) uses composition with this class to delegate
+  ///   their visual rendering. This eliminates code duplication across 40+ component variants.
+  ///   The render maintains five TStyledButtonAttributes instances for each visual state:
+  ///   Normal, Pressed, Selected, Hot, and Disabled.
+  /// </remarks>
   TStyledButtonRender = class(TObject)
   strict private
     FOwnerControl: TControl;
@@ -340,62 +380,129 @@ type
     function GetInternalImage(out AImageList: TCustomImageList;
       out AImageIndex: Integer): Boolean;
   public
+    /// <summary>Gets the size of the current button image</summary>
+    /// <param name="AWidth">Returns image width in pixels</param>
+    /// <param name="AHeight">Returns image height in pixels</param>
+    /// <param name="AImageList">Returns the image list containing the image</param>
+    /// <param name="AImageIndex">Returns the index of the image</param>
+    /// <returns>True if image exists, False otherwise</returns>
     function GetImageSize(out AWidth, AHeight: Integer;
       out AImageList: TCustomImageList; out AImageIndex: Integer): Boolean; virtual;
+    /// <summary>Gets whether the button is currently being rescaled</summary>
     function GetRescalingButton: Boolean;
+    /// <summary>Sets the rescaling state of the button</summary>
     procedure SetRescalingButton(const AValue: Boolean);
+    /// <summary>Calculates the width of the split button dropdown area</summary>
     function GetSplitButtonWidth: Integer;
+    /// <summary>Displays the dropdown menu at the button location</summary>
     procedure ShowDropDownMenu;
+    /// <summary>Gets the current image for rendering</summary>
+    /// <param name="AImageList">Returns the image list</param>
+    /// <param name="AImageIndex">Returns the image index</param>
+    /// <returns>True if image exists</returns>
     function GetImage(out AImageList: TCustomImageList;
       out AImageIndex: Integer): Boolean;
+    /// <summary>Handles mouse move events for hover state</summary>
     procedure MouseMove(Shift: TShiftState; X, Y: Integer);
+    /// <summary>Handles mouse down events for pressed state</summary>
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer);
+    /// <summary>Handles mouse up events and triggers click</summary>
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer);
+    /// <summary>Called after component streaming is complete</summary>
     procedure Loaded;
+    /// <summary>Responds to changes in the associated action</summary>
     procedure ActionChange(Sender: TObject; CheckDefaults: Boolean);
+    /// <summary>Erases the button background</summary>
+    /// <param name="ACanvas">Target canvas for drawing</param>
     procedure EraseBackground(const ACanvas: TCanvas);
+    /// <summary>Draws the complete button with background, border, caption and image</summary>
+    /// <param name="ACanvas">Target canvas for drawing</param>
+    /// <param name="AEraseBackground">Whether to erase background first</param>
     procedure DrawButton(const ACanvas: TCanvas;
       const AEraseBackground: Boolean);
+    /// <summary>Draws the button caption and image</summary>
+    /// <param name="ACanvas">Target canvas for drawing</param>
+    /// <param name="ASurfaceRect">Rectangle defining the drawing area</param>
     procedure DrawCaptionAndImage(const ACanvas: TCanvas;
       const ASurfaceRect: TRect);
+    /// <summary>Sets the button caption text</summary>
     procedure SetText(const AValue: TCaption);
+    /// <summary>Gets the button caption text</summary>
     function GetText: TCaption;
+    /// <summary>Checks if dropdown menu can be shown</summary>
     function CanDropDownMenu: boolean;
     //Windows messages
+    /// <summary>Handles WM_KEYDOWN message</summary>
     procedure WMKeyDown(var Message: TMessage);
+    /// <summary>Handles WM_KEYUP message</summary>
     procedure WMKeyUp(var Message: TMessage);
+    /// <summary>Handles CM_STYLECHANGED message for VCL Style changes</summary>
     procedure CMStyleChanged(var Message: TMessage);
+    /// <summary>Handles CM_ENTER message when button receives focus</summary>
     procedure CMEnter(var Message: TCMEnter);
+    /// <summary>Handles CM_MOUSEENTER message for hot state</summary>
     procedure CMMouseEnter(var Message: TNotifyEvent);
+    /// <summary>Handles CM_MOUSELEAVE message to clear hot state</summary>
     procedure CMMouseLeave(var Message: TNotifyEvent);
+    /// <summary>Handles CM_ENABLEDCHANGED message</summary>
     procedure CMEnabledChanged(var Message: TMessage);
     {$IFDEF HiDPISupport}
+    /// <summary>Handles DPI scaling changes</summary>
+    /// <param name="M">Numerator of scale factor</param>
+    /// <param name="D">Denominator of scale factor</param>
+    /// <param name="isDpiChange">True if triggered by DPI change</param>
     procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); virtual;
     {$ENDIF}
+    /// <summary>Begins batch update to prevent repainting</summary>
     procedure BeginUpdate;
+    /// <summary>Ends batch update and triggers repaint</summary>
     procedure EndUpdate;
+    /// <summary>Checks if a custom draw type has been set</summary>
     function IsCustomDrawType: Boolean;
+    /// <summary>Checks if a custom radius has been set</summary>
     function IsCustomRadius: Boolean;
+    /// <summary>Determines if StyleFamily should be stored</summary>
     function IsStoredStyleFamily: Boolean;
+    /// <summary>Determines if StyleClass should be stored</summary>
     function IsStoredStyleClass: Boolean;
+    /// <summary>Determines if StyleAppearance should be stored</summary>
     function IsStoredStyleAppearance: Boolean;
+    /// <summary>Determines if StyleElements should be stored</summary>
     function IsStoredStyleElements: Boolean;
+    /// <summary>Determines if ButtonStyleSelected should be stored</summary>
     function IsStyleSelectedStored: Boolean;
+    /// <summary>Determines if ButtonStyleHot should be stored</summary>
     function IsStyleHotStored: Boolean;
+    /// <summary>Determines if ButtonStyleNormal should be stored</summary>
     function IsStyleNormalStored: Boolean;
+    /// <summary>Determines if ButtonStyleDisabled should be stored</summary>
     function IsStyleDisabledStored: Boolean;
+    /// <summary>Determines if ButtonStylePressed should be stored</summary>
     function IsStylePressedStored: Boolean;
+    /// <summary>Determines if NotificationBadge should be stored</summary>
     function IsNotificationBadgeStored: Boolean;
+    /// <summary>Sets the button style using family, class, and appearance</summary>
+    /// <param name="AStyleFamily">Style family name</param>
+    /// <param name="AStyleClass">Style class within the family</param>
+    /// <param name="AStyleAppearance">Style appearance variant</param>
     procedure SetButtonStyle(const AStyleFamily: TStyledButtonFamily;
       const AStyleClass: TStyledButtonClass;
       const AStyleAppearance: TStyledButtonAppearance); overload;
+    /// <summary>Sets the button style based on modal result</summary>
+    /// <param name="AStyleFamily">Style family name</param>
+    /// <param name="AModalResult">Modal result to determine appropriate style</param>
     procedure SetButtonStyle(const AStyleFamily: TStyledButtonFamily;
       const AModalResult: TModalResult); overload;
 
+    /// <summary>Sets focus to the owner control</summary>
     procedure SetFocus;
+    /// <summary>Copies all style properties to another render</summary>
+    /// <param name="ADest">Destination render to receive styles</param>
     procedure AssignStyleTo(ADest: TStyledButtonRender);
+    /// <summary>Assigns multiple attributes in a single call using ImageAlignment</summary>
+    /// <returns>The owner control</returns>
     function AssignAttributes(
       const AEnabled: Boolean = True;
       const AImageList: TCustomImageList = nil;
@@ -405,6 +512,8 @@ type
       const AAction: TCustomAction = nil;
       const AOnClick: TNotifyEvent = nil;
       const AName: string = ''): TControl; overload;
+    /// <summary>Assigns multiple attributes in a single call using ButtonLayout</summary>
+    /// <returns>The owner control</returns>
     function AssignAttributes(
       const AEnabled: Boolean = True;
       const AImageList: TCustomImageList = nil;
@@ -415,13 +524,34 @@ type
       const AOnClick: TNotifyEvent = nil;
       const AName: string = ''): TControl; overload;
 
+    /// <summary>Executes the button click action</summary>
+    /// <param name="AKeyPressed">True if click was triggered by keyboard</param>
     procedure Click(AKeyPressed: Boolean);
+    /// <summary>Shows the dropdown menu if available</summary>
     procedure DoDropDownMenu;
+    /// <summary>Sets all button style properties at once</summary>
+    /// <param name="AFamily">Style family name</param>
+    /// <param name="AClass">Style class within the family</param>
+    /// <param name="AAppearance">Style appearance variant</param>
     procedure SetButtonStyles(
       const AFamily: TStyledButtonFamily;
       const AClass: TStyledButtonClass;
       const AAppearance: TStyledButtonAppearance);
 
+    /// <summary>Creates render with custom style settings</summary>
+    /// <param name="AOwner">Owner control</param>
+    /// <param name="AOnClick">Click event handler</param>
+    /// <param name="AControlFont">Callback to get control font</param>
+    /// <param name="AGetCaption">Callback to get caption</param>
+    /// <param name="ASetCaption">Callback to set caption</param>
+    /// <param name="AGetParentFont">Callback to get ParentFont</param>
+    /// <param name="ASetParentFont">Callback to set ParentFont</param>
+    /// <param name="AFamily">Initial style family</param>
+    /// <param name="AClass">Initial style class</param>
+    /// <param name="AAppearance">Initial style appearance</param>
+    /// <param name="ADrawType">Initial draw type</param>
+    /// <param name="ACursor">Initial cursor</param>
+    /// <param name="AUseCustomDrawType">Whether to use custom draw type</param>
     constructor CreateStyled(AOwner: TControl;
       const AOnClick: TNotifyEvent;
       const AControlFont: TControlFont;
@@ -435,6 +565,7 @@ type
       const ADrawType: TStyledButtonDrawType;
       const ACursor: TCursor;
       const AUseCustomDrawType: Boolean); virtual;
+    /// <summary>Creates render with default style settings</summary>
     constructor Create(AOwner: TControl;
       const AOnClick: TNotifyEvent;
       const AControlFont: TControlFont;
@@ -442,107 +573,187 @@ type
       const ASetCaption: TSetCaption;
       const AGetParentFont: TGetParentFont;
       const ASetParentFont: TSetParentFont);
+    /// <summary>Destroys the render and releases resources</summary>
     destructor Destroy; override;
+    /// <summary>Checks if using default appearance settings</summary>
     function IsDefaultAppearance: Boolean;
+    /// <summary>Renders as standard VCL component when True</summary>
     property AsVCLComponent: Boolean read GetAsVCLComponent write SetAsVCLComponent;
+    /// <summary>Indicates if button is the active/default button</summary>
     property Active: Boolean read FActive write FActive;
+    /// <summary>Enables automatic clicking after AutoClickDelay milliseconds</summary>
     property AutoClick: Boolean read FAutoClick write SetAutoClick default False;
+    /// <summary>Delay in milliseconds before AutoClick triggers</summary>
     property AutoClickDelay: Integer read FAutoClickDelay write SetAutoClickDelay default DEFAULT_AUTOCLICK_DELAY;
+    /// <summary>Indicates if button has keyboard focus</summary>
     property Focused: Boolean read GetFocused;
+    /// <summary>Current visual state of the button</summary>
     property ButtonState: TStyledButtonState read GetButtonState;
+    /// <summary>Indicates if style attributes have been applied</summary>
     property StyleApplied: Boolean read FStyleApplied write SetStyleApplied;
+    /// <summary>Button text displayed on the control</summary>
     property Caption: TCaption read GetText write SetText;
+    /// <summary>Text alignment within the button</summary>
     property CaptionAlignment: TAlignment read FCaptionAlignment write SetCaptionAlignment;
+    /// <summary>Controls visibility of the caption text</summary>
     property ShowCaption: Boolean read FShowCaption write SetShowCaption default True;
+    /// <summary>Secondary hint text for command link style buttons</summary>
     property CommandLinkHint: string read FCommandLinkHint write SetCommandLinkHint;
+    /// <summary>Makes this the default button (responds to Enter key)</summary>
     property Default: Boolean read FDefault write FDefault;
+    /// <summary>Displays UAC elevation shield icon when True</summary>
     property ElevationRequired: Boolean read FElevationRequired write SetElevationRequired;
+    /// <summary>Makes this the cancel button (responds to Escape key)</summary>
     property Cancel: Boolean read FCancel write FCancel;
+    /// <summary>Returns the currently active VCL style name</summary>
     property ActiveStyleName: string read GetActiveStyleName;
+    /// <summary>Position of image relative to caption</summary>
     property ImageAlignment: TImageAlignment read FImageAlignment write SetImageAlignment;
+    /// <summary>Image index to use when button is disabled</summary>
     property DisabledImageIndex: TImageIndex read FDisabledImageIndex write SetDisabledImageIndex;
+    /// <summary>Image list for disabled state images</summary>
     property DisabledImages: TCustomImageList read FDisabledImages write SetDisabledImages;
+    /// <summary>Popup menu to display as dropdown</summary>
     property DropDownMenu: TPopupMenu read FDropDownMenu write SetDropDownMenu;
+    /// <summary>Renders button with flat appearance when True</summary>
     property Flat: Boolean read FFlat write SetFlat;
+    /// <summary>Width of the split button dropdown arrow area</summary>
     property SplitButtonWidth: Integer read GetSplitButtonWidth;
+    /// <summary>Image index when mouse hovers over button</summary>
     property HotImageIndex: TImageIndex read FHotImageIndex write SetHotImageIndex;
+    /// <summary>Image index for stylus/pen hover state</summary>
     property StylusHotImageIndex: TImageIndex read FStylusHotImageIndex write SetStylusHotImageIndex;
+    /// <summary>Bitmap glyph for TBitBtn compatibility</summary>
     property Glyph: TBitmap read GetGlyph write SetGlyph;
+    /// <summary>Number of glyph images in the bitmap</summary>
     property NumGlyphs: TNumGlyphs read GetNumGlyphs write SetNumGlyphs;
+    /// <summary>Image list containing button images</summary>
     property Images: TCustomImageList read FImages write SetImages;
+    /// <summary>Index of the default image in Images</summary>
     property ImageIndex: TImageIndex read GetImageIndex write SetImageIndex;
+    /// <summary>Predefined button type (OK, Cancel, Yes, No, etc.)</summary>
     property Kind: TBitBtnKind read GetKind write SetKind default bkCustom;
+    /// <summary>Control that owns this render instance</summary>
     property OwnerControl: TControl read FOwnerControl;
+    /// <summary>Image index when button is pressed</summary>
     property PressedImageIndex: TImageIndex read FPressedImageIndex write SetPressedImageIndex;
+    /// <summary>Image index when button is selected/focused</summary>
     property SelectedImageIndex: TImageIndex read FSelectedImageIndex write SetSelectedImageIndex;
+    /// <summary>Makes button background transparent</summary>
     property Transparent: Boolean read FTransparent write SetTransparent;
     {$IFDEF D10_4+}
+    /// <summary>Image name for disabled state (Delphi 10.4+)</summary>
     property DisabledImageName: TImageName read FDisabledImageName write SetDisabledImageName;
+    /// <summary>Image name for hot/hover state (Delphi 10.4+)</summary>
     property HotImageName: TImageName read FHotImageName write SetHotImageName;
+    /// <summary>Image name for stylus hover state (Delphi 10.4+)</summary>
     property StylusHotImageName: TImageName read FStylusHotImageName write SetStylusHotImageName;
+    /// <summary>Default image name (Delphi 10.4+)</summary>
     property ImageName: TImageName read GetImageName write SetImageName;
+    /// <summary>Image name for pressed state (Delphi 10.4+)</summary>
     property PressedImageName: TImageName read FPressedImageName write SetPressedImageName;
+    /// <summary>Image name for selected state (Delphi 10.4+)</summary>
     property SelectedImageName: TImageName read FSelectedImageName write SetSelectedImageName;
     {$ENDIF}
+    /// <summary>Margins around the image in pixels</summary>
     property ImageMargins: TImageMargins read FImageMargins write SetImageMargins;
+    /// <summary>Modal result returned when button is clicked</summary>
     property ModalResult: TModalResult read FModalResult write SetModalResult;
+    /// <summary>Indicates button is being rescaled for DPI changes</summary>
     property RescalingButton: Boolean read GetRescalingButton write SetRescalingButton;
 
     //Properties used when UseButtonLayout is True
+    /// <summary>Position of glyph relative to caption (TSpeedButton compatibility)</summary>
     property Layout: TButtonLayout read FButtonLayout write SetLayout;
+    /// <summary>Margin around glyph in pixels (-1 for automatic)</summary>
     property Margin: Integer read FMargin write SetMargin default -1;
+    /// <summary>Spacing between glyph and caption in pixels</summary>
     property Spacing: Integer read FSpacing write SetSpacing default 0;
 
     //Property used by TStyledButton, TStyledGraphicButton and TStyledSpeedButton
+    /// <summary>Allows all buttons in group to be up simultaneously</summary>
     property AllowAllUp: Boolean read FAllowAllUp write SetAllowAllUp;
+    /// <summary>Group identifier for radio-button behavior</summary>
     property GroupIndex: Integer read FGroupIndex write SetGroupIndex;
+    /// <summary>Pressed/checked state for grouped buttons</summary>
     property Down: Boolean read FDown write SetDown;
 
     //Style as TButton
+    /// <summary>Button style type (push button, command link, split)</summary>
     property Style: TCustomButton.TButtonStyle read FStyle write SetStyle;
 
     //StyledComponents Attributes
+    /// <summary>Corner radius for rounded button shapes in pixels</summary>
     property StyleRadius: Integer read FStyleRadius write SetStyleRadius;
+    /// <summary>Which corners should be rounded</summary>
     property StyleRoundedCorners: TRoundedCorners read FStyleRoundedCorners write SetStyleRoundedCorners default ALL_ROUNDED_CORNERS;
+    /// <summary>Shape type for button rendering</summary>
     property StyleDrawType: TStyledButtonDrawType read FStyleDrawType write SetStyleDrawType;
+    /// <summary>Style family name (Classic, Bootstrap, Angular, etc.)</summary>
     property StyleFamily: TStyledButtonFamily read FStyleFamily write SetStyleFamily;
+    /// <summary>Style class within the family</summary>
     property StyleClass: TStyledButtonClass read FStyleClass write SetStyleClass;
+    /// <summary>Style appearance variant</summary>
     property StyleAppearance: TStyledButtonAppearance read FStyleAppearance write SetStyleAppearance;
 
+    /// <summary>User-defined integer tag value</summary>
     property Tag: Integer read FTag write FTag;
+    /// <summary>Enables word wrapping for multi-line captions</summary>
     property WordWrap: Boolean read FWordWrap write SetWordWrap;
 
+    /// <summary>Custom attributes for normal button state</summary>
     property ButtonStyleNormal: TStyledButtonAttributes read FButtonStyleNormal write SetButtonStyleNormal;
+    /// <summary>Custom attributes for pressed button state</summary>
     property ButtonStylePressed: TStyledButtonAttributes read FButtonStylePressed write SetButtonStylePressed;
+    /// <summary>Custom attributes for selected/focused button state</summary>
     property ButtonStyleSelected: TStyledButtonAttributes read FButtonStyleSelected write SetButtonStyleSelected;
+    /// <summary>Custom attributes for hot/hover button state</summary>
     property ButtonStyleHot: TStyledButtonAttributes read FButtonStyleHot write SetButtonStyleHot;
+    /// <summary>Custom attributes for disabled button state</summary>
     property ButtonStyleDisabled: TStyledButtonAttributes read FButtonStyleDisabled write SetButtonStyleDisabled;
+    /// <summary>Notification badge display settings</summary>
     property NotificationBadge: TNotificationBadgeAttributes read FNotificationBadge write SetNotificationBadge;
 
+    /// <summary>Event fired when dropdown arrow is clicked</summary>
     property OnDropDownClick: TNotifyEvent read FOnDropDownClick write FOnDropDownClick;
 
     //Render property accessible from Components
+    /// <summary>Current button state for rendering</summary>
     property State: TButtonState read FState write SetState;
+    /// <summary>Indicates if mouse cursor is over the button</summary>
     property MouseInControl: Boolean read GetMouseInControl;
 
     //Owner Control property Access
-    //property Canvas: TCanvas read GetControlCanvas;
+    /// <summary>Enabled state of the owner control</summary>
     property Enabled: Boolean read GetControlEnabled write SetControlEnabled;
+    /// <summary>Inherits font from parent control when True</summary>
     property ParentFont: Boolean read GetParentFont write SetParentFont;
+    /// <summary>Font used for button text</summary>
     property Font: TFont read GetFont;
+    /// <summary>Action associated with the button</summary>
     property Action: TCustomAction read GetAction write SetAction;
-    property Name: TComponentName read GetName; // write SetName;
+    /// <summary>Component name of the owner control</summary>
+    property Name: TComponentName read GetName;
+    /// <summary>Parent control containing this button</summary>
     property Parent: TWinControl read GetParent write SetParent;
+    /// <summary>Current state of the owner component</summary>
     property ComponentState: TComponentState read GetComponentState;
+    /// <summary>Height of the owner control in pixels</summary>
     property Height: Integer read GetComponentHeight;
+    /// <summary>Width of the owner control in pixels</summary>
     property Width: Integer read GetComponentWidth;
+    /// <summary>Hint text for the owner control</summary>
     property Hint: string read GetHint;
 
     //Owner Control must assign those event-handlers
+    /// <summary>Event handler for button click</summary>
     property OnClick: TNotifyEvent read FOnClick write FOnClick;
+    /// <summary>Callback to access owner control's font</summary>
     property ControlFont: TControlFont read FControlFont write FControlFont;
   public
+    /// <summary>Sets whether a custom draw type is being used</summary>
     procedure SetCustomStyleDrawType(ACustomStyleDrawType: Boolean);
+    /// <summary>Indicates if custom style attributes have been set</summary>
     property HasCustomAttributes: Boolean read GetHasCustomAttributes write SetHasCustomAttributes default False;
   end;
 
@@ -551,7 +762,15 @@ type
   TStyledSpeedButton = class;
   TStyledBitBtn = class;
 
-  { TCustomStyledGraphicButton }
+  /// <summary>Base class for lightweight styled graphic buttons</summary>
+  /// <remarks>
+  ///   TCustomStyledGraphicButton is a lightweight button component based on
+  ///   TGraphicControl. It does not have a window handle, cannot receive focus,
+  ///   and cannot be used as a container. Use this for toolbar buttons, decorative
+  ///   buttons, or scenarios where focus support is not required. For buttons
+  ///   that need keyboard focus, use TCustomStyledButton instead.
+  ///   Styling is delegated to an internal TStyledButtonRender instance.
+  /// </remarks>
   TCustomStyledGraphicButton = class(TGraphicControl)
   private
     FRender: TStyledButtonRender;
@@ -740,6 +959,13 @@ type
     {$ENDIF}
     function GetRenderClass: TStyledButtonRenderClass; virtual;
   public
+    /// <summary>Registers default rendering style for all new instances</summary>
+    /// <param name="ADrawType">Default draw type (shape)</param>
+    /// <param name="AFamily">Default style family</param>
+    /// <param name="AClass">Default style class</param>
+    /// <param name="AAppearance">Default style appearance</param>
+    /// <param name="AStyleRadius">Default corner radius</param>
+    /// <param name="ACursor">Default cursor</param>
     class procedure RegisterDefaultRenderingStyle(
       const ADrawType: TStyledButtonDrawType;
       const AFamily: TStyledButtonFamily = DEFAULT_CLASSIC_FAMILY;
@@ -747,20 +973,33 @@ type
       const AAppearance: TStyledButtonAppearance = DEFAULT_APPEARANCE;
       const AStyleRadius: Integer = DEFAULT_RADIUS;
       const ACursor: TCursor = DEFAULT_CURSOR); virtual;
+    /// <summary>Gets whether button is being rescaled</summary>
     function GetRescalingButton: Boolean;
+    /// <summary>Sets the rescaling state</summary>
     procedure SetRescalingButton(const AValue: Boolean);
+    /// <summary>Gets the width of the split button area</summary>
     function GetSplitButtonWidth: Integer;
+    /// <summary>Displays the dropdown menu</summary>
     procedure ShowDropDownMenu;
+    /// <summary>Begins batch update to prevent repainting</summary>
     procedure BeginUpdate;
+    /// <summary>Ends batch update and triggers repaint</summary>
     procedure EndUpdate;
+    /// <summary>Sets button style using family, class, and appearance</summary>
     procedure SetButtonStyle(const AStyleFamily: TStyledButtonFamily;
       const AStyleClass: TStyledButtonClass;
       const AStyleAppearance: TStyledButtonAppearance); overload;
+    /// <summary>Sets button style based on modal result</summary>
     procedure SetButtonStyle(const AStyleFamily: TStyledButtonFamily;
       const AModalResult: TModalResult); overload;
+    /// <summary>Copies style settings to a render instance</summary>
     procedure AssignStyleTo(ADestRender: TStyledButtonRender); overload;
+    /// <summary>Copies style settings to another graphic button</summary>
     procedure AssignStyleTo(ADest: TCustomStyledGraphicButton); overload;
+    /// <summary>Assigns this button's properties to another object</summary>
     procedure AssignTo(ADest: TPersistent); override;
+    /// <summary>Assigns multiple attributes in a single call</summary>
+    /// <returns>Self for method chaining</returns>
     function AssignAttributes(
       const AEnabled: Boolean = True;
       const AImageList: TCustomImageList = nil;
@@ -770,12 +1009,16 @@ type
       const AAction: TCustomAction = nil;
       const AOnClick: TNotifyEvent = nil;
       const AName: string = ''): TCustomStyledGraphicButton;
+    /// <summary>Executes the button click action</summary>
     procedure Click; override;
+    /// <summary>Shows the dropdown menu if available</summary>
     procedure DoDropDownMenu;
+    /// <summary>Creates button with specified style settings</summary>
     constructor CreateStyled(AOwner: TComponent;
       const AFamily: TStyledButtonFamily;
       const AClass: TStyledButtonClass;
       const AAppearance: TStyledButtonAppearance); overload; virtual;
+    /// <summary>Creates button with full style customization</summary>
     constructor CreateStyled(AOwner: TComponent;
       const AFamily: TStyledButtonFamily;
       const AClass: TStyledButtonClass;
@@ -783,7 +1026,9 @@ type
       const ADrawType: TStyledButtonDrawType;
       const ACursor: TCursor;
       const AUseCustomDrawType: Boolean); overload; virtual;
+    /// <summary>Creates button with default style settings</summary>
     constructor Create(AOwner: TComponent); override;
+    /// <summary>Destroys the button and releases resources</summary>
     destructor Destroy; override;
     property ActiveStyleName: string read GetActiveStyleName;
     property AsVCLComponent: Boolean read GetAsVCLComponent write SetAsVCLComponent;
@@ -853,7 +1098,14 @@ type
     property OnDropDownClick: TNotifyEvent read GetOnDropDownClick write SetOnDropDownClick;
   end;
 
-  { TStyledGraphicButton }
+  /// <summary>Styled graphic button component without window handle</summary>
+  /// <remarks>
+  ///   TStyledGraphicButton is a lightweight styled button based on TGraphicControl.
+  ///   It supports all styling features (StyleFamily, StyleClass, StyleAppearance,
+  ///   StyleDrawType, StyleRadius) but cannot receive keyboard focus. Ideal for
+  ///   toolbar buttons, floating buttons, or decorative clickable elements.
+  ///   Published properties expose all styling and image options.
+  /// </remarks>
   [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledGraphicButton = class(TCustomStyledGraphicButton)
   published
@@ -944,7 +1196,14 @@ type
     property OnDropDownClick;
   end;
 
-  { TStyledSpeedButton }
+  /// <summary>TSpeedButton-compatible styled button component</summary>
+  /// <remarks>
+  ///   TStyledSpeedButton provides compatibility with TSpeedButton, exposing
+  ///   Layout, Margin, and Spacing properties for positioning glyphs and captions.
+  ///   Defaults to Transparent=True and Spacing=4 to match TSpeedButton behavior.
+  ///   Use this component to replace existing TSpeedButton controls while gaining
+  ///   styled appearance capabilities. Like TSpeedButton, it cannot receive focus.
+  /// </remarks>
   [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledSpeedButton = class(TCustomStyledGraphicButton)
   public
@@ -1026,7 +1285,15 @@ type
     property ButtonStyleDisabled;
   end;
 
-  { TCustomStyledButton }
+  /// <summary>Base class for windowed styled buttons with focus support</summary>
+  /// <remarks>
+  ///   TCustomStyledButton is a windowed button component based on TCustomControl.
+  ///   Unlike TCustomStyledGraphicButton, it has a window handle and can receive
+  ///   keyboard focus, making it suitable for form navigation via Tab key.
+  ///   Supports Default and Cancel properties for dialog integration, ElevationRequired
+  ///   for UAC shield display, and all standard button features. Uses double-buffered
+  ///   painting for flicker-free rendering. Styling is delegated to TStyledButtonRender.
+  /// </remarks>
   TCustomStyledButton = class(TCustomControl)
   private
     FPaintBuffer: TBitmap;
@@ -1367,7 +1634,14 @@ type
     property OnKeyUp;
   end;
 
-  { TStyledButton }
+  /// <summary>Primary styled button component with full focus and dialog support</summary>
+  /// <remarks>
+  ///   TStyledButton is the main styled button component, equivalent to TButton but
+  ///   with modern styled appearance. Supports keyboard focus, Default/Cancel properties
+  ///   for dialog integration, ModalResult for form closing, and all styling features.
+  ///   Use this component for primary form buttons that require keyboard navigation.
+  ///   Configure default styles via RegisterDefaultRenderingStyle class method.
+  /// </remarks>
   [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledButton = class(TCustomStyledButton)
   published
@@ -1483,7 +1757,15 @@ type
     property ButtonStyleDisabled;
   end;
 
-  { TStyledBitBtn }
+  /// <summary>TBitBtn-compatible styled button with glyph support</summary>
+  /// <remarks>
+  ///   TStyledBitBtn provides compatibility with TBitBtn, supporting Glyph,
+  ///   NumGlyphs, Layout, Margin, Spacing, and Kind properties. The Kind
+  ///   property automatically sets Caption, Glyph, and ModalResult based on
+  ///   predefined button types (bkOK, bkCancel, bkYes, bkNo, etc.).
+  ///   Use this component to replace existing TBitBtn controls while gaining
+  ///   styled appearance capabilities and modern visual features.
+  /// </remarks>
   [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledBitBtn = class(TCustomStyledButton)
   private
@@ -1573,7 +1855,15 @@ type
     property ButtonStyleDisabled;
   end;
 
-//Global function to create a StyledButton
+/// <summary>Creates and positions a styled button in a single call</summary>
+/// <param name="AOwner">Component owner for memory management</param>
+/// <param name="AParent">Parent control where button will be placed</param>
+/// <param name="AFamily">Style family (Classic, Bootstrap, Angular, etc.)</param>
+/// <param name="AClass">Style class within the family</param>
+/// <param name="AAppearance">Style appearance variant</param>
+/// <param name="ACaption">Button caption text</param>
+/// <param name="ARectPosition">Position rectangle (Left, Top, Width, Height)</param>
+/// <returns>Created TCustomStyledButton instance</returns>
 function CreateAndPosStyledButton(const AOwner: TComponent;
   const AParent: TWinControl;
   const AFamily: TStyledButtonFamily;

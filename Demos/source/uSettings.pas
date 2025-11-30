@@ -56,12 +56,14 @@ type
     FButtonDrawRounded: Boolean;
     FToolbarDrawRounded: Boolean;
     FMenuDrawRounded: Boolean;
+    FDialogDrawRounded: Boolean;
     function GetUseDarkStyle: Boolean;
     function GetButtonTextColor: TColor;
     class function GetSettingsFileName: string; static;
     procedure SetButtonDrawRounded(const AValue: Boolean);
     procedure SetToolbarDrawRounded(const AValue: Boolean);
     procedure SetMenuDrawRounded(const AValue: Boolean);
+    procedure SetDialogDrawRounded(const AValue: Boolean);
     procedure Changed;
     procedure SetActivePageIndex(const AValue: Integer);
     procedure SetFontName(const AValue: string);
@@ -92,6 +94,7 @@ type
     property ButtonDrawRounded: Boolean read FButtonDrawRounded write SetButtonDrawRounded;
     property ToolbarDrawRounded: Boolean read FToolbarDrawRounded write SetToolbarDrawRounded;
     property MenuDrawRounded: Boolean read FMenuDrawRounded write SetMenuDrawRounded;
+    property DialogDrawRounded: Boolean read FDialogDrawRounded write SetDialogDrawRounded;
   end;
 
 function IsWindowsAppThemeLight: Boolean;
@@ -220,6 +223,7 @@ begin
   FToolbarDrawRounded := FIniFile.ReadBool('Global', 'ToolbarDrawRounded', false);
   FButtonDrawRounded := FIniFile.ReadBool('Global', 'ButtonDrawRounded', false);
   FMenuDrawRounded := FIniFile.ReadBool('Global', 'MenuDrawRounded', false);
+  FDialogDrawRounded := FIniFile.ReadBool('Global', 'DialogDrawRounded', false);
 
   //Select Style by default on Actual Windows Theme
   if FThemeSelection = tsAsWindows then
@@ -249,6 +253,7 @@ begin
   FIniFile.WriteBool('Global', 'ToolbarDrawRounded', ToolbarDrawRounded);
   FIniFile.WriteBool('Global', 'ButtonDrawRounded', ButtonDrawRounded);
   FIniFile.WriteBool('Global', 'MenuDrawRounded', MenuDrawRounded);
+  FIniFile.WriteBool('Global', 'DialogDrawRounded', DialogDrawRounded);
   FIsChanged := False;
 end;
 
@@ -271,6 +276,15 @@ begin
   if FMenuDrawRounded <> AValue then
   begin
     FMenuDrawRounded := AValue;
+    Changed;
+  end;
+end;
+
+procedure TSettings.SetDialogDrawRounded(const AValue: Boolean);
+begin
+  if FDialogDrawRounded <> AValue then
+  begin
+    FDialogDrawRounded := AValue;
     Changed;
   end;
 end;

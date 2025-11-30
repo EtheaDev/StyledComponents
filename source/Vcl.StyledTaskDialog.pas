@@ -38,55 +38,86 @@ uses
   , Vcl.Graphics
   , Vcl.Forms
   , Vcl.ButtonStylesAttributes
+  , Vcl.StandardButtonStyles
   , Vcl.StyledButton
   ;
 
 const
+  /// <summary>Default alpha blend value for styled dialogs (fully opaque)</summary>
   DEFAULT_STYLEDDIALOG_ALPHABLEND = 255;
+  /// <summary>Default minimum width for styled dialogs in pixels</summary>
   DEFAULT_STYLEDDIALOG_MIN_WIDTH = 500;
+  /// <summary>Default minimum height for styled dialogs in pixels</summary>
   DEFAULT_STYLEDDIALOG_MIN_HEIGHT = 280;
+  /// <summary>Default width for dialog buttons in pixels</summary>
   DEFAULT_STYLEDDIALOG_BUTTONSWIDTH = 74;
+  /// <summary>Default height for dialog buttons in pixels</summary>
   DEFAULT_STYLEDDIALOG_BUTTONSHEIGHT = 30;
+  /// <summary>Minimum allowed size for dialog buttons in pixels</summary>
   MIN_STYLEDDIALOG_BUTTONSSIZE = 10;
+  /// <summary>Maximum allowed width for dialog buttons in pixels</summary>
   MAX_STYLEDDIALOG_BUTTONSWIDTH = 800;
+  /// <summary>Maximum allowed height for dialog buttons in pixels</summary>
   MAX_STYLEDDIALOG_BUTTONSHEIGHT = 300;
 
   {$IFDEF Use_Large_Dialog_Icons}
+  /// <summary>Default size for main dialog icon in pixels (128 when Use_Large_Dialog_Icons is defined)</summary>
   DEFAULT_MAIN_ICON_SIZE = 128;
   {$ELSE}
+  /// <summary>Default size for main dialog icon in pixels</summary>
   DEFAULT_MAIN_ICON_SIZE = 64;
   {$ENDIF}
 
+  /// <summary>Extended TTaskDialogIcon value for question mark icon</summary>
   tdiQuestion = 5;
 
 type
-  //A new TTaskDialogIcon Value for StyledComponents to
-  //include tdiQuestion Value
-
+  /// <summary>Array type for storing custom dialog icons indexed by dialog type</summary>
   TStyledDialogIcons = array[TMsgDlgType] of TIcon;
+  /// <summary>Event type for finding a dialog button by its modal result</summary>
+  /// <param name="AModalResult">The modal result to search for</param>
+  /// <returns>The TStyledButton matching the modal result, or nil if not found</returns>
   TOnFindDialogButtonEvent = function (const AModalResult: TModalResult): TStyledButton of object;
+  /// <summary>Exception class for styled task dialog errors</summary>
   EStyledTaskDialogException = class(Exception);
 
 {$WARN SYMBOL_PLATFORM OFF}
 
 type
+  /// <summary>Event type called when the styled task dialog form is shown</summary>
+  /// <param name="AStyledTaskDialogForm">The dialog form being shown</param>
   TTaskDialogShow = procedure(
     const AStyledTaskDialogForm: TForm) of Object;
 
-  { TStyledTaskDialogProgressBar }
+  /// <summary>Progress bar component for styled task dialogs</summary>
+  /// <remarks>Extends TTaskDialogProgressBar for use within TStyledTaskDialog</remarks>
   [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledTaskDialogProgressBar = class(TTaskDialogProgressBar)
   end;
 
-  { TStyledTaskDialog }
+  /// <summary>Advanced task dialog component with styled buttons and full customization</summary>
+  /// <remarks>
+  ///   TStyledTaskDialog provides a modern, fully customizable alternative to standard
+  ///   Windows dialogs. It supports styled buttons, custom icons, animations (via Skia4Delphi),
+  ///   progress bars, command links, radio buttons, verification checkboxes, and more.
+  /// </remarks>
   [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledTaskDialog = class(TTaskDialog)
+  private
+    class var
+    _DefaultButtonsFamily: TStyledButtonFamily;
+    _DefaultButtonsDrawType: TStyledButtonDrawType;
+    _DefaultButtonsRadius: Integer;
+    _DefaultButtonsRoundedCorners: TRoundedCorners;
   private
     FHelpFile: string;
     FParentWnd: HWND;
     FPosition: TPoint;
     FMainIconSize: Integer;
     FDialogButtonsFamily: TStyledButtonFamily;
+    FDialogButtonsDrawType: TStyledButtonDrawType;
+    FDialogButtonsRadius: Integer;
+    FDialogButtonsRoundedCorners: TRoundedCorners;
     FUseTitleInMessageDlg: Boolean;
     FAlphaBlendValue: Byte;
     FButtonsWidth: Integer;
@@ -102,6 +133,9 @@ type
     FOnDialogShow: TTaskDialogShow;
     FHideSystemCloseButton: Boolean;
     function IsDefaultFamily: Boolean;
+    function IsStoredDrawType: Boolean;
+    function IsStoredRadius: Boolean;
+    function IsStoredRoundedCorners: Boolean;
     procedure SetAutoClick(const AValue: Boolean);
     procedure SetAutoClickDelay(const AValue: Integer);
     procedure SetAlphaBlendValue(const AValue: Byte);
@@ -120,40 +154,98 @@ type
     procedure DoOnHelp; override;
   protected
   public
+    /// <summary>Called when the expand button is clicked</summary>
+    /// <param name="Expanded">True if content is now expanded, False if collapsed</param>
     procedure DoOnExpandButtonClicked(Expanded: Boolean); override;
+    /// <summary>Called when a radio button is clicked</summary>
+    /// <param name="ButtonID">The ID of the clicked radio button</param>
     procedure DoOnRadioButtonClicked(ButtonID: Integer); override;
+    /// <summary>Called when a hyperlink in the dialog text is clicked</summary>
+    /// <param name="AURL">The URL of the clicked hyperlink</param>
     procedure DoOnHyperlinkClicked(const AURL: string); override;
+    /// <summary>Creates a new instance of TStyledTaskDialog</summary>
+    /// <param name="AOwner">The component owner</param>
     constructor Create(AOwner: TComponent); override;
+    /// <summary>Displays the task dialog and returns when the user closes it</summary>
+    /// <param name="ParentWnd">Handle to the parent window</param>
+    /// <returns>True if the dialog was closed with a positive result</returns>
     function Execute(ParentWnd: HWND): Boolean; overload; override;
+    /// <summary>Finds a dialog button by its modal result value</summary>
+    /// <param name="AModalResult">The modal result to search for</param>
+    /// <returns>The TStyledButton matching the modal result, or nil if not found</returns>
     function FindDialogButton(const AModalResult: TModalResult): TStyledButton;
+    /// <summary>Returns True if a custom position has been set for the dialog</summary>
+    /// <returns>True if Position is not the default (-1, -1)</returns>
     function IsCustomPosition: Boolean;
+    /// <summary>Registers default rendering style for all TStyledTaskDialog instances</summary>
+    /// <param name="ADrawType">The draw type for buttons (btRoundRect, btRounded, btRect, btEllipse)</param>
+    /// <param name="AFamily">The style family for buttons (default: DEFAULT_CLASSIC_FAMILY)</param>
+    /// <param name="ARadius">The corner radius in pixels (default: DEFAULT_RADIUS)</param>
+    /// <param name="ARoundedCorners">Which corners to round (default: ALL_ROUNDED_CORNERS)</param>
+    class procedure RegisterDefaultRenderingStyle(
+      const ADrawType: TStyledButtonDrawType;
+      const AFamily: TStyledButtonFamily = DEFAULT_CLASSIC_FAMILY;
+      const ARadius: Integer = DEFAULT_RADIUS;
+      const ARoundedCorners: TRoundedCorners = ALL_ROUNDED_CORNERS); virtual;
+    /// <summary>The default button determined from message dialog type</summary>
     property MessageDefaultButton: TMsgDlgBtn read FMessageDefaultButton;
+    /// <summary>Indicates if MessageDefaultButton should be used</summary>
     property UseMessageDefaultButton: Boolean read FUseMessageDefaultButton;
+    /// <summary>Path to the help file for context-sensitive help</summary>
     property HelpFile: string read FHelpFile write FHelpFile;
+    /// <summary>Window handle of the dialog form</summary>
     property Handle: HWND read GetHandle write SetHandle;
+    /// <summary>Event handler to find a dialog button by modal result</summary>
     property OnFindDialogButton: TOnFindDialogButtonEvent read FOnFindDialogButton write FOnFindDialogButton;
   published
-    //Additional properties compared to TTaskDialog
+    /// <summary>Enables automatic button click after a delay</summary>
     property AutoClick: Boolean read FAutoClick write SetAutoClick default False;
+    /// <summary>Delay in milliseconds before auto-clicking the default button</summary>
     property AutoClickDelay: Integer read FAutoClickDelay write SetAutoClickDelay default DEFAULT_AUTOCLICK_DELAY;
+    /// <summary>Style family for dialog buttons (e.g., Bootstrap, Angular, Classic)</summary>
     property DialogButtonsFamily: TStyledButtonFamily read FDialogButtonsFamily write FDialogButtonsFamily stored IsDefaultFamily;
+    /// <summary>Draw type for dialog buttons (btRoundRect, btRounded, btRect, btEllipse)</summary>
+    property DialogButtonsDrawType: TStyledButtonDrawType read FDialogButtonsDrawType write FDialogButtonsDrawType stored IsStoredDrawType;
+    /// <summary>Corner radius in pixels for dialog buttons</summary>
+    property DialogButtonsRadius: Integer read FDialogButtonsRadius write FDialogButtonsRadius stored IsStoredRadius;
+    /// <summary>Specifies which corners of dialog buttons should be rounded</summary>
+    property DialogButtonsRoundedCorners: TRoundedCorners read FDialogButtonsRoundedCorners write FDialogButtonsRoundedCorners stored IsStoredRoundedCorners;
+    /// <summary>When True, displays buttons as command links with descriptions</summary>
     property UseCommandLinks: Boolean read GetUseCommandLinks write SetUseCommandLinks default False;
+    /// <summary>Enables Lottie animations for dialog icons (requires Skia4Delphi)</summary>
     property UseAnimations: Boolean read FUseAnimations write SetUseAnimations default false;
+    /// <summary>When True, loops the icon animation continuously</summary>
     property UseAnimationLoop: Boolean read FUseAnimationLoop write SetUseAnimationLoop default False;
+    /// <summary>When True, plays the icon animation in reverse</summary>
     property UseAnimationInverse: Boolean read FUseAnimationInverse write SetUseAnimationInverse default False;
+    /// <summary>When True, displays title in simple message dialogs</summary>
     property UseTitleInMessageDlg: Boolean read FUseTitleInMessageDlg write FUseTitleInMessageDlg default True;
+    /// <summary>Alpha blend value for dialog transparency (0=transparent, 255=opaque)</summary>
     property AlphaBlendValue: Byte read FAlphaBlendValue write SetAlphaBlendValue default DEFAULT_STYLEDDIALOG_ALPHABLEND;
+    /// <summary>Width of dialog buttons in pixels</summary>
     property ButtonsWidth: Integer read FButtonsWidth write SetButtonsWidth default DEFAULT_STYLEDDIALOG_BUTTONSWIDTH;
+    /// <summary>Height of dialog buttons in pixels</summary>
     property ButtonsHeight: Integer read FButtonsHeight write SetButtonsHeight default DEFAULT_STYLEDDIALOG_BUTTONSHEIGHT;
+    /// <summary>When True, hides the system close button (X) in the title bar</summary>
     property HideSystemCloseButton: Boolean read FHideSystemCloseButton write FHideSystemCloseButton default False;
+    /// <summary>Custom position for the dialog. Use (-1, -1) for default centering</summary>
     property Position: TPoint read FPosition write FPosition stored IsCustomPosition;
+    /// <summary>Size of the main dialog icon in pixels</summary>
     property MainIconSize: Integer read FMainIconSize write SetMainIconSize default DEFAULT_MAIN_ICON_SIZE;
+    /// <summary>Event fired when the dialog form is shown</summary>
     property OnDialogShow: TTaskDialogShow read FOnDialogShow write FOnDialogShow;
   end;
 
-  //Abstraction of a Dialog Launcher
+  /// <summary>Interface for custom dialog launcher implementations</summary>
+  /// <remarks>Implement this interface to provide custom dialog display logic</remarks>
   ITaskDialogLauncher = interface
     ['{B2F16F98-C163-4706-A803-E624126D8DF6}']
+    /// <summary>Executes and displays the task dialog</summary>
+    /// <param name="ParentWnd">Handle to the parent window</param>
+    /// <param name="ADialogType">The type of dialog (mtWarning, mtError, etc.)</param>
+    /// <param name="ATaskDialog">The TStyledTaskDialog instance to display</param>
+    /// <param name="ADialogBtnFamily">The button style family to use</param>
+    /// <returns>True if the dialog was executed successfully</returns>
     function DoExecute(ParentWnd: HWND;
       const ADialogType: TMsgDlgType;
       const ATaskDialog: TStyledTaskDialog;
@@ -176,89 +268,211 @@ function StyledMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; DefaultButton: TMsgDlgBtn; HelpCtx: Longint;
   X: Integer; Y: Integer): Integer; overload; deprecated 'use StyledMessageDlgPos(...) changing position of DefaultButton param, after HelpCtx'
 
-//Equivalent functions of standard MessageDlg functions
+/// <summary>Displays a styled message dialog (replacement for MessageDlg)</summary>
+/// <param name="Msg">The message to display</param>
+/// <param name="DlgType">The dialog type (mtWarning, mtError, mtInformation, mtConfirmation, mtCustom)</param>
+/// <param name="Buttons">The buttons to display</param>
+/// <param name="HelpCtx">Help context ID</param>
+/// <param name="DefaultButton">The default button</param>
+/// <returns>The modal result of the clicked button</returns>
 function StyledMessageDlg(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn): Integer; overload;
+/// <summary>Displays a styled message dialog (replacement for MessageDlg)</summary>
+/// <param name="Msg">The message to display</param>
+/// <param name="DlgType">The dialog type (mtWarning, mtError, mtInformation, mtConfirmation, mtCustom)</param>
+/// <param name="Buttons">The buttons to display</param>
+/// <param name="HelpCtx">Help context ID</param>
+/// <returns>The modal result of the clicked button</returns>
 function StyledMessageDlg(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer; overload;
+/// <summary>Displays a styled message dialog with custom button captions</summary>
+/// <param name="Msg">The message to display</param>
+/// <param name="DlgType">The dialog type</param>
+/// <param name="Buttons">The buttons to display</param>
+/// <param name="HelpCtx">Help context ID</param>
+/// <param name="DefaultButton">The default button</param>
+/// <param name="CustomButtonCaptions">Array of custom captions for each button</param>
+/// <returns>The modal result of the clicked button</returns>
 function StyledMessageDlg(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn;
   CustomButtonCaptions: array of string): Integer; overload;
 
-//Equivalent functions of standard MessageDlgPos functions
+/// <summary>Displays a styled message dialog at a specific position</summary>
+/// <param name="Msg">The message to display</param>
+/// <param name="DlgType">The dialog type</param>
+/// <param name="Buttons">The buttons to display</param>
+/// <param name="HelpCtx">Help context ID</param>
+/// <param name="X">X coordinate for dialog position</param>
+/// <param name="Y">Y coordinate for dialog position</param>
+/// <returns>The modal result of the clicked button</returns>
 function StyledMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint;
   X: Integer; Y: Integer): Integer; overload;
+/// <summary>Displays a styled message dialog at a specific position with default button</summary>
+/// <param name="Msg">The message to display</param>
+/// <param name="DlgType">The dialog type</param>
+/// <param name="Buttons">The buttons to display</param>
+/// <param name="HelpCtx">Help context ID</param>
+/// <param name="DefaultButton">The default button</param>
+/// <param name="X">X coordinate for dialog position</param>
+/// <param name="Y">Y coordinate for dialog position</param>
+/// <returns>The modal result of the clicked button</returns>
 function StyledMessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn;
   X: Integer; Y: Integer): Integer; overload;
 
-//Equivalent functions of standard TaskMessageDlg functions
+/// <summary>Displays a styled task message dialog with title (replacement for TaskMessageDlg)</summary>
+/// <param name="Title">The dialog title</param>
+/// <param name="Msg">The message to display</param>
+/// <param name="DlgType">The dialog type</param>
+/// <param name="Buttons">The buttons to display</param>
+/// <param name="HelpCtx">Help context ID</param>
+/// <returns>The modal result of the clicked button</returns>
 function StyledTaskMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer; overload;
+/// <summary>Displays a styled task message dialog with title and default button</summary>
+/// <param name="Title">The dialog title</param>
+/// <param name="Msg">The message to display</param>
+/// <param name="DlgType">The dialog type</param>
+/// <param name="Buttons">The buttons to display</param>
+/// <param name="HelpCtx">Help context ID</param>
+/// <param name="DefaultButton">The default button</param>
+/// <returns>The modal result of the clicked button</returns>
 function StyledTaskMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn): Integer; overload;
-//Equivalent functions of standard TaskMessageDlgPos functions
+/// <summary>Displays a styled task message dialog at a specific position</summary>
+/// <param name="Title">The dialog title</param>
+/// <param name="Msg">The message to display</param>
+/// <param name="DlgType">The dialog type</param>
+/// <param name="Buttons">The buttons to display</param>
+/// <param name="HelpCtx">Help context ID</param>
+/// <param name="X">X coordinate for dialog position</param>
+/// <param name="Y">Y coordinate for dialog position</param>
+/// <returns>The modal result of the clicked button</returns>
 function StyledTaskMessageDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint;
   X: Integer; Y: Integer): Integer; overload;
+/// <summary>Displays a styled task message dialog at a specific position with default button</summary>
+/// <param name="Title">The dialog title</param>
+/// <param name="Msg">The message to display</param>
+/// <param name="DlgType">The dialog type</param>
+/// <param name="Buttons">The buttons to display</param>
+/// <param name="HelpCtx">Help context ID</param>
+/// <param name="DefaultButton">The default button</param>
+/// <param name="X">X coordinate for dialog position</param>
+/// <param name="Y">Y coordinate for dialog position</param>
+/// <returns>The modal result of the clicked button</returns>
 function StyledTaskMessageDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn;
   X: Integer; Y: Integer): Integer; overload;
 
-//Extra functions DoStyledTaskMessageDlg
+/// <summary>Displays a styled task message dialog with extended options</summary>
+/// <param name="Instruction">The instruction/title text</param>
+/// <param name="Msg">The message to display</param>
+/// <param name="DlgType">The dialog type</param>
+/// <param name="Buttons">The buttons to display</param>
+/// <param name="HelpCtx">Help context ID</param>
+/// <param name="AutoClickDelay">Delay in ms for auto-click (-1 to disable)</param>
+/// <param name="UseCommandLinks">When True, displays buttons as command links</param>
+/// <returns>The modal result of the clicked button</returns>
 function DoStyledTaskMessageDlg(const Instruction, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx : Longint = 0;
   const AutoClickDelay: Integer = -1; const UseCommandLinks: Boolean = False): Integer; overload;
+/// <summary>Displays a styled task message dialog with position and extended options</summary>
 function DoStyledTaskMessageDlgPos(const Instruction, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; X: Integer; Y: Integer;
   const AutoClickDelay: Integer = -1; const UseCommandLinks: Boolean = False): Integer; overload;
+/// <summary>Displays a styled task message dialog with position, help file and extended options</summary>
 function DoStyledTaskMessageDlgPosHelp(const Instruction, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; X: Integer = -1; Y: Integer = -1;
   const AutoClickDelay: Integer = -1; const UseCommandLinks: Boolean = False;
   const HelpFileName: string = ''): Integer; overload;
+/// <summary>Displays a styled task message dialog with all options including default button</summary>
 function DoStyledTaskMessageDlgPosHelp(const Instruction, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint; DefaultButton: TMsgDlgBtn;
   X: Integer = -1; Y: Integer = -1;
   const AutoClickDelay: Integer = -1; const UseCommandLinks: Boolean = False;
   const HelpFileName: string = ''): Integer; overload;
+/// <summary>Displays a message dialog with position and help support</summary>
 function DoMessageDlgPosHelp(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Integer; DefaultButton: TMsgDlgBtn;
   X: Integer = -1; Y: Integer = -1;
   const AutoClickDelay: Integer = -1;  const UseCommandLinks: Boolean = False;
   const HelpFileName: string = ''): Integer; overload;
+/// <summary>Displays a message dialog with position and help support (without default button)</summary>
 function DoMessageDlgPosHelp(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint;
   X: Integer = -1; Y: Integer = -1;
   const AutoClickDelay: Integer = -1; const UseCommandLinks: Boolean = False;
   const HelpFileName: string = ''): Integer; overload;
 
-//Equivalent function of standard ShowMessage function
+/// <summary>Displays a simple styled message (replacement for ShowMessage)</summary>
+/// <param name="Msg">The message to display</param>
 procedure StyledShowMessage(const Msg: string); overload;
+/// <summary>Displays a formatted styled message (replacement for ShowMessageFmt)</summary>
+/// <param name="Msg">The format string</param>
+/// <param name="Params">The format parameters</param>
 procedure StyledShowMessageFmt(const Msg: string; Params: array of const); overload;
 
+/// <summary>Sets whether to display title in message dialogs</summary>
+/// <param name="AValue">True to display title, False to hide it</param>
 procedure SetUseTitleInMessageDlg(AValue: boolean);
+/// <summary>Registers a custom dialog launcher implementation</summary>
+/// <param name="AShowStyledTaskDialog">The custom launcher interface</param>
+/// <param name="AButtonFamily">The button style family to use</param>
 procedure RegisterCustomExecute(const AShowStyledTaskDialog: ITaskDialogLauncher;
   const AButtonFamily: TStyledButtonFamily = '');
+/// <summary>Unregisters the custom dialog launcher</summary>
 procedure UnregisterCustomExecute;
+/// <summary>Converts a TTaskDialogIcon to TMsgDlgType</summary>
+/// <param name="AIcon">The task dialog icon</param>
+/// <returns>The corresponding message dialog type</returns>
 function GetTaskDlgType(const AIcon: TTaskDialogIcon): TMsgDlgType;
+/// <summary>Returns the current dialog font</summary>
+/// <returns>The TFont used for dialogs</returns>
 function GetDialogFont: TFont;
+/// <summary>Returns the current dialog button family</summary>
+/// <returns>The style family name</returns>
 function GetDialogBtnFamily: TStyledButtonFamily;
 
+/// <summary>Returns the default title for a dialog type</summary>
+/// <param name="DlgType">The dialog type</param>
+/// <returns>The localized title string</returns>
 function GetDialogTypeTitle(const DlgType: TMsgDlgType): string;
+/// <summary>Returns the current dialog alpha blend value</summary>
+/// <returns>The alpha blend value (0-255)</returns>
 function GetDialogAlphaBlendValue: Byte;
+/// <summary>Converts a TMsgDlgBtn to TTaskDialogCommonButton</summary>
+/// <param name="ABtn">The message dialog button</param>
+/// <returns>The corresponding task dialog common button</returns>
 function MsgDlgBtnToDefaultBtn(const ABtn: TMsgDlgBtn): TTaskDialogCommonButton;
 
-//Global Initialization procedures (different versions)
+/// <summary>Initializes styled task dialogs with a custom font</summary>
+/// <param name="AFont">The font to use for dialogs</param>
 procedure InitializeStyledTaskDialogs(AFont: TFont); overload;
 
+/// <summary>Initializes styled task dialogs with animation setting</summary>
+/// <param name="AUseAnimations">True to enable animations (requires Skia4Delphi)</param>
 procedure InitializeStyledTaskDialogs(AUseAnimations: Boolean); overload;
 
+/// <summary>Initializes styled task dialogs with button family and options</summary>
+/// <param name="ADialogButtonsFamily">The button style family</param>
+/// <param name="AUseCommandLinks">True to use command links style</param>
+/// <param name="AAutoClickDelay">Auto-click delay in milliseconds (-1 to disable)</param>
 procedure InitializeStyledTaskDialogs(
   const ADialogButtonsFamily: TStyledButtonFamily = '';
   const AUseCommandLinks: Boolean = False;
   const AAutoClickDelay: Integer = -1); overload;
 
+/// <summary>Initializes styled task dialogs with full customization options</summary>
+/// <param name="AUseTitleInMessageDlg">True to show title in message dialogs</param>
+/// <param name="AFont">The font to use for dialogs</param>
+/// <param name="AUseCommandLinks">True to use command links style</param>
+/// <param name="ADialogButtonsFamily">The button style family</param>
+/// <param name="AAlphaBlendValue">Dialog transparency (0-255)</param>
+/// <param name="AButtonsWidth">Width of dialog buttons in pixels</param>
+/// <param name="AButtonsHeight">Height of dialog buttons in pixels</param>
+/// <param name="AAutoClickDelay">Auto-click delay in milliseconds (-1 to disable)</param>
 procedure InitializeStyledTaskDialogs(
   AUseTitleInMessageDlg: Boolean; AFont: TFont;
   const AUseCommandLinks: Boolean = False;
@@ -287,7 +501,6 @@ uses
   , System.RTLConsts
   , Winapi.ShellApi
   , Vcl.StyledCmpMessages
-  , Vcl.StandardButtonStyles
   , Vcl.StyledCmpStrUtils
   , Vcl.StyledTaskDialogFormUnit
   , Vcl.StyledTaskDialogStdUnit
@@ -798,7 +1011,10 @@ begin
   inherited;
   //Default Position: -1, -1 (is not a custom position)
   FPosition := TPoint.Create(-1,-1);
-  FDialogButtonsFamily := _DialogButtonsFamily;
+  FDialogButtonsFamily := _DefaultButtonsFamily;
+  FDialogButtonsDrawType := _DefaultButtonsDrawType;
+  FDialogButtonsRadius := _DefaultButtonsRadius;
+  FDialogButtonsRoundedCorners := _DefaultButtonsRoundedCorners;
   UseCommandLinks := _UseCommandLinks;
   FUseTitleInMessageDlg := _UseTitleInMessageDlg;
   AlphaBlendValue := _AlphaBlendValue;
@@ -894,7 +1110,34 @@ end;
 
 function TStyledTaskDialog.IsDefaultFamily: Boolean;
 begin
-  Result := FDialogButtonsFamily <> DEFAULT_CLASSIC_FAMILY;
+  Result := FDialogButtonsFamily <> _DefaultButtonsFamily;
+end;
+
+function TStyledTaskDialog.IsStoredDrawType: Boolean;
+begin
+  Result := FDialogButtonsDrawType <> _DefaultButtonsDrawType;
+end;
+
+function TStyledTaskDialog.IsStoredRadius: Boolean;
+begin
+  Result := FDialogButtonsRadius <> _DefaultButtonsRadius;
+end;
+
+function TStyledTaskDialog.IsStoredRoundedCorners: Boolean;
+begin
+  Result := FDialogButtonsRoundedCorners <> _DefaultButtonsRoundedCorners;
+end;
+
+class procedure TStyledTaskDialog.RegisterDefaultRenderingStyle(
+  const ADrawType: TStyledButtonDrawType;
+  const AFamily: TStyledButtonFamily;
+  const ARadius: Integer;
+  const ARoundedCorners: TRoundedCorners);
+begin
+  _DefaultButtonsFamily := AFamily;
+  _DefaultButtonsDrawType := ADrawType;
+  _DefaultButtonsRadius := ARadius;
+  _DefaultButtonsRoundedCorners := ARoundedCorners;
 end;
 
 procedure TStyledTaskDialog.SetAlphaBlendValue(const AValue: Byte);
@@ -1023,6 +1266,11 @@ initialization
   _ButtonsWidth := DEFAULT_STYLEDDIALOG_BUTTONSWIDTH;
   _ButtonsHeight := DEFAULT_STYLEDDIALOG_BUTTONSHEIGHT;
   _DialogFont := nil;
+  //Initialize TStyledTaskDialog class variables for default button styles
+  TStyledTaskDialog._DefaultButtonsFamily := DEFAULT_CLASSIC_FAMILY;
+  TStyledTaskDialog._DefaultButtonsDrawType := btRoundRect;
+  TStyledTaskDialog._DefaultButtonsRadius := DEFAULT_RADIUS;
+  TStyledTaskDialog._DefaultButtonsRoundedCorners := ALL_ROUNDED_CORNERS;
   RegisterTaskDialogFormClass(TStyledTaskDialogStd);
 
 finalization

@@ -50,10 +50,24 @@ const
   DEFAULT_CAPTION_MARGIN = 4;
 
 type
+  /// <summary>Exception class for styled panel errors</summary>
   EStyledPanelError = Exception;
   TStyledPanel = class;
+  /// <summary>Class reference type for TStyledPanel descendants</summary>
   TStyledPanelClass = class of TStyledPanel;
 
+  /// <summary>Styled panel component with modern appearance</summary>
+  /// <remarks>
+  ///   TStyledPanel is a styled alternative to TPanel that provides modern
+  ///   visual appearance through the StyledComponents styling system.
+  ///   Unlike button components, TStyledPanel uses TStyledButtonAttributes
+  ///   directly for Normal and Disabled states (no TStyledButtonRender).
+  ///   Supports custom styles via StyleFamily, StyleClass, StyleAppearance,
+  ///   rounded corners, and all standard TPanel features. Can act as a
+  ///   container for other controls. Switch to standard VCL rendering
+  ///   via AsVCLComponent property. Use RegisterDefaultRenderingStyle
+  ///   to set global defaults for all styled panels.
+  /// </remarks>
   [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledPanel = class(TCustomPanel)
   private
@@ -111,27 +125,48 @@ type
     {$ENDIF}
   public
     {$IFDEF D10_4+}
+    /// <summary>Scales panel for new PPI (High DPI support)</summary>
     procedure ScaleForPPI(NewPPI: Integer); override;
     {$ENDIF}
     {$IFDEF D10_1+}
+    /// <summary>Handles DPI scaling changes</summary>
     procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
     {$ENDIF}
+    /// <summary>Copies properties from another panel</summary>
     procedure Assign(Source: TPersistent); override;
+    /// <summary>Creates panel with default style settings</summary>
     constructor Create(AOwner: TComponent); override;
+    /// <summary>Creates panel with specified style settings</summary>
+    /// <param name="AOwner">Component owner</param>
+    /// <param name="AFamily">Initial style family</param>
+    /// <param name="AClass">Initial style class</param>
+    /// <param name="AAppearance">Initial style appearance</param>
     constructor CreateStyled(AOwner: TComponent;
       const AFamily: TStyledButtonFamily;
       const AClass: TStyledButtonClass;
       const AAppearance: TStyledButtonAppearance); virtual;
+    /// <summary>Destroys the panel and releases resources</summary>
     destructor Destroy; override;
+    /// <summary>Sets the panel style at runtime</summary>
+    /// <param name="AStyleFamily">Style family name</param>
+    /// <param name="AStyleClass">Style class within the family</param>
+    /// <param name="AStyleAppearance">Style appearance variant</param>
     procedure SetPanelStyle(const AStyleFamily: TStyledButtonFamily;
       const AStyleClass: TStyledButtonClass;
       const AStyleAppearance: TStyledButtonAppearance);
+    /// <summary>Registers default rendering style for all new panel instances</summary>
+    /// <param name="ADrawType">Default draw type (shape)</param>
+    /// <param name="AFamily">Default style family</param>
+    /// <param name="AClass">Default style class</param>
+    /// <param name="AAppearance">Default style appearance</param>
+    /// <param name="AStyleRadius">Default corner radius</param>
     class procedure RegisterDefaultRenderingStyle(
       const ADrawType: TStyledButtonDrawType;
       const AFamily: TStyledButtonFamily = DEFAULT_CLASSIC_FAMILY;
       const AClass: TStyledButtonClass = DEFAULT_WINDOWS_CLASS;
       const AAppearance: TStyledButtonAppearance = DEFAULT_APPEARANCE;
       const AStyleRadius: Integer = DEFAULT_RADIUS); virtual;
+    /// <summary>Returns the currently active VCL style name</summary>
     property ActiveStyleName: string read GetActiveStyleName;
   published
     //Publishing TCustomPanel properties

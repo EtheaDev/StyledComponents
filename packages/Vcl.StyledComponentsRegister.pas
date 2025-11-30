@@ -78,7 +78,7 @@ Type
     FInheritedCompEditor: TComponentEditor;
     function InheritedCompEditor: TComponentEditor;
   protected
-    function GetInheritedClass: TComponentClass; virtual;
+    function GetInheritedClass: TComponentClass; virtual; abstract;
   public
     function GetVerbCount: Integer; override;
     function GetVerb(Index: Integer): string; override;
@@ -117,6 +117,8 @@ Type
   TStyledButtonGroupComponentEditor = class(TInheritedComponentEditor)
   private
     function GetButtonGroup: TStyledButtonGroup;
+  protected
+    function GetInheritedClass: TComponentClass; override;
   public
     function GetVerbCount: Integer; override;
     function GetVerb(Index: Integer): string; override;
@@ -126,6 +128,8 @@ Type
   TStyledCategoryButtonsComponentEditor = class(TInheritedComponentEditor)
   private
     function GetCategoryButtons: TStyledCategoryButtons;
+  protected
+    function GetInheritedClass: TComponentClass; override;
   public
     function GetVerbCount: Integer; override;
     function GetVerb(Index: Integer): string; override;
@@ -689,6 +693,12 @@ begin
     Result := TStyledButtonGroup(LComponent);
 end;
 
+function TStyledButtonGroupComponentEditor.GetInheritedClass: TComponentClass;
+begin
+  //VCL Class to capture Editor
+  Result := TButtonGroup;
+end;
+
 function TStyledButtonGroupComponentEditor.GetVerb(Index: Integer): string;
 begin
   if Index = 0 then
@@ -716,12 +726,12 @@ procedure TInheritedComponentEditor.ExecuteVerb(Index: Integer);
 begin
   InheritedCompEditor.ExecuteVerb(Index);
 end;
-
+(*
 function TInheritedComponentEditor.GetInheritedClass: TComponentClass;
 begin
   Result := TComponentClass(GetComponent.ClassParent);
 end;
-
+*)
 function TInheritedComponentEditor.GetVerb(Index: Integer): string;
 begin
   Result := InheritedCompEditor.GetVerb(Index);
@@ -816,6 +826,12 @@ begin
   LComponent := GetComponent;
   if LComponent is TStyledCategoryButtons then
     Result := TStyledCategoryButtons(LComponent);
+end;
+
+function TStyledCategoryButtonsComponentEditor.GetInheritedClass: TComponentClass;
+begin
+  //VCL Class to capture Editor
+  Result := TCategoryButtons;
 end;
 
 function TStyledCategoryButtonsComponentEditor.GetVerb(Index: Integer): string;

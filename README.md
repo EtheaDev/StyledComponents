@@ -2,7 +2,7 @@
 
 ## Components similar to Delphi VCL Buttons, Panels, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 3.9.1
+### Actual official version: 3.9.2
 
 ---
 ## New Setup for Installation of Components
@@ -397,6 +397,14 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+
+30 Nov 2025 - version 3.9.2
+- Added button customization properties to TStyledTaskDialog:
+  - DialogButtonsDrawType: TStyledButtonDrawType (btRoundRect, btRounded, btRect, btEllipse)
+  - DialogButtonsRadius: Integer (corner radius)
+  - DialogButtonsRoundedCorners: TRoundedCorners (which corners are rounded)
+- Added RegisterDefaultRenderingStyle class method to TStyledTaskDialog for global default button styles
+- Added "Apply to Task Dialogs" option in Demo settings for rounded buttons
 
 16 Nov 2025 - version 3.9.1
 - Added **TStyledPanel** component: a styled container control based on TCustomPanel

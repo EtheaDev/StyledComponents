@@ -81,6 +81,7 @@ const
   NavigatorMoveBtns = [TNavigateBtn.nbFirst..TNavigateBtn.nbLast];
 
 type
+  /// <summary>Exception class for styled database navigator errors</summary>
   EStyledDbnavigatorError = Exception;
 
   TCustomStyledDBNavigator = class;
@@ -88,14 +89,30 @@ type
   TStyledNavButton = class;
   TStyledNavDataLink = class;
 
+  /// <summary>Callback procedure for enabling/disabling navigator buttons</summary>
+  /// <param name="ADbNavigator">The navigator component</param>
+  /// <param name="ABtn">The button being evaluated</param>
+  /// <param name="AEnabled">Set to True/False to enable/disable the button</param>
   TEnableNavBtnProc = procedure(const ADbNavigator: TCustomStyledDBNavigator; const ABtn: TStyledNavButton; var AEnabled: Boolean) of Object;
+  /// <summary>Callback procedure for iterating navigator buttons</summary>
+  /// <param name="Button">The current button being processed</param>
   TButtonProc = reference to procedure (Button: TStyledNavButton);
+  /// <summary>Array type for navigator buttons indexed by TNavigateBtn</summary>
   TNavButtons = array[TNavigateBtn] of TStyledNavButton;
 
+  /// <summary>Event type for button click in navigators</summary>
   TNavigateButtonEvent = procedure (Sender: TObject; Button: TNavigateButton) of object;
+  /// <summary>Orientation options for the navigator layout</summary>
   TNavigatorOrientation = (orHorizontal, orVertical);
 
-  { TStyledNavButton }
+  /// <summary>Styled navigation button for database navigators</summary>
+  /// <remarks>
+  ///   TStyledNavButton is a specialized styled button for use within
+  ///   TStyledDbNavigator and TStyledBindNavigator. Each button represents
+  ///   a database navigation action (First, Prior, Next, Last, Insert, Delete,
+  ///   Edit, Post, Cancel, Refresh). Supports auto-repeat for navigation buttons
+  ///   when held down.
+  /// </remarks>
   TStyledNavButton = class(TStyledGraphicButton)
   private
     FIndex: TNavigateBtn;
@@ -147,7 +164,14 @@ type
     property OnDropDownClick;
   end;
 
-  { TCustomStyledDBNavigator }
+  /// <summary>Base class for styled database navigators</summary>
+  /// <remarks>
+  ///   TCustomStyledDBNavigator is the base class for database navigation
+  ///   components. It provides a styled alternative to the standard TDBNavigator
+  ///   with customizable button appearance via StyleFamily, StyleClass, and
+  ///   StyleAppearance properties. Supports all standard navigation buttons
+  ///   with configurable visibility, hints, and captions.
+  /// </remarks>
   TCustomStyledDBNavigator = class(TCustomPanel)
   private
     //Standard support as TDbNavigator
@@ -359,7 +383,14 @@ type
     property StyleAppearance: TStyledButtonAppearance read FStyleAppearance write SetStyleAppearance stored IsStoredStyleAppearance;
   end;
 
-  { TStyledDBNavigator }
+  /// <summary>Styled database navigator component with DataSource support</summary>
+  /// <remarks>
+  ///   TStyledDBNavigator is a styled alternative to TDBNavigator for navigating
+  ///   and manipulating database records. Connect to a dataset via the DataSource
+  ///   property. Buttons automatically enable/disable based on dataset state.
+  ///   Supports ConfirmDelete for delete confirmation dialogs, custom hints and
+  ///   captions, and all StyledComponents styling features.
+  /// </remarks>
   [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledDBNavigator = class (TCustomStyledDBNavigator)
   private
@@ -451,7 +482,14 @@ type
     destructor Destroy; override;
   end;
 
-  { TStyledBindNavigator }
+  /// <summary>Styled LiveBindings navigator component</summary>
+  /// <remarks>
+  ///   TStyledBindNavigator is a styled alternative to TBindNavigator for use
+  ///   with LiveBindings data sources. Implements IBindNavigator interface for
+  ///   compatibility with the LiveBindings framework. Connect to a data source
+  ///   via the DataSource property (TBaseLinkingBindSource). Provides the same
+  ///   styling capabilities as TStyledDBNavigator.
+  /// </remarks>
   [ComponentPlatforms(pidWin32 or pidWin64)]
   TStyledBindNavigator = class(TCustomStyledDbNavigator, IBindNavigator)
   private

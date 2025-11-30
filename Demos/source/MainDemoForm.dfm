@@ -376,7 +376,7 @@ object frmMain: TfrmMain
           Left = 3
           Top = 28
           Width = 386
-          Height = 97
+          Height = 120
           Align = alTop
           Caption = 'Rounded Buttons'
           TabOrder = 1
@@ -413,11 +413,22 @@ object frmMain: TfrmMain
             TabOrder = 2
             OnClick = MenuRoundedCheckBoxClick
           end
+          object DialogRoundedCheckBox: TCheckBox
+            AlignWithMargins = True
+            Left = 5
+            Top = 87
+            Width = 376
+            Height = 17
+            Align = alTop
+            Caption = 'Apply to Task Dialogs'
+            TabOrder = 3
+            OnClick = DialogRoundedCheckBoxClick
+          end
         end
         object ShowFormGroupBox: TGroupBox
           AlignWithMargins = True
           Left = 3
-          Top = 131
+          Top = 154
           Width = 386
           Height = 62
           Align = alTop

@@ -113,6 +113,7 @@ type
     ToolbarRoundedCheckBox: TCheckBox;
     ButtonsRoundedCheckBox: TCheckBox;
     MenuRoundedCheckBox: TCheckBox;
+    DialogRoundedCheckBox: TCheckBox;
     ThemesRadioGroup: TRadioGroup;
     SelectThemeRadioGroup: TRadioGroup;
     acApplySettings: TAction;
@@ -146,6 +147,7 @@ type
     procedure ToolbarRoundedCheckBoxClick(Sender: TObject);
     procedure ButtonsRoundedCheckBoxClick(Sender: TObject);
     procedure MenuRoundedCheckBoxClick(Sender: TObject);
+    procedure DialogRoundedCheckBoxClick(Sender: TObject);
   private
     FActiveAction: TAction;
     FActiveView: TForm;
@@ -428,6 +430,11 @@ begin
   FSettings.MenuDrawRounded := MenuRoundedCheckBox.Checked;
 end;
 
+procedure TfrmMain.DialogRoundedCheckBoxClick(Sender: TObject);
+begin
+  FSettings.DialogDrawRounded := DialogRoundedCheckBox.Checked;
+end;
+
 procedure TfrmMain.pcChange(Sender: TObject);
 begin
   FSettings.ActivePageIndex := pc.ActivePageIndex;
@@ -632,6 +639,7 @@ begin
     ToolbarRoundedCheckBox.Checked := FSettings.ToolbarDrawRounded;
     ButtonsRoundedCheckBox.Checked := FSettings.ButtonDrawRounded;
     MenuRoundedCheckBox.Checked := FSettings.MenuDrawRounded;
+    DialogRoundedCheckBox.Checked := FSettings.DialogDrawRounded;
 
     //Rounded Buttons for StyledButtons
     if FSettings.ButtonDrawRounded then
@@ -658,6 +666,14 @@ begin
     TStyledButtonGroup.RegisterDefaultRenderingStyle(LStyle);
     catMenuItems.StyleDrawType := LStyle;
     MenuButtonToolbar.StyleDrawType := LStyle;
+
+    //Rounded Buttons for StyledTaskDialogs
+    if FSettings.DialogDrawRounded then
+      LStyle := btRounded
+    else
+      LStyle := btRoundRect;
+    TStyledTaskDialog.RegisterDefaultRenderingStyle(LStyle);
+
     PopulateAvailThemes;
   finally
     Screen.Cursor := crDefault;

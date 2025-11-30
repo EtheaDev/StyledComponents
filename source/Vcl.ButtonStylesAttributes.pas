@@ -55,13 +55,20 @@ uses
   ;
 
 const
-  StyledComponentsVersion = '3.9.1';
+  /// <summary>Current version of the StyledComponents library</summary>
+  StyledComponentsVersion = '3.9.2';
+  /// <summary>Default corner radius for rounded buttons in pixels</summary>
   DEFAULT_RADIUS = 6;
+  /// <summary>Resource name for the Windows shield admin icon</summary>
   RESOURCE_SHIELD_ICON = 'STYLED_BUTTON_SHIELD_ADMIN';
+  /// <summary>Default maximum value for notification badge counter</summary>
   DEFAULT_MAX_BADGE_VALUE = 99;
+  /// <summary>Default background color for notification badges</summary>
   DEFAULT_BADGE_COLOR = clRed;
+  /// <summary>Default font color for notification badges</summary>
   DEFAULT_BADGE_FONT_COLOR = clWhite;
-  DEFAULT_AUTOCLICK_DELAY = 5000; //Five Seconds
+  /// <summary>Default auto-click delay in milliseconds (5 seconds)</summary>
+  DEFAULT_AUTOCLICK_DELAY = 5000;
 
 resourcestring
   ERROR_FAMILY_NOT_FOUND = 'Styled Button Family "%s" not found';
@@ -69,37 +76,60 @@ resourcestring
   ERROR_VALUE_OUT_OF_RANGE = 'Error: Value "%d" for "%s" is out of Range (%d-%d)';
 
 Type
+  /// <summary>Exception class for styled attributes errors</summary>
   EStyledAttributesException = class(Exception);
 
-  //Windows Version
+  /// <summary>Enumeration of Windows versions for compatibility detection</summary>
   TWindowsVersion = (wvUndefined, wvWindowsXP, wvWindowsVista, wvWindows7,
     wvWindows8, wvWindows8_1, wvWindows10, wvWindows11);
 
+  /// <summary>Position of notification badge on a button</summary>
   TNotificationBadgePosition = (nbpTopRight, nbpTopLeft, nbpBottomRight, nbpBottomLeft);
+  /// <summary>Size of notification badge (normal counter or small dot)</summary>
   TNotificationBadgeSize = (nbsNormal, nbsSmallDot);
 
-  //string typed attributes
+  /// <summary>Style family name (e.g., 'Bootstrap', 'Angular-Light', 'Classic')</summary>
   TStyledButtonFamily = string;
+  /// <summary>Style class name within a family (e.g., 'Primary', 'Success', 'Danger')</summary>
   TStyledButtonClass = string;
+  /// <summary>Style appearance name (e.g., 'Normal', 'Outline', 'Flat')</summary>
   TStyledButtonAppearance = string;
 
-  //Type of border
+  /// <summary>Shape type for button drawing</summary>
+  /// <remarks>
+  ///   btRoundRect: Rectangle with rounded corners (radius controlled by StyleRadius)
+  ///   btRounded: Fully rounded ends (pill shape)
+  ///   btRect: Sharp rectangle corners
+  ///   btEllipse: Elliptical/circular shape
+  /// </remarks>
   TStyledButtonDrawType = (btRoundRect, btRounded, btRect, btEllipse);
+  /// <summary>Individual corner identifier for selective rounding</summary>
   TRoundedCorner = (rcTopLeft, rcTopRight, rcBottomRight, rcBottomLeft);
+  /// <summary>Set of corners to apply rounding to</summary>
   TRoundedCorners = set of TRoundedCorner;
 const
+  /// <summary>Constant representing all four corners rounded</summary>
   ALL_ROUNDED_CORNERS = [rcTopLeft, rcTopRight, rcBottomLeft, rcBottomRight];
 
 Type
-  //Type of Draw for Border
-  TBorderDrawStyle = (brdClear, brdSolid); //similar to Pen.psClear and Pen.psSolid
-  TButtonDrawStyle = (btnClear, btnSolid); //similar to Brush.bsClear and Brush.bsSolid
+  /// <summary>Border drawing style (clear/invisible or solid)</summary>
+  TBorderDrawStyle = (brdClear, brdSolid);
+  /// <summary>Button fill drawing style (clear/transparent or solid)</summary>
+  TButtonDrawStyle = (btnClear, btnSolid);
 
-  //List of available elements
+  /// <summary>Array of style family names</summary>
   TButtonFamilies = array of TStyledButtonFamily;
+  /// <summary>Array of style class names</summary>
   TButtonClasses = Array of TStyledButtonClass;
+  /// <summary>Array of style appearance names</summary>
   TButtonAppearances = Array of TStyledButtonAppearance;
 
+  /// <summary>Attributes for notification badge display on styled buttons</summary>
+  /// <remarks>
+  ///   TNotificationBadgeAttributes controls the appearance and content of notification
+  ///   badges (counter circles) that can be displayed on any styled button. Supports
+  ///   numeric counters, custom text, and small dot indicators.
+  /// </remarks>
   TNotificationBadgeAttributes = class(TComponent)
   private
     FNotificationCount: Integer;
@@ -125,25 +155,46 @@ Type
     function GetIsVisible: Boolean;
     function IsFontStyleStored: Boolean;
   public
+    /// <summary>Copies properties from another TNotificationBadgeAttributes instance</summary>
     procedure Assign(ASource: TPersistent); override;
+    /// <summary>Creates a new notification badge attributes instance</summary>
     constructor Create(AOwner: TComponent); override;
+    /// <summary>Returns True if any custom attributes are set</summary>
     function HasCustomAttributes: Boolean;
+    /// <summary>The text content to display in the badge</summary>
     property BadgeContent: string read GetBadgeContent;
+    /// <summary>Returns True if badge should be visible (has content)</summary>
     property IsVisible: Boolean read GetIsVisible;
+    /// <summary>The control that owns this badge</summary>
     property OwnerControl: TControl read FOwnerControl;
   published
+    /// <summary>Background color of the badge</summary>
     property Color: TColor read FColor write SetColor default DEFAULT_BADGE_COLOR;
+    /// <summary>Custom text to display instead of notification count</summary>
     property CustomText: string read FCustomText write SetCustomText;
+    /// <summary>Font color for the badge text</summary>
     property FontColor: TColor read FFontColor write SetFontColor default DEFAULT_BADGE_FONT_COLOR;
+    /// <summary>Font style for the badge text</summary>
     property FontStyle: TFontStyles read FFontStyle write SetFontStyle stored IsFontStyleStored;
+    /// <summary>Number of notifications to display (0 hides badge unless CustomText is set)</summary>
     property NotificationCount: Integer read FNotificationCount write SetNotificationCount default 0;
+    /// <summary>Maximum number to display before showing "99+" style text</summary>
     property MaxNotifications: Word read FMaxNotifications write SetMaxNotifications default DEFAULT_MAX_BADGE_VALUE;
+    /// <summary>Corner position for the badge</summary>
     property Position: TNotificationBadgePosition read FPosition write SetPosition default nbpTopRight;
+    /// <summary>Size type of the badge (normal counter or small dot)</summary>
     property Size: TNotificationBadgeSize read FSize write SetSize default nbsNormal;
-
+    /// <summary>Event fired when badge content changes</summary>
     property OnContentChange: TNotifyEvent read FOnContentChange write FOnContentChange;
   end;
 
+  /// <summary>Visual attributes for a styled button in a specific state</summary>
+  /// <remarks>
+  ///   TStyledButtonAttributes defines all the visual properties for rendering a button
+  ///   in a specific state (Normal, Pressed, Selected, Hot, Disabled). Each button
+  ///   maintains five instances of this class, one for each state. Properties can be
+  ///   inherited from the style family or customized individually.
+  /// </remarks>
   TStyledButtonAttributes = class(TComponent)
   private
     //Custom values
@@ -206,81 +257,179 @@ Type
     function GetRoundedCorners: TRoundedCorners;
     procedure SetCustomAttributes(const Value: Boolean);
   public
+    /// <summary>Creates a new button attributes instance</summary>
     constructor Create(AOwner: TComponent); override;
+    /// <summary>Returns True if any custom attribute has been set</summary>
     function HasCustomAttributes: Boolean;
+    /// <summary>Copies all properties from another attributes instance</summary>
     procedure Assign(ASource: TPersistent); override;
+    /// <summary>Returns the TPenStyle equivalent for the border draw style</summary>
     function PenStyle: TPenStyle;
+    /// <summary>Returns the TBrushStyle equivalent for the button draw style</summary>
     function BrushStyle: TBrushStyle;
+    /// <summary>Assigns styled attributes from source, returns True if changed</summary>
     function AssignStyledAttributes(const ASource: TStyledButtonAttributes): Boolean;
+    /// <summary>Resets all custom attributes to use family defaults</summary>
     procedure ResetCustomAttributes;
+    /// <summary>True if DrawType has been customized</summary>
     property HasCustomDrawType: Boolean read FHasCustomDrawType;
+    /// <summary>True if BorderWidth has been customized</summary>
     property HasCustomBorderWidth: Boolean read FHasCustomBorderWidth;
+    /// <summary>True if BorderDrawStyle has been customized</summary>
     property HasCustomBorderDrawStyle: Boolean read FHasCustomBorderDrawStyle;
+    /// <summary>True if ButtonDrawStyle has been customized</summary>
     property HasCustomButtonDrawStyle: Boolean read FHasCustomButtonDrawStyle;
+    /// <summary>True if BorderColor has been customized</summary>
     property HasCustomBorderColor: Boolean read FHasCustomBorderColor;
+    /// <summary>True if FontColor has been customized</summary>
     property HasCustomFontColor: Boolean read FHasCustomFontColor;
+    /// <summary>True if FontStyle has been customized</summary>
     property HasCustomFontStyle: Boolean read FHasCustomFontStyle;
+    /// <summary>True if ButtonColor has been customized</summary>
     property HasCustomButtonColor: Boolean read FHasCustomButtonColor;
+    /// <summary>True if Radius has been customized</summary>
     property HasCustomRadius: Boolean read FHasCustomRadius;
+    /// <summary>True if RoundedCorners has been customized</summary>
     property HasCustomRoundedCorners: Boolean read FHasCustomRoundedCorners;
   published
+    /// <summary>Shape drawing type (btRoundRect, btRounded, btRect, btEllipse)</summary>
     property DrawType: TStyledButtonDrawType read GetDrawType write SetDrawType stored FHasCustomDrawType;
+    /// <summary>Width of the border in pixels</summary>
     property BorderWidth: Integer read GetBorderWidth write SetBorderWidth stored FHasCustomBorderWidth;
+    /// <summary>Border drawing style (clear or solid)</summary>
     property BorderDrawStyle: TBorderDrawStyle read GetBorderDrawStyle write SetBorderDrawStyle stored FHasCustomBorderDrawStyle;
+    /// <summary>Button fill drawing style (clear or solid)</summary>
     property ButtonDrawStyle: TButtonDrawStyle read GetButtonDrawStyle write SetButtonDrawStyle stored FHasCustomButtonDrawStyle;
+    /// <summary>Color of the button border</summary>
     property BorderColor: TColor read GetBorderColor write SetBorderColor stored FHasCustomBorderColor;
+    /// <summary>Color of the button text/caption</summary>
     property FontColor: TColor read GetFontColor write SetFontColor stored FHasCustomFontColor;
+    /// <summary>Font style for the button text</summary>
     property FontStyle: TFontStyles read GetFontStyle write SetFontStyle stored FHasCustomFontStyle;
+    /// <summary>Background fill color of the button</summary>
     property ButtonColor: TColor read GetButtonColor write SetButtonColor stored FHasCustomButtonColor;
+    /// <summary>Corner radius for btRoundRect draw type</summary>
     property Radius: Integer read GetRadius write SetRadius stored FHasCustomRadius;
+    /// <summary>Set of corners to apply rounding to</summary>
     property RoundedCorners: TRoundedCorners read GetRoundedCorners write SetRoundedCorners stored FHasCustomRoundedCorners;
+    /// <summary>Legacy property - use HasCustomAttributes instead</summary>
     property UseCustomAttributes: Boolean read HasCustomAttributes write SetCustomAttributes stored False;
   end;
 
-  //  Abstraction of Graphic Button Attributes
+  /// <summary>Interface for style family attribute providers</summary>
+  /// <remarks>
+  ///   Implement this interface to create custom style families.
+  ///   Each style family (Bootstrap, Angular, Classic, etc.) provides an implementation
+  ///   that defines colors and appearances for all button states.
+  /// </remarks>
   IStyledButtonAttributes = interface
     ['{C7BC98EE-D513-46B9-881A-2FDE8DE07786}']
+    /// <summary>Updates button attributes for all five states based on family/class/appearance</summary>
+    /// <param name="AFamily">The style family name</param>
+    /// <param name="AStyle">The style class within the family</param>
+    /// <param name="AAppearance">The appearance variant</param>
+    /// <param name="ANormalStyle">Output: attributes for normal state</param>
+    /// <param name="APressedStyle">Output: attributes for pressed state</param>
+    /// <param name="ASelectedStyle">Output: attributes for selected state</param>
+    /// <param name="AHotStyle">Output: attributes for hot/hover state</param>
+    /// <param name="ADisabledStyle">Output: attributes for disabled state</param>
     procedure UpdateAttributes(
       const AFamily:  TStyledButtonFamily;
       const AStyle: TStyledButtonClass;
       const AAppearance: TStyledButtonAppearance;
       var ANormalStyle, APressedStyle, ASelectedStyle,
       AHotStyle, ADisabledStyle: TStyledButtonAttributes);
+    /// <summary>Returns the name of this button family</summary>
     function ButtonFamilyName: string;
+    /// <summary>Returns array of available style classes in this family</summary>
     function GetButtonClasses: TButtonClasses;
+    /// <summary>Returns array of available appearances in this family</summary>
     function GetButtonAppearances: TButtonAppearances;
+    /// <summary>Gets the appropriate style class and appearance for a modal result</summary>
+    /// <param name="AModalResult">The modal result value</param>
+    /// <param name="AStyleClass">Output: recommended style class</param>
+    /// <param name="AStyleAppearance">Output: recommended appearance</param>
     procedure GetStyleByModalResult(
       const AModalResult: System.UITypes.TModalResult;
       var AStyleClass: TStyledButtonClass;
       var AStyleAppearance: TStyledButtonAppearance);
   end;
 
+  /// <summary>Container class for a registered button style family</summary>
   TButtonFamily = class(TObject)
   private
     FStyleFamily: TStyledButtonFamily;
     FCustomAttributes: IStyledButtonAttributes;
   public
+    /// <summary>The style attributes provider interface for this family</summary>
     property StyledAttributes: IStyledButtonAttributes read FCustomAttributes;
   end;
 
-//utilities
+// Utility functions
+
+/// <summary>Validates that a value is within the specified range</summary>
+/// <param name="AName">Property name for error message</param>
+/// <param name="AValue">Value to check</param>
+/// <param name="AMin">Minimum allowed value</param>
+/// <param name="AMax">Maximum allowed value</param>
+/// <exception cref="EStyledAttributesException">Raised if value is out of range</exception>
 procedure CheckValue(const AName: string; const AValue, AMin, AMax: Integer);
+/// <summary>Darkens a color by the specified percentage</summary>
+/// <param name="Color">The color to darken</param>
+/// <param name="Percent">Percentage to darken (0-100)</param>
+/// <returns>The darkened color</returns>
 function DarkenColor(Color:TColor; Percent:integer):TColor;
+/// <summary>Lightens a color by the specified percentage</summary>
+/// <param name="Color">The color to lighten</param>
+/// <param name="Percent">Percentage to lighten (0-100)</param>
+/// <returns>The lightened color</returns>
 function LightenColor(Color:TColor; Percent:integer):TColor;
+/// <summary>Converts an HTML color string to TColor</summary>
+/// <param name="Color">HTML color string (e.g., '#FF0000' or 'red')</param>
+/// <returns>The corresponding TColor value</returns>
 function HtmlToColor(Color: string): TColor;
+/// <summary>Converts a color to its grayscale equivalent</summary>
+/// <param name="AColor">The color to convert</param>
+/// <returns>The grayscale color</returns>
 function ColortoGrayscale(AColor : TColor): TColor;
+/// <summary>Determines if a color is considered light or dark</summary>
+/// <param name="Color">The color to test</param>
+/// <returns>True if the color is light, False if dark</returns>
 function ColorIsLight(Color: TColor): Boolean;
+/// <summary>Compares two button style attributes for equality</summary>
+/// <param name="Style1">First style to compare</param>
+/// <param name="Style2">Second style to compare</param>
+/// <returns>True if both styles have identical properties</returns>
 function SameStyledButtonStyle(Style1, Style2: TStyledButtonAttributes): Boolean;
+/// <summary>Compares two notification badge attributes for equality</summary>
+/// <param name="Attr1">First attributes to compare</param>
+/// <param name="Attr2">Second attributes to compare</param>
+/// <returns>True if both have identical properties</returns>
 function SameNotificationBadgeAttributes(Attr1, Attr2: TNotificationBadgeAttributes): Boolean;
+/// <summary>Creates a copy of button style attributes</summary>
+/// <param name="ASource">Source attributes to copy</param>
+/// <param name="ADest">Destination attributes (will be created if nil)</param>
 procedure CloneButtonStyle(const ASource: TStyledButtonAttributes;
   var ADest: TStyledButtonAttributes);
+/// <summary>Returns the active VCL style name for a control</summary>
+/// <param name="AControl">The control to check</param>
+/// <returns>The style name (e.g., 'Windows', 'Carbon', etc.)</returns>
 function GetActiveStyleName(const AControl: TControl): string;
+/// <summary>Detects the current Windows version</summary>
+/// <returns>The Windows version enumeration value</returns>
 function GetWindowsVersion: TWindowsVersion;
+/// <summary>Removes or cleans hyperlink references from a string</summary>
+/// <param name="Msg">The message containing hrefs</param>
+/// <param name="OnlyLinks">When True, only removes link tags</param>
+/// <param name="OnlyFileNotExists">When True, only removes links to non-existent files</param>
+/// <returns>The cleaned string</returns>
 function ClearHRefs(const Msg: string;  OnlyLinks: boolean = True;
   OnlyFileNotExists: boolean = False): string;
 
-//Calculate Image and Text Rect for Drawing using ImageAlignment and ImageMargins
-//for StyledButton and StyledGraphicButton
+// Drawing calculation functions
+
+/// <summary>Calculates image and text rectangles for drawing using ImageAlignment and ImageMargins</summary>
+/// <remarks>Used by TStyledButton and TStyledGraphicButton</remarks>
 procedure CalcImageAndTextRect(const ASurfaceRect: TRect;
   const ACaption: string;
   out ATextRect: TRect; out AImageRect: TRect;
@@ -290,8 +439,8 @@ procedure CalcImageAndTextRect(const ASurfaceRect: TRect;
   const ABorderWidth: Integer;
   const AScale: Single); overload;
 
-//Calculate Image and Text Rect for Drawing using ButtonLayout, Margin and Spacing
-//For StyledSpeedButton and StyledBitBtn
+/// <summary>Calculates image and text rectangles for drawing using ButtonLayout, Margin and Spacing</summary>
+/// <remarks>Used by TStyledSpeedButton and TStyledBitBtn for TSpeedButton/TBitBtn compatibility</remarks>
 procedure CalcImageAndTextRect(const ACanvas: TCanvas;
   const ACaption: string; const ASurfaceRect: TRect;
   const AOffset: TPoint;
@@ -301,20 +450,22 @@ procedure CalcImageAndTextRect(const ACanvas: TCanvas;
   const AMargin, ASpacing, ABorderWidth: Integer;
   const ABiDiFlags: Cardinal); overload;
 
-//draw of Glyph
+// Drawing functions
+
+/// <summary>Draws a BitBtn-style glyph with state-based image selection</summary>
 procedure DrawBitBtnGlyph(const ACanvas: TCanvas; const ARect: TRect;
   const AKind: Vcl.Buttons.TBitBtnKind;
   const AState: TButtonState; const AEnabled: Boolean;
   const AOriginal: TBitmap; const ANumGlyphs: Integer; const ATransparentColor: TColor);
 
-//drawing a Text in a Canvas Using Alignment and Spacing
+/// <summary>Draws button text with alignment and spacing</summary>
 procedure DrawButtonText(const ACanvas: TCanvas;
   const AText: string; const AAlignment: TAlignment;
   const ASpacing, ABorderWidth: Integer;
   var ARect: TRect; ABidiFlags: Cardinal;
   const PreserveBorders: Boolean = True);
 
-//drawing a Notification Badge on a Canvas
+/// <summary>Draws a notification badge on a canvas</summary>
 procedure DrawButtonNotificationBadge(const ACanvas: TCanvas;
   const ASurfaceRect: TRect; const AScaleFactor: Single;
   const AValue: string;
@@ -322,57 +473,78 @@ procedure DrawButtonNotificationBadge(const ACanvas: TCanvas;
   const APosition: TNotificationBadgePosition;
   const AColor, AFontColor: TColor; const AFontStyle: TFontStyles);
 
-//drawing "old-style" with masked bitmap
+/// <summary>Draws a bitmap with transparency using mask technique</summary>
 procedure DrawBitmapTransparent(ACanvas: TCanvas; ARect: TRect;
   const AWidth, AHeight: Integer; AOriginal: TBitmap;
   AState: TButtonState; ANumGlyphs: Integer; const ATransparentColor: TColor);
 
-//drawing Command-Link Arrow (white or Black)
+/// <summary>Draws a command-link arrow icon (white or black based on style)</summary>
 procedure DrawIconFromCommandLinkRes(ACanvas: TCanvas; ARect: TRect;
   AVCLStyleName: string; AState: TButtonState; AEnabled: Boolean);
 
-//Draw rectangle and border into Canvas
+/// <summary>Draws a rectangle with border on canvas</summary>
 procedure DrawRect(ACanvas: TCanvas; var ARect: TRect);
 
-//draw Button into Canvas
+/// <summary>Draws a button shape using GDI+ with antialiasing</summary>
+/// <param name="ACanvas">The canvas to draw on</param>
+/// <param name="ARect">The bounding rectangle</param>
+/// <param name="ADrawType">The shape type to draw</param>
+/// <param name="ACornerRadius">Corner radius for rounded shapes</param>
+/// <param name="ARoundedCorners">Which corners to round</param>
+/// <param name="APreserveBorderSpace">When True, leaves space for border</param>
 procedure CanvasDrawShape(const ACanvas: TCanvas; ARect: TRect;
   const ADrawType: TStyledButtonDrawType; const ACornerRadius: Single;
   const ARoundedCorners: TRoundedCorners;
   const APreserveBorderSpace: Boolean = True);
 
-//draw Text into Canvas
+/// <summary>Draws text on canvas with BiDi support</summary>
 procedure CanvasDrawText(const ACanvas: TCanvas; ARect: TRect;
   const AText: string; ABiDiModeFlags: LongInt);
 
-//draw bar and triangle for SplitButton into Canvas
+/// <summary>Draws the separator bar and dropdown triangle for split buttons</summary>
 procedure CanvasDrawBarAndTriangle(const ACanvas: TCanvas; const ARect: TRect;
   const AScaleFactor: Single; ABarColor, ATriangleColor: TColor);
 
-//draw Vertical bar into Canvas
+/// <summary>Draws a vertical separator bar on canvas</summary>
 procedure CanvasDrawBar(const ACanvas: TCanvas; const ARect: TRect;
   const AScaleFactor: Single; ABarColor: TColor);
 
-//draw a triangle into Canvas
+/// <summary>Draws a dropdown triangle indicator on canvas</summary>
 procedure CanvasDrawTriangle(const ACanvas: TCanvas; const ARect: TRect;
   const AScaleFactor: Single; ATriangleColor: TColor);
 
-//ButtonFamily Factory
+// Button Family Factory functions
+
+/// <summary>Registers a new button style family</summary>
+/// <param name="AStyledButtonAttributes">The attributes interface implementation for the family</param>
 procedure RegisterButtonFamily(
   const AStyledButtonAttributes: IStyledButtonAttributes);
+/// <summary>Returns the list of all registered button families</summary>
 function GetButtonFamilies: TObjectList;
+/// <summary>Gets a button family by name</summary>
+/// <param name="AFamilyName">The family name to find</param>
+/// <returns>The TButtonFamily instance, or nil if not found</returns>
 function GetButtonFamilyClass(const AFamilyName: TStyledButtonFamily): TButtonFamily;
+/// <summary>Gets a button family name by index</summary>
 function GetButtonFamilyName(const Index: Integer): TStyledButtonFamily;
+/// <summary>Gets available style classes for a button family</summary>
 function GetButtonClasses(const AFamily: TButtonFamily): TButtonClasses;
+/// <summary>Gets available appearances for a button family</summary>
 function GetButtonAppearances(const AFamily: TButtonFamily): TButtonAppearances;
+/// <summary>Gets available style classes for a family by name</summary>
 function GetButtonFamilyClasses(const AFamily: TStyledButtonFamily): TButtonClasses;
+/// <summary>Gets available appearances for a family by name</summary>
 function GetButtonFamilyAppearances(const AFamily: TStyledButtonFamily): TButtonAppearances;
 
+/// <summary>Validates and retrieves a button family, setting defaults if needed</summary>
+/// <returns>True if the family was found and validated</returns>
 function StyleFamilyCheckAttributes(
   const AFamily: TStyledButtonFamily;
   var AClass: TStyledButtonClass;
   var AAppearance: TStyledButtonAppearance;
   out AButtonFamily: TButtonFamily): Boolean;
 
+/// <summary>Updates button attributes for all states based on family/class/appearance</summary>
 procedure StyleFamilyUpdateAttributes(
   const AFamily: TStyledButtonFamily;
   var AClass: TStyledButtonClass;
@@ -380,6 +552,11 @@ procedure StyleFamilyUpdateAttributes(
   var ANormalStyle, APressedStyle,
   ASelectedStyle, AHotStyle, ADisabledStyle: TStyledButtonAttributes);
 
+/// <summary>Gets appropriate style class and appearance for a modal result</summary>
+/// <remarks>
+///   Maps modal results like mrOk, mrCancel, mrYes, mrNo to appropriate
+///   style classes (Success, Danger, etc.) based on the family's conventions
+/// </remarks>
 procedure StyleFamilyUpdateAttributesByModalResult(
   const AModalResult: TModalResult;
   const AFamily: TStyledButtonFamily;
