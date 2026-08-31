@@ -47,13 +47,13 @@
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
     <ItemGroup Condition="'$(BuildGroup)'=='ALL'">
         <BuildGroupProject Include="StyledAnimatedComponents.dproj">
-            <ProjectGuid>{10AD02FB-9DC1-47B6-A510-EE8D85DD1944}</ProjectGuid>
+            <ProjectGuid>{4623C7A7-07DE-431E-8CD6-B9FF3C22B38E}</ProjectGuid>
             <Configurations>Release</Configurations>
             <Platforms>Win32;Win64</Platforms>
             <Enabled>True</Enabled>
         </BuildGroupProject>
         <BuildGroupProject Include="dclStyledAnimatedComponents.dproj">
-            <ProjectGuid>{1F493CDE-04AB-46B1-B3B2-09FFE3F4F76E}</ProjectGuid>
+            <ProjectGuid>{1ACC24DA-A666-4FFC-BF01-8650ED9755D5}</ProjectGuid>
             <Configurations>Release</Configurations>
             <Platforms>Win32</Platforms>
             <Enabled>True</Enabled>

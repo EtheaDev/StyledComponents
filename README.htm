@@ -1,4 +1,11 @@
-<style type="text/css">
+﻿<style type="text/css">
+body{
+  font-family: Arial, Helvetica, sans-serif;
+}
+img{
+  max-width: 100%;
+  height: auto;
+}
 code{
   font-family: "Consolas", monospace;
 }
@@ -31,7 +38,7 @@ td{
 </style>
 <h1>Delphi VCL StyledComponents <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg" alt="License"/></a></h1>
 <h2>Components similar to Delphi VCL Buttons, Panels, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!</h2>
-<h3>Actual official version: 4.2.1</h3>
+<h3>Actual official version: 4.2.2</h3>
 <hr />
 <h2>New Setup for Installation of Components</h2>
 <p>From 3.8.1 version a new &ldquo;Installer&rdquo; read-to-use is located in the Release area: <a href="https://github.com/EtheaDev/StyledComponents/releases/latest/download/StyledComponents_Setup.exe">Download the Installer</a>.</p>
@@ -81,6 +88,7 @@ td{
     <td align="left"><img src="./Images/Classic_Normal_Windows_btEllipse.png" alt="Ellipse"/></td>
   </tr>
 </table>
+<br/>
 <ul>
 <li><strong>StyleRoundedCorners</strong>: used for RoundRect and Rounded DrawType</li>
 <li><strong>StyleRadius</strong>: used for btRoundRect DrawType</li>
@@ -144,6 +152,7 @@ td{
     <td><strong>TStyledPanel</strong> a styled container control based on TCustomPanel with support for Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color). It provides full control over background rendering with customizable shape (Rounded, RoundRect, Rect, Ellipse), colors and borders for Normal and Disabled states. Features include Caption alignment, customizable margins, and the ability to switch between styled and VCL rendering.</td>
   </tr>
 </table>
+<br/>
 <hr />
 <p>For &ldquo;backward compatibily&rdquo;, you can also use those components.</p>
 <table>
@@ -160,6 +169,7 @@ td{
     <td><strong>TStyledBitBtn</strong> derives from TStyledButton, and introduce <em>Layout</em>, <em>Margin</em> and <em>Spacing</em> properties, to control Drawing (Icon and Caption) as a standard TBitBtn. You can also use Glyph and NumGlyphs.</td>
   </tr>
 </table>
+<br/>
 <p>Those components uses some properties to Draw Icon and Caption in a different way:</p>
 <ul>
 <li>A <em>Glyph</em> and <em>NumGlyphs</em> for the Icon of the button (not reccomended, because doesn't scale)</li>
@@ -178,6 +188,7 @@ td{
     <td><strong>TStyledAnimatedButton</strong> is Styled Button with with &ldquo;animated icon&rdquo; using a Skia TSkAnimatedImage component inside. You can select the events that starts the animation, like: <em>AnimateOnMouseOver</em>, <em>AnimateOnClick</em>, <em>AnimateAlways</em>, <em>AnimateOnFocus</em>.</td>
   </tr>
 </table>
+<br/>
 <hr />
 <h2>Description of Styled Buttons</h2>
 <p><strong>TStyledGraphicButton</strong>, <strong>TStyledButton</strong>, <strong>TStyledBitBtn</strong> and <strong>TStyledSpeedButton</strong> are designed to expand Button UI styles to break the limits of classic VCL Button components.</p>
@@ -203,19 +214,25 @@ td{
 <p><strong><em>Control the default rendering styles for any Styled Buttons, Toolbars and DbNavigator</em></strong></p>
 <p>It's possible to redefine at global application level the default Drawing styles for any Components, adding some line in your project file. For Example:</p>
 <p>Add those units in uses of dpr:</p>
-<pre><code class="Pascal">  Vcl.StyledButton,
-  Vcl.ButtonStylesAttributes,
-  Vcl.StyledDbNavigator,
-  Vcl.StyledToolbar,
+<div style="font-family: Arial, 'Courier New', monospace; font-size: 12pt;  background-color: #191D22; color: #FFFFFF;">
+<pre><code><span>  Vcl</span><span style="color: #D4D4D4; ">.</span><span>StyledButton</span><span style="color: #D4D4D4; ">,</span>
+<span>  Vcl</span><span style="color: #D4D4D4; ">.</span><span>ButtonStylesAttributes</span><span style="color: #D4D4D4; ">,</span>
+<span>  Vcl</span><span style="color: #D4D4D4; ">.</span><span>StyledDbNavigator</span><span style="color: #D4D4D4; ">,</span>
+<span>  Vcl</span><span style="color: #D4D4D4; ">.</span><span>StyledToolbar</span><span style="color: #D4D4D4; ">,</span>
 </code></pre>
+</div>
 <p>Add those lines after Application.Initialize in dpr code:</p>
-<pre><code class="Pascal">  TStyledButton.RegisterDefaultRenderingStyle(btRounded);
-  TStyledDbNavigator.RegisterDefaultRenderingStyle(btRounded);
-  TStyledToolbar.RegisterDefaultRenderingStyle(btRect);
+<div style="font-family: Arial, 'Courier New', monospace; font-size: 12pt;  background-color: #191D22; color: #FFFFFF;">
+<pre><code><span>  TStyledButton</span><span style="color: #D4D4D4; ">.</span><span>RegisterDefaultRenderingStyle</span><span style="color: #D4D4D4; ">(</span><span>btRounded</span><span style="color: #D4D4D4; ">);</span>
+<span>  TStyledDbNavigator</span><span style="color: #D4D4D4; ">.</span><span>RegisterDefaultRenderingStyle</span><span style="color: #D4D4D4; ">(</span><span>btRounded</span><span style="color: #D4D4D4; ">);</span>
+<span>  TStyledToolbar</span><span style="color: #D4D4D4; ">.</span><span>RegisterDefaultRenderingStyle</span><span style="color: #D4D4D4; ">(</span><span>btRect</span><span style="color: #D4D4D4; ">);</span>
 </code></pre>
+</div>
 <p>You can also use a Family/Class/Appearance of any type, for example:</p>
-<pre><code class="Pascal">TStyledButton.RegisterDefaultRenderingStyle(btRoundRect, BOOTSTRAP_FAMILY, btn_primary, BOOTSTRAP_NORMAL);
+<div style="font-family: Arial, 'Courier New', monospace; font-size: 12pt;  background-color: #191D22; color: #FFFFFF;">
+<pre><code><span>TStyledButton</span><span style="color: #D4D4D4; ">.</span><span>RegisterDefaultRenderingStyle</span><span style="color: #D4D4D4; ">(</span><span>btRoundRect</span><span style="color: #D4D4D4; ">,</span><span> BOOTSTRAP_FAMILY</span><span style="color: #D4D4D4; ">,</span><span> btn_primary</span><span style="color: #D4D4D4; ">,</span><span> BOOTSTRAP_NORMAL</span><span style="color: #D4D4D4; ">);</span>
 </code></pre>
+</div>
 <p>You can also use <a href="https://github.com/EtheaDev/StyledComponents/wiki/Interposer-Unit-(Vcl.StyledComponentsHooks)">Interposer Unit (Vcl.StyledComponentsHooks.pas)</a> to easily change all Buttons of your application.</p>
 <p><strong><em>Template unit to create your custom Family Styles</em></strong></p>
 <p>With the unit &ldquo;Vcl.TemplateButtonStyles.pas&rdquo; you can create your own Family of Button Styles, <a href="http://ethea.it/docs/styledcomponents/HowtoBuildYourCustomStyle.html">as explained here</a></p>
@@ -320,12 +337,14 @@ MessageDlg -> StyledMessageDlg
 TaskDialog -> StyledTaskDialog</p>
 <h2>How to change Dialogs attributes (Font/Buttons Style)</h2>
 <p>By default, StyledDialogs uses Segoe UI Font with Size 9 (stored into Vcl.StyledTaskDialogFormUnit.dfm). If you want to use another font/size you can call InitializeStyledTaskDialogs like in this example:</p>
-<pre><code class="Delphi">  //Resize Standard Message Font to an higher size and select Arial character
-  Screen.MessageFont.Size := Round(Screen.MessageFont.Size*1.2);
-  Screen.MessageFont.Name := 'Arial';
-  //Inizialize the styled dialogs using "Bootstrap" styled buttons and the Screen.MessageFont
-  InitializeStyledTaskDialogs(True, Screen.MessageFont, BOOTSTRAP_FAMILY);
+<div style="font-family: Arial, 'Courier New', monospace; font-size: 12pt;  background-color: #191D22; color: #FFFFFF;">
+<pre><code><span>  </span><span style="color: #6A9955; font-style: italic; ">//Resize Standard Message Font to an higher size and select Arial character</span>
+<span>  Screen</span><span style="color: #D4D4D4; ">.</span><span>MessageFont</span><span style="color: #D4D4D4; ">.</span><span>Size </span><span style="color: #D4D4D4; ">:=</span><span> Round</span><span style="color: #D4D4D4; ">(</span><span>Screen</span><span style="color: #D4D4D4; ">.</span><span>MessageFont</span><span style="color: #D4D4D4; ">.</span><span>Size</span><span style="color: #D4D4D4; ">*</span><span style="color: #B5CEA8; ">1.2</span><span style="color: #D4D4D4; ">);</span>
+<span>  Screen</span><span style="color: #D4D4D4; ">.</span><span>MessageFont</span><span style="color: #D4D4D4; ">.</span><span>Name </span><span style="color: #D4D4D4; ">:=</span><span> </span><span style="color: #CE9178; ">'Arial'</span><span style="color: #D4D4D4; ">;</span>
+<span>  </span><span style="color: #6A9955; font-style: italic; ">//Inizialize the styled dialogs using &quot;Bootstrap&quot; styled buttons and the Screen.MessageFont</span>
+<span>  InitializeStyledTaskDialogs</span><span style="color: #D4D4D4; ">(</span><span>True</span><span style="color: #D4D4D4; ">,</span><span> Screen</span><span style="color: #D4D4D4; ">.</span><span>MessageFont</span><span style="color: #D4D4D4; ">,</span><span> BOOTSTRAP_FAMILY</span><span style="color: #D4D4D4; ">);</span>
 </code></pre>
+</div>
 <p><strong>StyledTaskDialog Demo</strong></p>
 <p>A simple demo to show how to use StyledTaskDialog with custom icons using ImageList.</p>
 <p>The main form is useful to test every format / buttons and type of dialogs.</p>
@@ -348,6 +367,22 @@ TaskDialog -> StyledTaskDialog</p>
 <p><img src="./Images/SupportingDelphi.jpg" alt="Delphi Support"/></p>
 <p>Related links: <a href="https://www.embarcadero.com">embarcadero.com</a> - <a href="https://learndelphi.org">learndelphi.org</a></p>
 <h3>RELEASE NOTES</h3>
+<p>31 Aug 2026 - version 4.2.2</p>
+<ul>
+<li>Bug-fix batch from the v4.2.1 code review (crashes and wrong behaviour):</li>
+<li>Fixed crashes/AVs: positioned StyledTaskDialog (Assert on nil Owner), StyledButton WM_PAINT on paint exception, action-link ImageName cast, nil-deref from the streamer (IsStoredStyle), TStyledPanel.Assign, StyledToolbar drop-down (FToolBar)</li>
+<li>Fixed StyledToolbar: rescaling flag, Buttons[] index, MenuItem free-notification, no more runtime button reordering, WMSysCommand</li>
+<li>Fixed StyledTaskDialog: TimerEvent without OnTimer, _DialogFont, dialog Handle cleared on close, question-icon native fallback, launcher/title/button-family handling</li>
+<li>Fixed wrong-field setters (ButtonsWidth, CustomFooterIcon, StylusHotImageIndex)</li>
+<li>Fixed TImageNamePropertyEditor (D10_4+ guard) and the animated component editor / Notification</li>
+<li>Unknown StyleFamily now raises instead of rendering black; attribute setters copy (Assign) instead of swapping the object pointer</li>
+<li>Fixed per-item Enabled in StyledButtonGroup / StyledCategoryButtons</li>
+<li>Fixed image-list change/free notifications in StyledToolbar and StyledDBNavigator</li>
+<li>Fixed Vcl.StyledMessagesHooks so adding it no longer breaks existing MessageDlg/TaskMessageDlg calls</li>
+<li>Fixed unknown style-class handling in Angular / Basic-Colors / SVG-Colors families</li>
+<li>Fixed several ThemeType mismatches in the VCL-style color tables</li>
+<li>Packaging: unique ProjectGuid in D11, all sources saved as UTF-8 with BOM, aligned package descriptions</li>
+</ul>
 <p>25 May 2026 - version 4.2.1</p>
 <ul>
 <li>Fixed TStyledButton design-time rendering on Windows 11 Dark Mode</li>

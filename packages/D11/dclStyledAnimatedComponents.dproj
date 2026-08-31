@@ -1,6 +1,6 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{1F493CDE-04AB-46B1-B3B2-09FFE3F4F76E}</ProjectGuid>
+        <ProjectGuid>{1ACC24DA-A666-4FFC-BF01-8650ED9755D5}</ProjectGuid>
         <MainSource>dclStyledAnimatedComponents.dpk</MainSource>
         <ProjectVersion>19.5</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>

@@ -1,4 +1,4 @@
-{******************************************************************************}
+﻿{******************************************************************************}
 {                                                                              }
 {  StyledComponentsHooks: an interposer Unit to use Styled Components          }
 {  using Standard Delphi Controls Class Names                                  }

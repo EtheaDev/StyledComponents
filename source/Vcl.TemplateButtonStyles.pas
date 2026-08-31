@@ -1,4 +1,4 @@
-{******************************************************************************}
+﻿{******************************************************************************}
 {                                                                              }
 {  TemplateButtonStyles: A base unit to create Button Styles attributes:       }
 {  family/classes/appearance                                                   }

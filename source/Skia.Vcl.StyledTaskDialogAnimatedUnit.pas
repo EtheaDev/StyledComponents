@@ -1,4 +1,4 @@
-{******************************************************************************}
+﻿{******************************************************************************}
 {                                                                              }
 {  StyledTaskDialogAnimated: an example of Task Dialog Form                    }
 {  using a TSkAnimatedImage with Lottie Animations                             }

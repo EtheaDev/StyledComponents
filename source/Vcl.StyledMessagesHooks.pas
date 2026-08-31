@@ -1,4 +1,4 @@
-{******************************************************************************}
+﻿{******************************************************************************}
 {                                                                              }
 {  StyledMessagesHooks: an interposer Unit to use Styled Dialog Boxes          }
 {  using Standard Delphi calls MessageDialog or ShowMessage                    }
@@ -34,19 +34,35 @@ uses
   Vcl.Dialogs
   ;
 
+const
+  //Sentinel meaning "no explicit default button". TMsgDlgBtn has no 'none'
+  //value, so an out-of-range cast is used as a marker.
+  NO_DEFAULT_BUTTON = TMsgDlgBtn(-1);
+
+//These interposer routines intentionally SHADOW (hide) the Vcl.Dialogs ones and
+//must NOT be marked 'overload'. Marking them overload merges them into the same
+//candidate set as Vcl.Dialogs' identical signatures, and every call then fails
+//with E2251 "Ambiguous overloaded call". Instead each routine covers all the RTL
+//call shapes (2..5 arguments, including the DefaultButton form) via optional
+//trailing parameters. Do NOT "helpfully" add 'overload' here.
+
 function TaskMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
-  Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint;
+  DefaultButton: TMsgDlgBtn = NO_DEFAULT_BUTTON): Integer;
 
 function MessageDlg(const Msg: string; DlgType: TMsgDlgType;
-  Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer;
+  Buttons: TMsgDlgButtons = [mbOK]; HelpCtx: Longint = 0;
+  DefaultButton: TMsgDlgBtn = NO_DEFAULT_BUTTON): Integer;
 
 function MessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint;
-  X: Integer = -1; Y: Integer = -1): Integer;
+  X: Integer = -1; Y: Integer = -1;
+  DefaultButton: TMsgDlgBtn = NO_DEFAULT_BUTTON): Integer;
 
 function TaskDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint;
-  X: Integer = -1; Y: Integer = -1): Integer;
+  X: Integer = -1; Y: Integer = -1;
+  DefaultButton: TMsgDlgBtn = NO_DEFAULT_BUTTON): Integer;
 
 procedure ShowMessage(const Msg: string);
 
@@ -57,29 +73,45 @@ uses
   ;
 
 function TaskMessageDlg(const Title, Msg: string; DlgType: TMsgDlgType;
-  Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer;
+  Buttons: TMsgDlgButtons; HelpCtx: Longint;
+  DefaultButton: TMsgDlgBtn = NO_DEFAULT_BUTTON): Integer;
 begin
-  Result := StyledTaskMessageDlg(Title, Msg, DlgType, Buttons, HelpCtx);
+  if DefaultButton = NO_DEFAULT_BUTTON then
+    Result := StyledTaskMessageDlg(Title, Msg, DlgType, Buttons, HelpCtx)
+  else
+    Result := StyledTaskMessageDlg(Title, Msg, DlgType, Buttons, HelpCtx, DefaultButton);
 end;
 
 function MessageDlg(const Msg: string; DlgType: TMsgDlgType;
-  Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer;
+  Buttons: TMsgDlgButtons = [mbOK]; HelpCtx: Longint = 0;
+  DefaultButton: TMsgDlgBtn = NO_DEFAULT_BUTTON): Integer;
 begin
-  Result := StyledMessageDlg(Msg, DlgType, Buttons, HelpCtx);
+  if DefaultButton = NO_DEFAULT_BUTTON then
+    Result := StyledMessageDlg(Msg, DlgType, Buttons, HelpCtx)
+  else
+    Result := StyledMessageDlg(Msg, DlgType, Buttons, HelpCtx, DefaultButton);
 end;
 
 function MessageDlgPos(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint;
-  X: Integer = -1; Y: Integer = -1): Integer;
+  X: Integer = -1; Y: Integer = -1;
+  DefaultButton: TMsgDlgBtn = NO_DEFAULT_BUTTON): Integer;
 begin
-  Result := StyledMessageDlgPos(Msg, DlgType, Buttons, HelpCtx, X, Y);
+  if DefaultButton = NO_DEFAULT_BUTTON then
+    Result := StyledMessageDlgPos(Msg, DlgType, Buttons, HelpCtx, X, Y)
+  else
+    Result := StyledMessageDlgPos(Msg, DlgType, Buttons, HelpCtx, DefaultButton, X, Y);
 end;
 
 function TaskDlgPos(const Title, Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint;
-  X: Integer = -1; Y: Integer = -1): Integer;
+  X: Integer = -1; Y: Integer = -1;
+  DefaultButton: TMsgDlgBtn = NO_DEFAULT_BUTTON): Integer;
 begin
-  Result := StyledTaskMessageDlgPos(Title, Msg, DlgType, Buttons, HelpCtx, X, Y);
+  if DefaultButton = NO_DEFAULT_BUTTON then
+    Result := StyledTaskMessageDlgPos(Title, Msg, DlgType, Buttons, HelpCtx, X, Y)
+  else
+    Result := StyledTaskMessageDlgPos(Title, Msg, DlgType, Buttons, HelpCtx, DefaultButton, X, Y);
 end;
 
 procedure ShowMessage(const Msg: string);

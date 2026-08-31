@@ -1,4 +1,4 @@
-{******************************************************************************}
+﻿{******************************************************************************}
 {                                                                              }
 {  AngulaButtonStyles: Button Styles inspired to Material/angular              }
 {  https://material.angular.io/components/button/overview                      }
@@ -161,6 +161,13 @@ begin
   end
   else if SameText(AClass, btn_Link) then
   begin
+    AButtonColor := htmlToColor('#FFFFFF');
+    AFontColor := htmlToColor('#212121');
+  end
+  else
+  begin
+    //Unknown class: fall back to the Basic light colours instead of leaving the
+    //var parameters unassigned (garbage).
     AButtonColor := htmlToColor('#FFFFFF');
     AFontColor := htmlToColor('#212121');
   end;
@@ -353,6 +360,13 @@ begin
   end
   else if SameText(AClass, btn_Link) then
   begin
+    AButtonColor := htmlToColor('#424242');
+    AFontColor := htmlToColor('#FFFFFF');
+  end
+  else
+  begin
+    //Unknown class: fall back to the Basic dark colours instead of leaving the
+    //var parameters unassigned (garbage).
     AButtonColor := htmlToColor('#424242');
     AFontColor := htmlToColor('#FFFFFF');
   end;

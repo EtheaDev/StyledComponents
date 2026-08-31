@@ -1,4 +1,4 @@
-{******************************************************************************}
+﻿{******************************************************************************}
 {                                                                              }
 {  StyledAnimatedComponents: a set of Styled VCL Component                     }
 {  with animations                                                             }
@@ -115,6 +115,11 @@ var
 begin
   inherited;
   LButton := GetButton as TStyledAnimatedButton;
+  //Defensive guard: TStyledAnimatedToolButton is disjoint from
+  //TStyledAnimatedButton, so GetButton could return nil for it; exit instead of
+  //dereferencing LButton.
+  if not Assigned(LButton) then
+    Exit;
   if Index = 0 then
   begin
     if EditStyledButton(LButton) then

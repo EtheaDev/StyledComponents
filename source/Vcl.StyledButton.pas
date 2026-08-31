@@ -3624,7 +3624,9 @@ begin
   begin
     FStylusHotImageIndex := AValue;
     {$IFDEF D10_4+}
-    UpdateImageName(AValue, FHotImageName);
+    //Keep the matching image name in sync with the stylus-hot index (its own
+    //field, not FHotImageName).
+    UpdateImageName(AValue, FStylusHotImageName);
     {$ENDIF}
   end;
 end;
@@ -3732,9 +3734,13 @@ end;
 
 procedure TStyledButtonRender.SetButtonStyleNormal(const AValue: TStyledButtonAttributes);
 begin
-  if not SameStyledButtonStyle(FButtonStyleNormal, AValue) then
+  //Copy into the owned sub-object instead of swapping the pointer: a swap would
+  //alias (and later double-free) another component's attributes. Guard nil so
+  //ButtonStyleNormal := nil is a safe no-op instead of an AV in the comparison.
+  if Assigned(AValue) and not SameStyledButtonStyle(FButtonStyleNormal, AValue) then
   begin
-    FButtonStyleNormal := AValue;
+    FButtonStyleNormal.Assign(AValue);
+    Invalidate;
   end;
 end;
 
@@ -3766,42 +3772,47 @@ end;
 procedure TStyledButtonRender.SetButtonStyleDisabled(
   const AValue: TStyledButtonAttributes);
 begin
-  if not SameStyledButtonStyle(FButtonStyleDisabled, AValue) then
+  if Assigned(AValue) and not SameStyledButtonStyle(FButtonStyleDisabled, AValue) then
   begin
-    FButtonStyleDisabled := AValue;
+    FButtonStyleDisabled.Assign(AValue);
+    Invalidate;
   end;
 end;
 
 procedure TStyledButtonRender.SetButtonStylePressed(const AValue: TStyledButtonAttributes);
 begin
-  if not SameStyledButtonStyle(FButtonStylePressed, AValue) then
+  if Assigned(AValue) and not SameStyledButtonStyle(FButtonStylePressed, AValue) then
   begin
-    FButtonStylePressed := AValue;
+    FButtonStylePressed.Assign(AValue);
+    Invalidate;
   end;
 end;
 
 procedure TStyledButtonRender.SetButtonStyleSelected(const AValue: TStyledButtonAttributes);
 begin
-  if not SameStyledButtonStyle(FButtonStyleSelected, AValue) then
+  if Assigned(AValue) and not SameStyledButtonStyle(FButtonStyleSelected, AValue) then
   begin
-    FButtonStyleSelected := AValue;
+    FButtonStyleSelected.Assign(AValue);
+    Invalidate;
   end;
 end;
 
 procedure TStyledButtonRender.SetButtonStyleHot(const AValue: TStyledButtonAttributes);
 begin
-  if not SameStyledButtonStyle(FButtonStyleHot, AValue) then
+  if Assigned(AValue) and not SameStyledButtonStyle(FButtonStyleHot, AValue) then
   begin
-    FButtonStyleHot := AValue;
+    FButtonStyleHot.Assign(AValue);
+    Invalidate;
   end;
 end;
 
 procedure TStyledButtonRender.SetNotificationBadge(
   const AValue: TNotificationBadgeAttributes);
 begin
-  if not SameNotificationBadgeAttributes(FNotificationBadge, AValue) then
+  if Assigned(AValue) and not SameNotificationBadgeAttributes(FNotificationBadge, AValue) then
   begin
-    FNotificationBadge := AValue;
+    FNotificationBadge.Assign(AValue);
+    Invalidate;
   end;
 end;
 
@@ -3976,6 +3987,10 @@ begin
   LValue := AValue;
   if LValue = '' then
     LValue := DEFAULT_CLASSIC_FAMILY;
+  //Reject an unregistered family loudly: this surfaces a missing style unit at
+  //design time (the form fails to load) instead of rendering black at runtime.
+  if not StyleFamilyExists(LValue) then
+    raise EStyledAttributesException.CreateFmt(ERROR_FAMILY_NOT_FOUND, [LValue]);
   if (LValue <> Self.FStyleFamily) or not FStyleApplied then
   begin
     FStyleFamily := LValue;
@@ -5377,9 +5392,21 @@ end;
 {$IFDEF D10_4+}
 function TGraphicButtonActionLink.IsImageNameLinked: Boolean;
 begin
-  Result := inherited IsImageNameLinked and
-    (TCustomStyledGraphicButton(FClient).ImageName =
-      TCustomAction(Action).ImageName);
+  //One action-link class serves both (disjoint) hierarchies: windowed and
+  //graphic. Without a type test, casting a windowed TStyledButton to
+  //TCustomStyledGraphicButton would read arbitrary memory as a string. Matches
+  //IsImageIndexLinked.
+  Assert(Assigned(FClient));
+  if FClient is TCustomStyledButton then
+    Result := inherited IsImageNameLinked and
+      (TCustomStyledButton(FClient).ImageName =
+        TCustomAction(Action).ImageName)
+  else if FClient is TCustomStyledGraphicButton then
+    Result := inherited IsImageNameLinked and
+      (TCustomStyledGraphicButton(FClient).ImageName =
+        TCustomAction(Action).ImageName)
+  else
+    Result := False;
 end;
 {$ENDIF}
 
@@ -6619,14 +6646,22 @@ var
   DC: HDC;
   LCanvas: TCanvas;
   PS: TPaintStruct;
+  LBeganPaint: Boolean;
 begin
   DC := HDC(Message.WParam);
+  //EndPaint must run in the finally: if DrawButton raises, the update region is
+  //never validated and Windows re-posts WM_PAINT forever (CPU spin). LBeganPaint
+  //tracks whether BeginPaint was called.
+  LBeganPaint := False;
   LCanvas := TCanvas.Create;
   try
     if DC <> 0 then
       LCanvas.Handle := DC
     else
+    begin
       LCanvas.Handle := BeginPaint(Self.Handle, PS);
+      LBeganPaint := True;
+    end;
     if FDoubleBuffered and (DC = 0) then
     begin
       if FPaintBuffer = nil then
@@ -6651,9 +6686,9 @@ begin
       // paint other controls
       PaintControls(LCanvas.Handle, nil);
     end;
-    if DC = 0 then
-      EndPaint(Self.Handle, PS);
   finally
+    if LBeganPaint then
+      EndPaint(Self.Handle, PS);
     LCanvas.Handle := 0;
     LCanvas.Free;
   end;

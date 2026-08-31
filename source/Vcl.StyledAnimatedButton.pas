@@ -1,4 +1,4 @@
-{******************************************************************************}
+﻿{******************************************************************************}
 {                                                                              }
 {  TStyledAnimatedButton: a StyledButton with "animated icon"                  }
 {  using a Skia TSkAnimatedImage component                                     }
@@ -431,7 +431,14 @@ procedure TStyledAnimatedButton.Notification(AComponent: TComponent;
   Operation: TOperation);
 begin
   if (Operation = opRemove) and (AComponent = FSkAnimatedImage) then
-    StopAnimation;
+  begin
+    //Use the field directly (not the auto-creating AnimatedImage getter) so we
+    //don't recreate a Skia object on the instance being removed; then clear the
+    //field, since Paint guards on FSkAnimatedImage.
+    if not (csDestroying in ComponentState) and FSkAnimatedImage.Animation.Running then
+      FSkAnimatedImage.Animation.Stop;
+    FSkAnimatedImage := nil;
+  end;
   inherited;
 end;
 

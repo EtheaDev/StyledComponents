@@ -1,4 +1,4 @@
-{******************************************************************************}
+﻿{******************************************************************************}
 {                                                                              }
 {  TStyledButtonAttributes: a collection of Rendering attributes               }
 {  for Styled Components                                                       }
@@ -56,7 +56,7 @@ uses
 
 const
   /// <summary>Current version of the StyledComponents library</summary>
-  StyledComponentsVersion = '4.2.1';
+  StyledComponentsVersion = '4.2.2';
   /// <summary>Default corner radius for rounded buttons in pixels</summary>
   DEFAULT_RADIUS = 6;
   /// <summary>Resource name for the Windows shield admin icon</summary>
@@ -536,6 +536,9 @@ function GetButtonFamilyClasses(const AFamily: TStyledButtonFamily): TButtonClas
 /// <summary>Gets available appearances for a family by name</summary>
 function GetButtonFamilyAppearances(const AFamily: TStyledButtonFamily): TButtonAppearances;
 
+/// <summary>Returns True if a button family with the given name is registered</summary>
+function StyleFamilyExists(const AFamily: TStyledButtonFamily): Boolean;
+
 /// <summary>Validates and retrieves a button family, setting defaults if needed</summary>
 /// <returns>True if the family was found and validated</returns>
 function StyleFamilyCheckAttributes(
@@ -947,7 +950,10 @@ begin
       AAppearance := LDefaultAppearance;
       Result := False;
     end;
-  end;
+  end
+  else
+    //Family not registered: report failure instead of a false success
+    Result := False;
 end;
 
 function StyleFamilyUpdateAttributes(
@@ -1027,6 +1033,13 @@ function GetButtonFamilyClass(const AFamilyName: TStyledButtonFamily): TButtonFa
 begin
   if not GetButtonFamily(AFamilyName, Result) then
     raise EStyledAttributesException.CreateFmt(ERROR_FAMILY_NOT_FOUND,[AFamilyName]);
+end;
+
+function StyleFamilyExists(const AFamily: TStyledButtonFamily): Boolean;
+var
+  LButtonFamily: TButtonFamily;
+begin
+  Result := GetButtonFamily(AFamily, LButtonFamily);
 end;
 
 function GetButtonClasses(const AFamily: TButtonFamily): TButtonClasses;

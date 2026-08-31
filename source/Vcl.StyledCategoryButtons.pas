@@ -1,4 +1,4 @@
-{******************************************************************************}
+﻿{******************************************************************************}
 {                                                                              }
 {  StyledCategoryButtons: a Styled CategoryButtons with TStyledButtonItem      }
 {  Based on TCategoryButtons and TButtonItem                                   }
@@ -264,7 +264,7 @@ type
       const AStyleDrawType: TStyledButtonDrawType;
       const ARadius: Single; const ARoundedCorners: TRoundedCorners);
     procedure DrawCaptionAndImage(const ACanvas: TCanvas; const ASurfaceRect: TRect;
-      const ACaption: TCaption; const AImageIndex: Integer);
+      const ACaption: TCaption; const AImageIndex: Integer; const AEnabled: Boolean);
     procedure SetCaptionAlignment(const AValue: TAlignment);
     function GetImageSize(out AWidth, AHeight: Integer;
       out AImageList: TCustomImageList): boolean;
@@ -504,7 +504,7 @@ end;
 
 procedure TStyledCategoryButtons.DrawCaptionAndImage(
   const ACanvas: TCanvas; const ASurfaceRect: TRect;
-  const ACaption: TCaption; const AImageIndex: Integer);
+  const ACaption: TCaption; const AImageIndex: Integer; const AEnabled: Boolean);
 var
   LTextFlags: Cardinal;
   LImageRect, LTextRect: TRect;
@@ -539,9 +539,10 @@ begin
 
   if LUseImageList and not Assigned(OnDrawIcon) then
   begin
-    //Uses an ImageList to draw the Icon
+    //Uses an ImageList to draw the Icon; AEnabled carries the per-item state so
+    //a disabled item's icon is greyed.
     Images.Draw(ACanvas, LImageRect.Left, LImageRect.Top,
-      AImageIndex, Enabled);
+      AImageIndex, AEnabled);
   end;
 
   if boShowCaptions in ButtonOptions then
@@ -559,15 +560,16 @@ end;
 function TStyledCategoryButtons.StyledButtonState(
   const AState: TButtonDrawState): TStyledButtonState;
 begin
-  //Calculate Styled State based on State
-  if (bdsHot in AState) and not (bdsDown in AState) then
+  //Calculate Styled State based on State. Disabled must win over hot/selection,
+  //so test it first (otherwise a stale selection hides the disabled look).
+  if not Enabled then
+    Result := bsmDisabled
+  else if (bdsHot in AState) and not (bdsDown in AState) then
     Result := bsmHot
   else if bdsDown in AState then
     Result := bsmPressed
   else if (bdsFocused in AState) or (bdsSelected in AState) then
     Result := bsmSelected
-  else if not Enabled then
-    Result := bsmDisabled
   else
     Result := bsmNormal;
 end;
@@ -594,6 +596,7 @@ var
   LBadgeFontColor: TColor;
   LBadgeFontStyle: TFontStyles;
   LBadgeContent: string;
+  LButtonItemEnabled: Boolean;
 begin
   //Do not call inherited
   LButtonItem := AButton as TStyledButtonItem;
@@ -604,6 +607,15 @@ begin
   else
   begin
     LState := StyledButtonState(AState);
+    //Honour the per-item Enabled: a disabled item must render greyed and win
+    //over hot/selection, matching the stock TCategoryButtons renderer.
+    {$IFDEF D13+}
+    LButtonItemEnabled := LButtonItem.Enabled;
+    {$ELSE}
+    LButtonItemEnabled := True;
+    {$ENDIF}
+    if not LButtonItemEnabled then
+      LState := bsmDisabled;
 
     LOldParentFont := ParentFont;
     LOldFontName := ACanvas.Font.Name;
@@ -650,7 +662,7 @@ begin
         Dec(LSurfaceRect.Right, LDropDownRect.Width);
 
       DrawCaptionAndImage(ACanvas, LSurfaceRect, LButtonItem.Caption,
-        LButtonItem.ImageIndex);
+        LButtonItem.ImageIndex, Enabled and LButtonItemEnabled);
 
       { Draw the icon - prefer the event }
       if Assigned(OnDrawIcon) then
@@ -1123,6 +1135,10 @@ begin
   LValue := AValue;
   if LValue = '' then
     LValue := DEFAULT_CLASSIC_FAMILY;
+  //Reject an unregistered family loudly, so a missing style unit surfaces at
+  //design time instead of rendering black at runtime.
+  if not StyleFamilyExists(LValue) then
+    raise EStyledAttributesException.CreateFmt(ERROR_FAMILY_NOT_FOUND, [LValue]);
   if (LValue <> Self.FStyleFamily) or not FStyleApplied then
   begin
     if not (csLoading in ComponentState) then
@@ -1190,9 +1206,12 @@ end;
 procedure TStyledCategoryButtons.SetButtonStyleDisabled(
   const AValue: TStyledButtonAttributes);
 begin
-  if FButtonStyleDisabled <> AValue then
+  //Copy into the owned sub-object instead of swapping the pointer (which would
+  //alias/double-free another component's attributes). Comparing values (not
+  //pointers) also makes this a real no-change guard; nil is a safe no-op.
+  if Assigned(AValue) and not SameStyledButtonStyle(FButtonStyleDisabled, AValue) then
   begin
-    FButtonStyleDisabled := AValue;
+    FButtonStyleDisabled.Assign(AValue);
     Invalidate;
   end;
 end;
@@ -1200,9 +1219,9 @@ end;
 procedure TStyledCategoryButtons.SetButtonStyleHot(
   const AValue: TStyledButtonAttributes);
 begin
-  if FButtonStyleHot <> AValue then
+  if Assigned(AValue) and not SameStyledButtonStyle(FButtonStyleHot, AValue) then
   begin
-    FButtonStyleHot := AValue;
+    FButtonStyleHot.Assign(AValue);
     Invalidate;
   end;
 end;
@@ -1210,9 +1229,9 @@ end;
 procedure TStyledCategoryButtons.SetButtonStyleNormal(
   const AValue: TStyledButtonAttributes);
 begin
-  if FButtonStyleNormal <> AValue then
+  if Assigned(AValue) and not SameStyledButtonStyle(FButtonStyleNormal, AValue) then
   begin
-    FButtonStyleNormal := AValue;
+    FButtonStyleNormal.Assign(AValue);
     Invalidate;
   end;
 end;
@@ -1220,9 +1239,9 @@ end;
 procedure TStyledCategoryButtons.SetButtonStylePressed(
   const AValue: TStyledButtonAttributes);
 begin
-  if FButtonStylePressed <> AValue then
+  if Assigned(AValue) and not SameStyledButtonStyle(FButtonStylePressed, AValue) then
   begin
-    FButtonStylePressed := AValue;
+    FButtonStylePressed.Assign(AValue);
     Invalidate;
   end;
 end;
@@ -1230,9 +1249,9 @@ end;
 procedure TStyledCategoryButtons.SetButtonStyleSelected(
   const AValue: TStyledButtonAttributes);
 begin
-  if FButtonStyleSelected <> AValue then
+  if Assigned(AValue) and not SameStyledButtonStyle(FButtonStyleSelected, AValue) then
   begin
-    FButtonStyleSelected := AValue;
+    FButtonStyleSelected.Assign(AValue);
     Invalidate;
   end;
 end;
@@ -1480,6 +1499,9 @@ end;
 procedure TStyledButtonItem.SetStyleFamily(
   const AValue: TStyledButtonFamily);
 begin
+  //Reject an unregistered family loudly (see TStyledCategoryButtons.SetStyleFamily).
+  if (AValue <> '') and not StyleFamilyExists(AValue) then
+    raise EStyledAttributesException.CreateFmt(ERROR_FAMILY_NOT_FOUND, [AValue]);
   if FStyleFamily <> AValue then
   begin
     FStyleFamily := AValue;

@@ -1,4 +1,4 @@
-{******************************************************************************}
+ï»¿{******************************************************************************}
 {                                                                              }
 {  StyledComponents: a set of Styled VCL Components                            }
 {                                                                              }
@@ -175,7 +175,7 @@ Type
       const ARect: TRect; ASelected: Boolean);
   end;
 
-  {$IFDEF D10_4}
+  {$IFDEF D10_4+}
   TImageNamePropertyEditor = class(TStringProperty, ICustomPropertyListDrawing)
   public
     function GetAttributes: TPropertyAttributes; override;
@@ -485,7 +485,7 @@ begin
       Result := 'Styled Button Editor...';
   end
   else if Index = 1 then
-    Result := Format('Ver. %s - © Ethea S.r.l. - Open Web Help...',[StyledComponentsVersion]);
+    Result := Format('Ver. %s - Â© Ethea S.r.l. - Open Web Help...',[StyledComponentsVersion]);
 end;
 
 function TStyledButtonComponentEditor.GetVerbCount: Integer;
@@ -586,7 +586,7 @@ begin
   else if Index = 2 then
     Result := 'Add StyledToolbar Separator'
   else if Index = 3 then
-    Result := Format('Ver. %s - © Ethea S.r.l. - Open Web Help...',[StyledComponentsVersion]);
+    Result := Format('Ver. %s - Â© Ethea S.r.l. - Open Web Help...',[StyledComponentsVersion]);
 end;
 
 function TStyledToolbarComponentEditor.GetVerbCount: Integer;
@@ -648,7 +648,7 @@ begin
   if Index = 0 then
     Result := 'Styled DbNavigator Editor...'
   else if Index = 1 then
-    Result := Format('Ver. %s - © Ethea S.r.l. - Open Web Help...',[StyledComponentsVersion]);
+    Result := Format('Ver. %s - Â© Ethea S.r.l. - Open Web Help...',[StyledComponentsVersion]);
 end;
 
 function TStyledNavigatorComponentEditor.GetVerbCount: Integer;
@@ -726,7 +726,7 @@ begin
   if Index = 0 then
     Result := 'Styled ButtonGroup Editor...'
   else if Index = 1 then
-    Result := Format('Ver. %s - © Ethea S.r.l. - Open Web Help...',[StyledComponentsVersion])
+    Result := Format('Ver. %s - Â© Ethea S.r.l. - Open Web Help...',[StyledComponentsVersion])
   else
     Result := Inherited GetVerb(Index-2);
 end;
@@ -861,7 +861,7 @@ begin
   if Index = 0 then
     Result := 'Styled CategoryButtons Editor...'
   else if Index = 1 then
-    Result := Format('Ver. %s - © Ethea S.r.l. - Open Web Help...',[StyledComponentsVersion])
+    Result := Format('Ver. %s - Â© Ethea S.r.l. - Open Web Help...',[StyledComponentsVersion])
   else
     Result := Inherited GetVerb(Index-2);
 end;
@@ -903,7 +903,7 @@ begin
   if Index = 0 then
     Result := 'Test Dialog...'
   else if Index = 1 then
-    Result := Format('Ver. %s - © Ethea S.r.l. - Open Web Help...',[StyledComponentsVersion]);
+    Result := Format('Ver. %s - Â© Ethea S.r.l. - Open Web Help...',[StyledComponentsVersion]);
 end;
 
 function TStyledTaskDialogComponentEditor.GetVerbCount: Integer;
@@ -1037,7 +1037,7 @@ begin
     Inc(AWidth, ImgList.Width);
 end;
 
-{$IFDEF D10_4}
+{$IFDEF D10_4+}
 { TImageNamePropertyEditor }
 
 function TImageNamePropertyEditor.GetImageListAt(Index: Integer): TCustomImageList;
@@ -1258,7 +1258,7 @@ begin
   RegisterPropertyEditor(TypeInfo(System.UITypes.TImageIndex),
     TStyledBitBtn, 'HotImageIndex', TImageIndexPropertyEditor);
 
-{$IFDEF D10_4}
+{$IFDEF D10_4+}
   //Property Editor for ImageName
   RegisterPropertyEditor(TypeInfo(System.UITypes.TImageName),
     TStyledGraphicButton, 'ImageName', TImageNamePropertyEditor);

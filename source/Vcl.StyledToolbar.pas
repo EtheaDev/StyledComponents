@@ -1,4 +1,4 @@
-{******************************************************************************}
+﻿{******************************************************************************}
 {                                                                              }
 {  StyledToolbar: a Toolbar with TStyledToolButtons inside                     }
 {  Based on TFlowPanel and TStyledGraphicButton                                }
@@ -747,6 +747,10 @@ begin
   begin
     if AComponent = FToolBar then
       FToolBar := nil;
+    //Clear FMenuItem too: SetMenuItem registers FreeNotification for it, so we
+    //must nil the field here to avoid a dangling reference after it is destroyed.
+    if AComponent = FMenuItem then
+      FMenuItem := nil;
   end;
 end;
 
@@ -767,7 +771,7 @@ var
 begin
   LHeight := Height;
   LWidth := Width;
-  if IsDropDown then
+  if IsDropDown and Assigned(FToolBar) then //FToolBar may be nil (not yet parented)
     LWidth := FToolBar.ButtonWidth + GetSplitButtonWidth;
   LUpdateToolBar := Assigned(FToolBar) and not FToolBar.FRescaling
     and ((AWidth <> Width) or (AHeight <> Height))
@@ -952,7 +956,13 @@ begin
   if AValue <> nil then
   begin
     if FMenuItem <> AValue then
+    begin
+      //Drop the free-notification on the previous item before registering the new
+      //one, otherwise registrations accumulate on this button.
+      if Assigned(FMenuItem) then
+        FMenuItem.RemoveFreeNotification(Self);
       AValue.FreeNotification(Self);
+    end;
     Action := AValue.Action;
     Caption := AValue.Caption;
     Down := AValue.Checked;
@@ -1066,7 +1076,7 @@ begin
     if IsDropDown then
     begin
       inherited Style := TCustomButton.TButtonStyle.bsSplitButton;
-      if FToolBar.AutoSize then
+      if Assigned(FToolBar) and FToolBar.AutoSize then //FToolBar may be nil (not yet parented)
         FToolBar.ResizeButtons;
     end
     else
@@ -1125,7 +1135,7 @@ begin
   try
     inherited;
   finally
-    FRescaling := True;
+    FRescaling := False; //reset the rescaling flag once inherited scaling is done
   end;
 end;
 
@@ -1138,7 +1148,7 @@ begin
     FButtonHeight := MulDiv(FButtonHeight, M, D);
     inherited ChangeScale(M, D, isDpiChange);
   finally
-    FRescaling := True;
+    FRescaling := False; //reset the rescaling flag once inherited scaling is done
   end;
 end;
 {$ENDIF}
@@ -1228,6 +1238,12 @@ end;
 destructor TStyledToolbar.Destroy;
 begin
   //FHotImageChangeLink.Free;
+  //Unregister the change links from their image lists before freeing them,
+  //otherwise the lists keep a reference to freed TChangeLink objects.
+  if Assigned(FDisabledImages) then
+    FDisabledImages.UnRegisterChanges(FDisabledImageChangeLink);
+  if Assigned(FImages) then
+    FImages.UnRegisterChanges(FImageChangeLink);
   FreeAndNil(FDisabledImageChangeLink);
   FreeAndNil(FImageChangeLink);
   inherited Destroy;
@@ -1561,7 +1577,20 @@ procedure TStyledToolbar.SetImages(const AValue: TCustomImageList);
 begin
   if FImages <> AValue then
   begin
+    //Register for change notifications (so the toolbar re-propagates when the
+    //list's images change) and for free-notification (so FImages is nilled when
+    //the list, often on another data module, is destroyed).
+    if Assigned(FImages) then
+    begin
+      FImages.RemoveFreeNotification(Self);
+      FImages.UnRegisterChanges(FImageChangeLink);
+    end;
     FImages := AValue;
+    if Assigned(FImages) then
+    begin
+      FImages.RegisterChanges(FImageChangeLink);
+      FImages.FreeNotification(Self);
+    end;
     ImageListChange(Self);
   end;
 end;
@@ -1578,7 +1607,17 @@ procedure TStyledToolbar.SetDisabledImages(const AValue: TCustomImageList);
 begin
   if FDisabledImages <> AValue then
   begin
+    if Assigned(FDisabledImages) then
+    begin
+      FDisabledImages.RemoveFreeNotification(Self);
+      FDisabledImages.UnRegisterChanges(FDisabledImageChangeLink);
+    end;
     FDisabledImages := AValue;
+    if Assigned(FDisabledImages) then
+    begin
+      FDisabledImages.RegisterChanges(FDisabledImageChangeLink);
+      FDisabledImages.FreeNotification(Self);
+    end;
     DisabledImageListChange(Self);
   end;
 end;
@@ -1794,6 +1833,9 @@ begin
           Exit;
         end;
       end;
+  //Pass every unhandled WM_SYSCOMMAND to the default processing instead of
+  //swallowing it (the VCL TToolBar.WMSysCommand ends with inherited too).
+  inherited;
 end;
 
 procedure TStyledToolbar.SetList(const AValue: Boolean);
@@ -1829,7 +1871,11 @@ var
   LControl, LTargetControl: TControl;
   LSourceButton: TStyledToolButton;
 begin
-  if (AControl is TStyledToolButton) and not DisableButtonAlign then
+  //Reorder buttons by drag only at design time: at runtime AlignControls runs on
+  //every realign, and any transient overlap would silently and permanently
+  //reorder the toolbar in a deployed application.
+  if (AControl is TStyledToolButton) and not DisableButtonAlign
+     and (csDesigning in ComponentState) and not (csLoading in ComponentState) then
   begin
     //Move Button selected in new position
     LSourceButton := TStyledToolButton(AControl);
@@ -1957,6 +2003,10 @@ begin
   LValue := AValue;
   if LValue = '' then
     LValue := DEFAULT_CLASSIC_FAMILY;
+  //Reject an unregistered family loudly, so a missing style unit surfaces at
+  //design time instead of rendering black at runtime.
+  if not StyleFamilyExists(LValue) then
+    raise EStyledAttributesException.CreateFmt(ERROR_FAMILY_NOT_FOUND, [LValue]);
   if (LValue <> Self.FStyleFamily) or not FStyleApplied then
   begin
     ProcessButtons(
@@ -2171,7 +2221,7 @@ begin
   LIndex := -1;
   for I := 0 to ControlCount -1 do
   begin
-    LControl := Controls[AIndex];
+    LControl := Controls[I]; //iterate on the loop index, not on the button index
     if LControl is TStyledToolButton then
     begin
       Inc(LIndex);

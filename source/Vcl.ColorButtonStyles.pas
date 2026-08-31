@@ -1,4 +1,4 @@
-{******************************************************************************}
+﻿{******************************************************************************}
 {                                                                              }
 {  ColorButtonStyles: Button Styles based on VCL color names                   }
 {  Unit System.UIConsts                                                        }
@@ -113,7 +113,10 @@ var
   LColor: integer;
 begin
   AOutLine := SameText(AAppearance, COLOR_BTN_OUTLINE);
-  IdentToColor(AClass, LColor);
+  //IdentToColor leaves LColor untouched (and returns False) for an unknown name,
+  //so default it instead of using the uninitialised local.
+  if not IdentToColor(AClass, LColor) then
+    LColor := Integer(clBtnFace);
   AButtonColor := TColor(LColor);
   if ColorIsLight(AButtonColor) then
   begin
@@ -298,8 +301,15 @@ var
 
 begin
   AOutLine := SameText(AAppearance, COLOR_BTN_OUTLINE);
-  LColor := StringToAlphaColor(AClass);
-  AButtonColor := AlphaColorToColor(LColor);
+  //StringToAlphaColor raises EConvertError for an unknown name
+  //never let that escape the paint path - fall back to a neutral colour.
+  try
+    LColor := StringToAlphaColor(AClass);
+    AButtonColor := AlphaColorToColor(LColor);
+  except
+    on EConvertError do
+      AButtonColor := clBtnFace;
+  end;
   if ColorIsLight(AButtonColor) then
   begin
     ABorderColor := DarkenColor(AButtonColor, 20);

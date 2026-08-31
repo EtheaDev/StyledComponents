@@ -2,7 +2,7 @@
 
 ## Components similar to Delphi VCL Buttons, Panels, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 4.2.1
+### Actual official version: 4.2.2
 
 ---
 ## New Setup for Installation of Components
@@ -397,6 +397,21 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+31 Aug 2026 - version 4.2.2
+- Bug-fix batch from the v4.2.1 code review (crashes and wrong behaviour):
+- Fixed crashes/AVs: positioned StyledTaskDialog (Assert on nil Owner), StyledButton WM_PAINT on paint exception, action-link ImageName cast, nil-deref from the streamer (IsStoredStyle), TStyledPanel.Assign, StyledToolbar drop-down (FToolBar)
+- Fixed StyledToolbar: rescaling flag, Buttons[] index, MenuItem free-notification, no more runtime button reordering, WMSysCommand
+- Fixed StyledTaskDialog: TimerEvent without OnTimer, _DialogFont, dialog Handle cleared on close, question-icon native fallback, launcher/title/button-family handling
+- Fixed wrong-field setters (ButtonsWidth, CustomFooterIcon, StylusHotImageIndex)
+- Fixed TImageNamePropertyEditor (D10_4+ guard) and the animated component editor / Notification
+- Unknown StyleFamily now raises instead of rendering black; attribute setters copy (Assign) instead of swapping the object pointer
+- Fixed per-item Enabled in StyledButtonGroup / StyledCategoryButtons
+- Fixed image-list change/free notifications in StyledToolbar and StyledDBNavigator
+- Fixed Vcl.StyledMessagesHooks so adding it no longer breaks existing MessageDlg/TaskMessageDlg calls
+- Fixed unknown style-class handling in Angular / Basic-Colors / SVG-Colors families
+- Fixed several ThemeType mismatches in the VCL-style color tables
+- Packaging: unique ProjectGuid in D11, all sources saved as UTF-8 with BOM, aligned package descriptions
+
 25 May 2026 - version 4.2.1
 - Fixed TStyledButton design-time rendering on Windows 11 Dark Mode
 

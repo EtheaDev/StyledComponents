@@ -1,4 +1,4 @@
-{******************************************************************************}
+Ôªø{******************************************************************************}
 {                                                                              }
 {  StyledCmpMessages: Messages translated for Styled Component                 }
 {                                                                              }
@@ -34,7 +34,7 @@ uses
 
 resourcestring
 {$IF DEFINED(ItaMessages) OR DEFINED(CBLIB_ITA)}
-    STR_YES = '&SÏ';
+    STR_YES = '&S√¨';
     STR_NO = '&No';
     STR_OK = 'OK';
     STR_CANCEL = 'Annulla';
@@ -43,7 +43,7 @@ resourcestring
     STR_IGNORE = 'I&gnora';
     STR_ALL = '&Tutti';
     STR_NOTOALL = '&No a tutti';
-    STR_YESTOALL = '&SÏ a tutti';
+    STR_YESTOALL = '&S√¨ a tutti';
     STR_HELP = '&Aiuto';
     STR_ABOUT = 'Informazioni';
     STR_WARNING = 'Attenzione';
@@ -56,10 +56,10 @@ resourcestring
     EDATABASEERRORDESC = 'Errore nei dati';
     EGENERICERROR = 'Errore';
     EACCESSVIOLDESC = 'Errore non previsto nel programma';
-    ERR_ACCES_VIOL_DESC = 'Si Ë verificato un errore inatteso nel programma.'+sLineBreak+sLineBreak+'%s'+sLineBreak+sLineBreak+
-                          'Si consiglia di uscire dal programma e riavviarlo (i dati gi‡ registrati non andranno perduti)'+sLineBreak+
+    ERR_ACCES_VIOL_DESC = 'Si √® verificato un errore inatteso nel programma.'+sLineBreak+sLineBreak+'%s'+sLineBreak+sLineBreak+
+                          'Si consiglia di uscire dal programma e riavviarlo (i dati gi√† registrati non andranno perduti)'+sLineBreak+
                           'Se l''errore dovesse persistere contattare il supporto tecnico';
-    ERR_DIALOG_FORM_NOT_REGISTERED = 'Errore: La TaskDialog Form con le animazioni non Ë disponibile.'+sLineBreak+
+    ERR_DIALOG_FORM_NOT_REGISTERED = 'Errore: La TaskDialog Form con le animazioni non √® disponibile.'+sLineBreak+
                           'Aggiungere "%s" Unit al progetto';
 
     //Navigator buttons Captions
@@ -100,11 +100,11 @@ resourcestring
     STR_OK = 'Ok';
     STR_CANCEL = 'Annuler';
     STR_ABORT = '&Abandonner';
-    STR_RETRY = '&RÈessayer';
+    STR_RETRY = '&R√©essayer';
     STR_IGNORE = '&Ignorer';
     STR_ALL = '&Tous';
-    STR_NOTOALL = '&Non ‡ tout';
-    STR_YESTOALL = '&Oui ‡ tout';
+    STR_NOTOALL = '&Non √† tout';
+    STR_YESTOALL = '&Oui √† tout';
     STR_HELP = '&Aide';
     STR_ABOUT = 'A propos';
     STR_WARNING = 'Attention';
@@ -112,23 +112,23 @@ resourcestring
     STR_INFORMATION = 'Information';
     STR_CONFIRM = 'Confirmer';
     STR_CLOSE = '&Fermer';
-    STR_THE_OPERATION = 'l''opÈration';
-    EINSTANTERRORDESC = 'Erreur de donnÈes';
-    EDATABASEERRORDESC = 'Erreur de donnÈes';
+    STR_THE_OPERATION = 'l''op√©ration';
+    EINSTANTERRORDESC = 'Erreur de donn√©es';
+    EDATABASEERRORDESC = 'Erreur de donn√©es';
     EGENERICERROR = 'Erreur';
-    EACCESSVIOLDESC = 'Violation d''accËs';
-    ERR_ACCES_VIOL_DESC = 'Une erreur non gÈrÈe a ÈtÈ detectÈe.'+sLineBreak+sLineBreak+'%s'+sLineBreak+sLineBreak+
-                          'Il est recommandÈ de fermer et de relancer l''application.'+sLineBreak+
+    EACCESSVIOLDESC = 'Violation d''acc√®s';
+    ERR_ACCES_VIOL_DESC = 'Une erreur non g√©r√©e a √©t√© detect√©e.'+sLineBreak+sLineBreak+'%s'+sLineBreak+sLineBreak+
+                          'Il est recommand√© de fermer et de relancer l''application.'+sLineBreak+
                           'Si le programme persiste, contactez le support technique.';
     ERR_DIALOG_FORM_NOT_REGISTERED = 'Erreur : le formulaire TaskDialog avec animations n''est pas disponible.'+sLineBreak+
-                          'Ajouter l''unitÈ "%s" au projet';
+                          'Ajouter l''unit√© "%s" au projet';
 
     //Navigator buttons Captions
     CaptionFirstRecord = 'Premier';
-    CaptionPriorRecord = 'PrÈcÈdent';
+    CaptionPriorRecord = 'Pr√©c√©dent';
     CaptionNextRecord = 'Suivant';
     CaptionLastRecord = 'Dernier';
-    CaptionInsertRecord = 'InsÈrer';
+    CaptionInsertRecord = 'Ins√©rer';
     CaptionDeleteRecord = 'Supprimer';
     CaptionEditRecord = 'Editer';
     CaptionPostEdit = 'Valider';
@@ -139,21 +139,21 @@ resourcestring
     CaptionCancelUpdates = 'Annuler';
     //Navigator buttons Hints
     SFirstRecord = 'Premier enregistrement';
-    SPriorRecord = 'Enregistrement prÈcÈdent';
+    SPriorRecord = 'Enregistrement pr√©c√©dent';
     SNextRecord = 'Enregistrement suivant';
     SLastRecord = 'Dernier enregistrement';
-    SInsertRecord = 'InsÈrer un enregistrement';
+    SInsertRecord = 'Ins√©rer un enregistrement';
     SDeleteRecord = 'Supprimer l''enregistrement';
     SEditRecord = 'Editer l''enregistrement ';
     SPostEdit = 'Valider les modifications';
     SCancelEdit = 'Abandonner les modifications';
     SConfirmCaption = 'Confirmer';
-    SRefreshRecord = 'Rafraichir les donnÈes';
+    SRefreshRecord = 'Rafraichir les donn√©es';
     SApplyUpdates = 'Appliquer les modifications';
     SCancelUpdates = 'Annuler les modifications';
     SDeleteRecordQuestion = 'Supprimer l''enregistrement?';
-    SShowDetails = 'Voir les dÈtails';
-    SHideDetails = 'Masquer les dÈtails';
+    SShowDetails = 'Voir les d√©tails';
+    SHideDetails = 'Masquer les d√©tails';
 {$ELSE}
     STR_YES = '&Yes';
     STR_NO = '&No';

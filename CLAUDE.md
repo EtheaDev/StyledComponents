@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Delphi VCL StyledComponents is a library of custom VCL components that provide styled buttons, panels, toolbars, navigators, button groups, and dialogs with modern appearance beyond standard Windows theming. Supports Delphi XE6 through Delphi 13 (32/64-bit).
 
-Current version: 3.9.1
+Current version: 4.2.2
 
 ## Build and Package Structure
 
@@ -165,7 +165,16 @@ Add `Vcl.StyledComponentsHooks.pas` to your project to replace standard buttons 
 
 ### Message Dialog Replacement
 
-To replace MessageDlg/TaskDialog with styled versions:
+There are two approaches.
+
+**Interposer / hook (no call-site changes):** add `Vcl.StyledMessagesHooks` as the **last** unit in the
+`uses` clause. Existing `MessageDlg`, `MessageDlgPos`, `ShowMessage`, `TaskMessageDlg` and `TaskDlgPos`
+calls then display styled dialogs unchanged. The unit *shadows* (hides) the RTL routines — it is not
+marked `overload` on purpose — and covers the 2- to 5-argument call shapes, including the
+`DefaultButton` variant, via optional trailing parameters. This mirrors `Vcl.StyledComponentsHooks`,
+the button interposer described above.
+
+**Explicit calls:** to replace MessageDlg/TaskDialog with styled versions:
 
 1. Add `Vcl.StyledTaskDialog` to uses clause
 2. Replace calls:

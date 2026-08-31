@@ -1,4 +1,4 @@
-{******************************************************************************}
+﻿{******************************************************************************}
 {                                                                              }
 {  StyledAnimatedTaskDialog: a Task Dialog Component with StyleButtons         }
 {  and animations using Skia4Delphi                                            }

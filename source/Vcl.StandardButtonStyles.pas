@@ -1,4 +1,4 @@
-{******************************************************************************}
+﻿{******************************************************************************}
 {                                                                              }
 {  Standard Button Family: implementation of "standard" Family                 }
 {  attributes for StyledButton similar to VCL Styled Buttons                   }
@@ -513,7 +513,7 @@ begin
     RegisterThemeAttributes('CopperDark',ttDark,clWhite,clWhite,
       htmlToColor('#2b2b2b'),htmlToColor('#2b2b2b'),htmlToColor('#e46b60'),
       htmlToColor('#898989'),htmlToColor('#E46B60'),btRoundRect);
-    RegisterThemeAttributes('Coral',ttDark,clWhite,clWhite,
+    RegisterThemeAttributes('Coral',ttLight,clWhite,clWhite,
       htmlToColor('#d86d00'),htmlToColor('#d86d00'),htmlToColor('#d86d00'),
       htmlToColor('#d86d00'),htmlToColor('#d1d1d1'),btRoundRect);
     RegisterThemeAttributes('Cyan Dusk',ttLight,clBlack,clWhite,
@@ -525,7 +525,7 @@ begin
     RegisterThemeAttributes('Diamond',ttLight,clBlack,clBlack,
       htmlToColor('#efeff0'),htmlToColor('#efeff0'),htmlToColor('#f5f5f5'),
       htmlToColor('#c4c3c3'),htmlToColor('#c4c3c3'),btRoundRect);
-    RegisterThemeAttributes('Emerald',ttDark,clWhite,clWhite,
+    RegisterThemeAttributes('Emerald',ttLight,clWhite,clWhite,
       htmlToColor('#00a57d'),htmlToColor('#00a57d'),htmlToColor('#00a57d'),
       htmlToColor('#00a57d'),htmlToColor('#cbcbc7'),btRoundRect);
     RegisterThemeAttributes('Emerald Light Slate',ttLight,clBlack,clBlack,
@@ -585,13 +585,13 @@ begin
     RegisterThemeAttributes('Obsidian',ttDark,clBlack,clBlack,
       htmlToColor('#cfd2d7'),htmlToColor('#cfd2d7'),htmlToColor('#ffd24e'),
       htmlToColor('#2f2f2f'),htmlToColor('#2f2f2f'),btRoundRect);
-    RegisterThemeAttributes('Onyx Blue',ttLight,clBlack,clWhite,
+    RegisterThemeAttributes('Onyx Blue',ttDark,clBlack,clWhite,
       htmlToColor('#adb0b4'),htmlToColor('#adb0b4'),htmlToColor('#42729a'),
       htmlToColor('#adb0b4'),htmlToColor('#42729a'),btRoundRect);
-    RegisterThemeAttributes('Puerto Rico',ttDark,clWhite,clWhite,
+    RegisterThemeAttributes('Puerto Rico',ttLight,clWhite,clWhite,
       htmlToColor('#44beb0'),htmlToColor('#44beb0'),htmlToColor('#52cfc0'),
       htmlToColor('#44beb0'),htmlToColor('#52cfc0'),btRoundRect);
-    RegisterThemeAttributes('Radiant',ttDark,clWhite,clWhite,
+    RegisterThemeAttributes('Radiant',ttLight,clWhite,clWhite,
       htmlToColor('#00b8b0'),htmlToColor('#00b8b0'),htmlToColor('#19bfb7'),
       htmlToColor('#00b8b0'),htmlToColor('#19bfb7'),btRoundRect);
     RegisterThemeAttributes('Ruby Graphite',ttDark,clWhite,clWhite,
@@ -612,10 +612,10 @@ begin
     RegisterThemeAttributes('Smokey Quartz Kamri',ttLight,clBlack,clBlack,
       htmlToColor('#dbdbdb'),htmlToColor('#dbdbdb'),htmlToColor('#f39772'),
       htmlToColor('#9f9f9f'),htmlToColor('#9f9f9f'),btRoundRect);
-    RegisterThemeAttributes('Stellar',ttLight,htmlToColor('#3e629a'),htmlToColor('#3e629a'),
+    RegisterThemeAttributes('Stellar',ttDark,htmlToColor('#3e629a'),htmlToColor('#3e629a'),
       htmlToColor('#fcfcfc'),htmlToColor('#fcfcfc'),clWhite,
       htmlToColor('#fcfcfc'),htmlToColor('#fcfcfc'),btRoundRect);
-    RegisterThemeAttributes('Stellar Dark',ttLight,htmlToColor('#3e629a'),htmlToColor('#3e629a'),
+    RegisterThemeAttributes('Stellar Dark',ttDark,htmlToColor('#3e629a'),htmlToColor('#3e629a'),
       htmlToColor('#fcfcfc'),htmlToColor('#fcfcfc'),clWhite,
       htmlToColor('#fcfcfc'),htmlToColor('#fcfcfc'),btRoundRect);
     RegisterThemeAttributes('Sterling',ttLight,clBlack,htmlToColor('#527593'),
@@ -633,7 +633,7 @@ begin
     RegisterThemeAttributes('Turquoise Gray',ttLight,clBlack,clWhite,
       htmlToColor('#ededed'),htmlToColor('#ededed'),htmlToColor('#28c0e9'),
       htmlToColor('#d3d3d3'),htmlToColor('#019ac4'),btRoundRect);
-    RegisterThemeAttributes('Vapor',ttLight,clBlack,clBlack,
+    RegisterThemeAttributes('Vapor',ttDark,clBlack,clBlack,
       htmlToColor('#89dcc8'),htmlToColor('#89dcc8'),htmlToColor('#7cc6b4'),
       htmlToColor('#89dcc8'),htmlToColor('#7cc6b4'),btRoundRect);
     RegisterThemeAttributes('Wedgewood Light',ttLight,clBlack,clWhite,
@@ -835,7 +835,7 @@ end;
 procedure InitDefaultPanelThemesAttributes;
 begin
   //Non themed Windows Style
-  RegisterPanelThemeAttributes('Windows',ttDark,clWindowText,clBtnFace,clActiveBorder);
+  RegisterPanelThemeAttributes('Windows',ttLight,clWindowText,clBtnFace,clActiveBorder);
 
   //Register Panel Theme Attributes for all VCL Styles
   RegisterPanelThemeAttributes('Amakrits',ttDark,htmlToColor('#c0c0c0'),htmlToColor('#212121'),htmlToColor('#212121'));
@@ -919,7 +919,7 @@ begin
   RegisterPanelThemeAttributes('Windows Modern Green',ttDark,htmlToColor('#ffffff'),htmlToColor('#077568'),htmlToColor('#077568'));
   RegisterPanelThemeAttributes('Windows Modern Purple',ttDark,htmlToColor('#ffffff'),htmlToColor('#80397b'),htmlToColor('#80397b'));
   RegisterPanelThemeAttributes('Windows Modern SlateGray',ttDark,htmlToColor('#ffffff'),htmlToColor('#36474e'),htmlToColor('#36474e'));
-  RegisterPanelThemeAttributes('Windows Modern MountainMist',ttDark,htmlToColor('#000000'),htmlToColor('#f3f3f3'),htmlToColor('#f3f3f3'));
+  RegisterPanelThemeAttributes('Windows Modern MountainMist',ttLight,htmlToColor('#000000'),htmlToColor('#f3f3f3'),htmlToColor('#f3f3f3'));
 end;
 
 procedure FreeThemesAttributes;

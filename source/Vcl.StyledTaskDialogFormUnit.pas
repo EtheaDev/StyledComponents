@@ -354,12 +354,16 @@ end;
 procedure UnRegisterTaskDialogFormClass(
   AFormClass: TStyledTaskDialogFormClass);
 begin
-  //Unregister handle
-  _DialogLauncher := nil;
   if AFormClass = _AnimatedTaskDialogFormClass then
     _AnimatedTaskDialogFormClass := nil;
   if AFormClass = _TaskDialogFormClass then
     _TaskDialogFormClass := nil;
+  //Drop the shared launcher only when no form class remains registered:
+  //unregistering one form (e.g. the animated one to fall back to the standard
+  //form) must not destroy the launcher the other form still needs.
+  if not Assigned(_AnimatedTaskDialogFormClass) and
+     not Assigned(_TaskDialogFormClass) then
+    _DialogLauncher := nil;
 end;
 
 procedure RegisterTaskDialogFormClass(
@@ -479,9 +483,11 @@ end;
 
 procedure TStyledTaskDialogForm.SetButtonsWidth(const AValue: Integer);
 begin
-  if FButtonsHeight <> AValue then
+  //Write the width field: this setter must update FButtonsWidth (FButtonsHeight
+  //has its own setter).
+  if FButtonsWidth <> AValue then
   begin
-    FButtonsHeight := AValue;
+    FButtonsWidth := AValue;
     UpdateButtonsSize;
   end;
 end;
@@ -499,7 +505,9 @@ procedure TStyledTaskDialogForm.SetCustomFooterIcon(const AValue: TIcon);
 begin
   if FCustomFooterIcon <> AValue then
   begin
-    FCustomMainIcon := AValue;
+    //Write the footer icon field (not FCustomMainIcon) so the footer icon loads
+    //from the new value.
+    FCustomFooterIcon := AValue;
     LoadCustomFooterIcon(FCustomFooterIcon, FfooterIcon);
   end;
 end;
@@ -1303,7 +1311,11 @@ var
 begin
   Inc(FTickCount, FTimer.Interval);
   LReset := False;
-  FOnTimer(Sender, FTickCount, LReset);
+  //OnTimer and tfCallbackTimer are independent: FOnTimer may be nil, so guard it
+  //(otherwise [tfShowProgressBar, tfCallbackTimer] without a handler AVs ~200ms
+  //after the dialog opens).
+  if Assigned(FOnTimer) then
+    FOnTimer(Sender, FTickCount, LReset);
   if LReset then
     FTickCount := 0;
 end;
@@ -1625,8 +1637,10 @@ var
 begin
   LX := X;
   LY := Y;
-  Assert(Owner is TForm);
-  LHandle := MonitorFromWindow(TForm(Owner).Handle, MONITOR_DEFAULTTONEAREST);
+  //The dialog form is created with Owner=nil, so an Assert(Owner is TForm) would
+  //fail (Debug) or TForm(nil).Handle would be a nil dereference (Release). This
+  //routine does not need Owner: use the form's own window to find the monitor.
+  LHandle := MonitorFromWindow(Self.Handle, MONITOR_DEFAULTTONEAREST);
   LMonitorInfo.cbSize := SizeOf(LMonitorInfo);
   if GetMonitorInfo(LHandle, {$IFNDEF CLR}@{$ENDIF}LMonitorInfo) then
     with LMonitorInfo do
@@ -1653,7 +1667,6 @@ var
   LParentControl: TControl;
   LOwnerForm: TForm;
   LFont: TFont;
-  LDlgBtnFamily: TStyledButtonFamily;
 begin
   //At least OK Button
   if (ATaskDialog.Buttons.Count = 0) and (ATaskDialog.CommonButtons = []) then
@@ -1720,7 +1733,9 @@ begin
     LFont := GetDialogFont;
     LForm.AlphaBlendValue := ATaskDialog.AlphaBlendValue;
     LForm.AlphaBlend := LForm.AlphaBlendValue <> DEFAULT_STYLEDDIALOG_ALPHABLEND;
-    LDlgBtnFamily := GetDialogBtnFamily;
+    //The dialog button family is now resolved in TStyledTaskDialog.DoExecute and
+    //passed as ADialogBtnFamily (assigned to LForm.FDialogBtnFamily above), so the
+    //old dead `LDlgBtnFamily := GetDialogBtnFamily` has been removed.
     if Assigned(LFont) then
       LForm.SetDialogFont(LFont)
     else
@@ -1735,6 +1750,11 @@ begin
     Result := True;
   finally
     LForm.Free;
+    //Clear the HWND poked into TCommonDialog.FHandle during show: otherwise the
+    //RTL property setters keep SendMessage-ing to the destroyed (or recycled)
+    //window on any post-close property assignment.
+    if ATaskDialog is TStyledTaskDialog then
+      TStyledTaskDialog(ATaskDialog).Handle := 0;
     if Assigned(ATaskDialog.OnDialogDestroyed) then
       ATaskDialog.OnDialogDestroyed(ATaskDialog);
   end;

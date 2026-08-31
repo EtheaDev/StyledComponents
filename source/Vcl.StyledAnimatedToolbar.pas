@@ -1,4 +1,4 @@
-{******************************************************************************}
+﻿{******************************************************************************}
 {                                                                              }
 {  StyledToolbar: a Toolbar with TStyledAnimatedToolButtons inside             }
 {  Based on TStyledToolbar and animations using Skia4Delphi                    }
