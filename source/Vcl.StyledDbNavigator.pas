@@ -782,6 +782,8 @@ end;
 
 procedure TCustomStyledDBNavigator.CMStyleChanged(var Message: TMessage);
 begin
+  //Propagate the style change to the base (and child buttons) first
+  inherited;
   UpdateButtonsIcons;
   Invalidate;
 end;
@@ -1451,10 +1453,15 @@ begin
   LValue := AValue;
   if LValue = '' then
     LValue := DEFAULT_CLASSIC_FAMILY;
-  //Reject an unregistered family loudly, so a missing style unit surfaces at
-  //design time instead of rendering black at runtime.
+  //Reject an unregistered family: raise at design time / direct assignment, but
+  //fall back to Classic while a deployed form is streaming.
   if not StyleFamilyExists(LValue) then
-    raise EStyledAttributesException.CreateFmt(ERROR_FAMILY_NOT_FOUND, [LValue]);
+  begin
+    if StyleFamilyLoadingFallback(Self) then
+      LValue := DEFAULT_CLASSIC_FAMILY
+    else
+      raise EStyledAttributesException.CreateFmt(ERROR_FAMILY_NOT_FOUND, [LValue]);
+  end;
   if (LValue <> Self.FStyleFamily) or not FStyleApplied then
   begin
     ProcessButtons(
@@ -1632,11 +1639,15 @@ end;
 
 procedure TCustomStyledDBNavigator.WMSetFocus(var Message: TWMSetFocus);
 begin
+  //Let the base process focus first, so OnEnter fires
+  inherited;
   FButtons[FocusedButton].Invalidate;
 end;
 
 procedure TCustomStyledDBNavigator.WMKillFocus(var Message: TWMKillFocus);
 begin
+  //Let the base process focus loss first, so OnExit fires
+  inherited;
   FButtons[FocusedButton].Invalidate;
 end;
 

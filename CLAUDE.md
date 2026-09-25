@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Delphi VCL StyledComponents is a library of custom VCL components that provide styled buttons, panels, toolbars, navigators, button groups, and dialogs with modern appearance beyond standard Windows theming. Supports Delphi XE6 through Delphi 13 (32/64-bit).
 
-Current version: 4.2.2
+Current version: 4.2.4
 
 ## Build and Package Structure
 

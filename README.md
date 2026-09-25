@@ -2,12 +2,12 @@
 
 ## Components similar to Delphi VCL Buttons, Panels, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 4.2.2
+### Actual official version: 4.2.4
 
 ---
-## New Setup for Installation of Components
+## Setup for Installation of Components
 
-From 3.8.1 version a new "Installer" read-to-use is located in the Release area: [Download the Installer](https://github.com/EtheaDev/StyledComponents/releases/latest/download/StyledComponents_Setup.exe).
+An easy "Installer" read-to-use is located in the Release area: [Download the Installer](https://github.com/EtheaDev/StyledComponents/releases/latest/download/StyledComponents_Setup.exe).
 
 The Installer automatically detect your Delphi versions, installa sources, build and installa packages and add source paths.
 
@@ -397,6 +397,24 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
 ### RELEASE NOTES
+25 Sep 2026 - version 4.2.4
+- Fixed SetButtonStyle raising an exception when called with empty Family/Class/Appearance: empty values now keep the current style (the one inherited from the Toolbar), as before 4.2.2
+- Same behaviour for StyledButtonGroup and StyledCategoryButtons items: empty values keep the current style or fall back to the parent control style
+- Fixed StyledToolbar runtime button sizing: at runtime the layout no longer writes the buttons size back into ButtonWidth/ButtonHeight (only at design-time), restoring full-width vertical toolbars (no more halved widths / doubled heights)
+
+12 Sep 2026 - version 4.2.3
+- New: StyledTaskDialog copies its content to the clipboard on Ctrl+C / Ctrl+Ins (native TaskDialog layout)
+- Fixed StyledToolbar double-scaling of ButtonWidth/ButtonHeight on Per-Monitor v2 DPI changes
+- Fixed TInheritedComponentEditor use-after-free (interface-owned editor, new instance via metaclass)
+- Fixed compile break in Vcl.StyledCmpMessages when ItaMessages/FraMessages is enabled
+- Fixed CMMouseEnter/CMMouseLeave message parameter type (TMessage instead of TNotifyEvent)
+- Fixed StyledDBNavigator not calling inherited in WMSetFocus/WMKillFocus/CMStyleChanged (OnEnter/OnExit now fire)
+- Fixed GetWindowsVersion (now uses TOSVersion) and ExtractHrefValues out-parameter order
+- Fixed notification badge not restoring the shared canvas state; completed TNotificationBadgeAttributes Assign/compare
+- Fixed CanvasDrawShape (btRect no longer creates a second GDI+ context), rounded-corner radius clamp, drop-down triangle vertical offset
+- Fixed CloneButtonStyle "create if nil" contract, long-message dialog width, and AutoClick division-by-zero at width 0
+- Improved StyledTaskDialog multi-monitor positioning (resolves the reference window)
+
 31 Aug 2026 - version 4.2.2
 - Bug-fix batch from the v4.2.1 code review (crashes and wrong behaviour):
 - Fixed crashes/AVs: positioned StyledTaskDialog (Assert on nil Owner), StyledButton WM_PAINT on paint exception, action-link ImageName cast, nil-deref from the streamer (IsStoredStyle), TStyledPanel.Assign, StyledToolbar drop-down (FToolBar)
@@ -412,10 +430,10 @@ Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org
 - Fixed several ThemeType mismatches in the VCL-style color tables
 - Packaging: unique ProjectGuid in D11, all sources saved as UTF-8 with BOM, aligned package descriptions
 
-25 May 2026 - version 4.2.1
+28 May 2026 - version 4.2.1
 - Fixed TStyledButton design-time rendering on Windows 11 Dark Mode
 
-26 Maj 2026 - version 4.2.0
+26 May 2026 - version 4.2.0
 - Fixed TaskDialog component in Delphi 13.1
 - Fixed TStyledButton: now reacts to form.StyleName changes
 - Fixed WM_PAINT cascade on style change (ApplyButtonStyle skip-invalidate when called from paint; all attribute groups assigned in one pass).

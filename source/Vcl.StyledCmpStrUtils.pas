@@ -59,11 +59,11 @@ begin
   //Esempio: stringa in input: '<A HREF="c:\windows\system32\Notepad.exe'>Editor</A>'
   //risultato: Editor (c:\windows\system32\Notepad.exe)';
 
-  if ExtractHrefValues(HRef, DisplayLabel, LinkStr) then
+  if ExtractHrefValues(HRef, LinkStr, DisplayLabel) then
   begin
     //la stringa è coerente con la sintassi HREF: Calcolo DisplayLabel e LinkStr
     if not SameText(DisplayLabel, LinkStr) then
-      Result := Format('%s (%s)',[LinkStr,DisplayLabel])
+      Result := Format('%s (%s)',[DisplayLabel,LinkStr])
     else
       Result := LinkStr;
   end

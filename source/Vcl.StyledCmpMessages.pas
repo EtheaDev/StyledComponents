@@ -54,6 +54,7 @@ resourcestring
     STR_THE_OPERATION = 'l''operazione';
     EINSTANTERRORDESC = 'Errore nei dati';
     EDATABASEERRORDESC = 'Errore nei dati';
+    EFILERERROR = 'Errore in operazione di input/output su file';
     EGENERICERROR = 'Errore';
     EACCESSVIOLDESC = 'Errore non previsto nel programma';
     ERR_ACCES_VIOL_DESC = 'Si è verificato un errore inatteso nel programma.'+sLineBreak+sLineBreak+'%s'+sLineBreak+sLineBreak+
@@ -115,6 +116,7 @@ resourcestring
     STR_THE_OPERATION = 'l''opération';
     EINSTANTERRORDESC = 'Erreur de données';
     EDATABASEERRORDESC = 'Erreur de données';
+    EFILERERROR = 'Erreur lors d''une opération d''entrée/sortie sur fichier';
     EGENERICERROR = 'Erreur';
     EACCESSVIOLDESC = 'Violation d''accès';
     ERR_ACCES_VIOL_DESC = 'Une erreur non gérée a été detectée.'+sLineBreak+sLineBreak+'%s'+sLineBreak+sLineBreak+
@@ -173,6 +175,7 @@ resourcestring
     STR_CONFIRM = 'Confirm';
     STR_CLOSE = '&Close';
     STR_THE_OPERATION = 'the operation';
+    EINSTANTERRORDESC = 'Error in data';
     EDATABASEERRORDESC = 'Error in data';
     EFILERERROR = 'Error in input/output file operation';
     EGENERICERROR = 'Error';

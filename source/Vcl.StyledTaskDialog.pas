@@ -68,7 +68,12 @@ const
   DEFAULT_MAIN_ICON_SIZE = 64;
   {$ENDIF}
 
-  /// <summary>Extended TTaskDialogIcon value for question mark icon</summary>
+  /// <summary>Extended TTaskDialogIcon value for the question-mark icon, which
+  /// the stock task dialog does not provide. TTaskDialogIcon is an Integer
+  /// subrange (Low(Integer)..High(Integer)), not an enum, so 5 is a valid value
+  /// and assigning it raises no range error. The styled path draws its own
+  /// question icon; the native fallback maps this back to tdiNone, because the
+  /// RTL icon table (CTaskDlgIcons) only covers tdiNone..tdiShield (0..4).</summary>
   tdiQuestion = 5;
 
 type

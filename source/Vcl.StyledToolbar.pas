@@ -384,6 +384,7 @@ type
     procedure ChangeScale(M, D: Integer); override;
     {$IFDEF D10_1+}
     procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
+    procedure ScaleForPPI(NewPPI: Integer); override;
     {$ENDIF}
     procedure SetAutoSize(AValue: Boolean); override;
     procedure Notification(AComponent: TComponent; AOperation: TOperation); override;
@@ -773,7 +774,13 @@ begin
   LWidth := Width;
   if IsDropDown and Assigned(FToolBar) then //FToolBar may be nil (not yet parented)
     LWidth := FToolBar.ButtonWidth + GetSplitButtonWidth;
+  //Only mirror a button's size back into the toolbar's ButtonWidth/ButtonHeight
+  //(and re-lay-out all buttons) at design time, where resizing one button is a
+  //deliberate edit. At runtime the FlowPanel/AutoSize layout drives SetBounds
+  //with computed sizes, so writing them back would corrupt FButtonWidth/
+  //FButtonHeight and cascade through ResizeButtons.
   LUpdateToolBar := Assigned(FToolBar) and not FToolBar.FRescaling
+    and (csDesigning in ComponentState)
     and ((AWidth <> Width) or (AHeight <> Height))
     and not IsSeparator
     and not (csLoading in ComponentState);
@@ -1149,6 +1156,21 @@ begin
     inherited ChangeScale(M, D, isDpiChange);
   finally
     FRescaling := False; //reset the rescaling flag once inherited scaling is done
+  end;
+end;
+
+procedure TStyledToolbar.ScaleForPPI(NewPPI: Integer);
+begin
+  //Per-Monitor DPI change: the VCL scales the child buttons first
+  //(ScaleControlsForDpi) and only then calls our ChangeScale. The guard must
+  //already be up while the children scale, otherwise TStyledToolButton.SetBounds
+  //writes their scaled size back into FButtonWidth/FButtonHeight and ChangeScale
+  //then scales it a second time. Keep FRescaling up around the whole pass.
+  FRescaling := True;
+  try
+    inherited;
+  finally
+    FRescaling := False;
   end;
 end;
 {$ENDIF}
@@ -2003,10 +2025,15 @@ begin
   LValue := AValue;
   if LValue = '' then
     LValue := DEFAULT_CLASSIC_FAMILY;
-  //Reject an unregistered family loudly, so a missing style unit surfaces at
-  //design time instead of rendering black at runtime.
+  //Reject an unregistered family: raise at design time / direct assignment, but
+  //fall back to Classic while a deployed form is streaming.
   if not StyleFamilyExists(LValue) then
-    raise EStyledAttributesException.CreateFmt(ERROR_FAMILY_NOT_FOUND, [LValue]);
+  begin
+    if StyleFamilyLoadingFallback(Self) then
+      LValue := DEFAULT_CLASSIC_FAMILY
+    else
+      raise EStyledAttributesException.CreateFmt(ERROR_FAMILY_NOT_FOUND, [LValue]);
+  end;
   if (LValue <> Self.FStyleFamily) or not FStyleApplied then
   begin
     ProcessButtons(

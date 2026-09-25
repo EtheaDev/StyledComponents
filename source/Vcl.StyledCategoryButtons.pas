@@ -162,6 +162,9 @@ type
   public
     procedure Assign(Source: TPersistent); override;
     constructor Create(Collection: TCollection); override;
+    /// <summary>Sets the item style using family, class, and appearance</summary>
+    /// <remarks>An empty value keeps the current one or, if the item has none,
+    /// uses the CategoryButtons style</remarks>
     procedure SetButtonStyle(const AStyleFamily: TStyledButtonFamily;
       const AStyleClass: TStyledButtonClass;
       const AStyleAppearance: TStyledButtonAppearance);
@@ -1135,10 +1138,15 @@ begin
   LValue := AValue;
   if LValue = '' then
     LValue := DEFAULT_CLASSIC_FAMILY;
-  //Reject an unregistered family loudly, so a missing style unit surfaces at
-  //design time instead of rendering black at runtime.
+  //Reject an unregistered family: raise at design time / direct assignment, but
+  //fall back to Classic while a deployed form is streaming.
   if not StyleFamilyExists(LValue) then
-    raise EStyledAttributesException.CreateFmt(ERROR_FAMILY_NOT_FOUND, [LValue]);
+  begin
+    if StyleFamilyLoadingFallback(Self) then
+      LValue := DEFAULT_CLASSIC_FAMILY
+    else
+      raise EStyledAttributesException.CreateFmt(ERROR_FAMILY_NOT_FOUND, [LValue]);
+  end;
   if (LValue <> Self.FStyleFamily) or not FStyleApplied then
   begin
     if not (csLoading in ComponentState) then
@@ -1498,13 +1506,22 @@ end;
 
 procedure TStyledButtonItem.SetStyleFamily(
   const AValue: TStyledButtonFamily);
+var
+  LValue: TStyledButtonFamily;
 begin
-  //Reject an unregistered family loudly (see TStyledCategoryButtons.SetStyleFamily).
-  if (AValue <> '') and not StyleFamilyExists(AValue) then
-    raise EStyledAttributesException.CreateFmt(ERROR_FAMILY_NOT_FOUND, [AValue]);
-  if FStyleFamily <> AValue then
+  LValue := AValue;
+  //Reject an unregistered family: raise at design time / direct assignment, but
+  //fall back to Classic while a deployed form is streaming (see TStyledCategoryButtons).
+  if (LValue <> '') and not StyleFamilyExists(LValue) then
   begin
-    FStyleFamily := AValue;
+    if StyleFamilyLoadingFallback(CategoryButtons) then
+      LValue := DEFAULT_CLASSIC_FAMILY
+    else
+      raise EStyledAttributesException.CreateFmt(ERROR_FAMILY_NOT_FOUND, [LValue]);
+  end;
+  if FStyleFamily <> LValue then
+  begin
+    FStyleFamily := LValue;
     InvalidateOwner;
   end;
   ApplyButtonStyle;
@@ -1527,12 +1544,22 @@ procedure TStyledButtonItem.SetButtonStyle(
   const AStyleAppearance: TStyledButtonAppearance);
 begin
   FStyleApplied := False;
-  FStyleFamily := AStyleFamily;
-  FStyleClass := AStyleClass;
-  FStyleAppearance := AStyleAppearance;
+  //Empty values keep the current style, or use the CategoryButtons style
+  if AStyleFamily <> '' then
+    FStyleFamily := AStyleFamily
+  else if (FStyleFamily = '') and Assigned(CategoryButtons) then
+    FStyleFamily := CategoryButtons.StyleFamily;
+  if AStyleClass <> '' then
+    FStyleClass := AStyleClass
+  else if (FStyleClass = '') and Assigned(CategoryButtons) then
+    FStyleClass := CategoryButtons.StyleClass;
+  if AStyleAppearance <> '' then
+    FStyleAppearance := AStyleAppearance
+  else if (FStyleAppearance = '') and Assigned(CategoryButtons) then
+    FStyleAppearance := CategoryButtons.StyleAppearance;
   if not ApplyButtonStyle then
     raise EStyledCategoryButtonsError.CreateFmt(ERROR_SETTING_BUTTON_STYLE,
-      [AStyleFamily, AStyleClass, AStyleAppearance]);
+      [FStyleFamily, FStyleClass, FStyleAppearance]);
 end;
 
 procedure TStyledButtonItem.SetStyleAppearance(

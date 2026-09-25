@@ -764,25 +764,25 @@ begin
     RegisterThemeAttributes('CDE Modern: Light',ttLight,clBlack,clWhite,
       htmlToColor('#CAD4E6'),htmlToColor('#CAD4E6'),htmlToColor('#5172EF'),
       htmlToColor('#CAD4E6'),htmlToColor('#5172EF'),btRoundRect);
-    RegisterThemeAttributes('Raize Frost : Blue',ttDark,clWhite,clWhite,
+    RegisterThemeAttributes('Raize Frost : Blue',ttLight,clWhite,clWhite,
       htmlToColor('#084f8a'),htmlToColor('#084f8a'),htmlToColor('#084f8a'),
       htmlToColor('#084f8a'),clWhite,btRect);
-    RegisterThemeAttributes('Raize Frost : Green',ttDark,clWhite,clWhite,
+    RegisterThemeAttributes('Raize Frost : Green',ttLight,clWhite,clWhite,
       htmlToColor('#084f8a'),htmlToColor('#084f8a'),htmlToColor('#084f8a'),
       htmlToColor('#084f8a'),clWhite,btRect);
-    RegisterThemeAttributes('Raize Frost : Orange',ttDark,clWhite,clWhite,
+    RegisterThemeAttributes('Raize Frost : Orange',ttLight,clWhite,clWhite,
       htmlToColor('#084f8a'),htmlToColor('#084f8a'),htmlToColor('#084f8a'),
       htmlToColor('#084f8a'),clWhite,btRect);
-    RegisterThemeAttributes('Raize Frost : Purple',ttDark,clWhite,clWhite,
+    RegisterThemeAttributes('Raize Frost : Purple',ttLight,clWhite,clWhite,
       htmlToColor('#084f8a'),htmlToColor('#084f8a'),htmlToColor('#084f8a'),
       htmlToColor('#084f8a'),clWhite,btRect);
-    RegisterThemeAttributes('Raize Frost : Red',ttDark,clWhite,clWhite,
+    RegisterThemeAttributes('Raize Frost : Red',ttLight,clWhite,clWhite,
       htmlToColor('#084f8a'),htmlToColor('#084f8a'),htmlToColor('#084f8a'),
       htmlToColor('#084f8a'),clWhite,btRect);
-    RegisterThemeAttributes('Raize Frost : Teal',ttDark,clWhite,clWhite,
+    RegisterThemeAttributes('Raize Frost : Teal',ttLight,clWhite,clWhite,
       htmlToColor('#084f8a'),htmlToColor('#084f8a'),htmlToColor('#084f8a'),
       htmlToColor('#084f8a'),clWhite,btRect);
-    RegisterThemeAttributes('Raize Frost : Yellow',ttDark,clWhite,clWhite,
+    RegisterThemeAttributes('Raize Frost : Yellow',ttLight,clWhite,clWhite,
       htmlToColor('#084f8a'),htmlToColor('#084f8a'),htmlToColor('#084f8a'),
       htmlToColor('#084f8a'),clWhite,btRect);
     RegisterThemeAttributes('Raize Graphite : Blue',ttDark,clWhite,clWhite,

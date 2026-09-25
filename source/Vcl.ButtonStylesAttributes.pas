@@ -56,7 +56,7 @@ uses
 
 const
   /// <summary>Current version of the StyledComponents library</summary>
-  StyledComponentsVersion = '4.2.2';
+  StyledComponentsVersion = '4.2.4';
   /// <summary>Default corner radius for rounded buttons in pixels</summary>
   DEFAULT_RADIUS = 6;
   /// <summary>Resource name for the Windows shield admin icon</summary>
@@ -539,6 +539,12 @@ function GetButtonFamilyAppearances(const AFamily: TStyledButtonFamily): TButton
 /// <summary>Returns True if a button family with the given name is registered</summary>
 function StyleFamilyExists(const AFamily: TStyledButtonFamily): Boolean;
 
+/// <summary>True when an unregistered family should silently fall back to the
+/// Classic family (a deployed form streaming from a DFM) rather than raising.
+/// False at design time or on a direct assignment, where raising surfaces the
+/// missing style unit immediately.</summary>
+function StyleFamilyLoadingFallback(const AComponent: TComponent): Boolean;
+
 /// <summary>Validates and retrieves a button family, setting defaults if needed</summary>
 /// <returns>True if the family was found and validated</returns>
 function StyleFamilyCheckAttributes(
@@ -611,8 +617,13 @@ function SameNotificationBadgeAttributes(Attr1, Attr2: TNotificationBadgeAttribu
 begin
   Result :=
     (Attr1.FNotificationCount = Attr2.FNotificationCount) and
+    (Attr1.FCustomText = Attr2.FCustomText) and
     (Attr1.FMaxNotifications = Attr2.FMaxNotifications) and
-    (Attr1.FPosition = Attr2.FPosition);
+    (Attr1.FPosition = Attr2.FPosition) and
+    (Attr1.FSize = Attr2.FSize) and
+    (Attr1.FColor = Attr2.FColor) and
+    (Attr1.FFontColor = Attr2.FFontColor) and
+    (Attr1.FFontStyle = Attr2.FFontStyle);
 end;
 
 function ColortoGrayscale(AColor : TColor): TColor;
@@ -671,6 +682,10 @@ procedure CloneButtonStyle(
   const ASource: TStyledButtonAttributes;
   var ADest: TStyledButtonAttributes);
 begin
+  //Honour the documented contract: create the destination if it is nil
+  //(the caller then owns the returned instance).
+  if not Assigned(ADest) then
+    ADest := TStyledButtonAttributes.Create(nil);
   ADest.FDrawType := ASource.FDrawType;
   ADest.FBorderWidth := ASource.FBorderWidth;
   ADest.FBorderDrawStyle := ASource.FBorderDrawStyle;
@@ -742,41 +757,27 @@ end;
 
 function GetWindowsVersion: TWindowsVersion;
 var
-  Reg: TRegistry;
-  VersionInfo: TOSVersionInfo;
   LBuildNumber: Integer;
 begin
   if _WindowsVersion = wvUndefined then
   begin
-    VersionInfo.dwOSVersionInfoSize := sizeOf(TOSVersionInfo);
-    Reg := TRegistry.Create;
-    Try
-      Reg.RootKey := HKEY_LOCAL_MACHINE;
-      case VersionInfo.dwPlatformID of
-        VER_PLATFORM_WIN32_WINDOWS:
-          Reg.OpenKeyReadOnly('\Software\Microsoft\Windows\CurrentVersion');
-      else
-        Reg.OpenKeyReadOnly('\Software\Microsoft\Windows NT\CurrentVersion');
-      end;
-      LBuildNumber := StrToIntDef(Reg.ReadString('CurrentBuild'), 0);
-      if LBuildNumber >= 22000 then
-        _WindowsVersion := wvWindows11
-      else if LBuildNumber >= 10240 then
-        _WindowsVersion := wvWindows10
-      else if LBuildNumber >= 9600 then
-        _WindowsVersion := wvWindows8_1
-      else if LBuildNumber >= 9200 then
-        _WindowsVersion := wvWindows8
-      else if LBuildNumber >= 7600 then
-        _WindowsVersion := wvWindows7
-      else if LBuildNumber >= 6000 then
-        _WindowsVersion := wvWindowsVista
-      else if LBuildNumber >= 2600 then
-        _WindowsVersion := wvWindowsXP;
-      Reg.CloseKey;
-    Finally
-      Reg.Free;
-    End;
+    //Use TOSVersion (System.SysUtils) for the OS build number: avoids the
+    //uninitialized version record and the registry access that could raise.
+    LBuildNumber := TOSVersion.Build;
+    if LBuildNumber >= 22000 then
+      _WindowsVersion := wvWindows11
+    else if LBuildNumber >= 10240 then
+      _WindowsVersion := wvWindows10
+    else if LBuildNumber >= 9600 then
+      _WindowsVersion := wvWindows8_1
+    else if LBuildNumber >= 9200 then
+      _WindowsVersion := wvWindows8
+    else if LBuildNumber >= 7600 then
+      _WindowsVersion := wvWindows7
+    else if LBuildNumber >= 6000 then
+      _WindowsVersion := wvWindowsVista
+    else if LBuildNumber >= 2600 then
+      _WindowsVersion := wvWindowsXP;
   end;
   Result := _WindowsVersion;
 end;
@@ -813,10 +814,11 @@ begin
   //input: '<A HREF="c:\windows\system32\Notepad.exe'>Editor</A>'
   //output: 'Editor (c:\windows\system32\Notepad.exe)';
 
-  if ExtractHrefValues(HRef, DisplayLabel, LinkStr) then
+  //LinkStr receives the URL, DisplayLabel the visible text
+  if ExtractHrefValues(HRef, LinkStr, DisplayLabel) then
   begin
     if not SameText(DisplayLabel, LinkStr) then
-      Result := Format('%s (%s)',[LinkStr,DisplayLabel])
+      Result := Format('%s (%s)',[DisplayLabel,LinkStr])
     else
       Result := LinkStr;
   end
@@ -830,11 +832,10 @@ var
   LinkStr: string;
 begin
   //input: '<A HREF="c:\windows\system32\Notepad.exe'>Editor</A>'
-  //output: 'Editor';
-  if ExtractHrefValues(HRef, DisplayLabel, LinkStr) then
-  begin
-    Result := LinkStr;
-  end
+  //output: 'c:\windows\system32\Notepad.exe';
+  //Return the link itself: LinkStr receives the URL, DisplayLabel the visible text
+  if ExtractHrefValues(HRef, LinkStr, DisplayLabel) then
+    Result := LinkStr
   else
     Result := HRef;
 end;
@@ -1042,6 +1043,13 @@ begin
   Result := GetButtonFamily(AFamily, LButtonFamily);
 end;
 
+function StyleFamilyLoadingFallback(const AComponent: TComponent): Boolean;
+begin
+  Result := Assigned(AComponent)
+    and (csLoading in AComponent.ComponentState)
+    and not (csDesigning in AComponent.ComponentState);
+end;
+
 function GetButtonClasses(const AFamily: TButtonFamily): TButtonClasses;
 begin
   Result := AFamily.FCustomAttributes.GetButtonClasses;
@@ -1092,6 +1100,8 @@ begin
     Color := LSource.FColor;
     FontColor := LSource.FFontColor;
     Size := LSource.FSize;
+    CustomText := LSource.FCustomText;
+    FontStyle := LSource.FFontStyle;
   end
   else
     inherited Assign(ASource);
@@ -1749,7 +1759,9 @@ begin
     w := ARectangle.Width;
     h := ARectangle.Height;
     d := ARadius / 2;
-    d := Min(d, Min(ARectangle.Width, ARectangle.Height));
+    //Clamp to half the short side: opposite corner arcs are each d wide, so a
+    //larger d would make them overlap past the middle of the rectangle.
+    d := Min(d, Min(ARectangle.Width, ARectangle.Height) / 2);
     // topleft
     if rcTopLeft in ARoundedCorners then
       Result.AddArc(l, t, d, d, 180, 90)
@@ -2292,7 +2304,17 @@ var
   LRect: TRect;
   W, H, LBadgeChars, LBadgeBorderSize: Integer;
   LFlags: Cardinal;
+  LOldPenStyle: TPenStyle;
+  LOldBrushColor, LOldFontColor: TColor;
+  LOldFontStyle: TFontStyles;
 begin
+  //Save the shared canvas state: this helper draws on the control's canvas and
+  //must not leak pen/brush/font changes to items painted afterwards.
+  LOldPenStyle := ACanvas.Pen.Style;
+  LOldBrushColor := ACanvas.Brush.Color;
+  LOldFontColor := ACanvas.Font.Color;
+  LOldFontStyle := ACanvas.Font.Style;
+  try
   ACanvas.Pen.Style := psClear;
   ACanvas.Brush.Color := AColor;
   ACanvas.Font.Color := AFontColor;
@@ -2348,6 +2370,13 @@ begin
   if ASizeType <> nbsSmallDot then
     DrawButtonText(ACanvas, AValue, taCenter, 0, 0, LRect,
       DT_NOCLIP or DT_CENTER or DT_VCENTER);
+  finally
+    //Restore the shared canvas state
+    ACanvas.Pen.Style := LOldPenStyle;
+    ACanvas.Brush.Color := LOldBrushColor;
+    ACanvas.Font.Color := LOldFontColor;
+    ACanvas.Font.Style := LOldFontStyle;
+  end;
 end;
 
 procedure DrawBitBtnGlyph(const ACanvas: TCanvas; const ARect: TRect;
@@ -2447,7 +2476,9 @@ begin
   LWidth  := LRect.Width - 8;
   LRect.Left := ARect.Left + 2;
   LRect.Right := LRect.Left + LWidth - 2;
-  LRect.Top := LMargin;
+  //Offset by ARect.Top: LMargin alone would place the triangle relative to the
+  //canvas top, drawing it ARect.Top pixels too high inside a non-zero-top rect.
+  LRect.Top := ARect.Top + LMargin;
   LRect.Bottom := LRect.Top + LHeight;
   Points3[0] := Point(LRect.Left + LWidth, LRect.Top);
   Points3[1] := Point(LRect.Left, LRect.Top);
@@ -2493,6 +2524,14 @@ var
   end;
 
 begin
+  //btRect is rendered entirely by DrawRect, which owns its own GDI+ context.
+  //Creating a second TGPGraphics here on the same HDC is unsupported by GDI+
+  //(and the objects below would be built and discarded on every rectangular paint).
+  if ADrawType in [btRect] then
+  begin
+    DrawRect(ACanvas, ARect);
+    Exit;
+  end;
   LGraphics := nil;
   LPen := nil;
   LBrush := nil;
@@ -2514,11 +2553,7 @@ begin
     else
       LPen := TGPPen.Create(LPenColor, LBorderWidth);
 
-    if (ADrawType in [btRect]) then
-    begin
-      DrawRect(ACanvas, ARect);
-    end
-    else if (ADrawType in [btRounded, btRoundRect]) then
+    if (ADrawType in [btRounded, btRoundRect]) then
     begin
       //Reduce canvas to draw a rounded rectangle of Pen Width
       if APreserveBorderSpace then
@@ -2682,6 +2717,7 @@ begin
   LGraphics := nil;
   LFontFamily := nil;
   LFont := nil;
+  LSolidBrush := nil;
   try
     LGraphics := TGPGraphics.Create(ACanvas.Handle);
     LFontFamily := TGPFontFamily.Create(ACanvas.Font.Name);
@@ -2698,6 +2734,7 @@ begin
     LGraphics.Free;
     LFontFamily.Free;
     LFont.Free;
+    LSolidBrush.Free;
   end;
 end;
 {$else}

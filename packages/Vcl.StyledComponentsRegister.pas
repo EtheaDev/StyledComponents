@@ -75,8 +75,11 @@ Type
 
   TInheritedComponentEditor = class(TComponentEditor)
   strict private
-    FInheritedCompEditor: TComponentEditor;
-    function InheritedCompEditor: TComponentEditor;
+    //Hold the inherited editor through its interface: component editors are
+    //reference-counted, so an interface field keeps it alive for the lifetime
+    //of this editor and releases it deterministically when the field is cleared.
+    FInheritedCompEditor: IComponentEditor;
+    function InheritedCompEditor: IComponentEditor;
   protected
     function GetInheritedClass: TComponentClass; virtual; abstract;
   public
@@ -740,13 +743,18 @@ end;
 
 destructor TInheritedComponentEditor.Destroy;
 begin
-  inherited;
+  //Release the reference to the inherited editor before destruction
   FInheritedCompEditor := nil;
+  inherited;
 end;
 
 procedure TInheritedComponentEditor.ExecuteVerb(Index: Integer);
+var
+  LEditor: IComponentEditor;
 begin
-  InheritedCompEditor.ExecuteVerb(Index);
+  LEditor := InheritedCompEditor;
+  if Assigned(LEditor) then
+    LEditor.ExecuteVerb(Index);
 end;
 (*
 function TInheritedComponentEditor.GetInheritedClass: TComponentClass;
@@ -755,16 +763,28 @@ begin
 end;
 *)
 function TInheritedComponentEditor.GetVerb(Index: Integer): string;
+var
+  LEditor: IComponentEditor;
 begin
-  Result := InheritedCompEditor.GetVerb(Index);
+  LEditor := InheritedCompEditor;
+  if Assigned(LEditor) then
+    Result := LEditor.GetVerb(Index)
+  else
+    Result := '';
 end;
 
 function TInheritedComponentEditor.GetVerbCount: Integer;
+var
+  LEditor: IComponentEditor;
 begin
-  Result := InheritedCompEditor.GetVerbCount;
+  LEditor := InheritedCompEditor;
+  if Assigned(LEditor) then
+    Result := LEditor.GetVerbCount
+  else
+    Result := 0;
 end;
 
-function TInheritedComponentEditor.InheritedCompEditor: TComponentEditor;
+function TInheritedComponentEditor.InheritedCompEditor: IComponentEditor;
 var
   LComponentEditor: TObject;
   LInheritedCompEditor: IComponentEditor;
@@ -776,11 +796,16 @@ begin
     try
       LInheritedCompEditor := GetComponentEditor(
         LInheritedComponent, Designer);
-      LComponentEditor := LInheritedCompEditor as TObject;
-      if LComponentEditor.InheritsFrom(TComponentEditor) then
+      if Assigned(LInheritedCompEditor) then
       begin
-        FInheritedCompEditor := TComponentEditor(LComponentEditor).Create(
-          Self.GetComponent, Self.Designer);
+        LComponentEditor := LInheritedCompEditor as TObject;
+        //Build a fresh editor bound to our own component: construct a new
+        //instance from the class type (not the temporary above) and keep it
+        //through its interface so its reference count owns the lifetime.
+        if LComponentEditor.InheritsFrom(TComponentEditor) then
+          FInheritedCompEditor := TComponentEditorClass(
+            LComponentEditor.ClassType).Create(
+              Self.GetComponent, Self.Designer) as IComponentEditor;
       end;
     finally
       LInheritedComponent.Free;
