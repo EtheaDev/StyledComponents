@@ -1,0 +1,110 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{EF850F7F-1A11-4F3A-ADA4-04C79C743B7C}</ProjectGuid>
+        <MainSource>StyledComponentsTests.dpr</MainSource>
+        <ProjectVersion>20.5</ProjectVersion>
+        <FrameworkType>VCL</FrameworkType>
+        <Base>True</Base>
+        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+        <TargetedPlatforms>3</TargetedPlatforms>
+        <AppType>Console</AppType>
+        <ProjectName Condition="'$(ProjectName)'==''">StyledComponentsTests</ProjectName>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
+        <Base_Win32>true</Base_Win32>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
+        <Base_Win64>true</Base_Win64>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_1)'!=''">
+        <Cfg_1>true</Cfg_1>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_2)'!=''">
+        <Cfg_2>true</Cfg_2>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base)'!=''">
+        <DCC_AssertionsAtRuntime>true</DCC_AssertionsAtRuntime>
+        <DCC_DcuOutput>..\..\Lib\D13\$(Platform)\$(Config)\StyledComponentsTests</DCC_DcuOutput>
+        <DCC_ExeOutput>..\..\Bin\$(Platform)\$(Config)</DCC_ExeOutput>
+        <DCC_UnitSearchPath>..\..\Source;..\..\..\source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
+        <DCC_Define>$(DCC_Define)</DCC_Define>
+        <DCC_E>false</DCC_E>
+        <DCC_N>false</DCC_N>
+        <DCC_S>false</DCC_S>
+        <DCC_F>false</DCC_F>
+        <DCC_K>false</DCC_K>
+        <!-- Runtime themes ON: without the comctl32 v6 manifest StyleServices.Enabled
+             is False and Vcl.StandardButtonStyles skips the whole VCL-style table. -->
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
+        <SanitizedProjectName>StyledComponentsTests</SanitizedProjectName>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=Ethea S.r.l.;FileDescription=StyledComponents Test Suite;FileVersion=4.2.4.0;InternalName=StyledComponentsTests;LegalCopyright=Copyright (c) Ethea S.r.l.;ProductName=StyledComponents;ProductVersion=4.2.4</VerInfo_Keys>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1)'!=''">
+        <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+        <DCC_DebugDCUs>true</DCC_DebugDCUs>
+        <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
+        <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+        <DCC_Optimize>false</DCC_Optimize>
+        <DCC_RemoteDebug>false</DCC_RemoteDebug>
+        <!-- The suite runs with the guards ON: an out-of-range access must fail
+             a test here rather than silently corrupt memory in production. -->
+        <DCC_RangeChecking>true</DCC_RangeChecking>
+        <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2)'!=''">
+        <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+        <DCC_DebugInfo>0</DCC_DebugInfo>
+        <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+        <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+        <DCC_Optimize>true</DCC_Optimize>
+    </PropertyGroup>
+    <ItemGroup>
+        <DelphiCompile Include="$(MainSource)">
+            <MainSource>MainSource</MainSource>
+        </DelphiCompile>
+        <DCCReference Include="..\..\Source\StyledTestUtils.pas"/>
+        <DCCReference Include="..\..\Source\StyledRenderTests.pas"/>
+        <DCCReference Include="..\..\Source\StyledButtonTests.pas"/>
+        <DCCReference Include="..\..\Source\StyledContainerTests.pas"/>
+        <DCCReference Include="..\..\Source\StyledDialogTests.pas"/>
+        <DCCReference Include="..\..\Source\StyledPerfTests.pas"/>
+        <BuildConfiguration Include="Base">
+            <Key>Base</Key>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Debug">
+            <Key>Cfg_1</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Release">
+            <Key>Cfg_2</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Delphi.Personality.12</Borland.Personality>
+        <Borland.ProjectType>Application</Borland.ProjectType>
+        <BorlandProject>
+            <Delphi.Personality>
+                <Source>
+                    <Source Name="MainSource">StyledComponentsTests.dpr</Source>
+                </Source>
+            </Delphi.Personality>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
+</Project>
