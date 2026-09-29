@@ -2,7 +2,7 @@
 
 ## Components similar to Delphi VCL Buttons, Panels, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 4.2.4
+### Actual official version: 4.3.0
 
 ---
 ## Setup for Installation of Components
@@ -396,7 +396,37 @@ If you are have Skia4Delphi installed, you can also try the AnimatedTaskDialogDe
 
 Related links: [embarcadero.com](https://www.embarcadero.com) - [learndelphi.org](https://learndelphi.org)
 
+### AUTOMATED TEST SUITE
+The `Test` folder contains a DUnitX console test suite (Delphi 13, Win32 and Win64) covering rendering (shapes, notification badge), the style families contracts (every Class/Appearance assigns its colours, Classic Disabled visibly differs from Normal), buttons (Assign, StyleFamily change, dialog keys), containers (StyledToolbar BeginUpdate/EndUpdate, StyledPanel ParentBackground with and without VCL styles, StyledButtonGroup/CategoryButtons items) and StyledTaskDialog.
+It also contains performance benchmarks (`StyledPerfTests`) that count heap allocations and time per paint and fail above a ceiling, locking the 4.3.0 optimizations against regressions.
+Run `Test\run_tests.cmd [Win32|Win64] [Debug|Release]`: it builds the project and writes a NUnit XML report in `Test\Bin\<Platform>\<Config>`.
+
 ### RELEASE NOTES
+29 Sep 2026 - version 4.3.0
+- New: automated DUnitX test suite in the Test folder (73 tests and performance benchmarks, Win32/Win64, `run_tests.cmd`), included in the installer
+- Performance: the double-buffer bitmap of styled buttons is kept between paints instead of being created and freed on every WM_PAINT (21 to 7 heap allocations per paint)
+- Performance: BitBtn Kind glyphs and command-link icons are decoded from the resources once per name and size instead of on every paint (bkOK paint from ~950 to ~230 us); custom BitBtn glyphs keep one image per state in a per-button cache (from ~560 to ~150 us)
+- Performance: Classic buttons under a VCL style re-resolve their attributes only when the active style name changes, not on every paint
+- Performance: ButtonGroup/CategoryButtons items with their own style keep their resolved attributes (27 to 9 allocations per item paint) instead of swapping and restoring the container attributes on every paint; this also stops the swap from overwriting custom container attributes
+- Performance: SVG-Colors resolves unknown class names without raising EConvertError (~40 to ~4 us); AutoClick timer interval clamped to 15 ms
+- Fixed StyledPanel of the Classic family taking the button colours of the VCL style instead of the panel ones (Coral was orange instead of light grey); AsVCLComponent panels are always square like a TPanel
+- Fixed StyledPanel per-control StyleName (10.4+) not re-resolving the style when the class name was unchanged (the panel kept the global style colours)
+- Fixed btRounded buttons drawn as round-rects instead of pills (regression of 4.2.3) and notification badge drawn as a round-rect on buttons with wide borders
+- Fixed Outline appearance not assigning ButtonColor in Bootstrap, Basic-Colors, SVG-Colors and Template families (black StyledPanel with ParentBackground=False, black AutoClick bar)
+- Fixed Angular Stroked border colour (Material grey instead of black, visible also in Angular-Dark)
+- Fixed Classic family Selected/Pressed/Disabled derivation: now based on the button colour luminance instead of ThemeType (Obsidian, Onyx Blue, Vapor had Disabled identical to Normal)
+- Fixed a VCL style registered with RegisterThemeAttributes after the first use not being listed/selectable
+- Fixed TStyledButton/TStyledGraphicButton Assign between styled buttons (raised EConvertError)
+- Fixed StyleFamily change keeping the colours of the previous family when Class/Appearance fell back to the family defaults
+- Fixed Enter/Esc handled twice (double click) on styled buttons in forms with KeyPreview
+- Fixed StyledPanel ParentBackground: no longer reset while loading the DFM; transparent panels now show the parent as painted by the active VCL style (also on double-buffered parents)
+- Fixed StyledPanel AsVCLComponent using the active VCL style colours and the selected appearance
+- Fixed StyledToolbar button sizes set inside BeginUpdate/EndUpdate being lost
+- Fixed StyledButtonGroup/StyledCategoryButtons items losing the container shape while loading
+- Fixed StyledTaskDialog.RadioButton nil after Execute when OnRadioButtonClicked is not assigned
+- TStyledToolbar.ScaleForPPI made public (removes hint H2269)
+- Improved installer (InnoSetupScripts 1.2.5) to fix some reported installation problems: the packages are now built with the IDE Library Path read from the registry, so packages requiring third-party .dcp (StyledAnimatedComponents with Skia4Delphi) no longer fail with "Required package not found" when the IDE EnvOptions.proj is stale, and library path entries ending with a backslash no longer break the build (MSB6001)
+
 25 Sep 2026 - version 4.2.4
 - Fixed SetButtonStyle raising an exception when called with empty Family/Class/Appearance: empty values now keep the current style (the one inherited from the Toolbar), as before 4.2.2
 - Same behaviour for StyledButtonGroup and StyledCategoryButtons items: empty values keep the current style or fall back to the parent control style

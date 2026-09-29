@@ -129,7 +129,13 @@ type
     procedure SetPanelStyleNormal(const AValue: TStyledButtonAttributes);
   protected
     procedure Paint; override;
+    procedure WMEraseBkgnd(var Message: TWMEraseBkgnd); message WM_ERASEBKGND;
     procedure Loaded; override;
+    {$IFDEF D10_4+}
+    /// <summary>A per-control VCL style name selects the Classic family and
+    /// that style as StyleClass, as TStyledButton does</summary>
+    procedure SetStyleName(const AValue: string); override;
+    {$ENDIF}
     procedure UpdateStyleElements; override;
     {$IFNDEF D10_4+}
     function IsCustomStyleActive: Boolean;
@@ -387,7 +393,9 @@ var
   LButtonFamily: TButtonFamily;
   LStyleClass: TStyledButtonClass;
   LStyleAppearance: TStyledButtonAppearance;
+  LPanelTheme: TPanelThemeAttribute;
 begin
+  LStyleAppearance := FStyleAppearance;
   if AsVCLStyle then
   begin
     //if StyleElements contains seBorder then use
@@ -409,15 +417,35 @@ begin
       LStyleClass, LStyleAppearance, LButtonFamily);
     if Result (*or (csDesigning in ComponentState)*) then
     begin
+      //Build the attributes from the resolved class/appearance: with
+      //AsVCLComponent that is the active VCL style, not FStyleClass ('Windows')
       StyleFamilyUpdateAttributes(
         FStyleFamily,
-        FStyleClass,
-        FStyleAppearance,
+        LStyleClass,
+        LStyleAppearance,
         FPanelStyleNormal,
         LDummyPressed,
         LDummySelected,
         LDummyHot,
         FPanelStyleDisabled);
+      //A panel of the Classic family takes the colours a TPanel has in that
+      //VCL style (RegisterPanelThemeAttributes), not the button ones: Coral
+      //is a light grey panel with an orange button. The draw styles (solid or
+      //Outline) still come from the family.
+      if (FStyleFamily = DEFAULT_CLASSIC_FAMILY) and
+        GetPanelStyleAttributes(LStyleClass, LPanelTheme) then
+      begin
+        FPanelStyleNormal.ButtonColor := LPanelTheme.PanelColor;
+        FPanelStyleNormal.BorderColor := LPanelTheme.BorderColor;
+        FPanelStyleNormal.FontColor := LPanelTheme.FontColor;
+        FPanelStyleDisabled.ButtonColor := LPanelTheme.PanelColor;
+        FPanelStyleDisabled.BorderColor := LPanelTheme.BorderColor;
+        //Disabled text fades towards the panel colour, as TPanel's clGrayText
+        if ColorIsLight(LPanelTheme.PanelColor) then
+          FPanelStyleDisabled.FontColor := LightenColor(LPanelTheme.FontColor, 50)
+        else
+          FPanelStyleDisabled.FontColor := DarkenColor(LPanelTheme.FontColor, 50);
+      end;
       Color := FPanelStyleNormal.ButtonColor;
       if not FCustomDrawType then
         FStyleDrawType := FPanelStyleNormal.DrawType;
@@ -487,9 +515,54 @@ begin
     FStyleApplied := ApplyPanelStyle;
 end;
 
+{$IFDEF D10_4+}
+procedure TStyledPanel.SetStyleName(const AValue: string);
+begin
+  if (AValue <> '') and (FStyleFamily <> DEFAULT_CLASSIC_FAMILY) then
+    StyleFamily := DEFAULT_CLASSIC_FAMILY;
+  inherited;
+  //The style seen by the control changed even when the class name does not
+  //(a panel created with that name as class, then given the StyleName):
+  //force the re-resolution the setters would otherwise skip
+  FStyleApplied := False;
+  if AValue <> '' then
+    StyleClass := AValue
+  else
+    FStyleApplied := ApplyPanelStyle;
+end;
+{$ENDIF}
+
+procedure TStyledPanel.WMEraseBkgnd(var Message: TWMEraseBkgnd);
+var
+  LStyle: TCustomStyleServices;
+begin
+  //With ParentBackground the interior must show the parent as it is really
+  //painted, the way TWinControl does for a transparent TPanel:
+  //- custom VCL style: StyleServices.DrawParentBackground lets the style
+  //  reproduce the parent chain (a host with seClient is painted by its hook,
+  //  not with its Color, so asking the host to erase would give a colour
+  //  nobody sees). Vcl.StyleAPI.DrawControlBackground also copes with a
+  //  double-buffered parent, which TWinControl's own erase path does not;
+  //- themed system style: as TWinControl, DrawParentBackground unless the
+  //  parent is double buffered;
+  //- themes off (TWinControl would fill with Color): ask the parent to erase.
+  if ParentBackground and Assigned(Parent) then
+  begin
+    LStyle := StyleServices{$IFDEF D10_4+}(Self){$ENDIF};
+    if LStyle.Enabled and (not LStyle.IsSystemStyle or not Parent.DoubleBuffered) then
+      LStyle.DrawParentBackground(Handle, Message.DC, nil, False)
+    else
+      PerformEraseBackground(Self, Message.DC);
+    Message.Result := 1;
+  end
+  else
+    inherited;
+end;
+
 procedure TStyledPanel.Paint;
 var
   LAttributes: TStyledButtonAttributes;
+  LDrawType: TStyledButtonDrawType;
   LDrawRect, LTextRect: TRect;
   LTextFlags: Cardinal;
   LStyle: TCustomStyleServices;
@@ -518,7 +591,7 @@ begin
   if AsVCLStyle then
   begin
     //When AsVCLComponent is True, use BorderColor from TPanelThemeAttribute
-    if GetPanelStyleAttributes(FStyleClass, LThemeAttribute) then
+    if GetPanelStyleAttributes(GetActiveStyleName, LThemeAttribute) then
       Canvas.Pen.Color := LThemeAttribute.BorderColor
     else
       Canvas.Pen.Color := LAttributes.BorderColor;
@@ -532,7 +605,7 @@ begin
   if AsVCLStyle then
   begin
     //When AsVCLComponent is True, use PanelColor from TPanelThemeAttribute
-    if GetPanelStyleAttributes(FStyleClass, LThemeAttribute) then
+    if GetPanelStyleAttributes(GetActiveStyleName, LThemeAttribute) then
       Canvas.Brush.Color := LThemeAttribute.PanelColor
     else
       Canvas.Brush.Color := LAttributes.ButtonColor;
@@ -547,7 +620,7 @@ begin
   if AsVCLStyle then
   begin
     //When AsVCLComponent is True, use FontColor from ThemeAttribute
-    if GetPanelStyleAttributes(FStyleClass, LThemeAttribute) then
+    if GetPanelStyleAttributes(GetActiveStyleName, LThemeAttribute) then
       Canvas.Font.Color := LThemeAttribute.FontColor
     else
       Canvas.Font.Color := LAttributes.FontColor;
@@ -559,9 +632,15 @@ begin
     Canvas.Font.Color := LAttributes.FontColor;
   Canvas.Font.Style := LAttributes.FontStyle;
 
-  //Draw Background and Border using CanvasDrawShape
+  //Draw Background and Border using CanvasDrawShape.
+  //AsVCLComponent mimics a TPanel of the active VCL style: square corners
+  //whatever StyleDrawType says (the bevel styles are not rendered yet).
+  if AsVCLStyle then
+    LDrawType := btRect
+  else
+    LDrawType := FStyleDrawType;
   CanvasDrawShape(Canvas, LDrawRect,
-    FStyleDrawType,
+    LDrawType,
     FStyleRadius,
     FStyleRoundedCorners);
 
@@ -656,7 +735,10 @@ begin
   begin
     FStyleDrawType := AValue;
     FCustomDrawType := True;
-    ParentBackground := not IsStoredParentBackground;
+    //Deriving ParentBackground from the shape is a design/runtime convenience:
+    //while loading, the value streamed from the DFM must win.
+    if not (csLoading in ComponentState) then
+      ParentBackground := not IsStoredParentBackground;
     Invalidate;
   end;
 end;

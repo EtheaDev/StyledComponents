@@ -33,6 +33,7 @@ uses
   System.SysUtils
   , System.Classes
   , System.UITypes
+  , System.Rtti
   , WinApi.Windows
   , Vcl.Dialogs
   , Vcl.Graphics
@@ -148,6 +149,8 @@ type
     procedure SetButtonsWidth(const AValue: Integer);
     function GetHandle: HWND;
     procedure SetHandle(const AValue: HWND);
+    procedure SetRadioButton(const AValue: TTaskDialogRadioButtonItem);
+    procedure SetPrivateField(const AFieldName: string; const AValue: TValue);
     procedure SetUseCommandLinks(const AValue: Boolean);
     function GetUseCommandLinks: Boolean;
     procedure SetMainIconSize(const AValue: Integer);
@@ -493,7 +496,6 @@ uses
   System.TypInfo
   , System.Math
   , System.Types
-  , System.Rtti
   , Vcl.Themes
   , Winapi.CommCtrl
   , System.WideStrUtils
@@ -1101,7 +1103,13 @@ end;
 
 procedure TStyledTaskDialog.DoOnRadioButtonClicked(ButtonID: Integer);
 begin
-  inherited DoOnRadioButtonClicked(ButtonID);
+  if Assigned(OnRadioButtonClicked) then
+    inherited DoOnRadioButtonClicked(ButtonID)
+  else
+    //TCustomTaskDialog updates RadioButton only inside the event branch (the
+    //native dialog fills it after TaskDialogIndirect): keep RadioButton
+    //readable after Execute also when no handler is assigned (D1)
+    SetRadioButton(TTaskDialogRadioButtonItem(RadioButtons.FindButton(ButtonID)));
 end;
 
 function TStyledTaskDialog.Execute(ParentWnd: HWND): Boolean;
@@ -1216,6 +1224,17 @@ begin
 end;
 
 procedure TStyledTaskDialog.SetHandle(const AValue: HWND);
+begin
+  SetPrivateField('FHandle', AValue);
+end;
+
+procedure TStyledTaskDialog.SetRadioButton(const AValue: TTaskDialogRadioButtonItem);
+begin
+  SetPrivateField('FRadioButton', AValue);
+end;
+
+procedure TStyledTaskDialog.SetPrivateField(const AFieldName: string;
+  const AValue: TValue);
 var
   Context: TRttiContext;
   RttiType: TRttiType;
@@ -1224,7 +1243,7 @@ begin
   Context := TRttiContext.Create;
   try
     RttiType := Context.GetType(Self.ClassType);
-    Field := RttiType.GetField('FHandle');
+    Field := RttiType.GetField(AFieldName);
     if Assigned(Field) then
       Field.SetValue(Self, AValue);
   finally

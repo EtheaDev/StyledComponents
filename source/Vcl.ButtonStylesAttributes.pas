@@ -56,7 +56,7 @@ uses
 
 const
   /// <summary>Current version of the StyledComponents library</summary>
-  StyledComponentsVersion = '4.2.4';
+  StyledComponentsVersion = '4.3.0';
   /// <summary>Default corner radius for rounded buttons in pixels</summary>
   DEFAULT_RADIUS = 6;
   /// <summary>Resource name for the Windows shield admin icon</summary>
@@ -450,13 +450,38 @@ procedure CalcImageAndTextRect(const ACanvas: TCanvas;
   const AMargin, ASpacing, ABorderWidth: Integer;
   const ABiDiFlags: Cardinal); overload;
 
+type
+  /// <summary>Per-button cache of the TImageList built from a BitBtn glyph, one
+  /// image per TButtonState. Building the list on every paint cost about five
+  /// times the rest of the paint (see Test\Source\StyledPerfTests). Owned by
+  /// TStyledButtonRender, which invalidates it when the glyph, NumGlyphs or Kind
+  /// change; a size or transparent-colour change invalidates it on its own.</summary>
+  TStyledGlyphCache = class(TObject)
+  private
+    FImageList: TImageList;
+    FIndexes: array[TButtonState] of Integer;
+    FWidth, FHeight: Integer;
+    FTransparentColor: TColor;
+  public
+    destructor Destroy; override;
+    /// <summary>Drops the cached images (the glyph changed)</summary>
+    procedure Invalidate;
+    /// <summary>Draws the AState image of AOriginal (ANumGlyphs states side by
+    /// side) at ARect.TopLeft, building that image on first use</summary>
+    procedure Draw(const ACanvas: TCanvas; const ARect: TRect;
+      const AOriginal: TBitmap; const AState: TButtonState;
+      const ANumGlyphs: Integer; const ATransparentColor: TColor);
+  end;
+
 // Drawing functions
 
-/// <summary>Draws a BitBtn-style glyph with state-based image selection</summary>
+/// <summary>Draws a BitBtn-style glyph with state-based image selection.
+/// With AGlyphCache the state images are built once and reused.</summary>
 procedure DrawBitBtnGlyph(const ACanvas: TCanvas; const ARect: TRect;
   const AKind: Vcl.Buttons.TBitBtnKind;
   const AState: TButtonState; const AEnabled: Boolean;
-  const AOriginal: TBitmap; const ANumGlyphs: Integer; const ATransparentColor: TColor);
+  const AOriginal: TBitmap; const ANumGlyphs: Integer; const ATransparentColor: TColor;
+  const AGlyphCache: TStyledGlyphCache = nil);
 
 /// <summary>Draws button text with alignment and spacing</summary>
 procedure DrawButtonText(const ACanvas: TCanvas;
@@ -577,6 +602,7 @@ implementation
 uses
   System.Win.Registry
   , System.Math
+  , System.Generics.Collections
 {$ifdef GDIPlusSupport}
   , Winapi.GDIPAPI
   , Winapi.GDIPOBJ
@@ -586,6 +612,71 @@ uses
 
 var
   _WindowsVersion: TWindowsVersion;
+  //Decoded resource images (BitBtn kind glyphs, command-link arrows), kept for
+  //the life of the process: decoding a PNG and scaling it on every paint cost
+  //about ten times the rest of a button paint (see Test\Source\StyledPerfTests).
+  {$IFDEF D10_4+}
+  _ResourceImages: TObjectDictionary<string, TWicImage>;
+  {$ELSE}
+  _ResourceImages: TObjectDictionary<string, TBitmap>;
+  {$ENDIF}
+
+{$IFDEF D10_4+}
+/// <summary>Returns the TWicImage of a resource decoded once per resource name
+/// and target size (TWicImage.Draw keeps one scaled buffer per instance, so
+/// instances are not shared across sizes). nil when the resource is missing.</summary>
+function GetResourceImage(const AResName: string;
+  const AWidth, AHeight: Integer): TWicImage;
+var
+  LKey: string;
+begin
+  LKey := Format('%s|%dx%d', [AResName, AWidth, AHeight]);
+  if not Assigned(_ResourceImages) then
+    _ResourceImages := TObjectDictionary<string, TWicImage>.Create([doOwnsValues]);
+  if not _ResourceImages.TryGetValue(LKey, Result) then
+  begin
+    Result := TWicImage.Create;
+    try
+      Result.InterpolationMode := wipmHighQualityCubic;
+      Result.LoadFromResourceName(HInstance, AResName);
+    except
+      on E: EResNotFound do
+        FreeAndNil(Result); //the miss is cached as well
+      else
+      begin
+        Result.Free;
+        raise;
+      end;
+    end;
+    _ResourceImages.Add(LKey, Result);
+  end;
+end;
+{$ELSE}
+/// <summary>Returns the bitmap of a resource loaded once per resource name.
+/// nil when the resource is missing.</summary>
+function GetResourceBitmap(const AResName: string): TBitmap;
+begin
+  if not Assigned(_ResourceImages) then
+    _ResourceImages := TObjectDictionary<string, TBitmap>.Create([doOwnsValues]);
+  if not _ResourceImages.TryGetValue(AResName, Result) then
+  begin
+    Result := TBitmap.Create;
+    try
+      Result.PixelFormat := pf32bit;
+      Result.LoadFromResourceName(HInstance, AResName);
+    except
+      on E: EResNotFound do
+        FreeAndNil(Result); //the miss is cached as well
+      else
+      begin
+        Result.Free;
+        raise;
+      end;
+    end;
+    _ResourceImages.Add(AResName, Result);
+  end;
+end;
+{$ENDIF}
 
 function GetButtonFamily(const AFamily: TStyledButtonFamily;
   out AButtonFamily: TButtonFamily): Boolean; forward;
@@ -1759,9 +1850,10 @@ begin
     w := ARectangle.Width;
     h := ARectangle.Height;
     d := ARadius / 2;
-    //Clamp to half the short side: opposite corner arcs are each d wide, so a
-    //larger d would make them overlap past the middle of the rectangle.
-    d := Min(d, Min(ARectangle.Width, ARectangle.Height) / 2);
+    //d is the bounding box of each quarter arc, which only spans half of it
+    //(x in [l, l+d/2]): opposite arcs meet when d equals the short side, so
+    //that is the clamp. Halving it turned btRounded pills into round-rects.
+    d := Min(d, Min(ARectangle.Width, ARectangle.Height));
     // topleft
     if rcTopLeft in ARoundedCorners then
       Result.AddArc(l, t, d, d, 180, 90)
@@ -2069,44 +2161,26 @@ begin
         LResName := 'STYLED_CMD_LINK_ARROW_WHITE';
     end;
   end;
+  //Decoded once per resource (and size), see GetResourceImage
   {$IFDEF D10_4+}
-  LImage := TWicImage.Create;
-  try try
-    LImage.InterpolationMode := wipmHighQualityCubic;
-    LImage.LoadFromResourceName(HInstance, LResName);
+  LImage := GetResourceImage(LResName, ARect.Width, ARect.Height);
+  if Assigned(LImage) then
     ACanvas.StretchDraw(ARect, LImage);
-    Exit;
-  except
-    on E: EResNotFound do ; //ignore Exception
-    else
-      raise;
-  end;  
-  finally
-    LImage.Free;
-  end;
   {$ELSE}
-  LBitmap := TBitmap.Create;
-  try
-    LBitmap.PixelFormat := pf32bit;
-    //LBitmap.TransparentMode := tmFixed;
-    LBitmap.LoadFromResourceName(HInstance, LResName);
-    //ACanvas.StretchDraw(ARect, LBitmap);
-    //LBitmapRect := TRect.Create(ARect.Top, ARect.Left, LBitmap.Width, LBitmap.Height);
+  LBitmap := GetResourceBitmap(LResName);
+  if Assigned(LBitmap) then
     DrawBitmapTransparent(ACanvas, ARect, ARect.Width, ARect.Height, LBitmap, bsUp, 1, clBlack);
-    Exit;
-  finally
-    LBitmap.Free;
-  end;
-  {$ENDIF}
+{$ENDIF}
 end;
 
-procedure DrawBitmapTransparent(ACanvas: TCanvas; ARect: TRect;
+/// <summary>Builds the AState image of a BitBtn glyph (masked, disabled
+/// rendering included) and adds it to AImageList; returns its index.</summary>
+function AddGlyphToImageList(const IL: TImageList;
   const AWidth, AHeight: Integer; AOriginal: TBitmap;
-  AState: TButtonState; ANumGlyphs: Integer; const ATransparentColor: TColor);
+  AState: TButtonState; ANumGlyphs: Integer; const ATransparentColor: TColor): Integer;
 const
   ROP_DSPDxax = $00E20746;
 var
-  IL: TImageList;
   TmpImage, MonoBmp, DDB: TBitmap;
   IRect, ORect: TRect;
   I: TButtonState;
@@ -2114,13 +2188,10 @@ var
   LIndex: Integer;
 begin
   LIndex := -1;
-  TmpImage := nil;
-  IL := nil;
+  TmpImage := TBitmap.Create;
   try
-    TmpImage := TBitmap.Create;
     TmpImage.Width := AWidth;
     TmpImage.Height := AHeight;
-    IL := TImageList.CreateSize(TmpImage.Width, TmpImage.Height);
     IRect := Rect(0, 0, AWidth, AHeight);
     TmpImage.Canvas.Brush.Color := clBtnFace;
     TmpImage.Palette := CopyPalette(AOriginal.Palette);
@@ -2225,12 +2296,71 @@ begin
           LIndex := IL.AddMasked(TmpImage, clDefault);
         end;
     end;
+  finally
+    TmpImage.Free;
+  end;
+  Result := LIndex;
+end;
+
+procedure DrawBitmapTransparent(ACanvas: TCanvas; ARect: TRect;
+  const AWidth, AHeight: Integer; AOriginal: TBitmap;
+  AState: TButtonState; ANumGlyphs: Integer; const ATransparentColor: TColor);
+var
+  IL: TImageList;
+  LIndex: Integer;
+begin
+  IL := TImageList.CreateSize(AWidth, AHeight);
+  try
+    LIndex := AddGlyphToImageList(IL, AWidth, AHeight, AOriginal, AState, ANumGlyphs, ATransparentColor);
     ImageList_DrawEx(IL.Handle, LIndex, ACanvas.Handle, ARect.Left, ARect.Top, AWidth, AHeight,
       clNone, clNone, ILD_Transparent);
   finally
     IL.Free;
-    TmpImage.Free;
   end;
+end;
+
+{ TStyledGlyphCache }
+
+destructor TStyledGlyphCache.Destroy;
+begin
+  Invalidate;
+  inherited;
+end;
+
+procedure TStyledGlyphCache.Invalidate;
+begin
+  FreeAndNil(FImageList);
+end;
+
+procedure TStyledGlyphCache.Draw(const ACanvas: TCanvas; const ARect: TRect;
+  const AOriginal: TBitmap; const AState: TButtonState;
+  const ANumGlyphs: Integer; const ATransparentColor: TColor);
+var
+  LWidth, LHeight: Integer;
+  LState: TButtonState;
+begin
+  if not Assigned(AOriginal) or (ANumGlyphs <= 0) or
+    (AOriginal.Width = 0) or (AOriginal.Height = 0) then
+    Exit;
+  LWidth := AOriginal.Width div ANumGlyphs;
+  LHeight := AOriginal.Height;
+  if Assigned(FImageList) and ((FWidth <> LWidth) or (FHeight <> LHeight) or
+    (FTransparentColor <> ATransparentColor)) then
+    Invalidate;
+  if not Assigned(FImageList) then
+  begin
+    FImageList := TImageList.CreateSize(LWidth, LHeight);
+    FWidth := LWidth;
+    FHeight := LHeight;
+    FTransparentColor := ATransparentColor;
+    for LState := Low(TButtonState) to High(TButtonState) do
+      FIndexes[LState] := -1;
+  end;
+  if FIndexes[AState] < 0 then
+    FIndexes[AState] := AddGlyphToImageList(FImageList, LWidth, LHeight,
+      AOriginal, AState, ANumGlyphs, ATransparentColor);
+  ImageList_DrawEx(FImageList.Handle, FIndexes[AState], ACanvas.Handle,
+    ARect.Left, ARect.Top, LWidth, LHeight, clNone, clNone, ILD_Transparent);
 end;
 
 procedure DrawButtonText(const ACanvas: TCanvas;
@@ -2305,17 +2435,23 @@ var
   W, H, LBadgeChars, LBadgeBorderSize: Integer;
   LFlags: Cardinal;
   LOldPenStyle: TPenStyle;
+  LOldPenWidth: Integer;
   LOldBrushColor, LOldFontColor: TColor;
   LOldFontStyle: TFontStyles;
 begin
   //Save the shared canvas state: this helper draws on the control's canvas and
   //must not leak pen/brush/font changes to items painted afterwards.
   LOldPenStyle := ACanvas.Pen.Style;
+  LOldPenWidth := ACanvas.Pen.Width;
   LOldBrushColor := ACanvas.Brush.Color;
   LOldFontColor := ACanvas.Font.Color;
   LOldFontStyle := ACanvas.Font.Style;
   try
   ACanvas.Pen.Style := psClear;
+  //The badge has no border: CanvasDrawShape derives the btRounded corner radius
+  //from Height - Pen.Width, so the border width left on the canvas by the
+  //button just painted would flatten the pill into a round-rect.
+  ACanvas.Pen.Width := 1;
   ACanvas.Brush.Color := AColor;
   ACanvas.Font.Color := AFontColor;
   ACanvas.Font.Style := AFontStyle;
@@ -2373,6 +2509,7 @@ begin
   finally
     //Restore the shared canvas state
     ACanvas.Pen.Style := LOldPenStyle;
+    ACanvas.Pen.Width := LOldPenWidth;
     ACanvas.Brush.Color := LOldBrushColor;
     ACanvas.Font.Color := LOldFontColor;
     ACanvas.Font.Style := LOldFontStyle;
@@ -2383,7 +2520,8 @@ procedure DrawBitBtnGlyph(const ACanvas: TCanvas; const ARect: TRect;
   const AKind: Vcl.Buttons.TBitBtnKind;
   const AState: TButtonState; const AEnabled: Boolean;
   const AOriginal: TBitmap; const ANumGlyphs: Integer;
-  const ATransparentColor: TColor);
+  const ATransparentColor: TColor;
+  const AGlyphCache: TStyledGlyphCache = nil);
 var
   LResName: String;
   LOriginal: TBitmap;
@@ -2393,7 +2531,6 @@ var
   {$ENDIF}
   LState: TButtonState;
 begin
-  LOriginal := nil;
   try
     try
       if AKind = bkCustom then
@@ -2410,20 +2547,15 @@ begin
         {$IFDEF D10_4+}
         if not AEnabled then
           LResName := LResName+'_DISABLED';
-        LImage := TWicImage.Create;
-        try
-          LImage.InterpolationMode := wipmHighQualityCubic;
-          LImage.LoadFromResourceName(HInstance, LResName);
+        //Decoded once per resource and size, see GetResourceImage
+        LImage := GetResourceImage(LResName, ARect.Width, ARect.Height);
+        if Assigned(LImage) then
           ACanvas.StretchDraw(ARect, LImage);
-          Exit;
-        finally
-          LImage.Free;
-        end;
+        Exit;
         {$ELSE}
-          LOriginal := TBitmap.Create;
+          //Loaded once per resource, see GetResourceBitmap (not owned here)
+          LOriginal := GetResourceBitmap(LResName);
           LNumGlyphs := 2;
-          LOriginal.PixelFormat := pf32bit;
-          LOriginal.LoadFromResourceName(HInstance, LResName);
         {$ENDIF}
       end;
       if not Assigned(LOriginal) or ((LOriginal.Width = 0) or (LOriginal.Height = 0)) then
@@ -2432,11 +2564,14 @@ begin
         LState := AState
       else
         LState := bsDisabled;
-      DrawBitmapTransparent(ACanvas, ARect, LOriginal.Width div LNumGlyphs, LOriginal.Height, LOriginal,
-        LState, LNumGlyphs, ATransparentColor);
+      if Assigned(AGlyphCache) then
+        //State images built once per button, see TStyledGlyphCache
+        AGlyphCache.Draw(ACanvas, ARect, LOriginal, LState, LNumGlyphs, ATransparentColor)
+      else
+        DrawBitmapTransparent(ACanvas, ARect, LOriginal.Width div LNumGlyphs, LOriginal.Height, LOriginal,
+          LState, LNumGlyphs, ATransparentColor);
     finally
-      if AKind <> bkCustom then
-        LOriginal.Free;
+      //LOriginal is the caller's glyph or a cached resource bitmap: not owned here
     end;
   except
     on E: EResNotFound do ; //ignore Exception
@@ -2751,5 +2886,6 @@ initialization
 
 finalization
   FFamilies.Free;
+  FreeAndNil(_ResourceImages);
 
 end.

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Delphi VCL StyledComponents is a library of custom VCL components that provide styled buttons, panels, toolbars, navigators, button groups, and dialogs with modern appearance beyond standard Windows theming. Supports Delphi XE6 through Delphi 13 (32/64-bit).
 
-Current version: 4.2.4
+Current version: 4.3.0
 
 ## Build and Package Structure
 
@@ -86,7 +86,8 @@ Each combination maps to 5 state-specific `TStyledButtonAttributes` objects (Nor
 
 ### Key Source Files
 
-- `source/Vcl.ButtonStylesAttributes.pas` - Core attributes and TStyledButtonRender class
+- `source/Vcl.ButtonStylesAttributes.pas` - Core attributes (TStyledButtonAttributes, style family registry, GDI+ shape drawing helpers)
+- `source/Vcl.StyledButton.pas` - TStyledButtonRender class and all button components
 - `source/Vcl.StyledButton.pas` - All button components
 - `source/Vcl.Standard*.pas`, `Vcl.Bootstrap*.pas`, `Vcl.Angular*.pas` - Style families
 - `source/Vcl.StyledToolbar.pas` - Toolbar component
@@ -232,6 +233,19 @@ All styled buttons support AutoClick/AutoClickDelay to trigger Click event after
 - Demo/tutorial modes
 
 The StyledTaskDialog component also supports this for auto-closing dialogs.
+
+## Automated Test Suite
+
+`Test/` holds a DUnitX console suite (Delphi 13, Win32/Win64) that locks the fixes of the code reviews and the rendering contracts:
+
+- `Test/run_tests.cmd [Win32|Win64] [Debug|Release] [BDS path]` builds `Test/Projects/D13/StyledComponentsTests.dproj` and runs it (NUnit XML report in `Test/Bin/<Platform>/<Config>/dunitx-results.xml`, exit code 0 = all green). Debug builds run with range and overflow checking on.
+- `Test/Source/StyledTestUtils.pas` - helpers: pixel probes (`PixelAt`, `AssertPixel`), off-screen painting of graphic and windowed controls, `HostForm`, streaming round-trip, the `[AllFamilies]` parametric attribute.
+- `StyledRenderTests` (shapes, badge, style family contracts), `StyledButtonTests` (Assign, StyleFamily change, dialog keys), `StyledContainerTests` (toolbar BeginUpdate, panel ParentBackground with and without VCL styles, panel colours per VCL style, group items), `StyledDialogTests` (RadioButton), `StyledPerfTests` (benchmarks: a pass-through memory manager counts heap allocations, TStopwatch the time; each benchmark reports its numbers and fails above an allocation ceiling; run them in Release for meaningful times).
+- The library's conditional symbols (`D10_4+`, `D11+`...) come from `source/StyledComponents.inc` and are NOT visible in the test units: guard version-dependent tests with `{$IF CompilerVersion >= ...}`.
+- The project links `{$R *.res}` with the comctl32 v6 manifest on purpose: without it `StyleServices.Enabled` is False and `Vcl.StandardButtonStyles` skips the whole VCL-style table.
+- Working rule: write the test red first, fix, rerun green; a test that also passes on the previous sources is not a regression test.
+
+`ManualTest/` contains older manual test applications and the code-review documents (Ethea internal, not shipped by the installer).
 
 ## Setup/Installation
 

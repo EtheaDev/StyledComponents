@@ -269,7 +269,11 @@ begin
   AHotColor       := LThemeAttribute.HotColor;
   ABorderColor    := LThemeAttribute.BorderColor;
   ABorderHotColor := LThemeAttribute.BorderHotColor;
-  ADarkStyle      := LThemeAttribute.ThemeType = ttDark;
+  //Direction of the derived states (Selected/Pressed lighten or darken,
+  //Disabled fades) follows the actual button colour, not ThemeType: several
+  //dark styles (Obsidian, Onyx Blue, Vapor...) draw a dark font on a light
+  //button and darkening it left Disabled identical to Normal (F2)
+  ADarkStyle      := not ColorIsLight(AButtonColor);
   ABorderType     := LThemeAttribute.BorderType;
   AFontColor      := LThemeAttribute.FontColor;
   AFontHotColor   := LThemeAttribute.FontHotColor;
@@ -409,6 +413,9 @@ begin
   LThemeAttribute := TThemeAttribute.Create;
   ThemeAttributes.Add(LThemeAttribute);
   UpdateThemeAttributes;
+  //Invalidate the cached class list built by GetButtonClasses, otherwise a
+  //style registered after the first use is not listed nor selectable (F3)
+  SetLength(ButtonClasses, 0);
 end;
 
 procedure RegisterPanelThemeAttributes(

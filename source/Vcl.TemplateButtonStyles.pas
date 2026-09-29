@@ -175,6 +175,9 @@ begin
   ANormalStyle.FontStyle := [fsBold];
     ANormalStyle.FontColor := LButtonColor;
     ANormalStyle.BorderColor := LightenColor(LButtonColor, 50);
+    //Outline does not paint ButtonColor, but assign it anyway (light tint):
+    //TStyledPanel without ParentBackground and the AutoClick bar read it
+    ANormalStyle.ButtonColor := ANormalStyle.BorderColor;
   end
   else
   begin

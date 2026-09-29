@@ -206,6 +206,8 @@ begin
     ANormalStyle.BorderWidth := COLOR_BTN_WIDTH;
     ANormalStyle.BorderColor := LButtonColor;
     ANormalStyle.FontColor := LButtonColor;
+    //Light tint for the consumers that must fill the surface (see F1)
+    ANormalStyle.ButtonColor := LightenColor(LButtonColor, 50);
   end
   else
   begin
@@ -285,6 +287,30 @@ end;
 
 { TSVGColorButtonStyles }
 
+/// <summary>StringToAlphaColor without the EConvertError: same parsing
+/// (named colours with or without the cla prefix, #RRGGBBAA, xRRGGBBAA,
+/// $ hex) but returns False for an unknown value.</summary>
+function TryStringToAlphaColor(const AValue: string; out AColor: TAlphaColor): Boolean;
+var
+  LValue: string;
+  LInt: Integer;
+  LInt64: Int64;
+begin
+  LValue := AValue;
+  if (LValue <> '') and ((LValue.Chars[0] = '#') or (LValue.Chars[0] = 'x')) then
+    LValue := '$' + LValue.Substring(1);
+  Result := (LValue <> '') and
+    (IdentToAlphaColor('cla' + LValue, LInt) or IdentToAlphaColor(LValue, LInt));
+  if Result then
+    AColor := TAlphaColor(LInt)
+  else
+  begin
+    Result := TryStrToInt64(LValue, LInt64);
+    if Result then
+      AColor := TAlphaColor(LInt64);
+  end;
+end;
+
 procedure TSVGColorButtonStyles.SVGClassToColors(const AClass: TStyledButtonClass;
   const AAppearance: TStyledButtonAppearance;
   var AFontColor, AButtonColor, ABorderColor: TColor; out AOutLine: Boolean);
@@ -301,15 +327,12 @@ var
 
 begin
   AOutLine := SameText(AAppearance, COLOR_BTN_OUTLINE);
-  //StringToAlphaColor raises EConvertError for an unknown name
-  //never let that escape the paint path - fall back to a neutral colour.
-  try
-    LColor := StringToAlphaColor(AClass);
-    AButtonColor := AlphaColorToColor(LColor);
-  except
-    on EConvertError do
-      AButtonColor := clBtnFace;
-  end;
+  //Unknown names fall back to a neutral colour without raising: the
+  //EConvertError of StringToAlphaColor cost ~50x a lookup per resolution
+  if TryStringToAlphaColor(AClass, LColor) then
+    AButtonColor := AlphaColorToColor(LColor)
+  else
+    AButtonColor := clBtnFace;
   if ColorIsLight(AButtonColor) then
   begin
     ABorderColor := DarkenColor(AButtonColor, 20);
@@ -396,6 +419,8 @@ begin
     ANormalStyle.BorderWidth := COLOR_BTN_WIDTH;
     ANormalStyle.BorderColor := LButtonColor;
     ANormalStyle.FontColor := LButtonColor;
+    //Light tint for the consumers that must fill the surface (see F1)
+    ANormalStyle.ButtonColor := LightenColor(LButtonColor, 50);
   end
   else
   begin

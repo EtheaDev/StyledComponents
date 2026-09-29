@@ -254,6 +254,9 @@ begin
     ANormalStyle.BorderWidth := ANGULAR_STROKED_WIDTH;
     ANormalStyle.BorderDrawStyle := brdSolid;
     ANormalStyle.ButtonDrawStyle := btnClear;
+    //Material stroked outline: rgba(0,0,0,.12) over a light surface. Without
+    //an explicit value the border was the clBlack default of a fresh object (F5)
+    ANormalStyle.BorderColor := htmlToColor('#E0E0E0');
     //Only for Primary, Accent and Warn, Stroked FontColor as Button Color
     if LPrimaryAccentWarn then
       ANormalStyle.FontColor := LButtonColor
@@ -452,6 +455,8 @@ begin
     ANormalStyle.BorderWidth := ANGULAR_STROKED_WIDTH;
     ANormalStyle.BorderDrawStyle := brdSolid;
     ANormalStyle.ButtonDrawStyle := btnClear;
+    //Material stroked outline: rgba(255,255,255,.12) over a dark surface (F5)
+    ANormalStyle.BorderColor := htmlToColor('#494949');
     //Only for Primary, Accent and Warn, Stroked FontColor as Button Color
     if LPrimaryAccentWarn then
       ANormalStyle.FontColor := LButtonColor

@@ -227,6 +227,11 @@ begin
     ANormalStyle.BorderWidth := BOOTSTRAP_BORDER_WIDTH;
     ANormalStyle.FontColor := LButtonColor;
     ANormalStyle.BorderColor := LightenColor(LButtonColor, 50);
+    //Outline buttons do not paint ButtonColor (btnClear), but the consumers
+    //that must fill a surface (TStyledPanel without ParentBackground, the
+    //AutoClick bar, TStyledAnimatedButton erase) read it: a light tint of the
+    //class colour, as the Classic family does, instead of the black default (F1)
+    ANormalStyle.ButtonColor := ANormalStyle.BorderColor;
   end
   else
   begin

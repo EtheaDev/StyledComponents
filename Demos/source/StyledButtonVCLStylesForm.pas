@@ -552,9 +552,16 @@ var
       ATop, LWidth, LHeight);
     LPanel.ParentBackground := False; //Required to apply VCL style colors
 
-    //Set AsVCLComponent based on render option
+    //Set AsVCLComponent based on render option: the panel then follows the
+    //VCL style seen by the control, so give it the same per-control StyleName
+    //as the TPanel on the left
     if LAsVcl then
+    begin
       LPanel.AsVCLComponent := True;
+      {$IFDEF D10_4+}
+      LPanel.StyleName := AStyleName;
+      {$ENDIF}
+    end;
 
     case PanelRenderRadioGroup.ItemIndex of
       RENDER_ROUNDED: LPanel.StyleDrawType := btRounded; //All panels Rounded
