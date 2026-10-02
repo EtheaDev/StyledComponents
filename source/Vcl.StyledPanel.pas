@@ -235,6 +235,9 @@ type
     property ParentShowHint;
     property PopupMenu;
     property ShowHint;
+    {$IFDEF D10_4+}
+    property StyleName;
+    {$ENDIF}
     property ShowCaption;
     property TabOrder;
     property TabStop;
@@ -394,6 +397,7 @@ var
   LStyleClass: TStyledButtonClass;
   LStyleAppearance: TStyledButtonAppearance;
   LPanelTheme: TPanelThemeAttribute;
+  LTemp: TStyledButtonAttributes;
 begin
   LStyleAppearance := FStyleAppearance;
   if AsVCLStyle then
@@ -435,16 +439,28 @@ begin
       if (FStyleFamily = DEFAULT_CLASSIC_FAMILY) and
         GetPanelStyleAttributes(LStyleClass, LPanelTheme) then
       begin
-        FPanelStyleNormal.ButtonColor := LPanelTheme.PanelColor;
-        FPanelStyleNormal.BorderColor := LPanelTheme.BorderColor;
-        FPanelStyleNormal.FontColor := LPanelTheme.FontColor;
-        FPanelStyleDisabled.ButtonColor := LPanelTheme.PanelColor;
-        FPanelStyleDisabled.BorderColor := LPanelTheme.BorderColor;
-        //Disabled text fades towards the panel colour, as TPanel's clGrayText
-        if ColorIsLight(LPanelTheme.PanelColor) then
-          FPanelStyleDisabled.FontColor := LightenColor(LPanelTheme.FontColor, 50)
-        else
-          FPanelStyleDisabled.FontColor := DarkenColor(LPanelTheme.FontColor, 50);
+        //The colours are written on ownerless copies: the setters of an attribute
+        //owned by the panel store a "custom" value that survives a later change
+        //of family (a Classic panel turned into Bootstrap stayed grey)
+        LTemp := TStyledButtonAttributes.Create(nil);
+        try
+          LTemp.AssignStyledAttributes(FPanelStyleNormal);
+          LTemp.ButtonColor := LPanelTheme.PanelColor;
+          LTemp.BorderColor := LPanelTheme.BorderColor;
+          LTemp.FontColor := LPanelTheme.FontColor;
+          FPanelStyleNormal.AssignStyledAttributes(LTemp);
+          LTemp.AssignStyledAttributes(FPanelStyleDisabled);
+          LTemp.ButtonColor := LPanelTheme.PanelColor;
+          LTemp.BorderColor := LPanelTheme.BorderColor;
+          //Disabled text fades towards the panel colour, as TPanel's clGrayText
+          if ColorIsLight(LPanelTheme.PanelColor) then
+            LTemp.FontColor := LightenColor(LPanelTheme.FontColor, 50)
+          else
+            LTemp.FontColor := DarkenColor(LPanelTheme.FontColor, 50);
+          FPanelStyleDisabled.AssignStyledAttributes(LTemp);
+        finally
+          LTemp.Free;
+        end;
       end;
       Color := FPanelStyleNormal.ButtonColor;
       if not FCustomDrawType then

@@ -56,7 +56,7 @@ uses
 
 const
   /// <summary>Current version of the StyledComponents library</summary>
-  StyledComponentsVersion = '4.3.0';
+  StyledComponentsVersion = '4.3.1';
   /// <summary>Default corner radius for rounded buttons in pixels</summary>
   DEFAULT_RADIUS = 6;
   /// <summary>Resource name for the Windows shield admin icon</summary>

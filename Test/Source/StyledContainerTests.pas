@@ -91,6 +91,13 @@ type
     procedure AsVCLComponent_PaintsSquareCorners;
 
     /// <summary>
+    ///  Component editor flow: the style chosen on a detached panel is copied to
+    ///  the real panel with AssignStyleTo; the real panel must paint with it.
+    /// </summary>
+    [Test]
+    procedure AssignStyleTo_FromBootstrapPanel_RepaintsTheTargetPanel;
+
+    /// <summary>
     ///  Regression (P-G6, 10.4+). Setting a per-control StyleName on an
     ///  AsVCLComponent panel whose StyleClass already had that name did not
     ///  re-resolve the attributes: the panel kept the colours of the style
@@ -333,6 +340,8 @@ begin
     LPanel.StyleDrawType := btRect;
     LPanel.ParentBackground := False;
     Assert.IsFalse(LPanel.AsVCLComponent, 'precondition: an explicit class is not AsVCLComponent');
+    // the style colours are not user customisations: they must not be streamed in the DFM
+    Assert.IsFalse(LPanel.PanelStyleNormal.HasCustomButtonColor, 'ButtonColor must not be flagged as custom');
     LBitmap := TStyledTestUtils.PaintWinControl(LPanel);
     try
       TStyledTestUtils.AssertPixel(LBitmap, 100, 40, ColorToRGB(LPanelTheme.PanelColor),
@@ -465,6 +474,47 @@ begin
     end;
   finally
     TStyleManager.SetStyle(TStyleManager.SystemStyle);
+  end;
+end;
+
+procedure TStyledPanelTests.AssignStyleTo_FromBootstrapPanel_RepaintsTheTargetPanel;
+var
+  LForm: TForm;
+  LReal, LDest, LRef: TStyledPanel;
+  LBitmap: TBitmap;
+begin
+  LForm := TStyledTestUtils.HostForm;
+  try
+    // the panel in the designer: default Classic/Windows, not transparent
+    LReal := TStyledPanel.Create(LForm);
+    LReal.Parent := LForm;
+    LReal.SetBounds(0, 0, 200, 80);
+    LReal.ParentBackground := False;
+    // reference: a panel created directly as Bootstrap/Success
+    LRef := TStyledPanel.CreateStyled(LForm, BOOTSTRAP_FAMILY, 'Success', BOOTSTRAP_NORMAL);
+    LRef.Parent := LForm;
+    LRef.SetBounds(0, 100, 200, 80);
+    LRef.ParentBackground := False;
+    // the editor's "new" panel receives the chosen preview style
+    LDest := TStyledPanel.CreateStyled(LForm, DEFAULT_CLASSIC_FAMILY, DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE);
+    LDest.StyleFamily := BOOTSTRAP_FAMILY;
+    LDest.StyleClass := 'Success';
+    LDest.StyleAppearance := BOOTSTRAP_NORMAL;
+    LDest.AssignStyleTo(LReal);
+    LBitmap := TStyledTestUtils.PaintWinControl(LReal);
+    try
+      Assert.AreEqual('Success', LReal.StyleClass, 'StyleClass');
+      Assert.AreEqual(BOOTSTRAP_FAMILY, LReal.StyleFamily, 'StyleFamily');
+      TStyledTestUtils.AssertPixel(LBitmap, 100, 40, ColorToRGB(LRef.PanelStyleNormal.ButtonColor),
+        Format('target panel after AssignStyleTo (AsVCL=%s ParentBackground=%s Color=%s Normal=%s)',
+        [BoolToStr(LReal.AsVCLComponent, True), BoolToStr(LReal.ParentBackground, True),
+         TStyledTestUtils.ColorText(ColorToRGB(LReal.Color)),
+         TStyledTestUtils.ColorText(ColorToRGB(LReal.PanelStyleNormal.ButtonColor))]));
+    finally
+      LBitmap.Free;
+    end;
+  finally
+    LForm.Free;
   end;
 end;
 

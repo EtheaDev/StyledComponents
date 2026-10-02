@@ -2,7 +2,7 @@
 
 ## Components similar to Delphi VCL Buttons, Panels, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 4.3.0
+### Actual official version: 4.3.1
 
 ---
 ## Setup for Installation of Components
@@ -127,9 +127,9 @@ using only three elements you can setup your Button in a very simple way:
 - **StyleClass**: a collection of predefined button style
 - **Style Appearance**: eg.Normal or Outline
 
-**Component editor for TStyledGraphicButton and StyledButton:**
+**Component editor for Styled Buttons and Styled Panels:**
 
-To simplify use of the Styled Buttons, there is a useful "Component Editor" to select three values that defines Button Style:
+To simplify use of the Styled Buttons and Panels, there is a useful "Component Editor" (right-click the component in the Form Designer) to select with a click the three values that define the Style. All the details, with the screenshots of every family, are in the [Component Editor page](https://ethea.it/docs/styledcomponents/Component-Editor.html).
 
 ***List of available StyleFamily***
 - **Classic**: a collection of Styles similar to [VCLStyled TButton](https://docwiki.embarcadero.com/RADStudio/Athens/en/Tutorial:_Using_TControl.StyleElements_in_VCL_Applications)
@@ -168,26 +168,6 @@ You can also use [Interposer Unit (Vcl.StyledComponentsHooks.pas)](https://githu
 With the unit "Vcl.TemplateButtonStyles.pas" you can create your own Family of Button Styles, [as explained here](http://ethea.it/docs/styledcomponents/HowtoBuildYourCustomStyle.html)
 
 ---
----
-*The Component Editor, with selected Family "Boostrap" and StyleRadius 18: Style Appearance can be Normal or Outline*
-
-![StyledButtonComponentEditorBootstrap.jpg](./Images/StyledButtonComponentEditorBootstrap.jpg)
----
-*The Component Editor, with selected Family "Angular Light": Style Appearance can be Flat, Raised, Basic, Stroked*
-
-![StyledButtonComponentEditorAngular.jpg](./Images/StyledButtonComponentEditorAngular.jpg)
----
-*The Component Editor, with selected Family "Classic": Style Appearance can be Normal or Outline*
-
-![StyledButtonComponentEditor.jpg](./Images/StyledButtonComponentEditor.jpg)
----
-*The Component Editor, with selected Family "Basic-Colors", and Rounded StyleDrawType: Style Appearance can be Normal and Outline*
-
-![StyledButtonComponentEditorRounded.jpg](./Images/StyledButtonComponentEditorRounded.jpg)
----
-*The Component Editor, with selected Family "SVG-Color", Style Appearance can be Normal or Outline*
-
-![StyledButtonComponentEditorSVG.jpg](./Images/StyledButtonComponentEditorSVG.jpg)
 ---
 **Special Features**
 
@@ -402,6 +382,16 @@ It also contains performance benchmarks (`StyledPerfTests`) that count heap allo
 Run `Test\run_tests.cmd [Win32|Win64] [Debug|Release]`: it builds the project and writes a NUnit XML report in `Test\Bin\<Platform>\<Config>`.
 
 ### RELEASE NOTES
+2 Oct 2026 - version 4.3.1
+- Fixed StyledPanel of the Classic family keeping the colours of the previous style: choosing Bootstrap, Angular or any other family for a panel that was Classic (typically from the Component Editor) left it grey in the designer, and ButtonColor was streamed into the DFM as if customized
+- Added the published property StyleName to TStyledPanel (Delphi 10.4+), for compatibility with TPanel: a per-control VCL style name can now be set in the Object Inspector and also selects the Classic family and that style
+- Component Editor: when editing a TStyledPanel the style pages now show panels (drawn with the colours a panel has in that style, with a hand cursor) instead of buttons; a Ruby Graphite panel is shown dark grey, not red as the button
+- Component Editor: choosing the Windows item of the Classic page keeps "As VCL Component" checked for buttons too, as it already did for panels
+- Component Editor: much faster to open: the first page was rebuilt several times while the dialog was initialized (once for each control that fires a change event); now only the page of the style of the component is built, once, with a single hourglass per page
+- Component Editor: the Help button opens the new dedicated documentation page
+- Component Editor: the position of the dialog is restored also when it was closed maximized (the normal size is kept, so Restore goes back to it); before, it reopened as a normal window as big as the screen
+- Documentation: new Component Editor page (with the screenshots that were in the README, now shortened); the test suite now has 74 tests
+
 29 Sep 2026 - version 4.3.0
 - New: automated DUnitX test suite in the Test folder (73 tests and performance benchmarks, Win32/Win64, `run_tests.cmd`), included in the installer
 - Performance: the double-buffer bitmap of styled buttons is kept between paints instead of being created and freed on every WM_PAINT (21 to 7 heap allocations per paint)

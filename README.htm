@@ -38,7 +38,7 @@ td{
 </style>
 <h1>Delphi VCL StyledComponents <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg" alt="License"/></a></h1>
 <h2>Components similar to Delphi VCL Buttons, Panels, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!</h2>
-<h3>Actual official version: 4.3.0</h3>
+<h3>Actual official version: 4.3.1</h3>
 <hr />
 <h2>Setup for Installation of Components</h2>
 <p>An easy &ldquo;Installer&rdquo; read-to-use is located in the Release area: <a href="https://github.com/EtheaDev/StyledComponents/releases/latest/download/StyledComponents_Setup.exe">Download the Installer</a>.</p>
@@ -200,8 +200,8 @@ td{
 <li><strong>StyleClass</strong>: a collection of predefined button style</li>
 <li><strong>Style Appearance</strong>: eg.Normal or Outline</li>
 </ul>
-<p><strong>Component editor for TStyledGraphicButton and StyledButton:</strong></p>
-<p>To simplify use of the Styled Buttons, there is a useful &ldquo;Component Editor&rdquo; to select three values that defines Button Style:</p>
+<p><strong>Component editor for Styled Buttons and Styled Panels:</strong></p>
+<p>To simplify use of the Styled Buttons and Panels, there is a useful &ldquo;Component Editor&rdquo; (right-click the component in the Form Designer) to select with a click the three values that define the Style. All the details, with the screenshots of every family, are in the <a href="https://ethea.it/docs/styledcomponents/Component-Editor.html">Component Editor page</a>.</p>
 <p><strong><em>List of available StyleFamily</em></strong></p>
 <ul>
 <li><strong>Classic</strong>: a collection of Styles similar to <a href="https://docwiki.embarcadero.com/RADStudio/Athens/en/Tutorial:_Using_TControl.StyleElements_in_VCL_Applications">VCLStyled TButton</a></li>
@@ -238,16 +238,6 @@ td{
 <p>With the unit &ldquo;Vcl.TemplateButtonStyles.pas&rdquo; you can create your own Family of Button Styles, <a href="http://ethea.it/docs/styledcomponents/HowtoBuildYourCustomStyle.html">as explained here</a></p>
 <hr />
 <hr />
-<p><em>The Component Editor, with selected Family &ldquo;Boostrap&rdquo; and StyleRadius 18: Style Appearance can be Normal or Outline</em></p>
-<h2><img src="./Images/StyledButtonComponentEditorBootstrap.jpg" alt="StyledButtonComponentEditorBootstrap.jpg"/></h2>
-<p><em>The Component Editor, with selected Family &ldquo;Angular Light&rdquo;: Style Appearance can be Flat, Raised, Basic, Stroked</em></p>
-<h2><img src="./Images/StyledButtonComponentEditorAngular.jpg" alt="StyledButtonComponentEditorAngular.jpg"/></h2>
-<p><em>The Component Editor, with selected Family &ldquo;Classic&rdquo;: Style Appearance can be Normal or Outline</em></p>
-<h2><img src="./Images/StyledButtonComponentEditor.jpg" alt="StyledButtonComponentEditor.jpg"/></h2>
-<p><em>The Component Editor, with selected Family &ldquo;Basic-Colors&rdquo;, and Rounded StyleDrawType: Style Appearance can be Normal and Outline</em></p>
-<h2><img src="./Images/StyledButtonComponentEditorRounded.jpg" alt="StyledButtonComponentEditorRounded.jpg"/></h2>
-<p><em>The Component Editor, with selected Family &ldquo;SVG-Color&rdquo;, Style Appearance can be Normal or Outline</em></p>
-<h2><img src="./Images/StyledButtonComponentEditorSVG.jpg" alt="StyledButtonComponentEditorSVG.jpg"/></h2>
 <p><strong>Special Features</strong></p>
 <p>Styled Components has special features compared to classic VCL Controls.</p>
 <p><strong><em>RoundedCorners options</em></strong></p>
@@ -371,6 +361,17 @@ TaskDialog -> StyledTaskDialog</p>
 It also contains performance benchmarks (<code>StyledPerfTests</code>) that count heap allocations and time per paint and fail above a ceiling, locking the 4.3.0 optimizations against regressions.
 Run <code>Test\run_tests.cmd [Win32|Win64] [Debug|Release]</code>: it builds the project and writes a NUnit XML report in <code>Test\Bin\&lt;Platform&gt;\&lt;Config&gt;</code>.</p>
 <h3>RELEASE NOTES</h3>
+<p>2 Oct 2026 - version 4.3.1</p>
+<ul>
+<li>Fixed StyledPanel of the Classic family keeping the colours of the previous style: choosing Bootstrap, Angular or any other family for a panel that was Classic (typically from the Component Editor) left it grey in the designer, and ButtonColor was streamed into the DFM as if customized</li>
+<li>Added the published property StyleName to TStyledPanel (Delphi 10.4+), for compatibility with TPanel: a per-control VCL style name can now be set in the Object Inspector and also selects the Classic family and that style</li>
+<li>Component Editor: when editing a TStyledPanel the style pages now show panels (drawn with the colours a panel has in that style, with a hand cursor) instead of buttons; a Ruby Graphite panel is shown dark grey, not red as the button</li>
+<li>Component Editor: choosing the Windows item of the Classic page keeps &ldquo;As VCL Component&rdquo; checked for buttons too, as it already did for panels</li>
+<li>Component Editor: much faster to open: the first page was rebuilt several times while the dialog was initialized (once for each control that fires a change event); now only the page of the style of the component is built, once, with a single hourglass per page</li>
+<li>Component Editor: the Help button opens the new dedicated documentation page</li>
+<li>Component Editor: the position of the dialog is restored also when it was closed maximized (the normal size is kept, so Restore goes back to it); before, it reopened as a normal window as big as the screen</li>
+<li>Documentation: new Component Editor page (with the screenshots that were in the README, now shortened); the test suite now has 74 tests</li>
+</ul>
 <p>29 Sep 2026 - version 4.3.0</p>
 <ul>
 <li>New: automated DUnitX test suite in the Test folder (73 tests and performance benchmarks, Win32/Win64, <code>run_tests.cmd</code>), included in the installer</li>
