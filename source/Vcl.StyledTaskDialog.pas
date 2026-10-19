@@ -442,6 +442,14 @@ function GetDialogFont: TFont;
 /// <summary>Returns the current dialog button family</summary>
 /// <returns>The style family name</returns>
 function GetDialogBtnFamily: TStyledButtonFamily;
+/// <summary>Returns the auto-click delay used by every dialog that is not given its own delay</summary>
+/// <returns>The delay in milliseconds (0 or less: no auto-click)</returns>
+function GetDialogAutoClickDelay: Integer;
+/// <summary>Sets the auto-click delay used by every dialog that is not given its own delay,
+/// leaving every other dialog setting as it is</summary>
+/// <param name="AValue">Delay in milliseconds (0 or less to disable)</param>
+/// <remarks>Use GetDialogAutoClickDelay to restore the previous value</remarks>
+procedure SetDialogAutoClickDelay(const AValue: Integer);
 
 /// <summary>Returns the default title for a dialog type</summary>
 /// <param name="DlgType">The dialog type</param>
@@ -781,6 +789,16 @@ end;
 function GetDialogBtnFamily: TStyledButtonFamily;
 begin
   Result := _DialogButtonsFamily;
+end;
+
+function GetDialogAutoClickDelay: Integer;
+begin
+  Result := _AutoClickDelay;
+end;
+
+procedure SetDialogAutoClickDelay(const AValue: Integer);
+begin
+  _AutoClickDelay := AValue;
 end;
 
 function StyledMessageDlg(const Msg: string; DlgType: TMsgDlgType;

@@ -14,6 +14,9 @@ uses
   Vcl.Dialogs,
   DUnitX.TestFramework,
   Vcl.StyledTaskDialog,
+  Vcl.ButtonStylesAttributes,
+  Vcl.StandardButtonStyles,
+  Vcl.StyledButton,
   Vcl.StyledTaskDialogFormUnit, // registers the styled dialog form (without it the native dialog is used)
   StyledTestUtils;
 
@@ -67,9 +70,55 @@ type
     procedure RadioButtonClicked_WithEventHandler_SetsRadioButton;
   end;
 
+  [TestFixture]
+  TStyledTaskDialogFamilyTests = class
+  public
+    /// <summary>
+    ///  Regression: the launcher assigned the family it received to the form even
+    ///  when it was empty (a dialog without StyleFamily), erasing the default
+    ///  Classic family of the form and raising an error. The buttons must use
+    ///  the Classic family.
+    /// </summary>
+    [Test]
+    procedure DialogWithoutStyleFamily_ButtonsUseTheClassicFamily;
+  end;
+
+  [TestFixture]
+  TStyledTaskDialogAutoClickDelayTests = class
+  public
+    /// <summary>
+    ///  SetDialogAutoClickDelay changes only the delay: a message dialog with
+    ///  only [mbOK] answers itself, and the previous value can be restored.
+    /// </summary>
+    [Test]
+    procedure MessageDlgUnderTheDelay_AnswersItself;
+
+    /// <summary>A dialog created under the delay has AutoClick, one created after restoring it has not.</summary>
+    [Test]
+    procedure DialogCreatedUnderTheDelay_HasAutoClick;
+  end;
+
 implementation
 
 type
+  /// <summary>Watchdog: closes the dialog if it did not answer itself.</summary>
+  TWatchdog = class
+  public
+    Timer: TTimer;
+    Fired: Boolean;
+    procedure OnTimer(Sender: TObject);
+  end;
+
+  /// <summary>Reads the family of the buttons while the dialog is modal, then closes it.</summary>
+  TFamilyProbe = class
+  public
+    Timer: TTimer;
+    Found: Boolean;
+    ButtonFamily: TStyledButtonFamily;
+    CustomButtonFamily: TStyledButtonFamily;
+    procedure OnTimer(Sender: TObject);
+  end;
+
   /// <summary>Destroys the form that launched the dialog while it is modal, then closes it.</summary>
   TOwnerKiller = class
   public
@@ -87,6 +136,45 @@ type
     Count: Integer;
     procedure Clicked(Sender: TObject);
   end;
+
+procedure TFamilyProbe.OnTimer(Sender: TObject);
+var
+  I: Integer;
+  J: Integer;
+  LForm: TStyledTaskDialogForm;
+begin
+  Timer.Enabled := False;
+  for I := 0 to Screen.FormCount - 1 do
+  begin
+    if Screen.Forms[I] is TStyledTaskDialogForm then
+    begin
+      LForm := TStyledTaskDialogForm(Screen.Forms[I]);
+      Found := True;
+      ButtonFamily := LForm.OKButton.StyleFamily;
+      // the button created by the form for the custom item of the dialog
+      for J := 0 to LForm.ComponentCount - 1 do
+        if (LForm.Components[J] is TStyledButton) and
+          (TStyledButton(LForm.Components[J]).Caption = 'Custom') then
+          CustomButtonFamily := TStyledButton(LForm.Components[J]).StyleFamily;
+      LForm.ModalResult := mrOk;
+      Break;
+    end;
+  end;
+end;
+
+procedure TWatchdog.OnTimer(Sender: TObject);
+var
+  I: Integer;
+begin
+  Timer.Enabled := False;
+  Fired := True;
+  for I := 0 to Screen.FormCount - 1 do
+    if Screen.Forms[I] is TStyledTaskDialogForm then
+    begin
+      Screen.Forms[I].ModalResult := mrCancel;
+      Break;
+    end;
+end;
 
 procedure TRadioProbe.Clicked(Sender: TObject);
 begin
@@ -277,9 +365,99 @@ begin
   end;
 end;
 
+{ TStyledTaskDialogFamilyTests }
+
+procedure TStyledTaskDialogFamilyTests.DialogWithoutStyleFamily_ButtonsUseTheClassicFamily;
+var
+  LProbe: TFamilyProbe;
+  LDialog: TStyledTaskDialog;
+  LLauncher: TTaskDialogLauncherHandler;
+begin
+  LProbe := TFamilyProbe.Create;
+  LDialog := TStyledTaskDialog.Create(nil);
+  LLauncher := TTaskDialogLauncherHandler.Create;
+  try
+    LProbe.Timer := TTimer.Create(nil);
+    LProbe.Timer.Interval := 200;
+    LProbe.Timer.OnTimer := LProbe.OnTimer;
+    LProbe.Timer.Enabled := True;
+    LDialog.Title := 'Family test';
+    LDialog.Text := 'A dialog without StyleFamily';
+    LDialog.CommonButtons := [tcbOk];
+    // a custom button: the form creates a new styled button for it
+    (LDialog.Buttons.Add as TTaskDialogButtonItem).Caption := 'Custom';
+    // the empty family is what a caller without StyleFamily passes
+    LLauncher.DoExecute(0, TMsgDlgType.mtInformation, LDialog, '');
+    Assert.IsTrue(LProbe.Found, 'the styled dialog form was shown');
+    Assert.AreEqual(DEFAULT_CLASSIC_FAMILY, LProbe.ButtonFamily, 'family of the OK button');
+    Assert.AreEqual(DEFAULT_CLASSIC_FAMILY, LProbe.CustomButtonFamily, 'family of the custom button');
+  finally
+    LProbe.Timer.Free;
+    LDialog.Free;
+    LProbe.Free;
+  end;
+end;
+
+{ TStyledTaskDialogAutoClickDelayTests }
+
+procedure TStyledTaskDialogAutoClickDelayTests.MessageDlgUnderTheDelay_AnswersItself;
+var
+  LWatchdog: TWatchdog;
+  LPrevious, LResult: Integer;
+begin
+  LWatchdog := TWatchdog.Create;
+  LPrevious := GetDialogAutoClickDelay;
+  try
+    LWatchdog.Timer := TTimer.Create(nil);
+    LWatchdog.Timer.Interval := 5000;
+    LWatchdog.Timer.OnTimer := LWatchdog.OnTimer;
+    SetDialogAutoClickDelay(500);
+    LWatchdog.Timer.Enabled := True;
+    LResult := StyledTaskMessageDlg('Delay test', 'Nobody is at the keyboard',
+      TMsgDlgType.mtInformation, [TMsgDlgBtn.mbOK], 0);
+    Assert.AreEqual(Integer(mrOk), LResult, 'the dialog pressed OK itself');
+    Assert.IsFalse(LWatchdog.Fired, 'the watchdog did not fire');
+  finally
+    SetDialogAutoClickDelay(LPrevious);
+    LWatchdog.Timer.Free;
+    LWatchdog.Free;
+  end;
+  Assert.AreEqual(LPrevious, GetDialogAutoClickDelay, 'the delay is restored');
+end;
+
+procedure TStyledTaskDialogAutoClickDelayTests.DialogCreatedUnderTheDelay_HasAutoClick;
+var
+  LPrevious: Integer;
+  LDialog: TStyledTaskDialog;
+begin
+  LPrevious := GetDialogAutoClickDelay;
+  try
+    SetDialogAutoClickDelay(3000);
+    Assert.AreEqual(3000, GetDialogAutoClickDelay, 'getter');
+    LDialog := TStyledTaskDialog.Create(nil);
+    try
+      Assert.IsTrue(LDialog.AutoClick, 'AutoClick under the delay');
+      Assert.AreEqual(3000, LDialog.AutoClickDelay, 'AutoClickDelay');
+    finally
+      LDialog.Free;
+    end;
+    SetDialogAutoClickDelay(0);
+    LDialog := TStyledTaskDialog.Create(nil);
+    try
+      Assert.IsFalse(LDialog.AutoClick, 'no AutoClick after the delay is cleared');
+    finally
+      LDialog.Free;
+    end;
+  finally
+    SetDialogAutoClickDelay(LPrevious);
+  end;
+end;
+
 initialization
   TDUnitX.RegisterTestFixture(TStyledTaskDialogSmokeTests);
   TDUnitX.RegisterTestFixture(TStyledTaskDialogLifetimeTests);
   TDUnitX.RegisterTestFixture(TStyledTaskDialogRadioTests);
+  TDUnitX.RegisterTestFixture(TStyledTaskDialogFamilyTests);
+  TDUnitX.RegisterTestFixture(TStyledTaskDialogAutoClickDelayTests);
 
 end.

@@ -9,7 +9,7 @@
 
 ## Components similar to Delphi VCL Buttons, Panels, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 4.4.0
+### Actual official version: 4.4.1
 
 ---
 ## Setup for Installation of Components
@@ -391,6 +391,12 @@ It also contains performance benchmarks (`StyledPerfTests`) that count heap allo
 Run `Test\run_tests.cmd [Win32|Win64] [Debug|Release]`: it builds the project and writes a NUnit XML report in `Test\Bin\<Platform>\<Config>`.
 
 ### RELEASE NOTES
+19 Oct 2026 - version 4.4.1
+- Fixed TStyledTaskDialog without StyleFamily (a dialog shown with an empty button family, for example by the message routines of an application that never called InitializeStyledTaskDialogs with a family): the form lost its default Classic family and raised an error when it created the buttons of the custom items; now the Classic family is used, and DialogButtonsDrawType, DialogButtonsRadius and DialogButtonsRoundedCorners are applied to the buttons in this case too
+- New: the property DialogBtnFamily of TStyledTaskDialogForm, to change the family of the buttons of a dialog that is already open
+- New: GetDialogAutoClickDelay and SetDialogAutoClickDelay (unit Vcl.StyledTaskDialog): read and change only the auto-click delay used by all the dialogs that are not given their own delay, leaving every other setting as it is (the overloads of InitializeStyledTaskDialogs that take the delay also reset font, family, command links, alpha blend and button sizes). It lets an application limit the delay to one operation, for example an idle-logout that saves the record and must not wait forever for a prompt that nobody reads, and put the previous value back afterwards
+- The test suite now has 121 tests
+
 11 Oct 2026 - version 4.4.0
 - New: the Angular Material 3 families **Angular-M3-Light** and **Angular-M3-Dark** (as in the current Angular Material button page): appearances Text, Elevated, Outlined, Filled and Tonal, a single class Basic, "full corner" (btRounded) shape by default, colours of the azure palette and the hover/focus/pressed/disabled states of Material 3; FAB, Mini FAB and Extended FAB are Tonal buttons with btRoundRect, the Icon button is a Text button with btEllipse. In a Styled TaskDialog the buttons are Filled/Outlined/Text according to their ModalResult
 - New: the Elevated appearance of Angular-M3 has a soft shadow (2 pixels, 3 on hover, none when disabled) seen only below the button (the top and the sides are unchanged) and drawn inside the area of the control: the face of the button is shorter by the size of the shadow, so the control does not grow. The new property StyleShadowSize (-1 = the shadow of the style family) is available on all the buttons, panels, toolbars, navigators, button groups and category buttons: a value of 0 or more gives the same shadow in every state on any family

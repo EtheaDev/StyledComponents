@@ -1,4 +1,4 @@
-unit Vcl.StyledAttributesFrameUnit;
+﻿unit Vcl.StyledAttributesFrameUnit;
 
 interface
 
