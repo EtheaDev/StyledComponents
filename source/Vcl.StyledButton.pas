@@ -378,6 +378,7 @@ type
     procedure SetModalResult(const AValue: TModalResult);
     function IsPressed: Boolean;
     function GetFocused: Boolean;
+    function GetTransparentFontColor(const AFontColor: TColor): TColor;
     procedure UpdateImageIndexAndName;
     {$IFDEF D10_4+}
     procedure UpdateImages;
@@ -2851,6 +2852,8 @@ var
   LStyleAttribute, LDrawAttribute: TStyledButtonAttributes;
   LCorners: TRoundedCorners;
   LDrawingAutoClick: Boolean;
+  LFaceSkipped: Boolean;
+  LFontColor: TColor;
 begin
   //Classic family follows the active VCL style: re-resolve only when the style
   //seen by this control differs from the one the attributes were built for
@@ -2872,7 +2875,8 @@ begin
     ACanvas.Pen.Style := psClear;
 
   //Don't draw button face for Transparent Buttons
-  if FTransparent and not FDown and not FMouseInControl and not Focused then
+  LFaceSkipped := FTransparent and not FDown and not FMouseInControl and not Focused;
+  if LFaceSkipped then
     ACanvas.Brush.Style := bsClear;
 
   //Draw the shadow (outside the face, inside the control) and the Button Shape
@@ -2906,6 +2910,17 @@ begin
     LStyleAttribute := GetDrawingStyle(ACanvas, ButtonState);
   end;
 
+  //A Transparent button whose face is not drawn shows its caption (and the
+  //split-button triangle) directly on the parent: the FontColor was chosen to
+  //pair with the face, so it can vanish against the parent (e.g. a white font
+  //registered for a dark face, drawn on a light panel)
+  LFontColor := LStyleAttribute.FontColor;
+  if LFaceSkipped then
+  begin
+    LFontColor := GetTransparentFontColor(LFontColor);
+    ACanvas.Font.Color := LFontColor;
+  end;
+
   //Draw Bar and Triangle
   if FDropDownRect.Width > 0 then
   begin
@@ -2918,7 +2933,7 @@ begin
         ACanvas.Pen.Color);
       CanvasDrawTriangle(ACanvas, FDropDownRect,
         GetOwnerScaleFactor,
-        LStyleAttribute.FontColor);
+        LFontColor);
     end
     else
     begin
@@ -2927,7 +2942,7 @@ begin
       FDropDownRect.Right := FDropDownRect.Right - LButtonOffset;
       CanvasDrawTriangle(ACanvas, FDropDownRect,
         GetOwnerScaleFactor,
-        LStyleAttribute.FontColor);
+        LFontColor);
     end;
   end;
 end;
@@ -3331,6 +3346,52 @@ begin
     Result := TCustomControl(FOwnerControl).Focused
   else
     Result := False;
+end;
+
+type
+  TControlColorAccess = class(TControl);
+
+function TStyledButtonRender.GetTransparentFontColor(
+  const AFontColor: TColor): TColor;
+var
+  LParent: TWinControl;
+  LStyle: TCustomStyleServices;
+  LStyled: Boolean;
+  LBackColor: TColor;
+begin
+  Result := AFontColor;
+  LParent := FOwnerControl.Parent;
+  if not Assigned(LParent) then
+    Exit;
+  //What is really behind the caption: the parent, painted by the VCL style
+  //when it styles its client, otherwise with its own Color
+  LStyle := StyleServices;
+  LStyled := LStyle.Enabled and not LStyle.IsSystemStyle and
+    (seClient in LParent.StyleElements);
+  if LStyled then
+    LBackColor := LStyle.GetStyleColor(scPanel)
+  else
+    LBackColor := TControlColorAccess(LParent).Color;
+  if LBackColor = clNone then
+    Exit;
+  LBackColor := ColorToRGB(LBackColor);
+  //The registered colour already contrasts: keep it
+  if ColorIsLight(ColorToRGB(AFontColor)) <> ColorIsLight(LBackColor) then
+    Exit;
+  //Otherwise the text colour the style gives to a panel, which is made to be
+  //read on that background; last resort black or white
+  if LStyled then
+    Result := LStyle.GetStyleFontColor(sfPanelTextNormal)
+  else
+    Result := clWindowText;
+  if (Result = clNone) or
+    (ColorIsLight(ColorToRGB(Result)) = ColorIsLight(LBackColor)) then
+  begin
+    if ColorIsLight(LBackColor) then
+      Result := clBlack
+    else
+      Result := clWhite;
+  end;
 end;
 
 function TStyledButtonRender.GetRescalingButton: Boolean;
