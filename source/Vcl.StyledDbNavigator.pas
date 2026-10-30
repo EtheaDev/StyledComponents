@@ -128,6 +128,7 @@ type
     function IsCustomDrawType: Boolean;
     function IsCustomRadius: Boolean;
     function IsCustomShadowSize: Boolean;
+    function IsCustomBorderWidth: Boolean;
     function IsCustomRoundedCorners: Boolean;
     function IsStoredStyleFamily: Boolean;
     function IsStoredStyleAppearance: Boolean;
@@ -152,6 +153,7 @@ type
     //StyledComponents Attributes
     property StyleRadius stored IsCustomRadius;
     property StyleShadowSize stored IsCustomShadowSize;
+    property StyleBorderWidth stored IsCustomBorderWidth;
     property StyleRoundedCorners stored IsCustomRoundedCorners;
     property StyleDrawType stored IsCustomDrawType;
     property StyleFamily stored IsStoredStyleFamily;
@@ -201,6 +203,7 @@ type
     //Styled Attributes
     FStyleRadius: Integer;
     FStyleShadowSize: Integer;
+    FStyleBorderWidth: Integer;
     FStyleDrawType: TStyledButtonDrawType;
     FStyleFamily: TStyledButtonFamily;
     FStyleClass: TStyledButtonClass;
@@ -239,6 +242,7 @@ type
     _DefaultClass: TStyledButtonClass;
     _DefaultAppearance: TStyledButtonAppearance;
     _DefaultStyleRadius: Integer;
+    _DefaultStyleBorderWidth: Integer;
     _DefaultCursor: TCursor;
 
     procedure ImageListChange(Sender: TObject);
@@ -268,6 +272,7 @@ type
     function IsCustomDrawType: Boolean;
     function IsCustomRadius: Boolean;
     function IsCustomShadowSize: Boolean;
+    function IsCustomBorderWidth: Boolean;
     function IsStoredStyleAppearance: Boolean;
     function IsStoredStyleClass: Boolean;
     function IsStoredStyleFamily: Boolean;
@@ -277,6 +282,7 @@ type
     procedure SetStyleFamily(const AValue: TStyledButtonFamily);
     procedure SetStyleRadius(const AValue: Integer);
     procedure SetStyleShadowSize(const AValue: Integer);
+    procedure SetStyleBorderWidth(const AValue: Integer);
     procedure SetDisabledImages(const AValue: TCustomImageList);
     procedure SetImages(const AValue: TCustomImageList);
     procedure SetStyleApplied(const AValue: Boolean);
@@ -315,6 +321,7 @@ type
       const AClass: TStyledButtonClass = DEFAULT_WINDOWS_CLASS;
       const AAppearance: TStyledButtonAppearance = DEFAULT_APPEARANCE;
       const AStyleRadius: Integer = DEFAULT_RADIUS;
+      const AStyleBorderWidth: Integer = DEFAULT_BORDER_WIDTH;
       const ACursor: TCursor = DEFAULT_CURSOR); virtual;
     //Styled constructor
     constructor CreateStyled(AOwner: TComponent;
@@ -383,6 +390,7 @@ type
     //StyledComponents Attributes
     property StyleRadius: Integer read FStyleRadius write SetStyleRadius stored IsCustomRadius;
     property StyleShadowSize: Integer read FStyleShadowSize write SetStyleShadowSize stored IsCustomShadowSize;
+    property StyleBorderWidth: Integer read FStyleBorderWidth write SetStyleBorderWidth stored IsCustomBorderWidth;
     property StyleDrawType: TStyledButtonDrawType read FStyleDrawType write SetStyleDrawType stored IsCustomDrawType;
     property StyleFamily: TStyledButtonFamily read FStyleFamily write SetStyleFamily stored IsStoredStyleFamily;
     property StyleClass: TStyledButtonClass read FStyleClass write SetStyleClass stored IsStoredStyleClass;
@@ -469,6 +477,7 @@ type
     //StyledComponents Attributes
     property StyleRadius;
     property StyleShadowSize;
+    property StyleBorderWidth;
     property StyleDrawType;
     property StyleFamily;
     property StyleClass;
@@ -578,6 +587,7 @@ type
     //StyledComponents Attributes
     property StyleRadius;
     property StyleShadowSize;
+    property StyleBorderWidth;
     property StyleDrawType;
     property StyleFamily;
     property StyleClass;
@@ -696,6 +706,7 @@ begin
   FStyleDrawType := _DefaultStyleDrawType;
   FStyleRadius := _DefaultStyleRadius;
   FStyleShadowSize := DEFAULT_SHADOW_SIZE;
+  FStyleBorderWidth := _DefaultStyleBorderWidth;
   FStyleFamily := AFamily;
   FStyleClass := AClass;
   FStyleAppearance := AAppearance;
@@ -928,14 +939,18 @@ end;
 class procedure TCustomStyledDBNavigator.RegisterDefaultRenderingStyle(
   const ADrawType: TStyledButtonDrawType; const AFamily: TStyledButtonFamily;
   const AClass: TStyledButtonClass; const AAppearance: TStyledButtonAppearance;
-  const AStyleRadius: Integer; const ACursor: TCursor);
+  const AStyleRadius: Integer; const AStyleBorderWidth: Integer;
+  const ACursor: TCursor);
 begin
+  if AStyleBorderWidth < DEFAULT_BORDER_WIDTH then
+    raise EArgumentException.Create(SInvalidProperty);
   _DefaultStyleDrawType := ADrawType;
   _UseCustomDrawType := True;
   _DefaultFamily := AFamily;
   _DefaultClass := AClass;
   _DefaultAppearance := AAppearance;
   _DefaultStyleRadius := AStyleRadius;
+  _DefaultStyleBorderWidth := AStyleBorderWidth;
   _DefaultCursor := ACursor;
 end;
 
@@ -1036,6 +1051,11 @@ end;
 function TCustomStyledDBNavigator.IsCustomShadowSize: Boolean;
 begin
   Result := StyleShadowSize <> DEFAULT_SHADOW_SIZE;
+end;
+
+function TCustomStyledDBNavigator.IsCustomBorderWidth: Boolean;
+begin
+  Result := StyleBorderWidth <> DEFAULT_BORDER_WIDTH;
 end;
 
 function TCustomStyledDBNavigator.IsStoredStyleAppearance: Boolean;
@@ -1511,6 +1531,23 @@ begin
   end;
 end;
 
+procedure TCustomStyledDBNavigator.SetStyleBorderWidth(const AValue: Integer);
+begin
+  if FStyleBorderWidth <> AValue then
+  begin
+    if AValue < DEFAULT_BORDER_WIDTH then
+      raise EReadError.create(SInvalidProperty);
+    ProcessButtons(
+      procedure (ABtn: TStyledNavButton)
+      begin
+        if ABtn.StyleBorderWidth = FStyleBorderWidth then
+          ABtn.StyleBorderWidth := AValue;
+      end);
+    FStyleBorderWidth := AValue;
+    StyleApplied := ApplyDbnavigatorStyle;
+  end;
+end;
+
 procedure TCustomStyledDBNavigator.SetStyleRadius(const AValue: Integer);
 begin
   if FStyleRadius <> AValue then
@@ -1628,6 +1665,7 @@ begin
     FShowCaptions := LNavigator.FShowCaptions;
     FStyleRadius := LNavigator.FStyleRadius;
     FStyleShadowSize := LNavigator.FStyleShadowSize;
+    FStyleBorderWidth := LNavigator.FStyleBorderWidth;
     FStyleDrawType := LNavigator.FStyleDrawType;
     FStyleFamily := LNavigator.FStyleFamily;
     FStyleClass := LNavigator.FStyleClass;
@@ -1989,6 +2027,7 @@ begin
       FDbNavigator._UseCustomDrawType);
     StyleRadius := FDbNavigator.StyleRadius;
     StyleShadowSize := FDbNavigator.StyleShadowSize;
+    StyleBorderWidth := FDbNavigator.StyleBorderWidth;
     StyleDrawType := FDbNavigator.StyleDrawType;
     ControlStyle := [csCaptureMouse, csDoubleClicks, csSetCaption, csOpaque];
   end
@@ -2027,6 +2066,14 @@ begin
     Result := StyleShadowSize <> FDbNavigator.StyleShadowSize
   else
     Result := StyleShadowSize <> DEFAULT_SHADOW_SIZE;
+end;
+
+function TStyledNavButton.IsCustomBorderWidth: Boolean;
+begin
+  if Assigned(FDbNavigator) then
+    Result := StyleBorderWidth <> FDbNavigator.StyleBorderWidth
+  else
+    Result := StyleBorderWidth <> DEFAULT_BORDER_WIDTH;
 end;
 
 function TStyledNavButton.IsCustomRadius: Boolean;
@@ -2452,6 +2499,7 @@ initialization
   TCustomStyledDBNavigator._DefaultClass := DEFAULT_WINDOWS_CLASS;
   TCustomStyledDBNavigator._DefaultAppearance := DEFAULT_APPEARANCE;
   TCustomStyledDBNavigator._DefaultStyleRadius := DEFAULT_RADIUS;
+  TCustomStyledDBNavigator._DefaultStyleBorderWidth := DEFAULT_BORDER_WIDTH;
   TCustomStyledDBNavigator._DefaultCursor := DEFAULT_CURSOR;
 
 end.

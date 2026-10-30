@@ -119,6 +119,7 @@ type
     //Styled Attributes
     FStyleRadius: Integer;
     FStyleShadowSize: Integer;
+    FStyleBorderWidth: Integer;
     FStyleRoundedCorners: TRoundedCorners;
     FStyleDrawType: TStyledButtonDrawType;
     FStyleFamily: TStyledButtonFamily;
@@ -138,6 +139,7 @@ type
     function IsCustomRoundedCorners: Boolean;
     function IsCustomRadius: Boolean;
     function IsCustomShadowSize: Boolean;
+    function IsCustomBorderWidth: Boolean;
     function IsStoredStyle: Boolean;
     procedure SetStyleFamily(const AValue: TStyledButtonFamily);
     procedure SetStyleClass(const AValue: TStyledButtonClass);
@@ -145,6 +147,7 @@ type
     procedure SetStyleDrawType(const AValue: TStyledButtonDrawType);
     procedure SetStyleRadius(const AValue: Integer);
     procedure SetStyleShadowSize(const AValue: Integer);
+    procedure SetStyleBorderWidth(const AValue: Integer);
     procedure SetStyleRoundedCorners(const AValue: TRoundedCorners);
     function GetStyledButtonGroup: TStyledButtonGroup;
     function ApplyButtonStyle: Boolean;
@@ -164,6 +167,7 @@ type
     //StyledComponents Attributes
     property StyleRadius: Integer read FStyleRadius write SetStyleRadius stored IsCustomRadius;
     property StyleShadowSize: Integer read FStyleShadowSize write SetStyleShadowSize stored IsCustomShadowSize;
+    property StyleBorderWidth: Integer read FStyleBorderWidth write SetStyleBorderWidth stored IsCustomBorderWidth;
     property StyleDrawType: TStyledButtonDrawType read FStyleDrawType write SetStyleDrawType stored IsCustomDrawType;
     property StyleRoundedCorners: TRoundedCorners read FStyleRoundedCorners write SetStyleRoundedCorners stored IsCustomRoundedCorners;
     property StyleFamily: TStyledButtonFamily read FStyleFamily write SetStyleFamily stored IsStoredStyle;
@@ -194,6 +198,7 @@ type
     //Styled Attributes
     FStyleRadius: Integer;
     FStyleShadowSize: Integer;
+    FStyleBorderWidth: Integer;
     FStyleDrawType: TStyledButtonDrawType;
     FStyleRoundedCorners: TRoundedCorners;
     FStyleFamily: TStyledButtonFamily;
@@ -220,6 +225,7 @@ type
     _DefaultClass: TStyledButtonClass;
     _DefaultAppearance: TStyledButtonAppearance;
     _DefaultStyleRadius: Integer;
+    _DefaultStyleBorderWidth: Integer;
     _DefaultButtonsCursor: TCursor;
 
     procedure ImageMarginsChange(Sender: TObject);
@@ -227,6 +233,7 @@ type
     function IsCustomRoundedCorners: Boolean;
     function IsCustomRadius: Boolean;
     function IsCustomShadowSize: Boolean;
+    function IsCustomBorderWidth: Boolean;
     function ImageMarginsStored: Boolean;
     function IsStoredStyleAppearance: Boolean;
     function IsStoredStyleClass: Boolean;
@@ -237,6 +244,7 @@ type
     procedure SetStyleFamily(const AValue: TStyledButtonFamily);
     procedure SetStyleRadius(const AValue: Integer);
     procedure SetStyleShadowSize(const AValue: Integer);
+    procedure SetStyleBorderWidth(const AValue: Integer);
     procedure SetStyleRoundedCorners(const AValue: TRoundedCorners);
     function ApplyButtonGroupStyle: Boolean;
     procedure SetStyleApplied(const AValue: Boolean);
@@ -265,7 +273,8 @@ type
       const ARadius: Single; const ARoundedCorners: TRoundedCorners;
       const AShadowSize: Integer);
     procedure DrawCaptionAndImage(const ACanvas: TCanvas; const ASurfaceRect: TRect;
-      const ACaption: TCaption; const AImageIndex: Integer; const AEnabled: Boolean);
+      const ACaption: TCaption; const AImageIndex: Integer; const AEnabled: Boolean;
+  const AMaxBorderWidth: Integer);
     procedure SetCaptionAlignment(const AValue: TAlignment);
     function GetImageSize(out AWidth, AHeight: Integer;
       out AImageList: TCustomImageList): boolean;
@@ -276,7 +285,10 @@ type
     procedure SetCursor(const AValue: TCursor);
     procedure SetImageAlignment(const AValue: TImageAlignment);
     function GetScaleFactor: Single;
-    function CalcMaxBorderWidth: Integer;
+    function CalcMaxBorderWidth(const AItem: TStyledGrpButtonItem;
+      const AAttributes: TStyledButtonAttributes): Integer;
+    function GetBorderWidthOf(const AItem: TStyledGrpButtonItem;
+      const AAttributes: TStyledButtonAttributes): Integer;
     function GetGrpButtonItems: TStyledGrpButtonItems;
     procedure SetGrpButtonItems(const AValue: TStyledGrpButtonItems);
     procedure SetImageMargins(const AValue: TImageMargins);
@@ -305,6 +317,7 @@ type
       const AClass: TStyledButtonClass = DEFAULT_WINDOWS_CLASS;
       const AAppearance: TStyledButtonAppearance = DEFAULT_APPEARANCE;
       const AStyleRadius: Integer = DEFAULT_RADIUS;
+      const AStyleBorderWidth: Integer = DEFAULT_BORDER_WIDTH;
       const AButtonsCursor: TCursor = DEFAULT_CURSOR); virtual;
     procedure SetButtonGroupStyle(const AStyleFamily: TStyledButtonFamily;
       const AStyleClass: TStyledButtonClass;
@@ -339,6 +352,7 @@ type
     //StyledComponents Attributes
     property StyleRadius: Integer read FStyleRadius write SetStyleRadius stored IsCustomRadius;
     property StyleShadowSize: Integer read FStyleShadowSize write SetStyleShadowSize stored IsCustomShadowSize;
+    property StyleBorderWidth: Integer read FStyleBorderWidth write SetStyleBorderWidth stored IsCustomBorderWidth;
     property StyleDrawType: TStyledButtonDrawType read FStyleDrawType write SetStyleDrawType stored IsCustomDrawType;
     property StyleRoundedCorners: TRoundedCorners read FStyleRoundedCorners write SetStyleRoundedCorners stored IsCustomRoundedCorners;
     property StyleFamily: TStyledButtonFamily read FStyleFamily write SetStyleFamily stored IsStoredStyleFamily;
@@ -395,6 +409,7 @@ begin
   FStyleDrawType := _DefaultStyleDrawType;
   FStyleRadius := _DefaultStyleRadius;
   FStyleShadowSize := DEFAULT_SHADOW_SIZE;
+  FStyleBorderWidth := _DefaultStyleBorderWidth;
   FStyleRoundedCorners := ALL_ROUNDED_CORNERS;
   FStyleFamily := AFamily;
   FStyleClass := AClass;
@@ -492,7 +507,8 @@ end;
 
 procedure TStyledButtonGroup.DrawCaptionAndImage(
   const ACanvas: TCanvas; const ASurfaceRect: TRect;
-  const ACaption: TCaption; const AImageIndex: Integer; const AEnabled: Boolean);
+  const ACaption: TCaption; const AImageIndex: Integer; const AEnabled: Boolean;
+  const AMaxBorderWidth: Integer);
 var
   LTextFlags: Cardinal;
   LImageRect, LTextRect: TRect;
@@ -523,7 +539,7 @@ begin
   //Calculate LTextRect and LImageRect using ImageMargins and ImageAlignment
   CalcImageAndTextRect(ASurfaceRect, ACaption, LTextRect, LImageRect,
     LImageWidth, LImageHeight, FImageAlignment, FImageMargins,
-    CalcMaxBorderWidth, GetScaleFactor);
+    AMaxBorderWidth, GetScaleFactor);
 
   if LUseImageList and not Assigned(OnDrawIcon) then
   begin
@@ -535,7 +551,7 @@ begin
 
   if gboShowCaptions in ButtonOptions then
     DrawButtonText(ACanvas, ACaption, FCaptionAlignment, FSpacing,
-      CalcMaxBorderWidth, LTextRect, LTextFlags);
+      AMaxBorderWidth, LTextRect, LTextFlags);
 end;
 
 function TStyledButtonGroup.IndexOfButtonAt(const X, Y: Integer): Integer;
@@ -679,7 +695,8 @@ begin
         Dec(LSurfaceRect.Right, LDropDownRect.Width);
 
       DrawCaptionAndImage(ACanvas, LSurfaceRect, LButtonItem.Caption,
-        LButtonItem.ImageIndex, Enabled and LButtonItemEnabled);
+        LButtonItem.ImageIndex, Enabled and LButtonItemEnabled,
+        CalcMaxBorderWidth(LButtonItem, LDrawAttributes));
 
       { Draw the icon - prefer the event }
       if Assigned(OnDrawIcon) then
@@ -806,15 +823,6 @@ begin
   end;
 end;
 
-function TStyledButtonGroup.CalcMaxBorderWidth: Integer;
-begin
-  Result := Max(Max(Max(Max(FButtonStyleNormal.BorderWidth,
-    FButtonStylePressed.BorderWidth),
-    FButtonStyleSelected.BorderWidth),
-    FButtonStyleHot.BorderWidth),
-    FButtonStyleDisabled.BorderWidth);
-end;
-
 function TStyledButtonGroup.ImageMarginsStored: Boolean;
 begin
   Result := not IsDefaultImageMargins;
@@ -838,6 +846,11 @@ end;
 function TStyledButtonGroup.IsCustomShadowSize: Boolean;
 begin
   Result := StyleShadowSize <> DEFAULT_SHADOW_SIZE;
+end;
+
+function TStyledButtonGroup.IsCustomBorderWidth: Boolean;
+begin
+  Result := StyleBorderWidth <> DEFAULT_BORDER_WIDTH;
 end;
 
 function TStyledButtonGroup.IsStoredStyleAppearance: Boolean;
@@ -900,14 +913,18 @@ end;
 class procedure TStyledButtonGroup.RegisterDefaultRenderingStyle(
   const ADrawType: TStyledButtonDrawType; const AFamily: TStyledButtonFamily;
   const AClass: TStyledButtonClass; const AAppearance: TStyledButtonAppearance;
-  const AStyleRadius: Integer; const AButtonsCursor: TCursor);
+  const AStyleRadius: Integer; const AStyleBorderWidth: Integer;
+  const AButtonsCursor: TCursor);
 begin
+  if AStyleBorderWidth < DEFAULT_BORDER_WIDTH then
+    raise EArgumentException.Create(SInvalidProperty);
   _DefaultStyleDrawType := ADrawType;
   _UseCustomDrawType := True;
   _DefaultFamily := AFamily;
   _DefaultClass := AClass;
   _DefaultAppearance := AAppearance;
   _DefaultStyleRadius := AStyleRadius;
+  _DefaultStyleBorderWidth := AStyleBorderWidth;
   _DefaultButtonsCursor := AButtonsCursor;
 end;
 
@@ -961,6 +978,7 @@ begin
     FStyleAppearance := TStyledButtonGroup(Source).FStyleAppearance;
     FStyleRadius := TStyledButtonGroup(Source).FStyleRadius;
     FStyleShadowSize := TStyledButtonGroup(Source).FStyleShadowSize;
+    FStyleBorderWidth := TStyledButtonGroup(Source).FStyleBorderWidth;
     FStyleRoundedCorners := TStyledButtonGroup(Source).FStyleRoundedCorners;
     FStyleDrawType := TStyledButtonGroup(Source).FStyleDrawType;
     FButtonsCursor := TStyledButtonGroup(Source).FButtonsCursor;
@@ -1198,6 +1216,23 @@ begin
   end;
 end;
 
+procedure TStyledButtonGroup.SetStyleBorderWidth(const AValue: Integer);
+begin
+  if FStyleBorderWidth <> AValue then
+  begin
+    if AValue < DEFAULT_BORDER_WIDTH then
+      raise EReadError.create(SInvalidProperty);
+    ProcessButtons(
+      procedure (ABtn: TStyledGrpButtonItem)
+      begin
+        if ABtn.StyleBorderWidth = FStyleBorderWidth then
+          ABtn.StyleBorderWidth := AValue;
+      end);
+    FStyleBorderWidth := AValue;
+    StyleApplied := ApplyButtonGroupStyle;
+  end;
+end;
+
 procedure TStyledButtonGroup.SetStyleRadius(const AValue: Integer);
 begin
   if FStyleRadius <> AValue then
@@ -1385,6 +1420,32 @@ begin
       AAttributes.ShadowSize);
 end;
 
+function TStyledButtonGroup.GetBorderWidthOf(const AItem: TStyledGrpButtonItem;
+  const AAttributes: TStyledButtonAttributes): Integer;
+begin
+  //StyleBorderWidth of the item overrides the border of the style in every state
+  if AItem.StyleBorderWidth >= 0 then
+    Result := AItem.StyleBorderWidth
+  else
+    Result := AAttributes.BorderWidth;
+end;
+
+function TStyledButtonGroup.CalcMaxBorderWidth(const AItem: TStyledGrpButtonItem;
+  const AAttributes: TStyledButtonAttributes): Integer;
+begin
+  //Biggest border of the states: it decides the margin of the text and of the image,
+  //so that they do not move when the state changes
+  if AItem.StyleBorderWidth >= 0 then
+    Result := AItem.StyleBorderWidth
+  else
+    Result := Max(Max(Max(Max(Max(FButtonStyleNormal.BorderWidth,
+      FButtonStylePressed.BorderWidth),
+      FButtonStyleSelected.BorderWidth),
+      FButtonStyleHot.BorderWidth),
+      FButtonStyleDisabled.BorderWidth),
+      AAttributes.BorderWidth);
+end;
+
 function TStyledButtonGroup.GetDrawingStyle(const ACanvas: TCanvas;
   const AButtonState: TStyledButtonState;
   const AItem: TStyledGrpButtonItem): TStyledButtonAttributes;
@@ -1405,7 +1466,10 @@ begin
     LSyleAttributes := GetAttributes(AButtonState);
 
   ACanvas.Pen.Style := LSyleAttributes.PenStyle;
-  ACanvas.Pen.Width := Round(LSyleAttributes.BorderWidth{$IFDEF D10_3+}*ScaleFactor{$ENDIF});
+  ACanvas.Pen.Width := Round(GetBorderWidthOf(AItem, LSyleAttributes){$IFDEF D10_3+}*ScaleFactor{$ENDIF});
+  //no border: a custom width of 0 draws no pen at all
+  if (AItem.StyleBorderWidth = 0) and (LSyleAttributes.PenStyle <> psClear) then
+    ACanvas.Pen.Style := psClear;
   ACanvas.Pen.Color := LSyleAttributes.BorderColor;
   ACanvas.Brush.Style := LSyleAttributes.BrushStyle;
   if LSyleAttributes.ButtonDrawStyle <> btnClear then
@@ -1478,6 +1542,7 @@ begin
     FStyleAppearance := ButtonGroup.StyleAppearance;
     FStyleRadius := ButtonGroup.StyleRadius;
     FStyleShadowSize := ButtonGroup.StyleShadowSize;
+    FStyleBorderWidth := ButtonGroup.StyleBorderWidth;
     FStyleRoundedCorners := ButtonGroup.StyleRoundedCorners;
     FStyleDrawType := ButtonGroup.StyleDrawType;
   end;
@@ -1537,6 +1602,7 @@ begin
   FStyleDrawType := TStyledButtonGroup._DefaultStyleDrawType;
   FStyleRadius := TStyledButtonGroup._DefaultStyleRadius;
   FStyleShadowSize := DEFAULT_SHADOW_SIZE;
+  FStyleBorderWidth := DEFAULT_BORDER_WIDTH;
   FStyleRoundedCorners := ALL_ROUNDED_CORNERS;
   LoadDefaultStyles;
 end;
@@ -1577,6 +1643,12 @@ function TStyledGrpButtonItem.IsCustomShadowSize: Boolean;
 begin
   Result := Assigned(ButtonGroup) and
     (FStyleShadowSize <> ButtonGroup.FStyleShadowSize);
+end;
+
+function TStyledGrpButtonItem.IsCustomBorderWidth: Boolean;
+begin
+  Result := Assigned(ButtonGroup) and
+    (FStyleBorderWidth <> ButtonGroup.FStyleBorderWidth);
 end;
 
 function TStyledGrpButtonItem.IsStoredStyle: Boolean;
@@ -1690,6 +1762,16 @@ begin
   ApplyButtonStyle;
 end;
 
+procedure TStyledGrpButtonItem.SetStyleBorderWidth(const AValue: Integer);
+begin
+  if FStyleBorderWidth <> AValue then
+  begin
+    FStyleBorderWidth := AValue;
+    InvalidateOwner;
+  end;
+  ApplyButtonStyle;
+end;
+
 procedure TStyledGrpButtonItem.SetStyleRoundedCorners(const AValue: TRoundedCorners);
 begin
   if FStyleRoundedCorners <> AValue then
@@ -1724,6 +1806,7 @@ initialization
   TStyledButtonGroup._DefaultClass := DEFAULT_WINDOWS_CLASS;
   TStyledButtonGroup._DefaultAppearance := DEFAULT_APPEARANCE;
   TStyledButtonGroup._DefaultStyleRadius := DEFAULT_RADIUS;
+  TStyledButtonGroup._DefaultStyleBorderWidth := DEFAULT_BORDER_WIDTH;
   TStyledButtonGroup._DefaultButtonsCursor := DEFAULT_CURSOR;
 
 end.

@@ -60,6 +60,19 @@ uses
   System.UITypes,
   Winapi.ShellAPI;
 
+{ Year of the module (exe, dll or bpl) that shows the About box: the copyright
+  ends there, so it never needs a yearly update }
+function ModuleYear: Integer;
+var
+  LDate: TDateTime;
+  LYear, LMonth, LDay: Word;
+begin
+  if not FileAge(GetModuleName(HInstance), LDate) then
+    LDate := Now;
+  DecodeDate(LDate, LYear, LMonth, LDay);
+  Result := LYear;
+end;
+
 function GetFileVersion(const FileName: string): string;
 var
   FSO: OleVariant;
@@ -91,6 +104,7 @@ procedure TfmAbout.FormCreate(Sender: TObject);
 begin
   lbAppName.Caption := Application.Title;
   lbVersion.Caption := 'Ver. '+StyledComponentsVersion;
+  lbCopyright.Caption := Format('Copyright '#169' 2022-%d Ethea S.r.l. - Apache License 2.0', [ModuleYear]);
   lbAppName.Font.Style := [TFontStyle.fsBold];
   lbAppName.Font.Style := lbAppName.Font.Style + [TFontStyle.fsBold];
   lbVersion.Font.Style := lbVersion.Font.Style + [TFontStyle.fsBold];

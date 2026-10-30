@@ -1,7 +1,7 @@
 ﻿{******************************************************************************}
 {                                                                              }
 {  AngulaButtonStyles: Button Styles inspired to Material/angular              }
-{  https://material.angular.io/components/button/overview                      }
+{  https://v16.material.angular.dev/components/button/overview                      }
 {                                                                              }
 {  Copyright (c) 2022-2026 (Ethea S.r.l.)                                      }
 {  Author: Carlo Barazzetta                                                    }

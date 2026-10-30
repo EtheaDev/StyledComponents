@@ -56,12 +56,15 @@ uses
 
 const
   /// <summary>Current version of the StyledComponents library</summary>
-  StyledComponentsVersion = '4.4.1';
+  StyledComponentsVersion = '4.5.0';
   /// <summary>Default corner radius for rounded buttons in pixels</summary>
   DEFAULT_RADIUS = 6;
   //StyleShadowSize: -1 = the shadow of the style family (ShadowSize of the
   //state attributes), 0 = no shadow, > 0 = the same shadow (pixels at 100%) in every state
   DEFAULT_SHADOW_SIZE = -1;
+  //StyleBorderWidth: -1 = the border width of the style (BorderWidth of the
+  //state attributes), 0 = no border, > 0 = the same border (pixels at 100%) in every state
+  DEFAULT_BORDER_WIDTH = -1;
   /// <summary>Resource name for the Windows shield admin icon</summary>
   RESOURCE_SHIELD_ICON = 'STYLED_BUTTON_SHIELD_ADMIN';
   /// <summary>Default maximum value for notification badge counter</summary>

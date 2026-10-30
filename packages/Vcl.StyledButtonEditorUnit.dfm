@@ -24,7 +24,6 @@ object StyledButtonEditor: TStyledButtonEditor
     Height = 3
     Cursor = crVSplit
     Align = alTop
-    ExplicitTop = 166
   end
   object BottomPanel: TPanel
     Left = 0
@@ -149,28 +148,32 @@ object StyledButtonEditor: TStyledButtonEditor
     object AttributesGroupBox: TGroupBox
       Left = 0
       Top = 0
-      Width = 393
+      Width = 329
       Height = 67
       Align = alLeft
       Caption = 'Button Attributes'
       TabOrder = 0
       object StyleDrawTypeLabel: TLabel
-        Left = 265
-        Top = 21
-        Width = 55
+        Left = 129
+        Top = 43
+        Width = 70
         Height = 13
+        Alignment = taRightJustify
+        AutoSize = False
         Caption = 'Draw Type:'
       end
       object StyleLabel: TLabel
-        Left = 143
-        Top = 21
-        Width = 27
+        Left = 129
+        Top = 15
+        Width = 70
         Height = 13
+        Alignment = taRightJustify
+        AutoSize = False
         Caption = 'Style:'
       end
       object EnabledCheckBox: TCheckBox
         Left = 62
-        Top = 23
+        Top = 14
         Width = 80
         Height = 17
         Caption = 'Enabled'
@@ -178,8 +181,8 @@ object StyledButtonEditor: TStyledButtonEditor
         OnClick = EnabledCheckBoxClick
       end
       object StyleDrawTypeComboBox: TComboBox
-        Left = 265
-        Top = 36
+        Left = 204
+        Top = 39
         Width = 119
         Height = 21
         Style = csDropDownList
@@ -188,7 +191,7 @@ object StyledButtonEditor: TStyledButtonEditor
       end
       object FlatButtonCheckBox: TCheckBox
         Left = 9
-        Top = 23
+        Top = 14
         Width = 50
         Height = 17
         Caption = 'Flat'
@@ -197,7 +200,7 @@ object StyledButtonEditor: TStyledButtonEditor
       end
       object AsVCLComponentCheckBox: TCheckBox
         Left = 9
-        Top = 46
+        Top = 41
         Width = 131
         Height = 17
         Caption = 'As VCL Component'
@@ -205,8 +208,8 @@ object StyledButtonEditor: TStyledButtonEditor
         OnClick = AsVCLComponentCheckBoxClick
       end
       object StyleComboBox: TComboBox
-        Left = 143
-        Top = 36
+        Left = 204
+        Top = 12
         Width = 119
         Height = 21
         Style = csDropDownList
@@ -215,13 +218,13 @@ object StyledButtonEditor: TStyledButtonEditor
       end
     end
     object RoundedCornersGroupBox: TGroupBox
-      Left = 673
+      Left = 678
       Top = 0
-      Width = 256
+      Width = 251
       Height = 67
       Align = alClient
       Caption = 'Rounded Corners'
-      TabOrder = 3
+      TabOrder = 4
       object TopRightCheckBox: TCheckBox
         Left = 112
         Top = 23
@@ -260,12 +263,12 @@ object StyledButtonEditor: TStyledButtonEditor
       end
     end
     object CornerRadiusGroupBox: TGroupBox
-      Left = 393
+      Left = 329
       Top = 0
-      Width = 192
+      Width = 173
       Height = 67
       Align = alLeft
-      Caption = 'Border Radius'
+      Caption = 'Border'
       TabOrder = 1
       object RadiusLabel: TLabel
         Left = 14
@@ -275,10 +278,12 @@ object StyledButtonEditor: TStyledButtonEditor
         Caption = 'Radius:'
       end
       object RadiusTrackBar: TTrackBar
+        AlignWithMargins = True
         Left = 5
-        Top = 35
-        Width = 180
+        Top = 38
+        Width = 163
         Height = 24
+        Align = alBottom
         Max = 30
         Min = 1
         Position = 1
@@ -286,14 +291,42 @@ object StyledButtonEditor: TStyledButtonEditor
         OnChange = RadiusTrackBarChange
       end
     end
+    object BorderWidthGroupBox: TGroupBox
+      Left = 502
+      Top = 0
+      Width = 88
+      Height = 67
+      Align = alLeft
+      Caption = 'Border'
+      TabOrder = 2
+      object BorderWidthLabel: TLabel
+        Left = 13
+        Top = 21
+        Width = 35
+        Height = 13
+        Caption = 'Width:'
+      end
+      object BorderWidthTrackBar: TTrackBar
+        AlignWithMargins = True
+        Left = 5
+        Top = 38
+        Width = 78
+        Height = 24
+        Align = alBottom
+        Min = -1
+        Position = -1
+        TabOrder = 0
+        OnChange = BorderWidthTrackBarChange
+      end
+    end
     object ShadowGroupBox: TGroupBox
-      Left = 585
+      Left = 590
       Top = 0
       Width = 88
       Height = 67
       Align = alLeft
       Caption = 'Shadow'
-      TabOrder = 2
+      TabOrder = 3
       object ShadowSizeLabel: TLabel
         Left = 13
         Top = 21
@@ -302,10 +335,12 @@ object StyledButtonEditor: TStyledButtonEditor
         Caption = 'Size:'
       end
       object ShadowSizeTrackBar: TTrackBar
-        Left = 6
-        Top = 35
-        Width = 83
+        AlignWithMargins = True
+        Left = 5
+        Top = 38
+        Width = 78
         Height = 24
+        Align = alBottom
         Position = 1
         TabOrder = 0
         OnChange = ShadowSizeTrackBarChange

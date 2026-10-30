@@ -99,6 +99,7 @@ type
     function IsStoredFlat: Boolean;
     function IsCustomRadius: Boolean;
     function IsCustomShadowSize: Boolean;
+    function IsCustomBorderWidth: Boolean;
     function IsCustomRoundedCorners: Boolean;
     function IsCustomDrawType: Boolean;
     function IsStoredStyleFamily: Boolean;
@@ -220,6 +221,7 @@ type
     //StyledComponents Attributes
     property StyleRadius stored IsCustomRadius;
     property StyleShadowSize stored IsCustomShadowSize;
+    property StyleBorderWidth stored IsCustomBorderWidth;
     property StyleRoundedCorners stored IsCustomRoundedCorners;
     property StyleDrawType: TStyledButtonDrawType read GetStyleDrawType write SetStyleDrawType stored IsCustomDrawType;
     property StyleFamily stored IsStoredStyleFamily;
@@ -303,6 +305,7 @@ type
     //Styled Attributes
     FStyleRadius: Integer;
     FStyleShadowSize: Integer;
+    FStyleBorderWidth: Integer;
     FStyleDrawType: TStyledButtonDrawType;
     FStyleFamily: TStyledButtonFamily;
     FStyleClass: TStyledButtonClass;
@@ -319,6 +322,7 @@ type
     _DefaultClass: TStyledButtonClass;
     _DefaultAppearance: TStyledButtonAppearance;
     _DefaultStyleRadius: Integer;
+    _DefaultStyleBorderWidth: Integer;
     _DefaultButtonsCursor: TCursor;
 
     function ControlsWidth: Integer;
@@ -351,6 +355,7 @@ type
     function IsCustomDrawType: Boolean;
     function IsCustomRadius: Boolean;
     function IsCustomShadowSize: Boolean;
+    function IsCustomBorderWidth: Boolean;
     function IsStoredStyleAppearance: Boolean;
     function IsStoredStyleClass: Boolean;
     function IsStoredStyleFamily: Boolean;
@@ -360,6 +365,7 @@ type
     procedure SetStyleFamily(const AValue: TStyledButtonFamily);
     procedure SetStyleRadius(const AValue: Integer);
     procedure SetStyleShadowSize(const AValue: Integer);
+    procedure SetStyleBorderWidth(const AValue: Integer);
     function ApplyToolbarStyle: Boolean;
     procedure SetStyleApplied(const AValue: Boolean);
     procedure UpdateButtons;
@@ -424,7 +430,8 @@ type
       const AFamily: TStyledButtonFamily = DEFAULT_CLASSIC_FAMILY;
       const AClass: TStyledButtonClass = DEFAULT_WINDOWS_CLASS;
       const AAppearance: TStyledButtonAppearance = DEFAULT_APPEARANCE;
-      const AStyleRadius: Integer = DEFAULT_RADIUS); virtual;
+      const AStyleRadius: Integer = DEFAULT_RADIUS;
+      const AStyleBorderWidth: Integer = DEFAULT_BORDER_WIDTH); virtual;
     /// <summary>Begins batch update to prevent excessive repainting</summary>
     procedure BeginUpdate; virtual;
     /// <summary>Ends batch update and triggers layout refresh</summary>
@@ -556,6 +563,7 @@ type
     //StyledComponents Attributes
     property StyleRadius: Integer read FStyleRadius write SetStyleRadius stored IsCustomRadius;
     property StyleShadowSize: Integer read FStyleShadowSize write SetStyleShadowSize stored IsCustomShadowSize;
+    property StyleBorderWidth: Integer read FStyleBorderWidth write SetStyleBorderWidth stored IsCustomBorderWidth;
     property StyleDrawType: TStyledButtonDrawType read FStyleDrawType write SetStyleDrawType stored IsCustomDrawType;
     property StyleFamily: TStyledButtonFamily read FStyleFamily write SetStyleFamily stored IsStoredStyleFamily;
     property StyleClass: TStyledButtonClass read FStyleClass write SetStyleClass stored IsStoredStyleClass;
@@ -1007,6 +1015,18 @@ begin
   end;
 end;
 
+function TStyledToolButton.IsCustomBorderWidth: boolean;
+begin
+  Result := not IsSeparator;
+  if Result then
+  begin
+    if Assigned(FToolBar) then
+      Result := StyleBorderWidth <> FToolBar.StyleBorderWidth
+    else
+      Result := StyleBorderWidth <> DEFAULT_BORDER_WIDTH;
+  end;
+end;
+
 function TStyledToolButton.IsCustomRadius: boolean;
 begin
   Result := not IsSeparator;
@@ -1267,6 +1287,7 @@ begin
   FStyleDrawType := _DefaultStyleDrawType;
   FStyleRadius := _DefaultStyleRadius;
   FStyleShadowSize := DEFAULT_SHADOW_SIZE;
+  FStyleBorderWidth := _DefaultStyleBorderWidth;
   FStyleFamily := AFamily;
   FStyleClass := AClass;
   FStyleAppearance := AAppearance;
@@ -1480,6 +1501,7 @@ begin
       LButton.Images := Self.Images;
       LButton.StyleRadius := FStyleRadius;
       LButton.StyleShadowSize := FStyleShadowSize;
+      LButton.StyleBorderWidth := FStyleBorderWidth;
       LButton.StyleDrawType := FStyleDrawType;
       LButton.StyleFamily := FStyleFamily;
       LButton.StyleClass := FStyleClass;
@@ -1517,6 +1539,11 @@ end;
 function TStyledToolbar.IsCustomShadowSize: Boolean;
 begin
   Result := StyleShadowSize <> DEFAULT_SHADOW_SIZE;
+end;
+
+function TStyledToolbar.IsCustomBorderWidth: Boolean;
+begin
+  Result := StyleBorderWidth <> DEFAULT_BORDER_WIDTH;
 end;
 
 function TStyledToolbar.IsGradientEndColorStored: Boolean;
@@ -1602,14 +1629,18 @@ end;
 class procedure TStyledToolbar.RegisterDefaultRenderingStyle(
   const ADrawType: TStyledButtonDrawType; const AFamily: TStyledButtonFamily;
   const AClass: TStyledButtonClass; const AAppearance: TStyledButtonAppearance;
-  const AStyleRadius: Integer);
+  const AStyleRadius: Integer;
+  const AStyleBorderWidth: Integer);
 begin
+  if AStyleBorderWidth < DEFAULT_BORDER_WIDTH then
+    raise EArgumentException.Create(SInvalidProperty);
   _DefaultStyleDrawType := ADrawType;
   _UseCustomDrawType := True;
   _DefaultFamily := AFamily;
   _DefaultClass := AClass;
   _DefaultAppearance := AAppearance;
   _DefaultStyleRadius := AStyleRadius;
+  _DefaultStyleBorderWidth := AStyleBorderWidth;
 end;
 
 procedure TStyledToolBar.RemoveButton(Control: TControl);
@@ -1791,6 +1822,7 @@ begin
     FStyleAppearance := LToolbar.FStyleAppearance;
     FStyleRadius := LToolbar.FStyleRadius;
     FStyleShadowSize := LToolbar.FStyleShadowSize;
+    FStyleBorderWidth := LToolbar.FStyleBorderWidth;
     FStyleDrawType := LToolbar.FStyleDrawType;
     Invalidate;
   end;
@@ -2099,6 +2131,23 @@ begin
           ABtn.StyleShadowSize := AValue;
       end);
     FStyleShadowSize := AValue;
+    StyleApplied := ApplyToolbarStyle;
+  end;
+end;
+
+procedure TStyledToolbar.SetStyleBorderWidth(const AValue: Integer);
+begin
+  if FStyleBorderWidth <> AValue then
+  begin
+    if AValue < DEFAULT_BORDER_WIDTH then
+      raise EReadError.create(SInvalidProperty);
+    ProcessButtons(
+      procedure (ABtn: TStyledToolButton)
+      begin
+        if ABtn.StyleBorderWidth = FStyleBorderWidth then
+          ABtn.StyleBorderWidth := AValue;
+      end);
+    FStyleBorderWidth := AValue;
     StyleApplied := ApplyToolbarStyle;
   end;
 end;
@@ -2514,6 +2563,7 @@ initialization
   TStyledToolbar._DefaultClass := DEFAULT_WINDOWS_CLASS;
   TStyledToolbar._DefaultAppearance := DEFAULT_APPEARANCE;
   TStyledToolbar._DefaultStyleRadius := DEFAULT_RADIUS;
+  TStyledToolbar._DefaultStyleBorderWidth := DEFAULT_BORDER_WIDTH;
   TStyledToolbar._DefaultButtonsCursor := DEFAULT_CURSOR;
 
 end.

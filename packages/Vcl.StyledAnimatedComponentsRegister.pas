@@ -170,6 +170,7 @@ begin
       LNewButton.StyleDrawType := LToolbar.StyleDrawType;
       LNewButton.StyleRadius := LToolbar.StyleRadius;
       LNewButton.StyleShadowSize := LToolbar.StyleShadowSize;
+      LNewButton.StyleBorderWidth := LToolbar.StyleBorderWidth;
       LNewButton.SetBounds(0, 0, LToolbar.ButtonWidth, LToolbar.ButtonHeight);
       if LToolbar.ShowCaptions then
       begin
@@ -182,6 +183,7 @@ begin
           LNewButton.StyleClass, LNewButton.StyleAppearance);
         LToolbar.StyleRadius := LNewButton.StyleRadius;
         LToolbar.StyleShadowSize := LNewButton.StyleShadowSize;
+        LToolbar.StyleBorderWidth := LNewButton.StyleBorderWidth;
         LToolbar.StyleDrawType := LNewButton.StyleDrawType;
         Designer.Modified;
       end;
@@ -263,6 +265,7 @@ begin
     LNavButton.StyleDrawType := LDbNavigator.StyleDrawType;
     LNavButton.StyleRadius := LDbNavigator.StyleRadius;
     LNavButton.StyleShadowSize := LDbNavigator.StyleShadowSize;
+    LNavButton.StyleBorderWidth := LDbNavigator.StyleBorderWidth;
     LNavButton.SetBounds(0, 0, LDbNavigator.ButtonWidth, LDbNavigator.ButtonHeight);
     if LDbNavigator.ShowCaptions then
     begin
@@ -275,6 +278,7 @@ begin
         LNavButton.StyleClass, LNavButton.StyleAppearance);
       LDbNavigator.StyleRadius := LNavButton.StyleRadius;
       LDbNavigator.StyleShadowSize := LNavButton.StyleShadowSize;
+      LDbNavigator.StyleBorderWidth := LNavButton.StyleBorderWidth;
       LDbNavigator.StyleDrawType := LNavButton.StyleDrawType;
       Designer.Modified;
     end;

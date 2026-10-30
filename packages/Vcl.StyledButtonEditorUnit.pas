@@ -91,6 +91,9 @@ type
     RadiusLabel: TLabel;
     ShadowSizeLabel: TLabel;
     ShadowGroupBox: TGroupBox;
+    BorderWidthGroupBox: TGroupBox;
+    BorderWidthLabel: TLabel;
+    BorderWidthTrackBar: TTrackBar;
     procedure FormCreate(Sender: TObject);
     procedure OKButtonClick(Sender: TObject);
     procedure ApplyButtonClick(Sender: TObject);
@@ -108,6 +111,7 @@ type
     procedure TabControlGetImageIndex(Sender: TObject; TabIndex: Integer;
       var ImageIndex: Integer);
     procedure ShadowSizeTrackBarChange(Sender: TObject);
+    procedure BorderWidthTrackBarChange(Sender: TObject);
   private
     FSourceButton: TStyledGraphicButton;
     FDestButton: TStyledGraphicButton;
@@ -652,6 +656,10 @@ begin
       AsVCLComponentCheckBox.Checked := FSourceButton.AsVCLComponent;
       RadiusTrackBar.Position := FSourceButton.StyleRadius;
       ShadowSizeTrackBar.Position := FSourceButton.StyleShadowSize;
+      //A width above the range of the trackbar is kept, not cut to the maximum
+      if FSourceButton.StyleBorderWidth > BorderWidthTrackBar.Max then
+        BorderWidthTrackBar.Max := FSourceButton.StyleBorderWidth;
+      BorderWidthTrackBar.Position := FSourceButton.StyleBorderWidth;
       RoundedCorners := FSourceButton.StyleRoundedCorners;
       FlatButtonCheckBox.Checked := FSourceButton.Flat;
     end
@@ -660,6 +668,8 @@ begin
       EnabledCheckBox.Checked := FSourcePanel.Enabled;
       AsVCLComponentCheckBox.Checked := FSourcePanel.AsVCLComponent;
       RadiusTrackBar.Position := FSourcePanel.StyleRadius;
+      //TStyledPanel has no StyleBorderWidth
+      BorderWidthGroupBox.Visible := False;
       RoundedCorners := FSourcePanel.StyleRoundedCorners;
       FlatButtonCheckBox.Visible := False;
     end;
@@ -772,6 +782,13 @@ begin
 end;
 
 
+procedure TStyledButtonEditor.BorderWidthTrackBarChange(Sender: TObject);
+begin
+  UpdateDestFromGUI;
+  FFamilyBuilt := '';
+  TabControlChange(TabControl);
+end;
+
 procedure TStyledButtonEditor.RoundedCheckBoxClick(Sender: TObject);
 begin
   UpdateDestFromGUI;
@@ -847,6 +864,7 @@ begin
     FDestButton.StyleDrawType := TStyledButtonDrawType(StyleDrawTypeComboBox.ItemIndex);
     FDestButton.StyleRadius := RadiusTrackBar.Position;
     FDestButton.StyleShadowSize := ShadowSizeTrackBar.Position;
+    FDestButton.StyleBorderWidth := BorderWidthTrackBar.Position;
     CornerRadiusGroupBox.Visible := FDestButton.StyleDrawType = btRoundRect;
     RoundedCornersGroupBox.Visible := FDestButton.StyleDrawType in [btRoundRect, btRounded];
     FDestButton.StyleRoundedCorners := RoundedCorners;
@@ -857,6 +875,10 @@ begin
     FDestButton.AsVCLComponent := AsVCLComponentCheckBox.Checked;
     RadiusLabel.Caption := Format('Radius: %d', [FDestButton.StyleRadius]);
     ShadowSizeLabel.Caption := Format('Size: %d', [FDestButton.StyleShadowSize]);
+    if FDestButton.StyleBorderWidth = DEFAULT_BORDER_WIDTH then
+      BorderWidthLabel.Caption := 'Width: style'
+    else
+      BorderWidthLabel.Caption := Format('Width: %d', [FDestButton.StyleBorderWidth]);
     ActualGroupBox.Caption := Format('ACTUAL: %s/%s/%s',
       [FSourceButton.StyleFamily, FSourceButton.StyleClass, FSourceButton.StyleAppearance]);
     NewGroupBox.Caption := Format('NEW: %s/%s/%s',
@@ -945,6 +967,7 @@ var
     LStyledButton.StyleRadius := RadiusTrackBar.Position;
     LStyledButton.StyleRoundedCorners := RoundedCorners;
     //LStyledButton.StyleShadowSize := ShadowSizeTrackBar.Position;
+    LStyledButton.StyleBorderWidth := BorderWidthTrackBar.Position;
     //Only the Classic/Windows preview follows the active VCL style (AsVCL): choosing
     //it must give back a button AsVCL, like the Windows preview of the panels
     LStyledButton.AsVCLComponent :=

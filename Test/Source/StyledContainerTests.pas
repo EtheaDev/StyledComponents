@@ -169,6 +169,26 @@ type
   end;
 
   [TestFixture]
+  TStyleBorderWidthContainerTests = class
+  public
+    /// <summary>The toolbar propagates StyleBorderWidth to its buttons, like StyleRadius.</summary>
+    [Test]
+    procedure Toolbar_PropagatesToButtons_AndKeepsCustomButtons;
+    /// <summary>The navigator propagates StyleBorderWidth to its buttons.</summary>
+    [Test]
+    procedure DbNavigator_PropagatesToButtons;
+    /// <summary>Group: the item inherits StyleBorderWidth and the group paints it.</summary>
+    [Test]
+    procedure ButtonGroup_ItemInheritsAndPaintsTheBorder;
+    /// <summary>Category buttons: the item inherits StyleBorderWidth and the control paints it.</summary>
+    [Test]
+    procedure CategoryButtons_ItemInheritsAndPaintsTheBorder;
+    /// <summary>RegisterDefaultRenderingStyle gives the registered border width to the new containers.</summary>
+    [Test]
+    procedure RegisteredDefault_AppliesToNewContainers;
+  end;
+
+  [TestFixture]
   TStyledGroupItemTests = class
   public
     /// <summary>
@@ -733,6 +753,180 @@ begin
   end;
 end;
 
+//True when at least one pixel is different
+function BitmapsDiffer(const A, B: TBitmap): Boolean;
+var
+  X, Y: Integer;
+begin
+  Result := False;
+  for Y := 0 to A.Height - 1 do
+    for X := 0 to A.Width - 1 do
+      if TStyledTestUtils.PixelAt(A, X, Y) <> TStyledTestUtils.PixelAt(B, X, Y) then
+        Exit(True);
+end;
+
+{ TStyleBorderWidthContainerTests }
+
+procedure TStyleBorderWidthContainerTests.RegisteredDefault_AppliesToNewContainers;
+var
+  LForm: TForm;
+begin
+  LForm := TStyledTestUtils.HostForm;
+  try
+    TStyledToolbar.RegisterDefaultRenderingStyle(DEFAULT_STYLEDRAWTYPE, DEFAULT_CLASSIC_FAMILY,
+      DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE, DEFAULT_RADIUS, 3);
+    TStyledDbNavigator.RegisterDefaultRenderingStyle(DEFAULT_STYLEDRAWTYPE, DEFAULT_CLASSIC_FAMILY,
+      DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE, DEFAULT_RADIUS, 3, DEFAULT_CURSOR);
+    TStyledButtonGroup.RegisterDefaultRenderingStyle(DEFAULT_STYLEDRAWTYPE, DEFAULT_CLASSIC_FAMILY,
+      DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE, DEFAULT_RADIUS, 3, DEFAULT_CURSOR);
+    TStyledCategoryButtons.RegisterDefaultRenderingStyle(DEFAULT_STYLEDRAWTYPE, DEFAULT_CLASSIC_FAMILY,
+      DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE, DEFAULT_RADIUS, 3, DEFAULT_CURSOR);
+    try
+      Assert.AreEqual(3, TStyledToolbar.Create(LForm).StyleBorderWidth, 'toolbar');
+      Assert.AreEqual(3, TStyledDbNavigator.Create(LForm).StyleBorderWidth, 'navigator');
+      Assert.AreEqual(3, TStyledButtonGroup.Create(LForm).StyleBorderWidth, 'group');
+      Assert.AreEqual(3, TStyledCategoryButtons.Create(LForm).StyleBorderWidth, 'category');
+    finally
+      TStyledToolbar.RegisterDefaultRenderingStyle(DEFAULT_STYLEDRAWTYPE, DEFAULT_CLASSIC_FAMILY,
+        DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE, DEFAULT_RADIUS, DEFAULT_BORDER_WIDTH);
+      TStyledDbNavigator.RegisterDefaultRenderingStyle(DEFAULT_STYLEDRAWTYPE, DEFAULT_CLASSIC_FAMILY,
+        DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE, DEFAULT_RADIUS, DEFAULT_BORDER_WIDTH, DEFAULT_CURSOR);
+      TStyledButtonGroup.RegisterDefaultRenderingStyle(DEFAULT_STYLEDRAWTYPE, DEFAULT_CLASSIC_FAMILY,
+        DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE, DEFAULT_RADIUS, DEFAULT_BORDER_WIDTH, DEFAULT_CURSOR);
+      TStyledCategoryButtons.RegisterDefaultRenderingStyle(DEFAULT_STYLEDRAWTYPE, DEFAULT_CLASSIC_FAMILY,
+        DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE, DEFAULT_RADIUS, DEFAULT_BORDER_WIDTH, DEFAULT_CURSOR);
+    end;
+  finally
+    LForm.Free;
+  end;
+end;
+
+procedure TStyleBorderWidthContainerTests.Toolbar_PropagatesToButtons_AndKeepsCustomButtons;
+var
+  LForm: TForm;
+  LToolbar: TStyledToolbar;
+  LButton1, LButton2: TStyledToolButton;
+begin
+  LForm := TStyledTestUtils.HostForm;
+  try
+    LToolbar := TStyledToolbar.Create(LForm);
+    LToolbar.Parent := LForm;
+    Assert.IsTrue(LToolbar.NewButton(LButton1));
+    Assert.IsTrue(LToolbar.NewButton(LButton2));
+    Assert.AreEqual(DEFAULT_BORDER_WIDTH, LToolbar.StyleBorderWidth, 'default');
+    LButton2.StyleBorderWidth := 6;
+    LToolbar.StyleBorderWidth := 3;
+    Assert.AreEqual(3, LButton1.StyleBorderWidth, 'button follows the toolbar');
+    Assert.AreEqual(6, LButton2.StyleBorderWidth, 'a button with its own value keeps it');
+    //a button added later inherits the toolbar value
+    Assert.IsTrue(LToolbar.NewButton(LButton1));
+    Assert.AreEqual(3, LButton1.StyleBorderWidth, 'new button inherits');
+    Assert.IsTrue(Pos('StyleBorderWidth = 3', TStyledTestUtils.DfmText(LToolbar)) > 0, 'stored');
+    LToolbar.StyleBorderWidth := DEFAULT_BORDER_WIDTH;
+    Assert.AreEqual(DEFAULT_BORDER_WIDTH, LToolbar.StyleBorderWidth);
+  finally
+    LForm.Free;
+  end;
+end;
+
+procedure TStyleBorderWidthContainerTests.DbNavigator_PropagatesToButtons;
+var
+  LForm: TForm;
+  LNavigator: TStyledDBNavigator;
+begin
+  LForm := TStyledTestUtils.HostForm;
+  try
+    LNavigator := TStyledDBNavigator.Create(LForm);
+    LNavigator.Parent := LForm;
+    Assert.AreEqual(DEFAULT_BORDER_WIDTH, LNavigator.StyleBorderWidth, 'default');
+    LNavigator.StyleBorderWidth := 3;
+    Assert.AreEqual(3, LNavigator.Buttons[nbFirst].StyleBorderWidth, 'button follows the navigator');
+    Assert.AreEqual(3, LNavigator.Buttons[nbDelete].StyleBorderWidth, 'all the buttons');
+    Assert.IsTrue(Pos('StyleBorderWidth = 3', TStyledTestUtils.DfmText(LNavigator)) > 0, 'stored');
+  finally
+    LForm.Free;
+  end;
+end;
+
+procedure TStyleBorderWidthContainerTests.ButtonGroup_ItemInheritsAndPaintsTheBorder;
+var
+  LForm: TForm;
+  LGroup: TStyledButtonGroup;
+  LItem: TStyledGrpButtonItem;
+  LPlain, LThick: TBitmap;
+begin
+  LForm := TStyledTestUtils.HostForm;
+  try
+    LGroup := TStyledButtonGroup.Create(LForm);
+    LGroup.Parent := LForm;
+    LGroup.SetBounds(0, 0, 200, 80);
+    LGroup.StyleFamily := BOOTSTRAP_FAMILY;
+    LGroup.StyleClass := btn_primary;
+    LGroup.StyleAppearance := BOOTSTRAP_OUTLINE;
+    LItem := LGroup.Items.Add as TStyledGrpButtonItem;
+    LItem.Caption := 'A';
+    Assert.AreEqual(DEFAULT_BORDER_WIDTH, LItem.StyleBorderWidth, 'default');
+    LPlain := TStyledTestUtils.PaintWinControl(LGroup);
+    try
+      LGroup.StyleBorderWidth := 6;
+      Assert.AreEqual(6, LItem.StyleBorderWidth, 'item inherits the group value');
+      LThick := TStyledTestUtils.PaintWinControl(LGroup);
+      try
+        Assert.IsTrue(BitmapsDiffer(LPlain, LThick), 'the item is painted with a thicker border');
+      finally
+        LThick.Free;
+      end;
+    finally
+      LPlain.Free;
+    end;
+    Assert.IsTrue(Pos('StyleBorderWidth = 6', TStyledTestUtils.DfmText(LGroup)) > 0, 'stored');
+    LItem.StyleBorderWidth := 0;
+    Assert.AreEqual(0, LItem.StyleBorderWidth, 'an item can have its own value');
+  finally
+    LForm.Free;
+  end;
+end;
+
+procedure TStyleBorderWidthContainerTests.CategoryButtons_ItemInheritsAndPaintsTheBorder;
+var
+  LForm: TForm;
+  LCategoryButtons: TStyledCategoryButtons;
+  LCategory: TButtonCategory;
+  LItem: TStyledButtonItem;
+  LPlain, LThick: TBitmap;
+begin
+  LForm := TStyledTestUtils.HostForm;
+  try
+    LCategoryButtons := TStyledCategoryButtons.Create(LForm);
+    LCategoryButtons.Parent := LForm;
+    LCategoryButtons.SetBounds(0, 0, 200, 120);
+    LCategoryButtons.StyleFamily := BOOTSTRAP_FAMILY;
+    LCategoryButtons.StyleClass := btn_primary;
+    LCategoryButtons.StyleAppearance := BOOTSTRAP_OUTLINE;
+    LCategory := LCategoryButtons.Categories.Add;
+    LCategory.Caption := 'Cat';
+    LItem := LCategory.Items.Add as TStyledButtonItem;
+    LItem.Caption := 'A';
+    Assert.AreEqual(DEFAULT_BORDER_WIDTH, LItem.StyleBorderWidth, 'default');
+    LPlain := TStyledTestUtils.PaintWinControl(LCategoryButtons);
+    try
+      LCategoryButtons.StyleBorderWidth := 6;
+      Assert.AreEqual(6, LItem.StyleBorderWidth, 'item inherits the container value');
+      LThick := TStyledTestUtils.PaintWinControl(LCategoryButtons);
+      try
+        Assert.IsTrue(BitmapsDiffer(LPlain, LThick), 'the item is painted with a thicker border');
+      finally
+        LThick.Free;
+      end;
+    finally
+      LPlain.Free;
+    end;
+    Assert.IsTrue(Pos('StyleBorderWidth = 6', TStyledTestUtils.DfmText(LCategoryButtons)) > 0, 'stored');
+  finally
+    LForm.Free;
+  end;
+end;
+
 { TStyleShadowSizeTests }
 
 //Paints a panel like a WM_ERASEBKGND + WM_PAINT: PaintTo of a panel with
@@ -1067,6 +1261,7 @@ initialization
   TDUnitX.RegisterTestFixture(TStyledToolbarTests);
   TDUnitX.RegisterTestFixture(TStyledPanelTests);
   TDUnitX.RegisterTestFixture(TStyledGroupItemTests);
+  TDUnitX.RegisterTestFixture(TStyleBorderWidthContainerTests);
   TDUnitX.RegisterTestFixture(TStyleShadowSizeTests);
 
 end.

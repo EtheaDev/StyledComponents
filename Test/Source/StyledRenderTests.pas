@@ -1,4 +1,4 @@
-/// <summary>
+﻿/// <summary>
 ///  The rendering engine: shape drawing, style-family registry and the
 ///  IStyledButtonAttributes contract every family must honour.
 /// </summary>
@@ -119,6 +119,26 @@ type
     /// <summary>A button of the family is a pill by default, painted as a pill.</summary>
     [Test]
     procedure Button_DefaultsToRoundedAndPaintsAPill;
+  end;
+
+  [TestFixture]
+  TStyleBorderWidthTests = class
+  public
+    /// <summary>The default (-1) is the border of the style and is not streamed.</summary>
+    [Test]
+    procedure Default_IsTheStyleAndNotStored;
+    /// <summary>A width greater than zero replaces the border of the style in every state.</summary>
+    [Test]
+    procedure CustomWidth_ReplacesTheBorderOfTheStyleInEveryState;
+    /// <summary>0 removes the border; values below -1 are refused.</summary>
+    [Test]
+    procedure Zero_RemovesTheBorder;
+    /// <summary>The value is streamed and copied by Assign.</summary>
+    [Test]
+    procedure CustomWidth_StreamsAndAssigns;
+    /// <summary>The registered default applies to new buttons, also AsVCLComponent ones; the button value wins.</summary>
+    [Test]
+    procedure RegisteredDefault_AppliesToNewButtons;
   end;
 
   [TestFixture]
@@ -854,10 +874,154 @@ begin
   Assert.AreEqual(STYLE_NAME, LClass, 'CheckAttributes must not fall back to Windows');
 end;
 
+{ TStyleBorderWidthTests }
+
+//number of pixels from the left edge that are not the colour of the face, in the middle row
+function BorderPixels(const AButton: TStyledButton): Integer;
+var
+  LBitmap: TBitmap;
+  LFace: TColor;
+begin
+  LBitmap := TStyledTestUtils.PaintWinControl(AButton);
+  try
+    LFace := TStyledTestUtils.PixelAt(LBitmap, AButton.Width div 2, AButton.Height div 2);
+    Result := 0;
+    while (Result < 20) and not TStyledTestUtils.SameColor(TStyledTestUtils.PixelAt(LBitmap, Result, AButton.Height div 2), LFace, 2) do
+      Inc(Result);
+  finally
+    LBitmap.Free;
+  end;
+end;
+
+procedure TStyleBorderWidthTests.Default_IsTheStyleAndNotStored;
+var
+  LForm: TForm;
+  LButton: TStyledButton;
+begin
+  LForm := TStyledTestUtils.HostForm;
+  try
+    LButton := TStyledButton.CreateStyled(LForm, DEFAULT_CLASSIC_FAMILY, DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE);
+    LButton.Parent := LForm;
+    Assert.AreEqual(-1, LButton.StyleBorderWidth);
+    Assert.AreEqual(-1, DEFAULT_BORDER_WIDTH);
+    Assert.IsTrue(Pos('StyleBorderWidth', TStyledTestUtils.DfmText(LButton)) = 0, 'the default is not streamed');
+  finally
+    LForm.Free;
+  end;
+end;
+
+procedure TStyleBorderWidthTests.CustomWidth_ReplacesTheBorderOfTheStyleInEveryState;
+var
+  LForm: TForm;
+  LButton: TStyledButton;
+begin
+  LForm := TStyledTestUtils.HostForm;
+  try
+    LButton := TStyledButton.CreateStyled(LForm, DEFAULT_CLASSIC_FAMILY, DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE);
+    LButton.Parent := LForm;
+    LButton.StyleDrawType := btRect;
+    LButton.SetBounds(0, 0, 100, 40);
+    LButton.StyleBorderWidth := 1;
+    Assert.AreEqual(1, BorderPixels(LButton), 'width 1');
+    LButton.StyleBorderWidth := 4;
+    Assert.AreEqual(4, BorderPixels(LButton), 'width 4, normal');
+    LButton.Enabled := False;
+    Assert.AreEqual(4, BorderPixels(LButton), 'width 4, disabled');
+  finally
+    LForm.Free;
+  end;
+end;
+
+procedure TStyleBorderWidthTests.Zero_RemovesTheBorder;
+var
+  LForm: TForm;
+  LButton: TStyledButton;
+  LRaised: Boolean;
+begin
+  LForm := TStyledTestUtils.HostForm;
+  try
+    LButton := TStyledButton.CreateStyled(LForm, DEFAULT_CLASSIC_FAMILY, DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE);
+    LButton.Parent := LForm;
+    LButton.StyleDrawType := btRect;
+    LButton.SetBounds(0, 0, 100, 40);
+    LButton.StyleBorderWidth := 0;
+    Assert.AreEqual(0, BorderPixels(LButton), 'no border pixels');
+    LRaised := False;
+    try
+      LButton.StyleBorderWidth := -2;
+    except
+      on EReadError do LRaised := True;
+    end;
+    Assert.IsTrue(LRaised, 'values below -1 are refused like StyleShadowSize');
+  finally
+    LForm.Free;
+  end;
+end;
+
+procedure TStyleBorderWidthTests.CustomWidth_StreamsAndAssigns;
+var
+  LForm: TForm;
+  LButton, LCopy, LOther: TStyledButton;
+begin
+  LForm := TStyledTestUtils.HostForm;
+  try
+    LButton := TStyledButton.CreateStyled(LForm, DEFAULT_CLASSIC_FAMILY, DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE);
+    LButton.Parent := LForm;
+    LButton.StyleBorderWidth := 3;
+    Assert.IsTrue(Pos('StyleBorderWidth = 3', TStyledTestUtils.DfmText(LButton)) > 0, 'stored when not default');
+    LCopy := TStyledTestUtils.StreamRoundTrip(LButton, TStyledButton, LForm) as TStyledButton;
+    Assert.AreEqual(3, LCopy.StyleBorderWidth, 'survives streaming');
+    LOther := TStyledButton.Create(LForm);
+    LOther.Assign(LButton);
+    Assert.AreEqual(3, LOther.StyleBorderWidth, 'copied by Assign');
+  finally
+    LForm.Free;
+  end;
+end;
+
+procedure TStyleBorderWidthTests.RegisteredDefault_AppliesToNewButtons;
+var
+  LForm: TForm;
+  LButton, LOwn: TStyledButton;
+  LRaised: Boolean;
+begin
+  LForm := TStyledTestUtils.HostForm;
+  try
+    TStyledButton.RegisterDefaultRenderingStyle(btRect, DEFAULT_CLASSIC_FAMILY,
+      DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE, DEFAULT_RADIUS, 5, DEFAULT_CURSOR);
+    try
+      LButton := TStyledButton.CreateStyled(LForm, DEFAULT_CLASSIC_FAMILY, DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE);
+      LButton.Parent := LForm;
+      LButton.StyleDrawType := btRect;
+      LButton.SetBounds(0, 0, 100, 40);
+      Assert.AreEqual(5, LButton.StyleBorderWidth, 'new buttons take the registered default');
+      Assert.AreEqual(5, BorderPixels(LButton), 'and paint it');
+      LOwn := TStyledButton.CreateStyled(LForm, DEFAULT_CLASSIC_FAMILY, DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE);
+      LOwn.StyleBorderWidth := 2;
+      Assert.AreEqual(2, LOwn.StyleBorderWidth, 'the value of the button wins');
+      LRaised := False;
+      try
+        TStyledButton.RegisterDefaultRenderingStyle(btRect, DEFAULT_CLASSIC_FAMILY,
+          DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE, DEFAULT_RADIUS, -2, DEFAULT_CURSOR);
+      except
+        on EArgumentException do LRaised := True;
+      end;
+      Assert.IsTrue(LRaised, 'values below -1 are refused');
+    finally
+      TStyledButton.RegisterDefaultRenderingStyle(DEFAULT_STYLEDRAWTYPE, DEFAULT_CLASSIC_FAMILY,
+        DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE, DEFAULT_RADIUS, DEFAULT_BORDER_WIDTH, DEFAULT_CURSOR);
+    end;
+    Assert.AreEqual(-1, TStyledButton.CreateStyled(LForm, DEFAULT_CLASSIC_FAMILY, DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE).StyleBorderWidth, 'restored');
+  finally
+    LForm.Free;
+  end;
+end;
+
 initialization
   TDUnitX.RegisterTestFixture(TShapeDrawingTests);
   TDUnitX.RegisterTestFixture(TBadgeDrawingTests);
   TDUnitX.RegisterTestFixture(TAngularM3Tests);
+  TDUnitX.RegisterTestFixture(TStyleBorderWidthTests);
   TDUnitX.RegisterTestFixture(TStyleFamilyRegistryTests);
   TDUnitX.RegisterTestFixture(TStyleFamilyContractTests);
 

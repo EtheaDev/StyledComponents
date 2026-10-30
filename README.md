@@ -9,7 +9,7 @@
 
 ## Components similar to Delphi VCL Buttons, Panels, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 4.4.1
+### Actual official version: 4.5.0
 
 ---
 ## Setup for Installation of Components
@@ -34,9 +34,9 @@ You can easily use them, as a replacement for the standard ones, as well as to p
 The main limitations of the buttons and components of the VCL are the shape and color, defined by the operating system.
 
 With **StyledComponents** you can overcome these limits in a simple way. You can:
-- Control the shape of the button
+- Control the shape of the button, the width of its border and the shadow below it
 - Control button and border color (without limits) for every button state.
-- Use "families" of predefined styles as in the WEB environment (e.g. Angular or Bootstrap)
+- Use "families" of predefined styles as in the WEB environment (e.g. Angular, Angular Material 3 or Bootstrap)
 - Adapt to the colors of the VCL styles, keeping the shape of the button consistent
 - The appearance is identical in “Windows” mode or by applying VCL styles to the application
 
@@ -50,7 +50,7 @@ using only few properties you can setup your Button in a very simple way.
 
 ### Color attributes:
 With three values, you can select predefined ready styles for button color, border and font color:
-- **StyleFamily**: the "Family" of a Style (eg.Classic or Bootstrap or Angular)
+- **StyleFamily**: the "Family" of a Style (eg. Classic, Bootstrap, Angular, Angular-M3, Basic-Colors or SVG-Colors)
 - **StyleClass**: a collection of predefined button style of the selected Family
 - **Style Appearance**: eg.Normal or Outline
 
@@ -63,6 +63,12 @@ With three values, you can select predefined ready styles for button color, bord
 
 - **StyleRoundedCorners**: used for RoundRect and Rounded DrawType
 - **StyleRadius**: used for btRoundRect DrawType
+
+### Border and shadow attributes:
+- **StyleBorderWidth**: the width of the border, the same in every state of the button and on any family (`-1` = the border of the chosen style, `0` = no border, greater than zero = that width in pixels, scaled with the DPI)
+- **StyleShadowSize**: a soft shadow below the button, drawn inside the area of the control (`-1` = the shadow of the chosen style, `0` = no shadow, greater than zero = that shadow in every state and on any family)
+
+Like the other style properties, both are available on all the buttons, on the toolbar, the navigators, the button group and the category buttons (which give them to their buttons and items), and the default border width of the new components can be set with `RegisterDefaultRenderingStyle`. The shadow is also available on TStyledPanel.
 
 _In this picture you can see the StyledComponentsDemo application with some examples:_
 
@@ -77,6 +83,7 @@ StyledComponents offers more options then standard components, such as:
 - Ability to change icon position and caption alignment in TStyledButtonGroup and TStyledCategoryButtons
 - Different appearance for buttons Items of TStyledToolbar, TStyledButtonGroup and TStyledCategoryButtons
 - Notification Badge for all StyledButtons
+- A Component Editor (right click on the component, "Styled Button Editor...") to choose Family, Class and Appearance with a preview of every style, and to set the shape, the border and the shadow
 - AutoClick event (after a Delayed time)
 - Animated icons using, TStyledAnimatedButton
 
@@ -87,15 +94,15 @@ Notice: by default the cursor for all Styled Buttons is crHandPoint.
 ## List of available Components:
 | Component | Description |
 | - | - |
-| ![TStyledGraphicButton](./Images/OK_GRAPH_BUTTON_128.png) | **TStyledGraphicButton** is a "pure" Graphic Button with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) with support of ImageList, Action and full configuration of five states: Normal, Pressed, Selected, Hot and Disabled. You can use it also into a TVirtualList component.|
-| ![TStyledButton](./Images/OK_BUTTON_128.png) | **TStyledButton** is classic "button control" with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) with support of ImageList, Action and full configuration of five states: Normal, Pressed, Selected, Hot and Disabled, plus Focus and TabStop support. You can easily replace all of your TButton components.|
+| ![TStyledGraphicButton](./Images/OK_GRAPH_BUTTON_128.png) | **TStyledGraphicButton** is a "pure" Graphic Button with Styles (eg. Classic, Bootstrap, Angular, Angular-M3, Basic-Color, SVG-Color) with support of ImageList, Action and full configuration of five states: Normal, Pressed, Selected, Hot and Disabled. You can use it also into a TVirtualList component.|
+| ![TStyledButton](./Images/OK_BUTTON_128.png) | **TStyledButton** is classic "button control" with Styles (eg. Classic, Bootstrap, Angular, Angular-M3, Basic-Color, SVG-Color) with support of ImageList, Action and full configuration of five states: Normal, Pressed, Selected, Hot and Disabled, plus Focus and TabStop support. You can easily replace all of your TButton components.|
 | ![TStyledToolbar](./Images/TOOL_BAR_128.png) | **TStyledToolbar** is a Toolbar that uses StyledToolButton, with full customizable of every button style and full control over the size of the buttons, also when Captions are visible. The width and height of the StyledToolButtons inside, do not depends on Caption size, as in classic TToolBar.|
-| ![TStyledDbNavigator](./Images/StyledDbNavigator_128.png) | **TStyledDbNavigator** is a special "DbNavigator" component, with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color), plus Button captions and better "move" icons in vertical mode. |
-| ![TStyledBindNavigator](./Images/StyledBindNavigator_128.png) | **TStyledBindNavigator** is a special "BindNavigator" component, with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color), plus Button captions and better "move" icons in vertical mode. |
-| ![TStyledButtonGroup](./Images/BUTTON_GROUP_128.png) | **TStyledButtonGroup** is a special "ButtonGroup" component with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) plus ImagePosition, CaptionAlignment and Flat properties, for adding more controls to the appearance of Buttons.|
-| ![TStyledCategoryButtons](./Images/CATEGORY_BUTTONS_128.png) | **TStyledCategoryButtons** is a special "CategoryButtons" component with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) plus ImagePosition, CaptionAlignment and Flat properties, for adding more controls to the appearance of Buttons.|
+| ![TStyledDbNavigator](./Images/StyledDbNavigator_128.png) | **TStyledDbNavigator** is a special "DbNavigator" component, with Styles (eg. Classic, Bootstrap, Angular, Angular-M3, Basic-Color, SVG-Color), plus Button captions and better "move" icons in vertical mode. |
+| ![TStyledBindNavigator](./Images/StyledBindNavigator_128.png) | **TStyledBindNavigator** is a special "BindNavigator" component, with Styles (eg. Classic, Bootstrap, Angular, Angular-M3, Basic-Color, SVG-Color), plus Button captions and better "move" icons in vertical mode. |
+| ![TStyledButtonGroup](./Images/BUTTON_GROUP_128.png) | **TStyledButtonGroup** is a special "ButtonGroup" component with Styles (eg. Classic, Bootstrap, Angular, Angular-M3, Basic-Color, SVG-Color) plus ImagePosition, CaptionAlignment and Flat properties, for adding more controls to the appearance of Buttons.|
+| ![TStyledCategoryButtons](./Images/CATEGORY_BUTTONS_128.png) | **TStyledCategoryButtons** is a special "CategoryButtons" component with Styles (eg. Classic, Bootstrap, Angular, Angular-M3, Basic-Color, SVG-Color) plus ImagePosition, CaptionAlignment and Flat properties, for adding more controls to the appearance of Buttons.|
 | ![TStyledTaskDialog](./Images/StyledTaskDialog_128.png) | **TStyledTaskDialog** is a special "TaskDialog" component (to replace MessageDlg and TaskDlg) with custom Button Captions and Icons. Using a special Form you can show a full customizable Dialog. Using Skia4Delpghi you can show animated dialogs!|
-| ![TStyledPanel](./Images/STYLED_PANEL_128.png) | **TStyledPanel** a styled container control based on TCustomPanel with support for Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color). It provides full control over background rendering with customizable shape (Rounded, RoundRect, Rect, Ellipse), colors and borders for Normal and Disabled states. Features include Caption alignment, customizable margins, and the ability to switch between styled and VCL rendering.|
+| ![TStyledPanel](./Images/STYLED_PANEL_128.png) | **TStyledPanel** a styled container control based on TCustomPanel with support for Styles (eg. Classic, Bootstrap, Angular, Angular-M3, Basic-Color, SVG-Color). It provides full control over background rendering with customizable shape (Rounded, RoundRect, Rect, Ellipse), colors and borders for Normal and Disabled states. Features include Caption alignment, customizable margins, and the ability to switch between styled and VCL rendering.|
 
 ---
 
@@ -141,7 +148,7 @@ To simplify use of the Styled Buttons and Panels, there is a useful "Component E
 ***List of available StyleFamily***
 - **Classic**: a collection of Styles similar to [VCLStyled TButton](https://docwiki.embarcadero.com/RADStudio/Athens/en/Tutorial:_Using_TControl.StyleElements_in_VCL_Applications)
 - **Bootstrap**: a collection of Styles similar to [Bootstrap buttons](https://getbootstrap.com/docs/4.0/components/buttons/)
-- **Angular-Light**: a collection of styles similar to the Material 2 [Angular buttons](https://material.angular.io/components/button/overview) (Flat, Raised, Basic, Stroked), light theme
+- **Angular-Light**: a collection of styles similar to the Material 2 [Angular buttons](https://v16.material.angular.dev/components/button/overview) (Flat, Raised, Basic, Stroked), light theme
 - **Angular-Dark**: the same Material 2 styles, dark theme
 - **Angular-M3-Light**: the buttons of the current Angular Material 3 (Text, Elevated, Outlined, Filled, Tonal), light colour scheme, as in the [Angular Material button page](https://material.angular.dev/components/button/overview)
 - **Angular-M3-Dark**: the same Angular Material 3 buttons, dark colour scheme
@@ -391,6 +398,12 @@ It also contains performance benchmarks (`StyledPerfTests`) that count heap allo
 Run `Test\run_tests.cmd [Win32|Win64] [Debug|Release]`: it builds the project and writes a NUnit XML report in `Test\Bin\<Platform>\<Config>`.
 
 ### RELEASE NOTES
+30 Oct 2026 - version 4.5.0
+- New: the property StyleBorderWidth, to change the width of the border of the buttons: -1 (default) = the border defined by the chosen style, 0 = no border, a value greater than zero = that width (in pixels at 100% scale, scaled with the DPI like the border of the style) in every state of the button (Normal, Hot, Pressed, Selected, Disabled) and on any family, also with AsVCLComponent. It is available on TStyledButton, TStyledBitBtn, TStyledSpeedButton, TStyledGraphicButton, TStyledAnimatedButton, TStyledToolbar (and its buttons), TStyledDbNavigator, TStyledBindNavigator, TStyledButtonGroup and TStyledCategoryButtons (also on every item); the value of a container is given to the buttons that still have the value of the container, like StyleRadius. The width also decides the margin of the text and of the image. It is saved in the form file only if different from -1; values below -1 raise an exception
+- New: the parameter AStyleBorderWidth (after AStyleRadius, default -1) of RegisterDefaultRenderingStyle of the buttons, toolbar, navigator, button group and category buttons: the border width given to the components created afterwards. Warning: the parameter is inserted before the cursor, so a call that passes the cursor as an argument by position must be updated
+- Component Editor: new Border Width trackbar (from -1 = the border of the style to 10) next to the radius, that changes the border of the button; it is not shown when editing a TStyledPanel
+- The test suite now has 131 tests
+
 19 Oct 2026 - version 4.4.1
 - Fixed TStyledTaskDialog without StyleFamily (a dialog shown with an empty button family, for example by the message routines of an application that never called InitializeStyledTaskDialogs with a family): the form lost its default Classic family and raised an error when it created the buttons of the custom items; now the Classic family is used, and DialogButtonsDrawType, DialogButtonsRadius and DialogButtonsRoundedCorners are applied to the buttons in this case too
 - New: the property DialogBtnFamily of TStyledTaskDialogForm, to change the family of the buttons of a dialog that is already open
@@ -898,3 +911,9 @@ StyledDialog:
 
 01 Nov 2022: version 0.9.0 (VCL)
 - First "beta" version
+
+## License
+
+Copyright (c) 2022-2026 Ethea S.r.l.
+
+Licensed under the [Apache License, Version 2.0](LICENSE) (the "License"): you may not use this software except in compliance with the License. Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.

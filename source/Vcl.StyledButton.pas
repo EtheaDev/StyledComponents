@@ -179,6 +179,7 @@ type
 
     FStyleRadius: Integer;
     FStyleShadowSize: Integer;
+    FStyleBorderWidth: Integer;
     FStyleRoundedCorners: TRoundedCorners;
     FStyleDrawType: TStyledButtonDrawType;
     FStyleFamily: TStyledButtonFamily;
@@ -253,6 +254,7 @@ type
     procedure SetImageMargins(const AValue: TImageMargins);
     procedure SetStyleRadius(const AValue: Integer);
     procedure SetStyleShadowSize(const AValue: Integer);
+    procedure SetStyleBorderWidth(const AValue: Integer);
     procedure SetStyleRoundedCorners(const AValue: TRoundedCorners);
     procedure SetStyleFamily(const AValue: TStyledButtonFamily);
     procedure SetStyleClass(const AValue: TStyledButtonClass);
@@ -358,6 +360,7 @@ type
     procedure UpdateAutoClickTimer(const AReset: Boolean);
     procedure AutoClickOnTimer(Sender: TObject);
     function CalcMaxBorderWidth: Integer;
+    function GetBorderWidthOf(const AAttributes: TStyledButtonAttributes): Integer;
     //Shadow: drawn inside the control, around the face
     function CalcMaxShadowSize: Integer;
     function GetShadowSizeOf(const AAttributes: TStyledButtonAttributes): Integer;
@@ -475,6 +478,8 @@ type
     function IsCustomRadius: Boolean;
     /// <summary>Checks if a custom shadow size has been set</summary>
     function IsCustomShadowSize: Boolean;
+    /// <summary>Checks if a custom border width has been set</summary>
+    function IsCustomBorderWidth: Boolean;
     /// <summary>Determines if StyleFamily should be stored</summary>
     function IsStoredStyleFamily: Boolean;
     /// <summary>Determines if StyleClass should be stored</summary>
@@ -702,6 +707,8 @@ type
     property StyleRadius: Integer read FStyleRadius write SetStyleRadius;
     /// <summary>Shadow around the button face in pixels (at 100% scale), the same in every state: -1 = the shadow of the style family, 0 = no shadow</summary>
     property StyleShadowSize: Integer read FStyleShadowSize write SetStyleShadowSize;
+    /// <summary>Border width in pixels (at 100% scale), the same in every state: -1 = the border of the style, 0 = no border</summary>
+    property StyleBorderWidth: Integer read FStyleBorderWidth write SetStyleBorderWidth;
     /// <summary>Which corners should be rounded</summary>
     property StyleRoundedCorners: TRoundedCorners read FStyleRoundedCorners write SetStyleRoundedCorners default ALL_ROUNDED_CORNERS;
     /// <summary>Shape type for button rendering</summary>
@@ -804,6 +811,7 @@ type
     _DefaultAppearance: TStyledButtonAppearance;
     _DefaultStyleRadius: Integer;
     _DefaultCursor: TCursor;
+    _DefaultStyleBorderWidth: Integer;
 
     //Event Handlers passed to Render
     procedure ControlFont(var AValue: TFont);
@@ -818,6 +826,9 @@ type
     function IsCustomShadowSize: Boolean;
     function GetStyleShadowSize: Integer;
     procedure SetStyleShadowSize(const AValue: Integer);
+    function IsCustomBorderWidth: Boolean;
+    function GetStyleBorderWidth: Integer;
+    procedure SetStyleBorderWidth(const AValue: Integer);
     function GetStyleRoundedCorners: TRoundedCorners;
     procedure SetStyleRoundedCorners(const AValue: TRoundedCorners);
     function ImageMarginsStored: Boolean;
@@ -985,6 +996,7 @@ type
     /// <param name="AClass">Default style class</param>
     /// <param name="AAppearance">Default style appearance</param>
     /// <param name="AStyleRadius">Default corner radius</param>
+    /// <param name="AStyleBorderWidth">Default StyleBorderWidth of the new buttons: -1 = the border of the style, 0 = no border, &gt; 0 = pixels at 100% scale. A value set on the single button replaces it</param>
     /// <param name="ACursor">Default cursor</param>
     class procedure RegisterDefaultRenderingStyle(
       const ADrawType: TStyledButtonDrawType;
@@ -992,6 +1004,7 @@ type
       const AClass: TStyledButtonClass = DEFAULT_WINDOWS_CLASS;
       const AAppearance: TStyledButtonAppearance = DEFAULT_APPEARANCE;
       const AStyleRadius: Integer = DEFAULT_RADIUS;
+      const AStyleBorderWidth: Integer = DEFAULT_BORDER_WIDTH;
       const ACursor: TCursor = DEFAULT_CURSOR); virtual;
     /// <summary>Gets whether button is being rescaled</summary>
     function GetRescalingButton: Boolean;
@@ -1103,6 +1116,7 @@ type
     //StyledComponents Attributes
     property StyleRadius: Integer read GetStyleRadius write SetStyleRadius stored IsCustomRadius default DEFAULT_RADIUS;
     property StyleShadowSize: Integer read GetStyleShadowSize write SetStyleShadowSize stored IsCustomShadowSize default DEFAULT_SHADOW_SIZE;
+    property StyleBorderWidth: Integer read GetStyleBorderWidth write SetStyleBorderWidth stored IsCustomBorderWidth default DEFAULT_BORDER_WIDTH;
     property StyleRoundedCorners: TRoundedCorners read GetStyleRoundedCorners write SetStyleRoundedCorners default ALL_ROUNDED_CORNERS;
     property StyleDrawType: TStyledButtonDrawType read GetStyleDrawType write SetStyleDrawType stored IsCustomDrawType;
     property StyleFamily: TStyledButtonFamily read GetStyleFamily write SetStyleFamily stored IsStoredStyleFamily;
@@ -1205,6 +1219,7 @@ type
     //StyledComponents Attributes
     property StyleRadius;
     property StyleShadowSize;
+    property StyleBorderWidth;
     property StyleRoundedCorners;
     property StyleDrawType;
     property StyleFamily;
@@ -1297,6 +1312,7 @@ type
     //StyledComponents Attributes
     property StyleRadius;
     property StyleShadowSize;
+    property StyleBorderWidth;
     property StyleRoundedCorners;
     property StyleDrawType;
     property StyleFamily;
@@ -1335,6 +1351,7 @@ type
     _DefaultAppearance: TStyledButtonAppearance;
     _DefaultStyleRadius: Integer;
     _DefaultCursor: TCursor;
+    _DefaultStyleBorderWidth: Integer;
 
     //Event Handlers passed to Render
     procedure ControlFont(var AValue: TFont);
@@ -1349,6 +1366,9 @@ type
     function IsCustomShadowSize: Boolean;
     function GetStyleShadowSize: Integer;
     procedure SetStyleShadowSize(const AValue: Integer);
+    function IsCustomBorderWidth: Boolean;
+    function GetStyleBorderWidth: Integer;
+    procedure SetStyleBorderWidth(const AValue: Integer);
     function GetStyleRoundedCorners: TRoundedCorners;
     procedure SetStyleRoundedCorners(const AValue: TRoundedCorners);
     function ImageMarginsStored: Boolean;
@@ -1540,6 +1560,7 @@ type
       const AClass: TStyledButtonClass = DEFAULT_WINDOWS_CLASS;
       const AAppearance: TStyledButtonAppearance = DEFAULT_APPEARANCE;
       const AStyleRadius: Integer = DEFAULT_RADIUS;
+      const AStyleBorderWidth: Integer = DEFAULT_BORDER_WIDTH;
       const ACursor: TCursor = DEFAULT_CURSOR); virtual;
     function GetRescalingButton: Boolean;
     procedure SetRescalingButton(const AValue: Boolean);
@@ -1643,6 +1664,7 @@ type
     //StyledComponents Attributes
     property StyleRadius: Integer read GetStyleRadius write SetStyleRadius stored IsCustomRadius default DEFAULT_RADIUS;
     property StyleShadowSize: Integer read GetStyleShadowSize write SetStyleShadowSize stored IsCustomShadowSize default DEFAULT_SHADOW_SIZE;
+    property StyleBorderWidth: Integer read GetStyleBorderWidth write SetStyleBorderWidth stored IsCustomBorderWidth default DEFAULT_BORDER_WIDTH;
     property StyleRoundedCorners: TRoundedCorners read GetStyleRoundedCorners write SetStyleRoundedCorners default ALL_ROUNDED_CORNERS;
     property StyleDrawType: TStyledButtonDrawType read GetStyleDrawType write SetStyleDrawType stored IsCustomDrawType;
     property StyleFamily: TStyledButtonFamily read GetStyleFamily write SetStyleFamily stored IsStoredStyleFamily;
@@ -1776,6 +1798,7 @@ type
     //StyledComponents Attributes
     property StyleRadius;
     property StyleShadowSize;
+    property StyleBorderWidth;
     property StyleRoundedCorners;
     property StyleDrawType;
     property StyleFamily;
@@ -1888,6 +1911,7 @@ type
     //StyledComponents Attributes
     property StyleRadius;
     property StyleShadowSize;
+    property StyleBorderWidth;
     property StyleRoundedCorners;
     property StyleDrawType;
     property StyleFamily;
@@ -1972,6 +1996,7 @@ begin
   ADest.FStyle := Self.FStyle;
   ADest.FStyleRadius := Self.FStyleRadius;
   ADest.FStyleShadowSize := Self.FStyleShadowSize;
+  ADest.FStyleBorderWidth := Self.FStyleBorderWidth;
   ADest.FStyleRoundedCorners := Self.FStyleRoundedCorners;
   ADest.FButtonStyleNormal.Assign(Self.FButtonStyleNormal);
   ADest.FButtonStylePressed.Assign(Self.FButtonStylePressed);
@@ -2306,6 +2331,7 @@ begin
   FCustomDrawType := AUseCustomDrawType;
   FStyleRadius := DEFAULT_RADIUS;
   FStyleShadowSize := DEFAULT_SHADOW_SIZE;
+  FStyleBorderWidth := DEFAULT_BORDER_WIDTH;
   FStyleRoundedCorners := ALL_ROUNDED_CORNERS;
   FStyleFamily := AFamily;
   FStyleAppearance := AAppearance;
@@ -2623,6 +2649,11 @@ begin
   Result := StyleShadowSize <> DEFAULT_SHADOW_SIZE;
 end;
 
+function TStyledButtonRender.IsCustomBorderWidth: Boolean;
+begin
+  Result := StyleBorderWidth <> DEFAULT_BORDER_WIDTH;
+end;
+
 function TStyledButtonRender.IsStoredStyleFamily: Boolean;
 begin
   Result := FStyleFamily <> DEFAULT_CLASSIC_FAMILY;
@@ -2934,11 +2965,11 @@ end;
 
 function TStyledButtonRender.CalcMaxBorderWidth: Integer;
 begin
-  Result := Max(Max(Max(Max(FButtonStyleNormal.BorderWidth,
-    FButtonStylePressed.BorderWidth),
-    FButtonStyleSelected.BorderWidth),
-    FButtonStyleHot.BorderWidth),
-    FButtonStyleDisabled.BorderWidth);
+  Result := Max(Max(Max(Max(GetBorderWidthOf(FButtonStyleNormal),
+    GetBorderWidthOf(FButtonStylePressed)),
+    GetBorderWidthOf(FButtonStyleSelected)),
+    GetBorderWidthOf(FButtonStyleHot)),
+    GetBorderWidthOf(FButtonStyleDisabled));
 end;
 
 function TStyledButtonRender.CalcMaxShadowSize: Integer;
@@ -3306,7 +3337,10 @@ begin
   //Getting drawing styles
   Result := GetAttributes(AButtonState);
   ACanvas.Pen.Style := Result.PenStyle;
-  ACanvas.Pen.Width := Round(Result.BorderWidth{$IFDEF D10_3+}*FOwnerControl.ScaleFactor{$ENDIF});
+  ACanvas.Pen.Width := Round(GetBorderWidthOf(Result){$IFDEF D10_3+}*FOwnerControl.ScaleFactor{$ENDIF});
+  //no border: a custom width of 0 draws no pen at all
+  if (FStyleBorderWidth = 0) and (Result.PenStyle <> psClear) then
+    ACanvas.Pen.Style := psClear;
   ACanvas.Pen.Color := Result.BorderColor;
   ACanvas.Brush.Style := Result.BrushStyle;
   if Result.ButtonDrawStyle <> btnClear then
@@ -3948,6 +3982,27 @@ begin
   end;
 end;
 
+procedure TStyledButtonRender.SetStyleBorderWidth(const AValue: Integer);
+begin
+  if FStyleBorderWidth <> AValue then
+  begin
+    if AValue < DEFAULT_BORDER_WIDTH then
+      raise EReadError.create(SInvalidProperty);
+    FStyleBorderWidth := AValue;
+    Invalidate;
+  end;
+end;
+
+function TStyledButtonRender.GetBorderWidthOf(
+  const AAttributes: TStyledButtonAttributes): Integer;
+begin
+  //StyleBorderWidth overrides the border of the style in every state
+  if FStyleBorderWidth >= 0 then
+    Result := FStyleBorderWidth
+  else
+    Result := AAttributes.BorderWidth;
+end;
+
 function TStyledButtonRender.GetShadowSizeOf(
   const AAttributes: TStyledButtonAttributes): Integer;
 begin
@@ -4550,6 +4605,7 @@ begin
       GetParentFont, SetParentFont,
       AFamily, AClass, AAppearance,
       _DefaultStyleDrawType, _DefaultCursor, _UseCustomDrawType);
+  FRender.StyleBorderWidth := _DefaultStyleBorderWidth;
 end;
 
 constructor TCustomStyledGraphicButton.Create(AOwner: TComponent);
@@ -4677,6 +4733,11 @@ begin
   Result := FRender.IsCustomShadowSize;
 end;
 
+function TCustomStyledGraphicButton.IsCustomBorderWidth: Boolean;
+begin
+  Result := FRender.IsCustomBorderWidth;
+end;
+
 function TCustomStyledGraphicButton.IsStoredStyleFamily: Boolean;
 begin
   Result := FRender.IsStoredStyleFamily;
@@ -4775,8 +4836,11 @@ end;
 class procedure TCustomStyledGraphicButton.RegisterDefaultRenderingStyle(
   const ADrawType: TStyledButtonDrawType; const AFamily: TStyledButtonFamily;
   const AClass: TStyledButtonClass; const AAppearance: TStyledButtonAppearance;
-  const AStyleRadius: Integer; const ACursor: TCursor);
+  const AStyleRadius: Integer; const AStyleBorderWidth: Integer;
+  const ACursor: TCursor);
 begin
+  if AStyleBorderWidth < DEFAULT_BORDER_WIDTH then
+    raise EArgumentException.Create(SInvalidProperty);
   _DefaultStyleDrawType := ADrawType;
   _UseCustomDrawType := True;
   _DefaultFamily := AFamily;
@@ -4784,6 +4848,7 @@ begin
   _DefaultAppearance := AAppearance;
   _DefaultStyleRadius := AStyleRadius;
   _DefaultCursor := ACursor;
+  _DefaultStyleBorderWidth := AStyleBorderWidth;
 end;
 
 function TCustomStyledGraphicButton.GetRenderClass: TStyledButtonRenderClass;
@@ -5179,6 +5244,11 @@ begin
   Result := FRender.StyleShadowSize;
 end;
 
+function TCustomStyledGraphicButton.GetStyleBorderWidth: Integer;
+begin
+  Result := FRender.StyleBorderWidth;
+end;
+
 function TCustomStyledGraphicButton.GetStyleRoundedCorners: TRoundedCorners;
 begin
   Result := FRender.StyleRoundedCorners;
@@ -5192,6 +5262,11 @@ end;
 procedure TCustomStyledGraphicButton.SetStyleShadowSize(const AValue: Integer);
 begin
   FRender.StyleShadowSize := AValue;
+end;
+
+procedure TCustomStyledGraphicButton.SetStyleBorderWidth(const AValue: Integer);
+begin
+  FRender.StyleBorderWidth := AValue;
 end;
 
 procedure TCustomStyledGraphicButton.SetStyleRoundedCorners(
@@ -5746,6 +5821,7 @@ begin
       GetParentFont, SetParentFont,
       AFamily, AClass, AAppearance,
       _DefaultStyleDrawType, _DefaultCursor, _UseCustomDrawType);
+  FRender.StyleBorderWidth := _DefaultStyleBorderWidth;
   TabStop := True;
 end;
 
@@ -5890,6 +5966,11 @@ end;
 function TCustomStyledButton.IsCustomShadowSize: Boolean;
 begin
   Result := FRender.IsCustomShadowSize;
+end;
+
+function TCustomStyledButton.IsCustomBorderWidth: Boolean;
+begin
+  Result := FRender.IsCustomBorderWidth;
 end;
 
 function TCustomStyledButton.IsStoredStyleFamily: Boolean;
@@ -6439,6 +6520,11 @@ begin
   Result := FRender.StyleShadowSize;
 end;
 
+function TCustomStyledButton.GetStyleBorderWidth: Integer;
+begin
+  Result := FRender.StyleBorderWidth;
+end;
+
 function TCustomStyledButton.GetStyleRoundedCorners: TRoundedCorners;
 begin
   Result := FRender.StyleRoundedCorners;
@@ -6452,6 +6538,11 @@ end;
 procedure TCustomStyledButton.SetStyleShadowSize(const AValue: Integer);
 begin
   FRender.StyleShadowSize := AValue;
+end;
+
+procedure TCustomStyledButton.SetStyleBorderWidth(const AValue: Integer);
+begin
+  FRender.StyleBorderWidth := AValue;
 end;
 
 procedure TCustomStyledButton.SetStyleRoundedCorners(
@@ -6707,8 +6798,11 @@ end;
 class procedure TCustomStyledButton.RegisterDefaultRenderingStyle(
   const ADrawType: TStyledButtonDrawType; const AFamily: TStyledButtonFamily;
   const AClass: TStyledButtonClass; const AAppearance: TStyledButtonAppearance;
-  const AStyleRadius: Integer; const ACursor: TCursor);
+  const AStyleRadius: Integer; const AStyleBorderWidth: Integer;
+  const ACursor: TCursor);
 begin
+  if AStyleBorderWidth < DEFAULT_BORDER_WIDTH then
+    raise EArgumentException.Create(SInvalidProperty);
   _DefaultStyleDrawType := ADrawType;
   _UseCustomDrawType := True;
   _DefaultFamily := AFamily;
@@ -6716,6 +6810,7 @@ begin
   _DefaultAppearance := AAppearance;
   _DefaultStyleRadius := AStyleRadius;
   _DefaultCursor := ACursor;
+  _DefaultStyleBorderWidth := AStyleBorderWidth;
 end;
 
 procedure TCustomStyledButton.ReleasePaintBuffer;
@@ -6979,6 +7074,7 @@ initialization
   TCustomStyledGraphicButton._DefaultAppearance := DEFAULT_APPEARANCE;
   TCustomStyledGraphicButton._DefaultStyleRadius := DEFAULT_RADIUS;
   TCustomStyledGraphicButton._DefaultCursor := DEFAULT_CURSOR;
+  TCustomStyledGraphicButton._DefaultStyleBorderWidth := DEFAULT_BORDER_WIDTH;
 
   TCustomStyledButton._DefaultStyleDrawType := DEFAULT_STYLEDRAWTYPE;
   TCustomStyledButton._DefaultFamily := DEFAULT_CLASSIC_FAMILY;
@@ -6986,5 +7082,6 @@ initialization
   TCustomStyledButton._DefaultAppearance := DEFAULT_APPEARANCE;
   TCustomStyledButton._DefaultStyleRadius := DEFAULT_RADIUS;
   TCustomStyledButton._DefaultCursor := DEFAULT_CURSOR;
+  TCustomStyledButton._DefaultStyleBorderWidth := DEFAULT_BORDER_WIDTH;
 
 end.
