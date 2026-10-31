@@ -138,6 +138,8 @@ type
     FDialogBtnDrawType: TStyledButtonDrawType;
     FDialogBtnRadius: Integer;
     FDialogBtnRoundedCorners: TRoundedCorners;
+    FDialogBtnShadowSize: Integer;
+    FDialogBtnBorderWidth: Integer;
     FCommonButtons: TTaskDialogCommonButtons;
     FDefaultButton: TTaskDialogCommonButton;
     FUseMessageDefaultButton: Boolean;
@@ -1170,6 +1172,8 @@ begin
       LStyledButton.StyleDrawType := FDialogBtnDrawType;
       LStyledButton.StyleRadius := FDialogBtnRadius;
       LStyledButton.StyleRoundedCorners := FDialogBtnRoundedCorners;
+      LStyledButton.StyleShadowSize := FDialogBtnShadowSize;
+      LStyledButton.StyleBorderWidth := FDialogBtnBorderWidth;
     end
     else
     begin
@@ -1432,6 +1436,8 @@ begin
   FDialogBtnDrawType := btRoundRect;
   FDialogBtnRadius := DEFAULT_RADIUS;
   FDialogBtnRoundedCorners := ALL_ROUNDED_CORNERS;
+  FDialogBtnShadowSize := DEFAULT_SHADOW_SIZE;
+  FDialogBtnBorderWidth := DEFAULT_BORDER_WIDTH;
 end;
 
 procedure TStyledTaskDialogForm.DefaultDialogSize(out AClientWidth, AClientHeight, AImageSize: Integer);
@@ -1783,6 +1789,8 @@ procedure TStyledTaskDialogForm.InitDlgButtonsWithFamily(const AFamily: TStyledB
       AButton.StyleDrawType := FDialogBtnDrawType;
       AButton.StyleRadius := FDialogBtnRadius;
       AButton.StyleRoundedCorners := FDialogBtnRoundedCorners;
+      AButton.StyleShadowSize := FDialogBtnShadowSize;
+      AButton.StyleBorderWidth := FDialogBtnBorderWidth;
     end;
   end;
 
@@ -2002,6 +2010,8 @@ begin
     LForm.FDialogBtnDrawType := ATaskDialog.DialogButtonsDrawType;
     LForm.FDialogBtnRadius := ATaskDialog.DialogButtonsRadius;
     LForm.FDialogBtnRoundedCorners := ATaskDialog.DialogButtonsRoundedCorners;
+    LForm.FDialogBtnShadowSize := ATaskDialog.DialogButtonsShadowSize;
+    LForm.FDialogBtnBorderWidth := ATaskDialog.DialogButtonsBorderWidth;
     LForm.FButtonsWidth := ATaskDialog.ButtonsWidth;
     LForm.FButtonsHeight := ATaskDialog.ButtonsHeight;
     LForm.FAutoClickDelay := ATaskDialog.AutoClickDelay;

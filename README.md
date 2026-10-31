@@ -9,7 +9,7 @@
 
 ## Components similar to Delphi VCL Buttons, Panels, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 4.5.0
+### Actual official version: 4.5.1
 
 ---
 ## Setup for Installation of Components
@@ -398,6 +398,13 @@ It also contains performance benchmarks (`StyledPerfTests`) that count heap allo
 Run `Test\run_tests.cmd [Win32|Win64] [Debug|Release]`: it builds the project and writes a NUnit XML report in `Test\Bin\<Platform>\<Config>`.
 
 ### RELEASE NOTES
+1 Nov 2026 - version 4.5.1
+- New: the properties DialogButtonsBorderWidth and DialogButtonsShadowSize of TStyledTaskDialog (-1 = the border/shadow of the style, 0 = none, a value greater than zero = that border/shadow in every state): they are given to all the buttons of the dialog (also the ones of the custom items and the command links), like StyleBorderWidth and StyleShadowSize of TStyledButton. They are saved in the form file only if different from the registered default, and a value below -1 raises an exception
+- New: the parameters AShadowSize and ABorderWidth (default -1) at the end of TStyledTaskDialog.RegisterDefaultRenderingStyle, to register the default border and shadow of the buttons of all the dialogs created afterwards; the existing calls are not affected
+- Fixed the items of TStyledButtonGroup and TStyledCategoryButtons loaded from the form file with a style of their own: they now start from the border width registered with RegisterDefaultRenderingStyle (as the radius), instead of -1
+- Fixed StyleBorderWidth and StyleShadowSize of the items of TStyledButtonGroup and TStyledCategoryButtons: a value below -1 now raises an exception, as for the components
+- The test suite now has 137 tests
+
 30 Oct 2026 - version 4.5.0
 - New: the property StyleBorderWidth, to change the width of the border of the buttons: -1 (default) = the border defined by the chosen style, 0 = no border, a value greater than zero = that width (in pixels at 100% scale, scaled with the DPI like the border of the style) in every state of the button (Normal, Hot, Pressed, Selected, Disabled) and on any family, also with AsVCLComponent. It is available on TStyledButton, TStyledBitBtn, TStyledSpeedButton, TStyledGraphicButton, TStyledAnimatedButton, TStyledToolbar (and its buttons), TStyledDbNavigator, TStyledBindNavigator, TStyledButtonGroup and TStyledCategoryButtons (also on every item); the value of a container is given to the buttons that still have the value of the container, like StyleRadius. The width also decides the margin of the text and of the image. It is saved in the form file only if different from -1; values below -1 raise an exception
 - New: the parameter AStyleBorderWidth (after AStyleRadius, default -1) of RegisterDefaultRenderingStyle of the buttons, toolbar, navigator, button group and category buttons: the border width given to the components created afterwards. Warning: the parameter is inserted before the cursor, so a call that passes the cursor as an argument by position must be updated

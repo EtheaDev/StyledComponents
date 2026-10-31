@@ -166,6 +166,9 @@ type
     /// <summary>Panel: the client area of the children excludes the shadow.</summary>
     [Test]
     procedure Panel_ChildrenStayInsideTheFace;
+    /// <summary>The items of group and category buttons refuse a shadow below -1, like the components.</summary>
+    [Test]
+    procedure Items_RefuseAShadowBelowTheDefault;
   end;
 
   [TestFixture]
@@ -186,6 +189,12 @@ type
     /// <summary>RegisterDefaultRenderingStyle gives the registered border width to the new containers.</summary>
     [Test]
     procedure RegisteredDefault_AppliesToNewContainers;
+    /// <summary>An item loaded with a style of its own starts from the registered default border width.</summary>
+    [Test]
+    procedure RegisteredDefault_AppliesToItemsCreatedWhileLoading;
+    /// <summary>The items refuse a border width below -1, like the containers.</summary>
+    [Test]
+    procedure Items_RefuseAWidthBelowTheDefault;
   end;
 
   [TestFixture]
@@ -753,6 +762,22 @@ begin
   end;
 end;
 
+//Streams ASource into ADest: a group needs a parent window to read its items,
+//so the destination is created (ownerless: the parent frees it) and parented by the caller
+procedure StreamInto(const ASource, ADest: TComponent);
+var
+  LStream: TMemoryStream;
+begin
+  LStream := TMemoryStream.Create;
+  try
+    LStream.WriteComponent(ASource);
+    LStream.Position := 0;
+    LStream.ReadComponent(ADest);
+  finally
+    LStream.Free;
+  end;
+end;
+
 //True when at least one pixel is different
 function BitmapsDiffer(const A, B: TBitmap): Boolean;
 var
@@ -766,6 +791,86 @@ begin
 end;
 
 { TStyleBorderWidthContainerTests }
+
+procedure TStyleBorderWidthContainerTests.RegisteredDefault_AppliesToItemsCreatedWhileLoading;
+var
+  LForm: TForm;
+  LGroup, LGroupCopy: TStyledButtonGroup;
+  LCategoryButtons, LCategoryCopy: TStyledCategoryButtons;
+begin
+  LForm := TStyledTestUtils.HostForm;
+  try
+    TStyledButtonGroup.RegisterDefaultRenderingStyle(DEFAULT_STYLEDRAWTYPE, DEFAULT_CLASSIC_FAMILY,
+      DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE, DEFAULT_RADIUS, 3, DEFAULT_CURSOR);
+    TStyledCategoryButtons.RegisterDefaultRenderingStyle(DEFAULT_STYLEDRAWTYPE, DEFAULT_CLASSIC_FAMILY,
+      DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE, DEFAULT_RADIUS, 3, DEFAULT_CURSOR);
+    try
+      //the items have a style of their own: while loading they do not copy the container
+      LGroup := TStyledButtonGroup.Create(LForm);
+      LGroup.Parent := LForm;
+      (LGroup.Items.Add as TStyledGrpButtonItem).StyleFamily := BOOTSTRAP_FAMILY;
+      LGroupCopy := TStyledButtonGroup.Create(nil);
+      LGroupCopy.Parent := LForm;
+      StreamInto(LGroup, LGroupCopy);
+      Assert.AreEqual(3, LGroupCopy.StyleBorderWidth, 'group');
+      Assert.AreEqual(3, (LGroupCopy.Items[0] as TStyledGrpButtonItem).StyleBorderWidth, 'group item');
+
+      LCategoryButtons := TStyledCategoryButtons.Create(LForm);
+      LCategoryButtons.Parent := LForm;
+      (LCategoryButtons.Categories.Add.Items.Add as TStyledButtonItem).StyleFamily := BOOTSTRAP_FAMILY;
+      LCategoryCopy := TStyledCategoryButtons.Create(nil);
+      LCategoryCopy.Parent := LForm;
+      StreamInto(LCategoryButtons, LCategoryCopy);
+      Assert.AreEqual(3, LCategoryCopy.StyleBorderWidth, 'category buttons');
+      Assert.AreEqual(3, (LCategoryCopy.Categories[0].Items[0] as TStyledButtonItem).StyleBorderWidth, 'category item');
+    finally
+      TStyledButtonGroup.RegisterDefaultRenderingStyle(DEFAULT_STYLEDRAWTYPE, DEFAULT_CLASSIC_FAMILY,
+        DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE, DEFAULT_RADIUS, DEFAULT_BORDER_WIDTH, DEFAULT_CURSOR);
+      TStyledCategoryButtons.RegisterDefaultRenderingStyle(DEFAULT_STYLEDRAWTYPE, DEFAULT_CLASSIC_FAMILY,
+        DEFAULT_WINDOWS_CLASS, DEFAULT_APPEARANCE, DEFAULT_RADIUS, DEFAULT_BORDER_WIDTH, DEFAULT_CURSOR);
+    end;
+  finally
+    LForm.Free;
+  end;
+end;
+
+procedure TStyleBorderWidthContainerTests.Items_RefuseAWidthBelowTheDefault;
+var
+  LForm: TForm;
+  LGroup: TStyledButtonGroup;
+  LCategoryButtons: TStyledCategoryButtons;
+  LGroupItem: TStyledGrpButtonItem;
+  LCategoryItem: TStyledButtonItem;
+  LGroupRaised, LCategoryRaised: Boolean;
+begin
+  LForm := TStyledTestUtils.HostForm;
+  try
+    LGroup := TStyledButtonGroup.Create(LForm);
+    LGroup.Parent := LForm;
+    LGroupItem := LGroup.Items.Add as TStyledGrpButtonItem;
+    LCategoryButtons := TStyledCategoryButtons.Create(LForm);
+    LCategoryButtons.Parent := LForm;
+    LCategoryItem := LCategoryButtons.Categories.Add.Items.Add as TStyledButtonItem;
+    LGroupRaised := False;
+    LCategoryRaised := False;
+    try
+      LGroupItem.StyleBorderWidth := -5;
+    except
+      on EReadError do LGroupRaised := True;
+    end;
+    try
+      LCategoryItem.StyleBorderWidth := -5;
+    except
+      on EReadError do LCategoryRaised := True;
+    end;
+    Assert.IsTrue(LGroupRaised, 'group item');
+    Assert.IsTrue(LCategoryRaised, 'category item');
+    Assert.AreEqual(DEFAULT_BORDER_WIDTH, LGroupItem.StyleBorderWidth, 'the group item keeps its value');
+    Assert.AreEqual(DEFAULT_BORDER_WIDTH, LCategoryItem.StyleBorderWidth, 'the category item keeps its value');
+  finally
+    LForm.Free;
+  end;
+end;
 
 procedure TStyleBorderWidthContainerTests.RegisteredDefault_AppliesToNewContainers;
 var
@@ -1084,6 +1189,44 @@ begin
       LPlain.Free;
     end;
     Assert.IsTrue(Pos('StyleShadowSize = 4', TStyledTestUtils.DfmText(LCategoryButtons)) > 0, 'stored');
+  finally
+    LForm.Free;
+  end;
+end;
+
+procedure TStyleShadowSizeTests.Items_RefuseAShadowBelowTheDefault;
+var
+  LForm: TForm;
+  LGroup: TStyledButtonGroup;
+  LCategoryButtons: TStyledCategoryButtons;
+  LGroupItem: TStyledGrpButtonItem;
+  LCategoryItem: TStyledButtonItem;
+  LGroupRaised, LCategoryRaised: Boolean;
+begin
+  LForm := TStyledTestUtils.HostForm;
+  try
+    LGroup := TStyledButtonGroup.Create(LForm);
+    LGroup.Parent := LForm;
+    LGroupItem := LGroup.Items.Add as TStyledGrpButtonItem;
+    LCategoryButtons := TStyledCategoryButtons.Create(LForm);
+    LCategoryButtons.Parent := LForm;
+    LCategoryItem := LCategoryButtons.Categories.Add.Items.Add as TStyledButtonItem;
+    LGroupRaised := False;
+    LCategoryRaised := False;
+    try
+      LGroupItem.StyleShadowSize := -5;
+    except
+      on EReadError do LGroupRaised := True;
+    end;
+    try
+      LCategoryItem.StyleShadowSize := -5;
+    except
+      on EReadError do LCategoryRaised := True;
+    end;
+    Assert.IsTrue(LGroupRaised, 'group item');
+    Assert.IsTrue(LCategoryRaised, 'category item');
+    Assert.AreEqual(DEFAULT_SHADOW_SIZE, LGroupItem.StyleShadowSize, 'the group item keeps its value');
+    Assert.AreEqual(DEFAULT_SHADOW_SIZE, LCategoryItem.StyleShadowSize, 'the category item keeps its value');
   finally
     LForm.Free;
   end;

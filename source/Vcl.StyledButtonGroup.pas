@@ -1602,7 +1602,7 @@ begin
   FStyleDrawType := TStyledButtonGroup._DefaultStyleDrawType;
   FStyleRadius := TStyledButtonGroup._DefaultStyleRadius;
   FStyleShadowSize := DEFAULT_SHADOW_SIZE;
-  FStyleBorderWidth := DEFAULT_BORDER_WIDTH;
+  FStyleBorderWidth := TStyledButtonGroup._DefaultStyleBorderWidth;
   FStyleRoundedCorners := ALL_ROUNDED_CORNERS;
   LoadDefaultStyles;
 end;
@@ -1754,6 +1754,8 @@ end;
 
 procedure TStyledGrpButtonItem.SetStyleShadowSize(const AValue: Integer);
 begin
+  if AValue < DEFAULT_SHADOW_SIZE then
+    raise EReadError.Create(SInvalidProperty);
   if FStyleShadowSize <> AValue then
   begin
     FStyleShadowSize := AValue;
@@ -1764,6 +1766,8 @@ end;
 
 procedure TStyledGrpButtonItem.SetStyleBorderWidth(const AValue: Integer);
 begin
+  if AValue < DEFAULT_BORDER_WIDTH then
+    raise EReadError.Create(SInvalidProperty);
   if FStyleBorderWidth <> AValue then
   begin
     FStyleBorderWidth := AValue;

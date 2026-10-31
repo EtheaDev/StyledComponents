@@ -1654,7 +1654,7 @@ begin
   FStyleDrawType := TStyledCategoryButtons._DefaultStyleDrawType;
   FStyleRadius := TStyledCategoryButtons._DefaultStyleRadius;
   FStyleShadowSize := DEFAULT_SHADOW_SIZE;
-  FStyleBorderWidth := DEFAULT_BORDER_WIDTH;
+  FStyleBorderWidth := TStyledCategoryButtons._DefaultStyleBorderWidth;
   FStyleRoundedCorners := ALL_ROUNDED_CORNERS;
   LoadDefaultStyles;
 end;
@@ -1803,6 +1803,8 @@ end;
 
 procedure TStyledButtonItem.SetStyleShadowSize(const AValue: Integer);
 begin
+  if AValue < DEFAULT_SHADOW_SIZE then
+    raise EReadError.Create(SInvalidProperty);
   if FStyleShadowSize <> AValue then
   begin
     FStyleShadowSize := AValue;
@@ -1813,6 +1815,8 @@ end;
 
 procedure TStyledButtonItem.SetStyleBorderWidth(const AValue: Integer);
 begin
+  if AValue < DEFAULT_BORDER_WIDTH then
+    raise EReadError.Create(SInvalidProperty);
   if FStyleBorderWidth <> AValue then
   begin
     FStyleBorderWidth := AValue;

@@ -84,6 +84,20 @@ type
   end;
 
   [TestFixture]
+  TStyledTaskDialogButtonsBorderTests = class
+  public
+    /// <summary>DialogButtonsBorderWidth and DialogButtonsShadowSize reach every button of the dialog.</summary>
+    [Test]
+    procedure DialogButtonsBorderAndShadow_AreAppliedToTheButtons;
+    /// <summary>The values registered with RegisterDefaultRenderingStyle are the ones of new dialogs, and are not stored.</summary>
+    [Test]
+    procedure RegisteredDefaults_AreTheOnesOfNewDialogs;
+    /// <summary>Values below -1 are refused, like StyleBorderWidth and StyleShadowSize.</summary>
+    [Test]
+    procedure ValuesBelowTheDefault_AreRefused;
+  end;
+
+  [TestFixture]
   TStyledTaskDialogAutoClickDelayTests = class
   public
     /// <summary>
@@ -116,6 +130,8 @@ type
     Found: Boolean;
     ButtonFamily: TStyledButtonFamily;
     CustomButtonFamily: TStyledButtonFamily;
+    ButtonBorderWidth, ButtonShadowSize: Integer;
+    CustomBorderWidth, CustomShadowSize: Integer;
     procedure OnTimer(Sender: TObject);
   end;
 
@@ -151,11 +167,17 @@ begin
       LForm := TStyledTaskDialogForm(Screen.Forms[I]);
       Found := True;
       ButtonFamily := LForm.OKButton.StyleFamily;
+      ButtonBorderWidth := LForm.OKButton.StyleBorderWidth;
+      ButtonShadowSize := LForm.OKButton.StyleShadowSize;
       // the button created by the form for the custom item of the dialog
       for J := 0 to LForm.ComponentCount - 1 do
         if (LForm.Components[J] is TStyledButton) and
           (TStyledButton(LForm.Components[J]).Caption = 'Custom') then
+        begin
           CustomButtonFamily := TStyledButton(LForm.Components[J]).StyleFamily;
+          CustomBorderWidth := TStyledButton(LForm.Components[J]).StyleBorderWidth;
+          CustomShadowSize := TStyledButton(LForm.Components[J]).StyleShadowSize;
+        end;
       LForm.ModalResult := mrOk;
       Break;
     end;
@@ -398,6 +420,108 @@ begin
   end;
 end;
 
+{ TStyledTaskDialogButtonsBorderTests }
+
+procedure TStyledTaskDialogButtonsBorderTests.DialogButtonsBorderAndShadow_AreAppliedToTheButtons;
+var
+  LProbe: TFamilyProbe;
+  LDialog: TStyledTaskDialog;
+  LLauncher: TTaskDialogLauncherHandler;
+begin
+  LProbe := TFamilyProbe.Create;
+  LDialog := TStyledTaskDialog.Create(nil);
+  LLauncher := TTaskDialogLauncherHandler.Create;
+  try
+    LProbe.Timer := TTimer.Create(nil);
+    LProbe.Timer.Interval := 200;
+    LProbe.Timer.OnTimer := LProbe.OnTimer;
+    LProbe.Timer.Enabled := True;
+    LDialog.Title := 'Border test';
+    LDialog.Text := 'Buttons with their own border and shadow';
+    LDialog.CommonButtons := [tcbOk];
+    (LDialog.Buttons.Add as TTaskDialogButtonItem).Caption := 'Custom';
+    LDialog.DialogButtonsBorderWidth := 4;
+    LDialog.DialogButtonsShadowSize := 3;
+    LLauncher.DoExecute(0, TMsgDlgType.mtInformation, LDialog, '');
+    Assert.IsTrue(LProbe.Found, 'the styled dialog form was shown');
+    Assert.AreEqual(4, LProbe.ButtonBorderWidth, 'border width of the OK button');
+    Assert.AreEqual(3, LProbe.ButtonShadowSize, 'shadow of the OK button');
+    Assert.AreEqual(4, LProbe.CustomBorderWidth, 'border width of the custom button');
+    Assert.AreEqual(3, LProbe.CustomShadowSize, 'shadow of the custom button');
+  finally
+    LProbe.Timer.Free;
+    LDialog.Free;
+    LProbe.Free;
+  end;
+end;
+
+procedure TStyledTaskDialogButtonsBorderTests.RegisteredDefaults_AreTheOnesOfNewDialogs;
+var
+  LDialog: TStyledTaskDialog;
+begin
+  TStyledTaskDialog.RegisterDefaultRenderingStyle(btRoundRect, DEFAULT_CLASSIC_FAMILY,
+    DEFAULT_RADIUS, ALL_ROUNDED_CORNERS, 2, 5);
+  try
+    LDialog := TStyledTaskDialog.Create(nil);
+    try
+      Assert.AreEqual(2, LDialog.DialogButtonsShadowSize, 'shadow');
+      Assert.AreEqual(5, LDialog.DialogButtonsBorderWidth, 'border width');
+    finally
+      LDialog.Free;
+    end;
+  finally
+    TStyledTaskDialog.RegisterDefaultRenderingStyle(btRoundRect, DEFAULT_CLASSIC_FAMILY,
+      DEFAULT_RADIUS, ALL_ROUNDED_CORNERS, DEFAULT_SHADOW_SIZE, DEFAULT_BORDER_WIDTH);
+  end;
+  LDialog := TStyledTaskDialog.Create(nil);
+  try
+    Assert.AreEqual(DEFAULT_SHADOW_SIZE, LDialog.DialogButtonsShadowSize, 'shadow restored');
+    Assert.AreEqual(DEFAULT_BORDER_WIDTH, LDialog.DialogButtonsBorderWidth, 'border width restored');
+    Assert.IsTrue(Pos('DialogButtonsBorderWidth', TStyledTestUtils.DfmText(LDialog)) = 0, 'the default is not stored');
+    Assert.IsTrue(Pos('DialogButtonsShadowSize', TStyledTestUtils.DfmText(LDialog)) = 0, 'the default is not stored');
+    LDialog.DialogButtonsBorderWidth := 3;
+    LDialog.DialogButtonsShadowSize := 1;
+    Assert.IsTrue(Pos('DialogButtonsBorderWidth = 3', TStyledTestUtils.DfmText(LDialog)) > 0, 'stored when different');
+    Assert.IsTrue(Pos('DialogButtonsShadowSize = 1', TStyledTestUtils.DfmText(LDialog)) > 0, 'stored when different');
+  finally
+    LDialog.Free;
+  end;
+end;
+
+procedure TStyledTaskDialogButtonsBorderTests.ValuesBelowTheDefault_AreRefused;
+var
+  LDialog: TStyledTaskDialog;
+  LBorderRaised, LShadowRaised, LRegisterRaised: Boolean;
+begin
+  LDialog := TStyledTaskDialog.Create(nil);
+  try
+    LBorderRaised := False;
+    LShadowRaised := False;
+    LRegisterRaised := False;
+    try
+      LDialog.DialogButtonsBorderWidth := -2;
+    except
+      on EReadError do LBorderRaised := True;
+    end;
+    try
+      LDialog.DialogButtonsShadowSize := -2;
+    except
+      on EReadError do LShadowRaised := True;
+    end;
+    try
+      TStyledTaskDialog.RegisterDefaultRenderingStyle(btRoundRect, DEFAULT_CLASSIC_FAMILY,
+        DEFAULT_RADIUS, ALL_ROUNDED_CORNERS, -2, DEFAULT_BORDER_WIDTH);
+    except
+      on EArgumentException do LRegisterRaised := True;
+    end;
+    Assert.IsTrue(LBorderRaised, 'DialogButtonsBorderWidth');
+    Assert.IsTrue(LShadowRaised, 'DialogButtonsShadowSize');
+    Assert.IsTrue(LRegisterRaised, 'RegisterDefaultRenderingStyle');
+  finally
+    LDialog.Free;
+  end;
+end;
+
 { TStyledTaskDialogAutoClickDelayTests }
 
 procedure TStyledTaskDialogAutoClickDelayTests.MessageDlgUnderTheDelay_AnswersItself;
@@ -458,6 +582,7 @@ initialization
   TDUnitX.RegisterTestFixture(TStyledTaskDialogLifetimeTests);
   TDUnitX.RegisterTestFixture(TStyledTaskDialogRadioTests);
   TDUnitX.RegisterTestFixture(TStyledTaskDialogFamilyTests);
+  TDUnitX.RegisterTestFixture(TStyledTaskDialogButtonsBorderTests);
   TDUnitX.RegisterTestFixture(TStyledTaskDialogAutoClickDelayTests);
 
 end.

@@ -115,6 +115,8 @@ type
     _DefaultButtonsDrawType: TStyledButtonDrawType;
     _DefaultButtonsRadius: Integer;
     _DefaultButtonsRoundedCorners: TRoundedCorners;
+    _DefaultButtonsShadowSize: Integer;
+    _DefaultButtonsBorderWidth: Integer;
   private
     FHelpFile: string;
     FParentWnd: HWND;
@@ -124,6 +126,8 @@ type
     FDialogButtonsDrawType: TStyledButtonDrawType;
     FDialogButtonsRadius: Integer;
     FDialogButtonsRoundedCorners: TRoundedCorners;
+    FDialogButtonsShadowSize: Integer;
+    FDialogButtonsBorderWidth: Integer;
     FUseTitleInMessageDlg: Boolean;
     FAlphaBlendValue: Byte;
     FButtonsWidth: Integer;
@@ -142,6 +146,10 @@ type
     function IsStoredDrawType: Boolean;
     function IsStoredRadius: Boolean;
     function IsStoredRoundedCorners: Boolean;
+    function IsStoredShadowSize: Boolean;
+    function IsStoredBorderWidth: Boolean;
+    procedure SetDialogButtonsShadowSize(const AValue: Integer);
+    procedure SetDialogButtonsBorderWidth(const AValue: Integer);
     procedure SetAutoClick(const AValue: Boolean);
     procedure SetAutoClickDelay(const AValue: Integer);
     procedure SetAlphaBlendValue(const AValue: Byte);
@@ -190,11 +198,15 @@ type
     /// <param name="AFamily">The style family for buttons (default: DEFAULT_CLASSIC_FAMILY)</param>
     /// <param name="ARadius">The corner radius in pixels (default: DEFAULT_RADIUS)</param>
     /// <param name="ARoundedCorners">Which corners to round (default: ALL_ROUNDED_CORNERS)</param>
+    /// <param name="AShadowSize">Shadow below the buttons: -1 = the one of the style (default: DEFAULT_SHADOW_SIZE), 0 = none, greater than zero = pixels</param>
+    /// <param name="ABorderWidth">Border width of the buttons: -1 = the one of the style (default: DEFAULT_BORDER_WIDTH), 0 = none, greater than zero = pixels</param>
     class procedure RegisterDefaultRenderingStyle(
       const ADrawType: TStyledButtonDrawType;
       const AFamily: TStyledButtonFamily = DEFAULT_CLASSIC_FAMILY;
       const ARadius: Integer = DEFAULT_RADIUS;
-      const ARoundedCorners: TRoundedCorners = ALL_ROUNDED_CORNERS); virtual;
+      const ARoundedCorners: TRoundedCorners = ALL_ROUNDED_CORNERS;
+      const AShadowSize: Integer = DEFAULT_SHADOW_SIZE;
+      const ABorderWidth: Integer = DEFAULT_BORDER_WIDTH); virtual;
     /// <summary>The default button determined from message dialog type</summary>
     property MessageDefaultButton: TMsgDlgBtn read FMessageDefaultButton;
     /// <summary>Indicates if MessageDefaultButton should be used</summary>
@@ -218,6 +230,10 @@ type
     property DialogButtonsRadius: Integer read FDialogButtonsRadius write FDialogButtonsRadius stored IsStoredRadius;
     /// <summary>Specifies which corners of dialog buttons should be rounded</summary>
     property DialogButtonsRoundedCorners: TRoundedCorners read FDialogButtonsRoundedCorners write FDialogButtonsRoundedCorners stored IsStoredRoundedCorners;
+    /// <summary>Shadow below the dialog buttons in pixels (-1 = the one of the style, 0 = none)</summary>
+    property DialogButtonsShadowSize: Integer read FDialogButtonsShadowSize write SetDialogButtonsShadowSize stored IsStoredShadowSize;
+    /// <summary>Border width of the dialog buttons in pixels (-1 = the one of the style, 0 = none)</summary>
+    property DialogButtonsBorderWidth: Integer read FDialogButtonsBorderWidth write SetDialogButtonsBorderWidth stored IsStoredBorderWidth;
     /// <summary>When True, displays buttons as command links with descriptions</summary>
     property UseCommandLinks: Boolean read GetUseCommandLinks write SetUseCommandLinks default False;
     /// <summary>Enables Lottie animations for dialog icons (requires Skia4Delphi)</summary>
@@ -1045,6 +1061,8 @@ begin
   FDialogButtonsDrawType := _DefaultButtonsDrawType;
   FDialogButtonsRadius := _DefaultButtonsRadius;
   FDialogButtonsRoundedCorners := _DefaultButtonsRoundedCorners;
+  FDialogButtonsShadowSize := _DefaultButtonsShadowSize;
+  FDialogButtonsBorderWidth := _DefaultButtonsBorderWidth;
   UseCommandLinks := _UseCommandLinks;
   FUseTitleInMessageDlg := _UseTitleInMessageDlg;
   AlphaBlendValue := _AlphaBlendValue;
@@ -1180,16 +1198,46 @@ begin
   Result := FDialogButtonsRoundedCorners <> _DefaultButtonsRoundedCorners;
 end;
 
+function TStyledTaskDialog.IsStoredShadowSize: Boolean;
+begin
+  Result := FDialogButtonsShadowSize <> _DefaultButtonsShadowSize;
+end;
+
+function TStyledTaskDialog.IsStoredBorderWidth: Boolean;
+begin
+  Result := FDialogButtonsBorderWidth <> _DefaultButtonsBorderWidth;
+end;
+
+procedure TStyledTaskDialog.SetDialogButtonsShadowSize(const AValue: Integer);
+begin
+  if AValue < DEFAULT_SHADOW_SIZE then
+    raise EReadError.Create(SInvalidProperty);
+  FDialogButtonsShadowSize := AValue;
+end;
+
+procedure TStyledTaskDialog.SetDialogButtonsBorderWidth(const AValue: Integer);
+begin
+  if AValue < DEFAULT_BORDER_WIDTH then
+    raise EReadError.Create(SInvalidProperty);
+  FDialogButtonsBorderWidth := AValue;
+end;
+
 class procedure TStyledTaskDialog.RegisterDefaultRenderingStyle(
   const ADrawType: TStyledButtonDrawType;
   const AFamily: TStyledButtonFamily;
   const ARadius: Integer;
-  const ARoundedCorners: TRoundedCorners);
+  const ARoundedCorners: TRoundedCorners;
+  const AShadowSize: Integer;
+  const ABorderWidth: Integer);
 begin
+  if (AShadowSize < DEFAULT_SHADOW_SIZE) or (ABorderWidth < DEFAULT_BORDER_WIDTH) then
+    raise EArgumentException.Create(SInvalidProperty);
   _DefaultButtonsFamily := AFamily;
   _DefaultButtonsDrawType := ADrawType;
   _DefaultButtonsRadius := ARadius;
   _DefaultButtonsRoundedCorners := ARoundedCorners;
+  _DefaultButtonsShadowSize := AShadowSize;
+  _DefaultButtonsBorderWidth := ABorderWidth;
 end;
 
 procedure TStyledTaskDialog.SetAlphaBlendValue(const AValue: Byte);
@@ -1334,6 +1382,8 @@ initialization
   TStyledTaskDialog._DefaultButtonsDrawType := btRoundRect;
   TStyledTaskDialog._DefaultButtonsRadius := DEFAULT_RADIUS;
   TStyledTaskDialog._DefaultButtonsRoundedCorners := ALL_ROUNDED_CORNERS;
+  TStyledTaskDialog._DefaultButtonsShadowSize := DEFAULT_SHADOW_SIZE;
+  TStyledTaskDialog._DefaultButtonsBorderWidth := DEFAULT_BORDER_WIDTH;
   RegisterTaskDialogFormClass(TStyledTaskDialogStd);
 
 finalization
