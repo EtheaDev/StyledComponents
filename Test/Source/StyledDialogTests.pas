@@ -1,4 +1,4 @@
-/// <summary>
+﻿/// <summary>
 ///  StyledTaskDialog and the message hooks. No modal dialog is ever shown here.
 /// </summary>
 unit StyledDialogTests;
@@ -8,6 +8,10 @@ interface
 uses
   System.SysUtils,
   System.Classes,
+  Winapi.Windows,
+  Winapi.CommCtrl,
+  Vcl.Graphics,
+  Vcl.Themes,
   Vcl.Controls,
   Vcl.Forms,
   Vcl.ExtCtrls,
@@ -98,6 +102,38 @@ type
   end;
 
   [TestFixture]
+  TStyledTaskDialogTextBlinkTests = class
+  public
+    /// <summary>With TextBlink the text of the dialog is painted in the blink colour in one phase and not in the other.</summary>
+    [Test]
+    procedure Text_BlinksBetweenTheTwoColours;
+    /// <summary>The same under a VCL style, whose style hook forces the colour of the SysLink text.</summary>
+    [Test]
+    procedure Text_BlinksUnderAVclStyle;
+    /// <summary>With TextBlinkLinks the links take the blink colour too: their custom colours are on in the blink phase only.</summary>
+    [Test]
+    procedure Links_BlinkWithTheText_WhenAsked;
+    /// <summary>TextBlinkLinks is True by default.</summary>
+    [Test]
+    procedure TextBlinkLinks_IsTrueByDefault;
+    /// <summary>With TextBlinkLinks False the links keep the colours of the system: the state of the link never changes.</summary>
+    [Test]
+    procedure Links_KeepTheirColours_WhenSwitchedOff;
+    /// <summary>Without TextBlink the blink colour is never painted.</summary>
+    [Test]
+    procedure WithoutTextBlink_TheBlinkColourIsNeverPainted;
+    /// <summary>The message dialogs blink under SetDialogTextBlink, and not after the previous setting is restored.</summary>
+    [Test]
+    procedure MessageDlg_BlinksUnderTheDefault;
+    /// <summary>The defaults of SetDialogTextBlink are the ones of every new dialog.</summary>
+    [Test]
+    procedure Defaults_AreTheOnesOfNewDialogs;
+    /// <summary>An interval below the minimum (two blinks a second at most) is raised to it.</summary>
+    [Test]
+    procedure IntervalBelowTheMinimum_IsRaised;
+  end;
+
+  [TestFixture]
   TStyledTaskDialogAutoClickDelayTests = class
   public
     /// <summary>
@@ -135,6 +171,23 @@ type
     procedure OnTimer(Sender: TObject);
   end;
 
+  /// <summary>
+  ///  Samples the text colour of the shown dialog: the answer of the text label to
+  ///  WM_CTLCOLORSTATIC, which is what a SysLink paints its text with (clRed is the
+  ///  blink colour of the tests).
+  /// </summary>
+  TBlinkProbe = class
+  public
+    Timer: TTimer;
+    Samples: Integer;
+    SeenBlinking: Boolean;
+    SeenNormal: Boolean;
+    //state of the first link of the text: with or without LIS_DEFAULTCOLORS
+    SeenLinkWithCustomColours: Boolean;
+    SeenLinkWithDefaultColours: Boolean;
+    procedure OnTimer(Sender: TObject);
+  end;
+
   /// <summary>Destroys the form that launched the dialog while it is modal, then closes it.</summary>
   TOwnerKiller = class
   public
@@ -152,6 +205,52 @@ type
     Count: Integer;
     procedure Clicked(Sender: TObject);
   end;
+
+procedure TBlinkProbe.OnTimer(Sender: TObject);
+const
+  MAX_SAMPLES = 24; //70 ms each: enough to see both phases at the minimum interval
+var
+  I: Integer;
+  LForm: TStyledTaskDialogForm;
+  LDC: HDC;
+  LItem: TLItem;
+begin
+  Inc(Samples);
+  for I := 0 to Screen.FormCount - 1 do
+    if Screen.Forms[I] is TStyledTaskDialogForm then
+    begin
+      LForm := TStyledTaskDialogForm(Screen.Forms[I]);
+      //The SysLink paints the text with the colour of the reply to WM_CTLCOLORSTATIC,
+      //not with Font.Color: ask the same question to the label and read the answer
+      LDC := CreateCompatibleDC(0);
+      try
+        LForm.TextLabel.Perform(CN_CTLCOLORSTATIC, WPARAM(LDC), LPARAM(LForm.TextLabel.Handle));
+        if GetTextColor(LDC) = COLORREF(ColorToRGB(clRed)) then
+          SeenBlinking := True
+        else
+          SeenNormal := True;
+      finally
+        DeleteDC(LDC);
+      end;
+      FillChar(LItem, SizeOf(LItem), 0);
+      LItem.mask := LIF_ITEMINDEX or LIF_STATE;
+      LItem.iLink := 0;
+      LItem.stateMask := LIS_DEFAULTCOLORS;
+      if LForm.TextLabel.Perform(LM_GETITEM, 0, LPARAM(@LItem)) <> 0 then
+      begin
+        if (LItem.state and LIS_DEFAULTCOLORS) = 0 then
+          SeenLinkWithCustomColours := True
+        else
+          SeenLinkWithDefaultColours := True;
+      end;
+      if Samples >= MAX_SAMPLES then
+      begin
+        Timer.Enabled := False;
+        LForm.ModalResult := mrOk;
+      end;
+      Break;
+    end;
+end;
 
 procedure TFamilyProbe.OnTimer(Sender: TObject);
 var
@@ -522,6 +621,237 @@ begin
   end;
 end;
 
+{ TStyledTaskDialogTextBlinkTests }
+
+//Shows a dialog with the text blinking (or not) and returns what the probe saw
+procedure ShowAndSample(const ABlink: Boolean; const AProbe: TBlinkProbe;
+  const ALinks: Boolean = True);
+var
+  LDialog: TStyledTaskDialog;
+  LLauncher: TTaskDialogLauncherHandler;
+begin
+  LDialog := TStyledTaskDialog.Create(nil);
+  LLauncher := TTaskDialogLauncherHandler.Create;
+  try
+    AProbe.Timer := TTimer.Create(nil);
+    try
+      AProbe.Timer.Interval := 70;
+      AProbe.Timer.OnTimer := AProbe.OnTimer;
+      AProbe.Timer.Enabled := True;
+      LDialog.Title := 'Blink test';
+      LDialog.Text := 'A text that blinks: <a href="https://ethea.it">a link</a> WWWWWWWWWWWWWWWWWWWW';
+      LDialog.CommonButtons := [tcbOk];
+      LDialog.TextBlink := ABlink;
+      LDialog.TextBlinkLinks := ALinks;
+      LDialog.TextBlinkColor := clRed;
+      LDialog.TextBlinkInterval := MIN_TEXTBLINK_INTERVAL;
+      LLauncher.DoExecute(0, TMsgDlgType.mtInformation, LDialog, '');
+    finally
+      AProbe.Timer.Free;
+    end;
+  finally
+    LDialog.Free;
+  end;
+end;
+
+procedure TStyledTaskDialogTextBlinkTests.Text_BlinksBetweenTheTwoColours;
+var
+  LProbe: TBlinkProbe;
+begin
+  LProbe := TBlinkProbe.Create;
+  try
+    ShowAndSample(True, LProbe);
+    Assert.IsTrue(LProbe.SeenBlinking, 'the text was painted in the blink colour');
+    Assert.IsTrue(LProbe.SeenNormal, 'the text was painted without it in the other phase');
+  finally
+    LProbe.Free;
+  end;
+end;
+
+procedure TStyledTaskDialogTextBlinkTests.Text_BlinksUnderAVclStyle;
+const
+  STYLE_NAME = 'Carbon';
+var
+  LStyleFile: string;
+  LProbe: TBlinkProbe;
+begin
+  LStyleFile := IncludeTrailingPathDelimiter(GetEnvironmentVariable('BDS')) +
+    'Redist\styles\vcl\' + STYLE_NAME + '.vsf';
+  if not FileExists(LStyleFile) then
+    LStyleFile := 'C:\BDS\Studio\37.0\Redist\styles\vcl\' + STYLE_NAME + '.vsf';
+  if not FileExists(LStyleFile) then
+    Assert.Pass(STYLE_NAME + '.vsf not found: VCL style test skipped');
+  if TStyleManager.Style[STYLE_NAME] = nil then
+    TStyleManager.LoadFromFile(LStyleFile);
+  Assert.IsTrue(TStyleManager.TrySetStyle(STYLE_NAME, False), 'TrySetStyle ' + STYLE_NAME);
+  try
+    LProbe := TBlinkProbe.Create;
+    try
+      ShowAndSample(True, LProbe);
+      Assert.IsTrue(LProbe.SeenBlinking, 'the text was painted in the blink colour under ' + STYLE_NAME);
+      Assert.IsTrue(LProbe.SeenNormal, 'and without it in the other phase');
+    finally
+      LProbe.Free;
+    end;
+  finally
+    TStyleManager.SetStyle(TStyleManager.SystemStyle);
+  end;
+end;
+
+procedure TStyledTaskDialogTextBlinkTests.Links_BlinkWithTheText_WhenAsked;
+var
+  LProbe: TBlinkProbe;
+begin
+  LProbe := TBlinkProbe.Create;
+  try
+    ShowAndSample(True, LProbe);
+    Assert.IsTrue(LProbe.SeenLinkWithCustomColours, 'the link used the colour of the text in the blink phase');
+    Assert.IsTrue(LProbe.SeenLinkWithDefaultColours, 'and its own colours in the other phase');
+  finally
+    LProbe.Free;
+  end;
+end;
+
+procedure TStyledTaskDialogTextBlinkTests.TextBlinkLinks_IsTrueByDefault;
+var
+  LDialog: TStyledTaskDialog;
+begin
+  LDialog := TStyledTaskDialog.Create(nil);
+  try
+    Assert.IsTrue(LDialog.TextBlinkLinks);
+  finally
+    LDialog.Free;
+  end;
+end;
+
+procedure TStyledTaskDialogTextBlinkTests.Links_KeepTheirColours_WhenSwitchedOff;
+var
+  LProbe: TBlinkProbe;
+begin
+  LProbe := TBlinkProbe.Create;
+  try
+    ShowAndSample(True, LProbe, False);
+    Assert.IsTrue(LProbe.SeenBlinking, 'the text blinked');
+    Assert.IsFalse(LProbe.SeenLinkWithCustomColours and LProbe.SeenLinkWithDefaultColours,
+      'the state of the link never changed');
+  finally
+    LProbe.Free;
+  end;
+end;
+
+procedure TStyledTaskDialogTextBlinkTests.WithoutTextBlink_TheBlinkColourIsNeverPainted;
+var
+  LProbe: TBlinkProbe;
+begin
+  LProbe := TBlinkProbe.Create;
+  try
+    ShowAndSample(False, LProbe);
+    Assert.IsFalse(LProbe.SeenBlinking, 'the blink colour was never painted');
+    Assert.IsTrue(LProbe.SeenNormal, 'the dialog was sampled');
+  finally
+    LProbe.Free;
+  end;
+end;
+
+procedure TStyledTaskDialogTextBlinkTests.MessageDlg_BlinksUnderTheDefault;
+var
+  LProbe: TBlinkProbe;
+  LPreviousBlink: Boolean;
+  LPreviousColor: TColor;
+  LPreviousInterval: Integer;
+begin
+  LPreviousBlink := GetDialogTextBlink;
+  LPreviousColor := GetDialogTextBlinkColor;
+  LPreviousInterval := GetDialogTextBlinkInterval;
+  LProbe := TBlinkProbe.Create;
+  try
+    LProbe.Timer := TTimer.Create(nil);
+    try
+      LProbe.Timer.Interval := 70;
+      LProbe.Timer.OnTimer := LProbe.OnTimer;
+      SetDialogTextBlink(True, clRed, MIN_TEXTBLINK_INTERVAL);
+      LProbe.Timer.Enabled := True;
+      StyledTaskMessageDlg('Blink test', 'A message that blinks: WWWWWWWWWWWWWWWWWWWW',
+        TMsgDlgType.mtInformation, [TMsgDlgBtn.mbOK], 0);
+    finally
+      SetDialogTextBlink(LPreviousBlink, LPreviousColor, LPreviousInterval);
+      LProbe.Timer.Free;
+    end;
+    Assert.IsTrue(LProbe.SeenBlinking, 'the message blinked');
+    Assert.IsTrue(LProbe.SeenNormal, 'in both phases');
+  finally
+    LProbe.Free;
+  end;
+  Assert.AreEqual(LPreviousBlink, GetDialogTextBlink, 'the previous setting is restored');
+  Assert.AreEqual(LPreviousInterval, GetDialogTextBlinkInterval, 'the previous interval is restored');
+end;
+
+procedure TStyledTaskDialogTextBlinkTests.Defaults_AreTheOnesOfNewDialogs;
+var
+  LDialog: TStyledTaskDialog;
+  LPreviousBlink: Boolean;
+  LPreviousColor: TColor;
+  LPreviousInterval: Integer;
+begin
+  LDialog := TStyledTaskDialog.Create(nil);
+  try
+    Assert.IsFalse(LDialog.TextBlink, 'off by default');
+    Assert.AreEqual(Integer(DEFAULT_TEXTBLINK_COLOR), Integer(LDialog.TextBlinkColor), 'default colour');
+    Assert.AreEqual(DEFAULT_TEXTBLINK_INTERVAL, LDialog.TextBlinkInterval, 'default interval');
+    Assert.IsTrue(Pos('TextBlink', TStyledTestUtils.DfmText(LDialog)) = 0, 'the defaults are not stored');
+  finally
+    LDialog.Free;
+  end;
+  LPreviousBlink := GetDialogTextBlink;
+  LPreviousColor := GetDialogTextBlinkColor;
+  LPreviousInterval := GetDialogTextBlinkInterval;
+  SetDialogTextBlink(True, clLime, 400);
+  try
+    LDialog := TStyledTaskDialog.Create(nil);
+    try
+      Assert.IsTrue(LDialog.TextBlink, 'blink');
+      Assert.AreEqual(Integer(clLime), Integer(LDialog.TextBlinkColor), 'colour');
+      Assert.AreEqual(400, LDialog.TextBlinkInterval, 'interval');
+    finally
+      LDialog.Free;
+    end;
+  finally
+    SetDialogTextBlink(LPreviousBlink, LPreviousColor, LPreviousInterval);
+  end;
+  Assert.AreEqual(LPreviousBlink, GetDialogTextBlink, 'restored');
+end;
+
+procedure TStyledTaskDialogTextBlinkTests.IntervalBelowTheMinimum_IsRaised;
+var
+  LDialog: TStyledTaskDialog;
+  LPreviousBlink: Boolean;
+  LPreviousColor: TColor;
+  LPreviousInterval: Integer;
+begin
+  LDialog := TStyledTaskDialog.Create(nil);
+  try
+    LDialog.TextBlinkInterval := 10;
+    Assert.AreEqual(MIN_TEXTBLINK_INTERVAL, LDialog.TextBlinkInterval, 'through the property');
+  finally
+    LDialog.Free;
+  end;
+  LPreviousBlink := GetDialogTextBlink;
+  LPreviousColor := GetDialogTextBlinkColor;
+  LPreviousInterval := GetDialogTextBlinkInterval;
+  SetDialogTextBlink(True, clRed, 10);
+  try
+    Assert.AreEqual(MIN_TEXTBLINK_INTERVAL, GetDialogTextBlinkInterval, 'through SetDialogTextBlink');
+    LDialog := TStyledTaskDialog.Create(nil);
+    try
+      Assert.AreEqual(MIN_TEXTBLINK_INTERVAL, LDialog.TextBlinkInterval, 'new dialogs');
+    finally
+      LDialog.Free;
+    end;
+  finally
+    SetDialogTextBlink(LPreviousBlink, LPreviousColor, LPreviousInterval);
+  end;
+end;
+
 { TStyledTaskDialogAutoClickDelayTests }
 
 procedure TStyledTaskDialogAutoClickDelayTests.MessageDlgUnderTheDelay_AnswersItself;
@@ -583,6 +913,7 @@ initialization
   TDUnitX.RegisterTestFixture(TStyledTaskDialogRadioTests);
   TDUnitX.RegisterTestFixture(TStyledTaskDialogFamilyTests);
   TDUnitX.RegisterTestFixture(TStyledTaskDialogButtonsBorderTests);
+  TDUnitX.RegisterTestFixture(TStyledTaskDialogTextBlinkTests);
   TDUnitX.RegisterTestFixture(TStyledTaskDialogAutoClickDelayTests);
 
 end.

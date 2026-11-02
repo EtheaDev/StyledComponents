@@ -153,6 +153,13 @@ type
     FRadioButtons: TTaskDialogButtons;
     FAutoClick: Boolean;
     FAutoClickDelay: Integer;
+    FTextBlink: Boolean;
+    FTextBlinkColor: TColor;
+    FTextBlinkInterval: Integer;
+    FTextBlinkLinks: Boolean;
+    FTextBlinkOn: Boolean;
+    FTextBlinkTimer: TTimer;
+    FTextLabelWndProc: TWndMethod;
     FRadioButton: TTaskDialogRadioButtonItem;
     FProgressBar: TTaskDialogProgressBar;
     FFlags: TTaskDialogFlags;
@@ -181,6 +188,12 @@ type
     procedure AdjustWidth;
     procedure AdjustControlsTopPos;
     procedure AdjustButtonsCaption;
+    procedure StartTextBlink;
+    procedure StopTextBlink;
+    procedure SetTextBlinkPhase(const AOn: Boolean);
+    procedure SetTextBlinkLinksColours(const AOn: Boolean);
+    procedure TextBlinkTimerEvent(Sender: TObject);
+    procedure TextLabelWndProc(var Message: TMessage);
     procedure SetButtons(const AValue: TTaskDialogButtons);
     procedure PlayMessageDlgSound;
     procedure FocusDefaultButton;
@@ -1479,9 +1492,82 @@ begin
   TextLabel.Caption := '';
 end;
 
+procedure TStyledTaskDialogForm.StartTextBlink;
+begin
+  if Assigned(FTextBlinkTimer) then
+    Exit;
+  //TextLabel is a TLinkLabel (SysLink): it paints the text with the colour of the reply to
+  //WM_CTLCOLORSTATIC, which the VCL (or the style hook under a VCL style) decides, so
+  //Font.Color has no effect: the reply is overridden in the blink phase
+  FTextLabelWndProc := TextLabel.WindowProc;
+  TextLabel.WindowProc := TextLabelWndProc;
+  FTextBlinkOn := False;
+  if FTextBlinkLinks then
+    SetTextBlinkLinksColours(False);
+  FTextBlinkTimer := TTimer.Create(Self);
+  FTextBlinkTimer.Interval := FTextBlinkInterval;
+  FTextBlinkTimer.OnTimer := TextBlinkTimerEvent;
+  FTextBlinkTimer.Enabled := True;
+end;
+
+procedure TStyledTaskDialogForm.StopTextBlink;
+begin
+  if Assigned(FTextBlinkTimer) then
+  begin
+    FreeAndNil(FTextBlinkTimer);
+    TextLabel.WindowProc := FTextLabelWndProc;
+    SetTextBlinkPhase(False);
+  end;
+end;
+
+procedure TStyledTaskDialogForm.SetTextBlinkLinksColours(const AOn: Boolean);
+var
+  LItem: TLItem;
+  I: Integer;
+begin
+  if not TextLabel.HandleAllocated then
+    Exit;
+  //The links of the SysLink use the colours of the system, not the colour of the reply to
+  //WM_CTLCOLORSTATIC, unless LIS_DEFAULTCOLORS is off: it is off in the blink phase only
+  for I := 0 to 63 do
+  begin
+    FillChar(LItem, SizeOf(LItem), 0);
+    LItem.mask := LIF_ITEMINDEX or LIF_STATE;
+    LItem.iLink := I;
+    LItem.stateMask := LIS_DEFAULTCOLORS;
+    if not AOn then
+      LItem.state := LIS_DEFAULTCOLORS;
+    //the call fails when there is no link with that index
+    if TextLabel.Perform(LM_SETITEM, 0, LPARAM(@LItem)) = 0 then
+      Break;
+  end;
+end;
+
+procedure TStyledTaskDialogForm.SetTextBlinkPhase(const AOn: Boolean);
+begin
+  FTextBlinkOn := AOn;
+  if FTextBlinkLinks then
+    SetTextBlinkLinksColours(AOn);
+  if TextLabel.HandleAllocated then
+    TextLabel.Invalidate;
+end;
+
+procedure TStyledTaskDialogForm.TextBlinkTimerEvent(Sender: TObject);
+begin
+  SetTextBlinkPhase(not FTextBlinkOn);
+end;
+
+procedure TStyledTaskDialogForm.TextLabelWndProc(var Message: TMessage);
+begin
+  FTextLabelWndProc(Message);
+  if FTextBlinkOn and (Message.Msg = CN_CTLCOLORSTATIC) then
+    SetTextColor(TWMCtlColorStatic(Message).ChildDC, ColorToRGB(FTextBlinkColor));
+end;
+
 procedure TStyledTaskDialogForm.FormDestroy(Sender: TObject);
 begin
   inherited;
+  StopTextBlink;
   FCustomIcons[mtWarning].Free;
   FCustomIcons[mtError].Free;
   FCustomIcons[mtInformation].Free;
@@ -1644,6 +1730,8 @@ begin
     end;
     AdjustButtonsCaption;
     ShowDialogForm;
+    if FTextBlink then
+      StartTextBlink;
     AdjustWidth;
     AutoSizeLabel.AutoSize := True;
     //Enlarge form when the message is very long
@@ -2016,6 +2104,10 @@ begin
     LForm.FButtonsHeight := ATaskDialog.ButtonsHeight;
     LForm.FAutoClickDelay := ATaskDialog.AutoClickDelay;
     LForm.FAutoClick := ATaskDialog.AutoClick;
+    LForm.FTextBlink := ATaskDialog.TextBlink;
+    LForm.FTextBlinkColor := ATaskDialog.TextBlinkColor;
+    LForm.FTextBlinkInterval := ATaskDialog.TextBlinkInterval;
+    LForm.FTextBlinkLinks := ATaskDialog.TextBlinkLinks;
     LFont := GetDialogFont;
     LForm.AlphaBlendValue := ATaskDialog.AlphaBlendValue;
     LForm.AlphaBlend := LForm.AlphaBlendValue <> DEFAULT_STYLEDDIALOG_ALPHABLEND;

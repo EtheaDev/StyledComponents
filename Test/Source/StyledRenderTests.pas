@@ -21,6 +21,7 @@ uses
   Vcl.Forms,
   Vcl.Controls,
   Vcl.AngularButtonStyles,
+  Vcl.BootstrapButtonStyles,
   Vcl.StyledButton,
   StyledTestUtils;
 
@@ -139,6 +140,31 @@ type
     /// <summary>The registered default applies to new buttons, also AsVCLComponent ones; the button value wins.</summary>
     [Test]
     procedure RegisteredDefault_AppliesToNewButtons;
+  end;
+
+  [TestFixture]
+  TTransparentCaptionTests = class
+  public
+    /// <summary>
+    ///  A Transparent button does not draw its face in the Normal state: the caption is
+    ///  drawn on the parent, so it must contrast with the parent even when the font of
+    ///  the style was chosen to contrast with the face (white on a dark face).
+    /// </summary>
+    [Test]
+    [TestCase('BootstrapPrimaryOnWhite', 'Bootstrap,Primary,Normal,16777215')]
+    [TestCase('BootstrapLightOnBlack', 'Bootstrap,Light,Normal,0')]
+    [TestCase('ClassicOnBlack', 'Classic,Windows,Normal,0')]
+    procedure Caption_ContrastsWithTheParent(const AFamily, AClass, AAppearance: string;
+      const AParentColor: Integer);
+    /// <summary>A font that already contrasts with the parent is kept as the style defines it.</summary>
+    [Test]
+    procedure ReadableFont_IsKept;
+    /// <summary>A disabled Transparent button keeps its faded caption: it must not look enabled.</summary>
+    [Test]
+    [TestCase('ClassicOnWhite', 'Classic,Windows,Normal,16777215')]
+    [TestCase('BootstrapPrimaryOutlineOnWhite', 'Bootstrap,Primary,Outline,16777215')]
+    procedure DisabledCaption_StaysFaded(const AFamily, AClass, AAppearance: string;
+      const AParentColor: Integer);
   end;
 
   [TestFixture]
@@ -1017,11 +1043,106 @@ begin
   end;
 end;
 
+{ TTransparentCaptionTests }
+
+//The pixel of the caption farthest from the parent colour (sum of the RGB distances)
+//and the darkest one (sum of RGB), of a Transparent windowed button on a parent of that colour
+procedure CaptionExtremes(const AFamily, AClass, AAppearance: string;
+  const AParentColor: TColor; const AEnabled: Boolean;
+  out AFarthest, ADarkest: Integer; out ADarkestColor: TColor);
+var
+  LForm: TForm;
+  LButton: TStyledButton;
+  LBitmap: Vcl.Graphics.TBitmap;
+  LBack, LColor: TColor;
+  X, Y, LDistance, LSum: Integer;
+begin
+  LForm := TStyledTestUtils.HostForm;
+  try
+    LForm.Color := AParentColor;
+    LButton := TStyledButton.CreateStyled(LForm, AFamily, AClass, AAppearance);
+    LButton.Parent := LForm;
+    LButton.StyleDrawType := btRect;
+    LButton.Render.Transparent := True;
+    LButton.Caption := 'MMMMMMMM';
+    LButton.SetBounds(0, 0, 140, 40);
+    LButton.Enabled := AEnabled;
+    LBitmap := TStyledTestUtils.PaintWinControl(LButton, AParentColor);
+    try
+      LBack := ColorToRGB(AParentColor);
+      AFarthest := 0;
+      ADarkest := 3 * 255 + 1;
+      ADarkestColor := LBack;
+      //inside the border: only the caption can be there
+      for Y := 6 to LBitmap.Height - 7 do
+        for X := 6 to LBitmap.Width - 7 do
+        begin
+          LColor := ColorToRGB(TStyledTestUtils.PixelAt(LBitmap, X, Y));
+          LDistance := Abs((LColor and $FF) - (LBack and $FF)) +
+            Abs((LColor shr 8 and $FF) - (LBack shr 8 and $FF)) +
+            Abs((LColor shr 16 and $FF) - (LBack shr 16 and $FF));
+          if LDistance > AFarthest then
+            AFarthest := LDistance;
+          LSum := (LColor and $FF) + (LColor shr 8 and $FF) + (LColor shr 16 and $FF);
+          if LSum < ADarkest then
+          begin
+            ADarkest := LSum;
+            ADarkestColor := LColor;
+          end;
+        end;
+    finally
+      LBitmap.Free;
+    end;
+  finally
+    LForm.Free;
+  end;
+end;
+
+procedure TTransparentCaptionTests.Caption_ContrastsWithTheParent(
+  const AFamily, AClass, AAppearance: string; const AParentColor: Integer);
+var
+  LFarthest, LDarkest: Integer;
+  LDarkestColor: TColor;
+begin
+  CaptionExtremes(AFamily, AClass, AAppearance, TColor(AParentColor), True,
+    LFarthest, LDarkest, LDarkestColor);
+  Assert.IsTrue(LFarthest >= 300, Format('the caption is readable on the parent (distance %d)', [LFarthest]));
+end;
+
+procedure TTransparentCaptionTests.ReadableFont_IsKept;
+var
+  LFarthest, LDarkest: Integer;
+  LDarkestColor: TColor;
+begin
+  //Outline: the font is the blue of the button, which already contrasts with a white parent
+  CaptionExtremes(BOOTSTRAP_FAMILY, btn_primary, BOOTSTRAP_OUTLINE, clWhite, True,
+    LFarthest, LDarkest, LDarkestColor);
+  Assert.IsTrue(LFarthest >= 300, 'the caption is readable');
+  Assert.IsTrue((LDarkestColor shr 16 and $FF) > (LDarkestColor and $FF) + 100,
+    'the caption keeps the blue of the style (it is not replaced by the text colour)');
+end;
+
+procedure TTransparentCaptionTests.DisabledCaption_StaysFaded(
+  const AFamily, AClass, AAppearance: string; const AParentColor: Integer);
+var
+  LFarthestEnabled, LDarkestEnabled, LFarthestDisabled, LDarkestDisabled: Integer;
+  LColorEnabled, LColorDisabled: TColor;
+begin
+  CaptionExtremes(AFamily, AClass, AAppearance, TColor(AParentColor), True,
+    LFarthestEnabled, LDarkestEnabled, LColorEnabled);
+  CaptionExtremes(AFamily, AClass, AAppearance, TColor(AParentColor), False,
+    LFarthestDisabled, LDarkestDisabled, LColorDisabled);
+  Assert.IsTrue(LFarthestDisabled < LFarthestEnabled,
+    Format('the disabled caption is fainter than the enabled one (%d, enabled %d)',
+      [LFarthestDisabled, LFarthestEnabled]));
+end;
+
 initialization
   TDUnitX.RegisterTestFixture(TShapeDrawingTests);
   TDUnitX.RegisterTestFixture(TBadgeDrawingTests);
   TDUnitX.RegisterTestFixture(TAngularM3Tests);
   TDUnitX.RegisterTestFixture(TStyleBorderWidthTests);
+  TDUnitX.RegisterTestFixture(TTransparentCaptionTests);
   TDUnitX.RegisterTestFixture(TStyleFamilyRegistryTests);
   TDUnitX.RegisterTestFixture(TStyleFamilyContractTests);
 

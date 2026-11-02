@@ -9,7 +9,7 @@
 
 ## Components similar to Delphi VCL Buttons, Panels, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 4.5.1
+### Actual official version: 4.6.0
 
 ---
 ## Setup for Installation of Components
@@ -398,6 +398,12 @@ It also contains performance benchmarks (`StyledPerfTests`) that count heap allo
 Run `Test\run_tests.cmd [Win32|Win64] [Debug|Release]`: it builds the project and writes a NUnit XML report in `Test\Bin\<Platform>\<Config>`.
 
 ### RELEASE NOTES
+2 Nov 2026 - version 4.6.0
+- New: the properties TextBlink, TextBlinkColor and TextBlinkInterval of TStyledTaskDialog (requested in issue #66): while the dialog is shown the text switches between its colour and TextBlinkColor (default clRed) every TextBlinkInterval milliseconds (default 500). An interval below MIN_TEXTBLINK_INTERVAL (250 ms: two blinks a second, under the three flashes a second that WCAG 2.3.1 sets as the limit for flashing content) is raised to it. It works with and without VCL styles: the text of the dialog is a SysLink, which paints with the colour answered to WM_CTLCOLORSTATIC and ignores Font.Color, so the answer is the one that is changed. The hyperlinks of the text blink too (TextBlinkLinks, True by default): a SysLink paints its links with the colours of the system unless LIS_DEFAULTCOLORS is cleared, so it is cleared in the blink phase only; set TextBlinkLinks to False to keep the links still
+- New: GetDialogTextBlink, GetDialogTextBlinkColor, GetDialogTextBlinkInterval and SetDialogTextBlink (unit Vcl.StyledTaskDialog): the default of every new TStyledTaskDialog, which is the only way to make blink the dialogs of the message routines (StyledMessageDlg, ShowMessage with the hooks...), leaving every other setting as it is. Like SetDialogAutoClickDelay, it can be limited to one operation and the previous values put back afterwards
+- Fixed the caption, and the triangle of the split button, of a Transparent button (the default of the buttons of TStyledToolbar) unreadable when the font of the style was chosen to contrast with the face, which is not drawn in the Normal state: for example white on the light panel of Raize Frost : Blue. When the font of the style does not contrast with what is behind the button (the panel colour of the VCL style, or the Color of the parent) the text colour of the panel is used; a font that already contrasts is kept, and a disabled button keeps its faded font (pull request #117)
+- The test suite now has 152 tests
+
 1 Nov 2026 - version 4.5.1
 - New: the properties DialogButtonsBorderWidth and DialogButtonsShadowSize of TStyledTaskDialog (-1 = the border/shadow of the style, 0 = none, a value greater than zero = that border/shadow in every state): they are given to all the buttons of the dialog (also the ones of the custom items and the command links), like StyleBorderWidth and StyleShadowSize of TStyledButton. They are saved in the form file only if different from the registered default, and a value below -1 raises an exception
 - New: the parameters AShadowSize and ABorderWidth (default -1) at the end of TStyledTaskDialog.RegisterDefaultRenderingStyle, to register the default border and shadow of the buttons of all the dialogs created afterwards; the existing calls are not affected

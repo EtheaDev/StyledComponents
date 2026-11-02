@@ -44,6 +44,12 @@ uses
   ;
 
 const
+  /// <summary>Default colour of the blinking text of a dialog (TextBlink)</summary>
+  DEFAULT_TEXTBLINK_COLOR = clRed;
+  /// <summary>Default interval in milliseconds between the two colours of the blinking text</summary>
+  DEFAULT_TEXTBLINK_INTERVAL = 500;
+  /// <summary>Minimum interval of the blinking text: two blinks a second, under the three flashes a second that WCAG 2.3.1 sets as the limit</summary>
+  MIN_TEXTBLINK_INTERVAL = 250;
   /// <summary>Default alpha blend value for styled dialogs (fully opaque)</summary>
   DEFAULT_STYLEDDIALOG_ALPHABLEND = 255;
   /// <summary>Default minimum width for styled dialogs in pixels</summary>
@@ -134,6 +140,10 @@ type
     FButtonsHeight: Integer;
     FAutoClick: Boolean;
     FAutoClickDelay: Integer;
+    FTextBlink: Boolean;
+    FTextBlinkColor: TColor;
+    FTextBlinkInterval: Integer;
+    FTextBlinkLinks: Boolean;
     FOnFindDialogButton: TOnFindDialogButtonEvent;
     FUseAnimations: Boolean;
     FUseAnimationLoop: Boolean;
@@ -152,6 +162,7 @@ type
     procedure SetDialogButtonsBorderWidth(const AValue: Integer);
     procedure SetAutoClick(const AValue: Boolean);
     procedure SetAutoClickDelay(const AValue: Integer);
+    procedure SetTextBlinkInterval(const AValue: Integer);
     procedure SetAlphaBlendValue(const AValue: Byte);
     procedure SetButtonsHeight(const AValue: Integer);
     procedure SetButtonsWidth(const AValue: Integer);
@@ -222,6 +233,14 @@ type
     property AutoClick: Boolean read FAutoClick write SetAutoClick default False;
     /// <summary>Delay in milliseconds before auto-clicking the default button</summary>
     property AutoClickDelay: Integer read FAutoClickDelay write SetAutoClickDelay default DEFAULT_AUTOCLICK_DELAY;
+    /// <summary>When True the text of the dialog blinks: it switches between its colour and TextBlinkColor while the dialog is shown</summary>
+    property TextBlink: Boolean read FTextBlink write FTextBlink default False;
+    /// <summary>Colour of the text in the blink phase</summary>
+    property TextBlinkColor: TColor read FTextBlinkColor write FTextBlinkColor default DEFAULT_TEXTBLINK_COLOR;
+    /// <summary>Milliseconds between the two colours; a value below MIN_TEXTBLINK_INTERVAL is raised to it</summary>
+    property TextBlinkInterval: Integer read FTextBlinkInterval write SetTextBlinkInterval default DEFAULT_TEXTBLINK_INTERVAL;
+    /// <summary>When True (default) the hyperlinks of the text blink too; when False they keep the colours of the system</summary>
+    property TextBlinkLinks: Boolean read FTextBlinkLinks write FTextBlinkLinks default True;
     /// <summary>Style family for dialog buttons (e.g., Bootstrap, Angular, Classic)</summary>
     property DialogButtonsFamily: TStyledButtonFamily read FDialogButtonsFamily write FDialogButtonsFamily stored IsDefaultFamily;
     /// <summary>Draw type for dialog buttons (btRoundRect, btRounded, btRect, btEllipse)</summary>
@@ -466,6 +485,21 @@ function GetDialogAutoClickDelay: Integer;
 /// <param name="AValue">Delay in milliseconds (0 or less to disable)</param>
 /// <remarks>Use GetDialogAutoClickDelay to restore the previous value</remarks>
 procedure SetDialogAutoClickDelay(const AValue: Integer);
+/// <summary>Returns True if the text of every dialog that is not given its own setting blinks</summary>
+function GetDialogTextBlink: Boolean;
+/// <summary>Returns the colour of the blinking text used by every dialog that is not given its own</summary>
+function GetDialogTextBlinkColor: TColor;
+/// <summary>Returns the interval in milliseconds of the blinking text used by every dialog that is not given its own</summary>
+function GetDialogTextBlinkInterval: Integer;
+/// <summary>Sets the blinking text of every dialog that is not given its own setting (the message routines
+/// have no component to set), leaving every other dialog setting as it is</summary>
+/// <param name="AEnabled">True to make the text blink</param>
+/// <param name="AColor">Colour of the text in the blink phase</param>
+/// <param name="AInterval">Milliseconds between the two colours (raised to MIN_TEXTBLINK_INTERVAL if lower)</param>
+/// <remarks>Use the Get functions to restore the previous values</remarks>
+procedure SetDialogTextBlink(const AEnabled: Boolean;
+  const AColor: TColor = DEFAULT_TEXTBLINK_COLOR;
+  const AInterval: Integer = DEFAULT_TEXTBLINK_INTERVAL);
 
 /// <summary>Returns the default title for a dialog type</summary>
 /// <param name="DlgType">The dialog type</param>
@@ -549,6 +583,9 @@ var
   _ButtonsWidth: Integer;
   _ButtonsHeight: Integer;
   _AutoClickDelay: Integer;
+  _TextBlink: Boolean;
+  _TextBlinkColor: TColor;
+  _TextBlinkInterval: Integer;
 
   ButtonNames: array[TMsgDlgBtn] of string = (
     'Yes', 'No', 'OK', 'Cancel', 'Abort', 'Retry', 'Ignore', 'All', 'NoToAll',
@@ -817,6 +854,29 @@ begin
   _AutoClickDelay := AValue;
 end;
 
+function GetDialogTextBlink: Boolean;
+begin
+  Result := _TextBlink;
+end;
+
+function GetDialogTextBlinkColor: TColor;
+begin
+  Result := _TextBlinkColor;
+end;
+
+function GetDialogTextBlinkInterval: Integer;
+begin
+  Result := _TextBlinkInterval;
+end;
+
+procedure SetDialogTextBlink(const AEnabled: Boolean;
+  const AColor: TColor; const AInterval: Integer);
+begin
+  _TextBlink := AEnabled;
+  _TextBlinkColor := AColor;
+  _TextBlinkInterval := Max(AInterval, MIN_TEXTBLINK_INTERVAL);
+end;
+
 function StyledMessageDlg(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Longint): Integer; overload;
 begin
@@ -1073,6 +1133,10 @@ begin
     FAutoClickDelay := _AutoClickDelay
   else
     FAutoClickDelay := DEFAULT_AUTOCLICK_DELAY;
+  FTextBlink := _TextBlink;
+  FTextBlinkColor := _TextBlinkColor;
+  FTextBlinkInterval := _TextBlinkInterval;
+  FTextBlinkLinks := True;
   FMainIconSize := DEFAULT_MAIN_ICON_SIZE;
   DoOnDialogCreated;
 end;
@@ -1275,6 +1339,11 @@ begin
   FAutoClickDelay := AValue;
 end;
 
+procedure TStyledTaskDialog.SetTextBlinkInterval(const AValue: Integer);
+begin
+  FTextBlinkInterval := Max(AValue, MIN_TEXTBLINK_INTERVAL);
+end;
+
 procedure TStyledTaskDialog.SetButtonsHeight(const AValue: Integer);
 begin
   CheckValue('TStyledTaskDialog.ButtonsHeight', AValue,
@@ -1374,6 +1443,9 @@ initialization
   _UseCommandLinks := False;
   _UseTitleInMessageDlg := True;
   _AlphaBlendValue := DEFAULT_STYLEDDIALOG_ALPHABLEND;
+  _TextBlink := False;
+  _TextBlinkColor := DEFAULT_TEXTBLINK_COLOR;
+  _TextBlinkInterval := DEFAULT_TEXTBLINK_INTERVAL;
   _ButtonsWidth := DEFAULT_STYLEDDIALOG_BUTTONSWIDTH;
   _ButtonsHeight := DEFAULT_STYLEDDIALOG_BUTTONSHEIGHT;
   _DialogFont := nil;
