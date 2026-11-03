@@ -332,4 +332,28 @@ begin
     AExtension;
 end;
 
+/// <summary>
+///  Windows applies the show command the process was started with (STARTUPINFO, e.g. hidden
+///  when a runner starts the suite hidden) to the FIRST window the process shows.  When that
+///  was a test's dialog, the dialog stayed invisible, so a test that ran first (a single test
+///  or a filtered run) could fail.  A throwaway off-screen form takes that first show.
+/// </summary>
+procedure ConsumeStartupShowCommand;
+var
+  LForm: TForm;
+begin
+  LForm := TForm.CreateNew(nil);
+  try
+    LForm.Position := poDesigned;
+    LForm.SetBounds(-32000, -32000, 10, 10);
+    LForm.Show;
+    LForm.Hide;
+  finally
+    LForm.Free;
+  end;
+end;
+
+initialization
+  ConsumeStartupShowCommand;
+
 end.

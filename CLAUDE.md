@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Delphi VCL StyledComponents is a library of custom VCL components that provide styled buttons, panels, toolbars, navigators, button groups, and dialogs with modern appearance beyond standard Windows theming. Supports Delphi XE6 through Delphi 13 (32/64-bit).
 
-Current version: 4.6.0
+Current version: 4.6.1
 
 ## Build and Package Structure
 
@@ -257,4 +257,23 @@ The installer source is in `Setup/InnoSetupScripts/`.
 - Installs packages into IDE
 - Adds source paths to library path
 
+## DPM package (delphi.dev)
 
+The library is also published as a DPM package (Delphi Package Manager, https://delphi.dev,
+organization EtheaDev): spec `EtheaDev.StyledComponents.dspec` in the root (id `EtheaDev.StyledComponents`). It is packed from the GitHub
+clone and pushed by `D:\ETHEA\GitHub_EtheaDev\_sync\sync_project.py StyledComponents --release`; `version`
+is aligned to the README release notes automatically and `repositoryCommit: '#HASH#'` is replaced
+at pack time: don't edit them by hand.
+
+**Keep the dspec aligned with the packages and the Setup**: when a package folder is added or
+removed (new Delphi version), a `.dpk` is added/renamed, a new kind of file is needed by the
+packages (`.dfm`, `.res`, `.dcr`, ...), or a platform is enabled/disabled in a runtime `.dproj`,
+update `targetPlatforms` / `templates` (`source`, `build`, `design`) in the same commit. Check
+with `python D:\ETHEA\GitHub_EtheaDev\_sync\dpm_tools.py StyledComponents`: the publishing script refuses
+to commit/release while the check fails.
+
+- `StyledAnimatedComponents`/`dclStyledAnimatedComponents` are excluded before Delphi 12 with
+  `excludeCompilers` (they need Skia4Delphi, which has no DPM package; Skia is bundled from 12).
+- Only Win32 and Win64: the platforms declared in the dspec are the ones enabled in the runtime
+  `.dproj` files. WinARM64EC is not enabled in the packages, so it is not in the dspec; if it is
+  enabled in the future, the packages and the dspec are updated together.

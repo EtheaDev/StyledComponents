@@ -1,0 +1,95 @@
+# DPM package spec file
+min dpm client version: 1.0.0
+metadata:
+  id: EtheaDev.StyledComponents
+  version: 4.6.1
+  description: 'Components similar to Delphi VCL Buttons, Panels, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!'
+  authors:
+    - Carlo Barazzetta
+  projectUrl: https://github.com/EtheaDev/StyledComponents
+  repositoryUrl: https://github.com/EtheaDev/StyledComponents
+  repositoryCommit: '#HASH#'
+  license: Apache-2.0
+  copyright: Ethea S.r.l.
+  tags:
+    - vcl
+    - styled
+  readme: README.md
+variables:
+  packagesource: /packages/D$compilermajornoprefix$
+targetPlatforms:
+  - compiler from: delphixe6
+    compiler to: delphi10.0
+    platforms:
+      - win32
+      - win64
+  - compiler: delphi10.1
+    platforms:
+      - win32
+      - win64
+    variables:
+      packagesource: /packages/D10_1
+  - compiler: delphi10.2
+    platforms:
+      - win32
+      - win64
+    variables:
+      packagesource: /packages/D10_2
+  - compiler: delphi10.3
+    platforms:
+      - win32
+      - win64
+    variables:
+      packagesource: /packages/D10_3
+  - compiler: delphi10.4
+    platforms:
+      - win32
+      - win64
+    variables:
+      packagesource: /packages/D10_4
+  - compiler from: delphi11.0
+    compiler to: delphi13.0
+    platforms:
+      - win32
+      - win64
+templates:
+  - name: default
+    source:
+      - src: /source/*.pas
+      - src: /source/*.dfm
+        copyToLib: true
+      - src: /source/*.res
+      - src: /source/*.inc
+      - src: /animations/*.*
+      - src: $packageSource$/*.dpk
+      - src: $packageSource$/*.dproj
+      - src: /packages/*.dcr
+      - src: /packages/*.res
+      - src: /packages/*.pas
+      - src: /packages/*.dfm
+    build:
+      - project: $packageSource$/StyledComponents.dproj
+      - project: $packageSource$/StyledAnimatedComponents.dproj
+        excludeCompilers:
+          - delphixe6
+          - delphixe7
+          - delphixe8
+          - delphi10.0
+          - delphi10.1
+          - delphi10.2
+          - delphi10.3
+          - delphi10.4
+          - delphi11.0
+    design:
+      - project: $packageSource$/dclStyledComponents.dproj
+      - project: $packageSource$/dclStyledAnimatedComponents.dproj
+        excludeCompilers:
+          - delphixe6
+          - delphixe7
+          - delphixe8
+          - delphi10.0
+          - delphi10.1
+          - delphi10.2
+          - delphi10.3
+          - delphi10.4
+          - delphi11.0

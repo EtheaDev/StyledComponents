@@ -476,7 +476,9 @@ begin
     htmlToColor('#fdfdfd'),htmlToColor('#fdfdfd'),htmlToColor('#e0eef9'),
     htmlToColor('#d0d0d0'),htmlToColor('#0078d4'),LButtonBorder);
 
-  if StyleServices.Enabled then
+  //VCL Styles attributes are always registered: StyleServices.Enabled read here
+  //(unit initialization) reflects only the OS theme, not a VCL Style activated
+  //later (e.g. TStyleManager.TrySetStyle with runtime themes disabled).
   begin
     RegisterThemeAttributes('Amakrits',ttDark,clWhite,clBlack,
       htmlToColor('#292929'),htmlToColor('#292929'),htmlToColor('#6EE4D3'),

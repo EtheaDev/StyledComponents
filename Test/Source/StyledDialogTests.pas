@@ -238,7 +238,8 @@ begin
       LItem.stateMask := LIS_DEFAULTCOLORS;
       if LForm.TextLabel.Perform(LM_GETITEM, 0, LPARAM(@LItem)) <> 0 then
       begin
-        if (LItem.state and LIS_DEFAULTCOLORS) = 0 then
+        //LIS_DEFAULTCOLORS ON enables the custom colours ("enable custom text colors")
+        if (LItem.state and LIS_DEFAULTCOLORS) <> 0 then
           SeenLinkWithCustomColours := True
         else
           SeenLinkWithDefaultColours := True;
@@ -650,6 +651,7 @@ begin
       AProbe.Timer.Free;
     end;
   finally
+    LLauncher.Free;
     LDialog.Free;
   end;
 end;
@@ -732,8 +734,9 @@ begin
   try
     ShowAndSample(True, LProbe, False);
     Assert.IsTrue(LProbe.SeenBlinking, 'the text blinked');
-    Assert.IsFalse(LProbe.SeenLinkWithCustomColours and LProbe.SeenLinkWithDefaultColours,
-      'the state of the link never changed');
+    //"not both" is also met by a probe that never read the link, or by a flag stuck on
+    Assert.IsTrue(LProbe.SeenLinkWithDefaultColours, 'the link was read, with its own colours');
+    Assert.IsFalse(LProbe.SeenLinkWithCustomColours, 'the link never took the custom (blink) colours');
   finally
     LProbe.Free;
   end;

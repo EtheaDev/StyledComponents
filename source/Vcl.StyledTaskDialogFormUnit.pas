@@ -1528,14 +1528,15 @@ begin
   if not TextLabel.HandleAllocated then
     Exit;
   //The links of the SysLink use the colours of the system, not the colour of the reply to
-  //WM_CTLCOLORSTATIC, unless LIS_DEFAULTCOLORS is off: it is off in the blink phase only
+  //WM_CTLCOLORSTATIC, unless LIS_DEFAULTCOLORS ("enable custom text colors") is ON: it is
+  //on in the blink phase only
   for I := 0 to 63 do
   begin
     FillChar(LItem, SizeOf(LItem), 0);
     LItem.mask := LIF_ITEMINDEX or LIF_STATE;
     LItem.iLink := I;
     LItem.stateMask := LIS_DEFAULTCOLORS;
-    if not AOn then
+    if AOn then
       LItem.state := LIS_DEFAULTCOLORS;
     //the call fails when there is no link with that index
     if TextLabel.Perform(LM_SETITEM, 0, LPARAM(@LItem)) = 0 then

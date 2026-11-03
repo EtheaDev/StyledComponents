@@ -101,6 +101,12 @@ type
     /// </summary>
     [Test]
     procedure CNKeyDown_DialogKeyHandled_ReturnsOneAndClicksOnce;
+    /// <summary>
+    ///  CMDialogKey clicks only with no modifier down, read from the thread's keyboard state
+    ///  (KeyDataToShiftState -> GetKeyState): with Shift down Esc must not click.
+    /// </summary>
+    [Test]
+    procedure CNKeyDown_WithShiftDown_DoesNotClick;
   end;
 
 implementation
@@ -320,13 +326,17 @@ begin
   Inc(FClicks);
 end;
 
-procedure TStyledButtonKeyboardTests.CNKeyDown_DialogKeyHandled_ReturnsOneAndClicksOnce;
+/// <summary>
+///  Sends Esc (CN_KEYDOWN) to a Cancel button on a shown off-screen form with the thread's
+///  modifier keys set as given, restoring the keyboard state after.  CMDialogKey reads the
+///  modifiers with GetKeyState, so the test sets them instead of depending on the live state.
+/// </summary>
+function SendEscape(const AOnClick: TNotifyEvent; const AShiftDown: Boolean): Integer;
 var
   LForm: TForm;
   LButton: TStyledButton;
-  LResult: Integer;
+  LSaved, LState: TKeyboardState;
 begin
-  FClicks := 0;
   LForm := TStyledTestUtils.HostForm;
   try
     // CMDialogKey needs CanFocus, i.e. a visible form: show it off-screen
@@ -336,18 +346,56 @@ begin
     LButton := TStyledButton.Create(LForm);
     LButton.Parent := LForm;
     LButton.Cancel := True; // Esc is handled regardless of the Active/Default state
-    LButton.OnClick := CountClick;
+    LButton.OnClick := AOnClick;
+    if not GetKeyboardState(LSaved) then
+      RaiseLastOSError;
+    LState := LSaved;
+    LState[VK_SHIFT] := 0;
+    LState[VK_LSHIFT] := 0;
+    LState[VK_RSHIFT] := 0;
+    LState[VK_CONTROL] := 0;
+    LState[VK_LCONTROL] := 0;
+    LState[VK_RCONTROL] := 0;
+    LState[VK_MENU] := 0;
+    LState[VK_LMENU] := 0;
+    LState[VK_RMENU] := 0;
+    if AShiftDown then
+    begin
+      LState[VK_SHIFT] := $80;
+      LState[VK_LSHIFT] := $80;
+    end;
     LForm.Show;
     try
-      LResult := LButton.Perform(CN_KEYDOWN, VK_ESCAPE, 0);
+      if not SetKeyboardState(LState) then
+        RaiseLastOSError;
+      try
+        Result := LButton.Perform(CN_KEYDOWN, VK_ESCAPE, 0);
+      finally
+        SetKeyboardState(LSaved);
+      end;
     finally
       LForm.Hide;
     end;
-    Assert.AreEqual(1, FClicks, 'the dialog key must click the button exactly once');
-    Assert.AreEqual(1, LResult, 'CN_KEYDOWN must report the handled dialog key (1)');
   finally
     LForm.Free;
   end;
+end;
+
+procedure TStyledButtonKeyboardTests.CNKeyDown_DialogKeyHandled_ReturnsOneAndClicksOnce;
+var
+  LResult: Integer;
+begin
+  FClicks := 0;
+  LResult := SendEscape(CountClick, False);
+  Assert.AreEqual(1, FClicks, 'the dialog key must click the button exactly once');
+  Assert.AreEqual(1, LResult, 'CN_KEYDOWN must report the handled dialog key (1)');
+end;
+
+procedure TStyledButtonKeyboardTests.CNKeyDown_WithShiftDown_DoesNotClick;
+begin
+  FClicks := 0;
+  SendEscape(CountClick, True);
+  Assert.AreEqual(0, FClicks, 'Shift+Esc must not click the Cancel button');
 end;
 
 initialization

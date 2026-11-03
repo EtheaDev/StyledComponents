@@ -2,14 +2,14 @@
 
 <!-- badges -->
 [![License: Apache](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
-[![Latest release](https://img.shields.io/github/v/release/EtheaDev/StyledComponents?label=release&color=blue)](https://github.com/EtheaDev/SvgIconImageList/releases)
-[![Delphi XE3+](https://img.shields.io/badge/Delphi-XE6%2B-e62329.svg)](https://www.embarcadero.com/products/delphi)
+[![Latest release](https://img.shields.io/github/v/release/EtheaDev/StyledComponents?label=release&color=blue)](https://github.com/EtheaDev/StyledComponents/releases)
+[![Delphi XE6+](https://img.shields.io/badge/Delphi-XE6%2B-e62329.svg)](https://www.embarcadero.com/products/delphi)
 [![Platform: VCL](https://img.shields.io/badge/Platform-VCL-8a2be2.svg)](https://docwiki.embarcadero.com/RADStudio/en/Main_Page)
 [![Windows 10 and 11](https://img.shields.io/badge/Windows-10%20%7C%2011-0078d6.svg)](https://www.microsoft.com/windows)
 
 ## Components similar to Delphi VCL Buttons, Panels, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 4.6.0
+### Actual official version: 4.6.1
 
 ---
 ## Setup for Installation of Components
@@ -398,6 +398,13 @@ It also contains performance benchmarks (`StyledPerfTests`) that count heap allo
 Run `Test\run_tests.cmd [Win32|Win64] [Debug|Release]`: it builds the project and writes a NUnit XML report in `Test\Bin\<Platform>\<Config>`.
 
 ### RELEASE NOTES
+3 Nov 2026 - version 4.6.1
+- Fixed the hyperlinks of the blinking text of TStyledTaskDialog (TextBlinkLinks): the flag LIS_DEFAULTCOLORS of the SysLink means "enable the custom text colours", so it is now set in the blink phase (the links take TextBlinkColor) and cleared in the other one; in 4.6.0 it was the other way round (issue #120)
+- Fixed the caption of a Transparent button on a parent painted by its own VCL style (a StyleName set on the control, Delphi 11 and later) or on a TStyledPanel: the contrast is now measured against the style of the parent, and a TStyledPanel counts as styled only with AsVCLComponent, using the face it really paints, also the disabled one (issue #120)
+- Fixed EStyledButtonError raised when a VCL style is active and the runtime themes are disabled: the attributes of the VCL styles are always registered, a style without registered attributes falls back to the Windows class, and the appearance is initialized also when the border is not styled by the VCL style
+- The library is also published as a DPM package (delphi.dev, EtheaDev.StyledComponents)
+- The test suite now has 153 tests: the key tests of the dialog set the modifier keys themselves (new Shift+Esc test), and a dialog shown first is no longer left hidden by the start-up show command of the process
+
 2 Nov 2026 - version 4.6.0
 - New: the properties TextBlink, TextBlinkColor and TextBlinkInterval of TStyledTaskDialog (requested in issue #66): while the dialog is shown the text switches between its colour and TextBlinkColor (default clRed) every TextBlinkInterval milliseconds (default 500). An interval below MIN_TEXTBLINK_INTERVAL (250 ms: two blinks a second, under the three flashes a second that WCAG 2.3.1 sets as the limit for flashing content) is raised to it. It works with and without VCL styles: the text of the dialog is a SysLink, which paints with the colour answered to WM_CTLCOLORSTATIC and ignores Font.Color, so the answer is the one that is changed. The hyperlinks of the text blink too (TextBlinkLinks, True by default): a SysLink paints its links with the colours of the system unless LIS_DEFAULTCOLORS is cleared, so it is cleared in the blink phase only; set TextBlinkLinks to False to keep the links still
 - New: GetDialogTextBlink, GetDialogTextBlinkColor, GetDialogTextBlinkInterval and SetDialogTextBlink (unit Vcl.StyledTaskDialog): the default of every new TStyledTaskDialog, which is the only way to make blink the dialogs of the message routines (StyledMessageDlg, ShowMessage with the hooks...), leaving every other setting as it is. Like SetDialogAutoClickDelay, it can be limited to one operation and the previous values put back afterwards
