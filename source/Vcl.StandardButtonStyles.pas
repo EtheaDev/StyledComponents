@@ -727,8 +727,8 @@ begin
       htmlToColor('#cccccc'),htmlToColor('#cccccc'),htmlToColor('#1681da'),
       htmlToColor('#cccccc'),htmlToColor('#1681da'),btRoundRect);
     RegisterThemeAttributes('Windows Modern Dark',ttDark,clWhite,clWhite,
-      htmlToColor('#373737'),htmlToColor('#373737'),htmlToColor('#405560'),
-      htmlToColor('#434343'),htmlToColor('#4ab2e9'),btRoundRect);
+      htmlToColor('#262626'),htmlToColor('#262626'),htmlToColor('#017ce6'),
+      htmlToColor('#262626'),htmlToColor('#017ce6'),btRoundRect);
     RegisterThemeAttributes('Windows Modern Blue',ttDark,clWhite,clWhite,
       htmlToColor('#084f8a'),htmlToColor('#084f8a'),htmlToColor('#6aadec'),
       htmlToColor('#084f8a'),htmlToColor('#6aadec'),btRoundRect);
@@ -744,6 +744,11 @@ begin
     RegisterThemeAttributes('Windows Modern MountainMist',ttLight,clBlack,clBlack,
       htmlToColor('#dadada'),htmlToColor('#dadada'),htmlToColor('#e1edf6'),
       htmlToColor('#b4b4b4'),htmlToColor('#3a93dd'),btRoundRect);
+
+    //new Delphi 13.2 Style (renders exactly as Windows11 Modern Dark)
+    RegisterThemeAttributes('Windows Modern Dark SE',ttDark,clWhite,clWhite,
+      htmlToColor('#373737'),htmlToColor('#373737'),htmlToColor('#405560'),
+      htmlToColor('#434343'),htmlToColor('#4ab2e9'),btRoundRect);
 
     //New Third Parties Styles (provided by Lance Rasmussen)
     RegisterThemeAttributes('CDE Frost: Blue',ttDark,clWhite,clWhite,
@@ -923,12 +928,14 @@ begin
   RegisterPanelThemeAttributes('Zircon SE',ttLight,htmlToColor('#000000'),htmlToColor('#f7f7f7'),htmlToColor('#c9c9c9'));
   //New Delphi 13.1 Styles
   RegisterPanelThemeAttributes('Windows Modern',ttLight,htmlToColor('#000000'),htmlToColor('#f3f3f3'),htmlToColor('#c0c0c0'));
-  RegisterPanelThemeAttributes('Windows Modern Dark',ttDark,htmlToColor('#ffffff'),htmlToColor('#373737'),htmlToColor('#434343'));
-  RegisterPanelThemeAttributes('Windows Modern Blue',ttDark,htmlToColor('#ffffff'),htmlToColor('#0d70c8'),htmlToColor('#0d70c8'));
-  RegisterPanelThemeAttributes('Windows Modern Green',ttDark,htmlToColor('#ffffff'),htmlToColor('#077568'),htmlToColor('#077568'));
-  RegisterPanelThemeAttributes('Windows Modern Purple',ttDark,htmlToColor('#ffffff'),htmlToColor('#80397b'),htmlToColor('#80397b'));
-  RegisterPanelThemeAttributes('Windows Modern SlateGray',ttDark,htmlToColor('#ffffff'),htmlToColor('#36474e'),htmlToColor('#36474e'));
-  RegisterPanelThemeAttributes('Windows Modern MountainMist',ttLight,htmlToColor('#000000'),htmlToColor('#f3f3f3'),htmlToColor('#f3f3f3'));
+  RegisterPanelThemeAttributes('Windows Modern Dark',ttDark,htmlToColor('#ffffff'),htmlToColor('#000000'),htmlToColor('#333333'));
+  RegisterPanelThemeAttributes('Windows Modern Blue',ttDark,htmlToColor('#ffffff'),htmlToColor('#0c70c8'),htmlToColor('#0b599f'));
+  RegisterPanelThemeAttributes('Windows Modern Green',ttDark,htmlToColor('#ffffff'),htmlToColor('#077568'),htmlToColor('#045147'));
+  RegisterPanelThemeAttributes('Windows Modern Purple',ttDark,htmlToColor('#ffffff'),htmlToColor('#80397b'),htmlToColor('#6b3067'));
+  RegisterPanelThemeAttributes('Windows Modern SlateGray',ttDark,htmlToColor('#ffffff'),htmlToColor('#37474f'),htmlToColor('#1b282e'));
+  RegisterPanelThemeAttributes('Windows Modern MountainMist',ttLight,htmlToColor('#000000'),htmlToColor('#f3f3f3'),htmlToColor('#c0c0c0'));
+  //New Delphi 13.2 Style (renders exactly as Windows11 Modern Dark)
+  RegisterPanelThemeAttributes('Windows Modern Dark SE',ttDark,htmlToColor('#ffffff'),htmlToColor('#2b2b2b'),htmlToColor('#515151'));
 end;
 
 procedure FreeThemesAttributes;

@@ -101,29 +101,44 @@ type
     procedure ValuesBelowTheDefault_AreRefused;
   end;
 
+const
+  /// <summary>
+  ///  The blink tests that show a dialog and sample it for a while are slow: switched
+  ///  off to keep the suite fast. To switch them on again remove the [Ignore] attributes.
+  /// </summary>
+  BLINK_TESTS_OFF = 'slow blink test switched off: remove [Ignore] to run it';
+
+type
+
   [TestFixture]
   TStyledTaskDialogTextBlinkTests = class
   public
     /// <summary>With TextBlink the text of the dialog is painted in the blink colour in one phase and not in the other.</summary>
     [Test]
+    [Ignore(BLINK_TESTS_OFF)]
     procedure Text_BlinksBetweenTheTwoColours;
     /// <summary>The same under a VCL style, whose style hook forces the colour of the SysLink text.</summary>
     [Test]
+    [Ignore(BLINK_TESTS_OFF)]
     procedure Text_BlinksUnderAVclStyle;
     /// <summary>With TextBlinkLinks the links take the blink colour too: their custom colours are on in the blink phase only.</summary>
     [Test]
+    [Ignore(BLINK_TESTS_OFF)]
     procedure Links_BlinkWithTheText_WhenAsked;
     /// <summary>TextBlinkLinks is True by default.</summary>
     [Test]
     procedure TextBlinkLinks_IsTrueByDefault;
     /// <summary>With TextBlinkLinks False the links keep the colours of the system: the state of the link never changes.</summary>
     [Test]
+    [Ignore(BLINK_TESTS_OFF)]
     procedure Links_KeepTheirColours_WhenSwitchedOff;
     /// <summary>Without TextBlink the blink colour is never painted.</summary>
     [Test]
+    [Ignore(BLINK_TESTS_OFF)]
     procedure WithoutTextBlink_TheBlinkColourIsNeverPainted;
     /// <summary>The message dialogs blink under SetDialogTextBlink, and not after the previous setting is restored.</summary>
     [Test]
+    [Ignore(BLINK_TESTS_OFF)]
     procedure MessageDlg_BlinksUnderTheDefault;
     /// <summary>The defaults of SetDialogTextBlink are the ones of every new dialog.</summary>
     [Test]

@@ -9,7 +9,7 @@
 
 ## Components similar to Delphi VCL Buttons, Panels, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 4.6.1
+### Actual official version: 4.6.2
 
 ---
 ## Setup for Installation of Components
@@ -19,6 +19,16 @@ An easy "Installer" read-to-use is located in the Release area: [Download the In
 The Installer automatically detect your Delphi versions, installa sources, build and installa packages and add source paths.
 
 ![Setup](./Images/Setup.png)
+
+## Installation with DPM (Delphi Package Manager)
+
+The library is also published on [delphi.dev](https://delphi.dev/packages/etheadev.styledcomponents) as the package **EtheaDev.StyledComponents** (Delphi XE6 to 13, Win32 and Win64): you can install it with [DPM, the Delphi Package Manager](https://delphi.dev), as an alternative to the Setup. From the IDE, right click on your project in the Project Manager and choose *Manage DPM Packages*, or from the command line:
+
+```
+dpm install EtheaDev.StyledComponents <path of your project>.dproj
+```
+
+DPM downloads the package, builds it for the Delphi version and the platforms of your project and adds it to the project.
 
 ## Documentation
 
@@ -398,6 +408,11 @@ It also contains performance benchmarks (`StyledPerfTests`) that count heap allo
 Run `Test\run_tests.cmd [Win32|Win64] [Debug|Release]`: it builds the project and writes a NUnit XML report in `Test\Bin\<Platform>\<Config>`.
 
 ### RELEASE NOTES
+9 Nov 2026 - version 4.6.2
+- Support for the new VCL style "Windows Modern Dark SE" of Delphi 13.2: it is now in the colour tables of the Classic family used by the buttons (StyleClass and AsVCLComponent) and by TStyledPanel with AsVCLComponent; before, the components fell back to the light colours of the Windows class. Its colours, measured on the .vsf file, are the ones of Windows11 Modern Dark
+- Fixed the colours of the Windows Modern styles of Delphi 13.1, measured on their .vsf files: "Windows Modern Dark" had the colours of Windows11 Modern Dark (button #373737 instead of #262626, Hot #405560 instead of the blue #017CE6, panel #373737 instead of black #000000); the panel border of Windows Modern Blue, Green, Purple, SlateGray and MountainMist is now the shadow side of the bevel painted by the style (it was the panel colour itself), and the panel colour of Windows Modern Blue and SlateGray is now the exact one
+- The test suite now has 161 tests; the slow TextBlink tests that show the dialog are switched off with [Ignore]
+
 3 Nov 2026 - version 4.6.1
 - Fixed the hyperlinks of the blinking text of TStyledTaskDialog (TextBlinkLinks): the flag LIS_DEFAULTCOLORS of the SysLink means "enable the custom text colours", so it is now set in the blink phase (the links take TextBlinkColor) and cleared in the other one; in 4.6.0 it was the other way round (issue #120)
 - Fixed the caption of a Transparent button on a parent painted by its own VCL style (a StyleName set on the control, Delphi 11 and later) or on a TStyledPanel: the contrast is now measured against the style of the parent, and a TStyledPanel counts as styled only with AsVCLComponent, using the face it really paints, also the disabled one (issue #120)

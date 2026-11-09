@@ -56,7 +56,7 @@ uses
 
 const
   /// <summary>Current version of the StyledComponents library</summary>
-  StyledComponentsVersion = '4.6.1';
+  StyledComponentsVersion = '4.6.2';
   /// <summary>Default corner radius for rounded buttons in pixels</summary>
   DEFAULT_RADIUS = 6;
   //StyleShadowSize: -1 = the shadow of the style family (ShadowSize of the

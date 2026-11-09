@@ -122,6 +122,35 @@ type
     /// </summary>
     [Test]
     procedure StyleName_RepaintsWithThePanelColoursOfThatStyle;
+    /// <summary>
+    ///  Regression. "Windows Modern Dark SE" (new in Delphi 13.2) was not in the
+    ///  "asVCL" tables: buttons and panels fell back to the light "Windows"
+    ///  colours. It renders exactly as Windows11 Modern Dark (measured on the .vsf).
+    /// </summary>
+    [Test]
+    procedure WindowsModernDarkSE_IsRegisteredForButtonsAndPanels;
+    /// <summary>
+    ///  Regression. "Windows Modern Dark" (Delphi 13.1) was registered with the
+    ///  colours of Windows11 Modern Dark; measured on WindowsModernDark.vsf the
+    ///  button is #262626 (hot #017CE6, border = face) and the panel #000000
+    ///  with a #333333 bevel.
+    /// </summary>
+    [Test]
+    procedure WindowsModernDark_MatchesItsVclStyle;
+    /// <summary>
+    ///  Regression. Panel colours of the Windows Modern variants (Delphi 13.1)
+    ///  measured painting a TPanel under each .vsf: PanelColor is the face,
+    ///  BorderColor the shadow side of the raised bevel (the rule that gives
+    ///  #515151 for Windows11 Modern Dark and #c0c0c0 for Windows Modern).
+    /// </summary>
+    [Test]
+    [TestCase('Windows Modern',             'Windows Modern,#f3f3f3,#c0c0c0')]
+    [TestCase('Windows Modern Blue',        'Windows Modern Blue,#0c70c8,#0b599f')]
+    [TestCase('Windows Modern Green',       'Windows Modern Green,#077568,#045147')]
+    [TestCase('Windows Modern Purple',      'Windows Modern Purple,#80397b,#6b3067')]
+    [TestCase('Windows Modern SlateGray',   'Windows Modern SlateGray,#37474f,#1b282e')]
+    [TestCase('Windows Modern MountainMist','Windows Modern MountainMist,#f3f3f3,#c0c0c0')]
+    procedure WindowsModernVariants_PanelMatchesItsVclStyle(const AStyleName, APanelColor, ABorderColor: string);
 
     /// <summary>
     ///  Regression (P-G6b, 10.4+), the demo case: global style Carbon (dark),
@@ -553,6 +582,59 @@ begin
   finally
     LForm.Free;
   end;
+end;
+
+procedure TStyledPanelTests.WindowsModernDarkSE_IsRegisteredForButtonsAndPanels;
+const
+  STYLE_NAME = 'Windows Modern Dark SE';
+var
+  LButton: TThemeAttribute;
+  LPanel: TPanelThemeAttribute;
+begin
+  Assert.IsTrue(GetStyleAttributes(STYLE_NAME, LButton));
+  Assert.AreEqual(STYLE_NAME, LButton.StyleName, 'button attributes fall back to Windows');
+  Assert.IsTrue(LButton.ThemeType = ttDark, 'button ThemeType');
+  Assert.AreEqual(Integer(ColorToRGB(htmlToColor('#373737'))), Integer(ColorToRGB(LButton.ButtonColor)), 'ButtonColor');
+  Assert.AreEqual(Integer(ColorToRGB(htmlToColor('#405560'))), Integer(ColorToRGB(LButton.HotColor)), 'HotColor');
+  Assert.AreEqual(Integer(ColorToRGB(htmlToColor('#434343'))), Integer(ColorToRGB(LButton.BorderColor)), 'BorderColor');
+  Assert.AreEqual(Integer(ColorToRGB(clWhite)), Integer(ColorToRGB(LButton.FontColor)), 'FontColor');
+
+  Assert.IsTrue(GetPanelStyleAttributes(STYLE_NAME, LPanel));
+  Assert.AreEqual(STYLE_NAME, LPanel.StyleName, 'panel attributes fall back to Windows');
+  Assert.IsTrue(LPanel.ThemeType = ttDark, 'panel ThemeType');
+  Assert.AreEqual(Integer(ColorToRGB(htmlToColor('#2b2b2b'))), Integer(ColorToRGB(LPanel.PanelColor)), 'PanelColor');
+  Assert.AreEqual(Integer(ColorToRGB(clWhite)), Integer(ColorToRGB(LPanel.FontColor)), 'panel FontColor');
+end;
+
+procedure TStyledPanelTests.WindowsModernDark_MatchesItsVclStyle;
+const
+  STYLE_NAME = 'Windows Modern Dark';
+var
+  LButton: TThemeAttribute;
+  LPanel: TPanelThemeAttribute;
+begin
+  Assert.IsTrue(GetStyleAttributes(STYLE_NAME, LButton));
+  Assert.AreEqual(STYLE_NAME, LButton.StyleName);
+  Assert.AreEqual(Integer(ColorToRGB(htmlToColor('#262626'))), Integer(ColorToRGB(LButton.ButtonColor)), 'ButtonColor');
+  Assert.AreEqual(Integer(ColorToRGB(htmlToColor('#017ce6'))), Integer(ColorToRGB(LButton.HotColor)), 'HotColor');
+  Assert.AreEqual(Integer(ColorToRGB(htmlToColor('#262626'))), Integer(ColorToRGB(LButton.BorderColor)), 'BorderColor');
+  Assert.AreEqual(Integer(ColorToRGB(htmlToColor('#017ce6'))), Integer(ColorToRGB(LButton.BorderHotColor)), 'BorderHotColor');
+
+  Assert.IsTrue(GetPanelStyleAttributes(STYLE_NAME, LPanel));
+  Assert.AreEqual(STYLE_NAME, LPanel.StyleName);
+  Assert.AreEqual(Integer(ColorToRGB(htmlToColor('#000000'))), Integer(ColorToRGB(LPanel.PanelColor)), 'PanelColor');
+  Assert.AreEqual(Integer(ColorToRGB(htmlToColor('#333333'))), Integer(ColorToRGB(LPanel.BorderColor)), 'panel BorderColor');
+end;
+
+procedure TStyledPanelTests.WindowsModernVariants_PanelMatchesItsVclStyle(
+  const AStyleName, APanelColor, ABorderColor: string);
+var
+  LPanel: TPanelThemeAttribute;
+begin
+  Assert.IsTrue(GetPanelStyleAttributes(AStyleName, LPanel));
+  Assert.AreEqual(AStyleName, LPanel.StyleName);
+  Assert.AreEqual(Integer(ColorToRGB(htmlToColor(APanelColor))), Integer(ColorToRGB(LPanel.PanelColor)), 'PanelColor');
+  Assert.AreEqual(Integer(ColorToRGB(htmlToColor(ABorderColor))), Integer(ColorToRGB(LPanel.BorderColor)), 'BorderColor');
 end;
 
 procedure TStyledPanelTests.StyleName_UnderAGlobalCustomStyle_PaintsItsOwnStyle;
