@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
+<title>README</title>
 <style type="text/css">
 :root{color-scheme:light;}
 body{font-family:"Arial",sans-serif;font-size:12pt;color:#000000;background-color:#FFFFFF;}
@@ -18,6 +19,10 @@ window.addEventListener("scroll",function(){if(window.chrome&&chrome.webview)chr
 <body>
 <style type="text/css">
 img{
+  max-width: 100%;
+  height: auto;
+}
+video{
   max-width: 100%;
   height: auto;
 }
@@ -109,12 +114,12 @@ pre.mermaid{
 <h1 id="delphi-vcl-styledcomponents">Delphi VCL StyledComponents</h1>
 <!-- raw HTML omitted -->
 <p><a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="License: Apache" /></a>
-<a href="https://github.com/EtheaDev/SvgIconImageList/releases"><img src="https://img.shields.io/github/v/release/EtheaDev/StyledComponents?label=release&amp;color=blue" alt="Latest release" /></a>
+<a href="https://github.com/EtheaDev/StyledComponents/releases"><img src="https://img.shields.io/github/v/release/EtheaDev/StyledComponents?label=release&amp;color=blue" alt="Latest release" /></a>
 <a href="https://www.embarcadero.com/products/delphi"><img src="https://img.shields.io/badge/Delphi-XE6%2B-e62329.svg" alt="Delphi XE6+" /></a>
 <a href="https://docwiki.embarcadero.com/RADStudio/en/Main_Page"><img src="https://img.shields.io/badge/Platform-VCL-8a2be2.svg" alt="Platform: VCL" /></a>
 <a href="https://www.microsoft.com/windows"><img src="https://img.shields.io/badge/Windows-10%20%7C%2011-0078d6.svg" alt="Windows 10 and 11" /></a></p>
 <h2 id="components-similar-to-delphi-vcl-buttons-panels-toolbar-dbnavigator-bindnavigator-buttongroup-and-categorybuttons-with-custom-graphic-styles-and-an-advanced-full-customizable-taskdialog-also-with-animations">Components similar to Delphi VCL Buttons, Panels, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!</h2>
-<h3 id="actual-official-version-440">Actual official version: 4.4.0</h3>
+<h3 id="actual-official-version-463">Actual official version: 4.6.3</h3>
 <hr />
 <h2 id="setup-for-installation-of-components">Setup for Installation of Components</h2>
 <p>An easy “Installer” read-to-use is located in the Release area: <a href="https://github.com/EtheaDev/StyledComponents/releases/latest/download/StyledComponents_Setup.exe">Download the Installer</a>.</p>
@@ -122,8 +127,7 @@ pre.mermaid{
 <p><img src="./Images/Setup.png" alt="Setup" /></p>
 <h2 id="installation-with-dpm-delphi-package-manager">Installation with DPM (Delphi Package Manager)</h2>
 <p>The library is also published on <a href="https://delphi.dev/packages/etheadev.styledcomponents">delphi.dev</a> as the package <strong>EtheaDev.StyledComponents</strong> (Delphi XE6 to 13, Win32 and Win64): you can install it with <a href="https://delphi.dev">DPM, the Delphi Package Manager</a>, as an alternative to the Setup. From the IDE, right click on your project in the Project Manager and choose <em>Manage DPM Packages</em>, or from the command line:</p>
-<pre><code>dpm install EtheaDev.StyledComponents &lt;path of your project&gt;.dproj
-</code></pre>
+<pre style="background-color:#FFFFFF;color:#000000;"><code>dpm install EtheaDev.StyledComponents &lt;path of your project&gt;.dproj</code></pre>
 <p>DPM downloads the package, builds it for the Delphi version and the platforms of your project and adds it to the project.</p>
 <h2 id="documentation">Documentation</h2>
 <p>Follow the <a href="https://ethea.it/docs/styledcomponents/">Project Site</a> to known how to use those components to modernize your Delphi VCL using those components.</p>
@@ -134,9 +138,9 @@ pre.mermaid{
 <p>The main limitations of the buttons and components of the VCL are the shape and color, defined by the operating system.</p>
 <p>With <strong>StyledComponents</strong> you can overcome these limits in a simple way. You can:</p>
 <ul>
-<li>Control the shape of the button</li>
+<li>Control the shape of the button, the width of its border and the shadow below it</li>
 <li>Control button and border color (without limits) for every button state.</li>
-<li>Use “families” of predefined styles as in the WEB environment (e.g. Angular or Bootstrap)</li>
+<li>Use “families” of predefined styles as in the WEB environment (e.g. Angular, Angular Material 3 or Bootstrap)</li>
 <li>Adapt to the colors of the VCL styles, keeping the shape of the button consistent</li>
 <li>The appearance is identical in “Windows” mode or by applying VCL styles to the application</li>
 </ul>
@@ -147,7 +151,7 @@ pre.mermaid{
 <h3 id="color-attributes">Color attributes:</h3>
 <p>With three values, you can select predefined ready styles for button color, border and font color:</p>
 <ul>
-<li><strong>StyleFamily</strong>: the “Family” of a Style (eg.Classic or Bootstrap or Angular)</li>
+<li><strong>StyleFamily</strong>: the “Family” of a Style (eg. Classic, Bootstrap, Angular, Angular-M3, Basic-Colors or SVG-Colors)</li>
 <li><strong>StyleClass</strong>: a collection of predefined button style of the selected Family</li>
 <li><strong>Style Appearance</strong>: eg.Normal or Outline</li>
 </ul>
@@ -177,6 +181,12 @@ pre.mermaid{
 <li><strong>StyleRoundedCorners</strong>: used for RoundRect and Rounded DrawType</li>
 <li><strong>StyleRadius</strong>: used for btRoundRect DrawType</li>
 </ul>
+<h3 id="border-and-shadow-attributes">Border and shadow attributes:</h3>
+<ul>
+<li><strong>StyleBorderWidth</strong>: the width of the border, the same in every state of the button and on any family (<code>-1</code> = the border of the chosen style, <code>0</code> = no border, greater than zero = that width in pixels, scaled with the DPI)</li>
+<li><strong>StyleShadowSize</strong>: a soft shadow below the button, drawn inside the area of the control (<code>-1</code> = the shadow of the chosen style, <code>0</code> = no shadow, greater than zero = that shadow in every state and on any family)</li>
+</ul>
+<p>Like the other style properties, both are available on all the buttons, on the toolbar, the navigators, the button group and the category buttons (which give them to their buttons and items), and the default border width of the new components can be set with <code>RegisterDefaultRenderingStyle</code>. The shadow is also available on TStyledPanel.</p>
 <p><em>In this picture you can see the StyledComponentsDemo application with some examples:</em></p>
 <p><img src="./Images/StyledComponentsDemo.jpg" alt="StyledComponentsDemo" /></p>
 <h3 id="special-properties">Special Properties:</h3>
@@ -188,6 +198,7 @@ pre.mermaid{
 <li>Ability to change icon position and caption alignment in TStyledButtonGroup and TStyledCategoryButtons</li>
 <li>Different appearance for buttons Items of TStyledToolbar, TStyledButtonGroup and TStyledCategoryButtons</li>
 <li>Notification Badge for all StyledButtons</li>
+<li>A Component Editor (right click on the component, “Styled Button Editor…“) to choose Family, Class and Appearance with a preview of every style, and to set the shape, the border and the shadow</li>
 <li>AutoClick event (after a Delayed time)</li>
 <li>Animated icons using, TStyledAnimatedButton</li>
 </ul>
@@ -204,11 +215,11 @@ pre.mermaid{
 <tbody>
 <tr>
 <td><img src="./Images/OK_GRAPH_BUTTON_128.png" alt="TStyledGraphicButton" /></td>
-<td><strong>TStyledGraphicButton</strong> is a “pure” Graphic Button with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) with support of ImageList, Action and full configuration of five states: Normal, Pressed, Selected, Hot and Disabled. You can use it also into a TVirtualList component.</td>
+<td><strong>TStyledGraphicButton</strong> is a “pure” Graphic Button with Styles (eg. Classic, Bootstrap, Angular, Angular-M3, Basic-Color, SVG-Color) with support of ImageList, Action and full configuration of five states: Normal, Pressed, Selected, Hot and Disabled. You can use it also into a TVirtualList component.</td>
 </tr>
 <tr>
 <td><img src="./Images/OK_BUTTON_128.png" alt="TStyledButton" /></td>
-<td><strong>TStyledButton</strong> is classic “button control” with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) with support of ImageList, Action and full configuration of five states: Normal, Pressed, Selected, Hot and Disabled, plus Focus and TabStop support. You can easily replace all of your TButton components.</td>
+<td><strong>TStyledButton</strong> is classic “button control” with Styles (eg. Classic, Bootstrap, Angular, Angular-M3, Basic-Color, SVG-Color) with support of ImageList, Action and full configuration of five states: Normal, Pressed, Selected, Hot and Disabled, plus Focus and TabStop support. You can easily replace all of your TButton components.</td>
 </tr>
 <tr>
 <td><img src="./Images/TOOL_BAR_128.png" alt="TStyledToolbar" /></td>
@@ -216,19 +227,19 @@ pre.mermaid{
 </tr>
 <tr>
 <td><img src="./Images/StyledDbNavigator_128.png" alt="TStyledDbNavigator" /></td>
-<td><strong>TStyledDbNavigator</strong> is a special “DbNavigator” component, with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color), plus Button captions and better “move” icons in vertical mode.</td>
+<td><strong>TStyledDbNavigator</strong> is a special “DbNavigator” component, with Styles (eg. Classic, Bootstrap, Angular, Angular-M3, Basic-Color, SVG-Color), plus Button captions and better “move” icons in vertical mode.</td>
 </tr>
 <tr>
 <td><img src="./Images/StyledBindNavigator_128.png" alt="TStyledBindNavigator" /></td>
-<td><strong>TStyledBindNavigator</strong> is a special “BindNavigator” component, with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color), plus Button captions and better “move” icons in vertical mode.</td>
+<td><strong>TStyledBindNavigator</strong> is a special “BindNavigator” component, with Styles (eg. Classic, Bootstrap, Angular, Angular-M3, Basic-Color, SVG-Color), plus Button captions and better “move” icons in vertical mode.</td>
 </tr>
 <tr>
 <td><img src="./Images/BUTTON_GROUP_128.png" alt="TStyledButtonGroup" /></td>
-<td><strong>TStyledButtonGroup</strong> is a special “ButtonGroup” component with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) plus ImagePosition, CaptionAlignment and Flat properties, for adding more controls to the appearance of Buttons.</td>
+<td><strong>TStyledButtonGroup</strong> is a special “ButtonGroup” component with Styles (eg. Classic, Bootstrap, Angular, Angular-M3, Basic-Color, SVG-Color) plus ImagePosition, CaptionAlignment and Flat properties, for adding more controls to the appearance of Buttons.</td>
 </tr>
 <tr>
 <td><img src="./Images/CATEGORY_BUTTONS_128.png" alt="TStyledCategoryButtons" /></td>
-<td><strong>TStyledCategoryButtons</strong> is a special “CategoryButtons” component with Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color) plus ImagePosition, CaptionAlignment and Flat properties, for adding more controls to the appearance of Buttons.</td>
+<td><strong>TStyledCategoryButtons</strong> is a special “CategoryButtons” component with Styles (eg. Classic, Bootstrap, Angular, Angular-M3, Basic-Color, SVG-Color) plus ImagePosition, CaptionAlignment and Flat properties, for adding more controls to the appearance of Buttons.</td>
 </tr>
 <tr>
 <td><img src="./Images/StyledTaskDialog_128.png" alt="TStyledTaskDialog" /></td>
@@ -236,7 +247,7 @@ pre.mermaid{
 </tr>
 <tr>
 <td><img src="./Images/STYLED_PANEL_128.png" alt="TStyledPanel" /></td>
-<td><strong>TStyledPanel</strong> a styled container control based on TCustomPanel with support for Styles (eg. Classic, Bootstrap, Angular, Basic-Color, SVG-Color). It provides full control over background rendering with customizable shape (Rounded, RoundRect, Rect, Ellipse), colors and borders for Normal and Disabled states. Features include Caption alignment, customizable margins, and the ability to switch between styled and VCL rendering.</td>
+<td><strong>TStyledPanel</strong> a styled container control based on TCustomPanel with support for Styles (eg. Classic, Bootstrap, Angular, Angular-M3, Basic-Color, SVG-Color). It provides full control over background rendering with customizable shape (Rounded, RoundRect, Rect, Ellipse), colors and borders for Normal and Disabled states. Features include Caption alignment, customizable margins, and the ability to switch between styled and VCL rendering.</td>
 </tr>
 </tbody>
 </table>
@@ -299,7 +310,7 @@ pre.mermaid{
 <ul>
 <li><strong>Classic</strong>: a collection of Styles similar to <a href="https://docwiki.embarcadero.com/RADStudio/Athens/en/Tutorial:_Using_TControl.StyleElements_in_VCL_Applications">VCLStyled TButton</a></li>
 <li><strong>Bootstrap</strong>: a collection of Styles similar to <a href="https://getbootstrap.com/docs/4.0/components/buttons/">Bootstrap buttons</a></li>
-<li><strong>Angular-Light</strong>: a collection of styles similar to the Material 2 <a href="https://material.angular.io/components/button/overview">Angular buttons</a> (Flat, Raised, Basic, Stroked), light theme</li>
+<li><strong>Angular-Light</strong>: a collection of styles similar to the Material 2 <a href="https://v16.material.angular.dev/components/button/overview">Angular buttons</a> (Flat, Raised, Basic, Stroked), light theme</li>
 <li><strong>Angular-Dark</strong>: the same Material 2 styles, dark theme</li>
 <li><strong>Angular-M3-Light</strong>: the buttons of the current Angular Material 3 (Text, Elevated, Outlined, Filled, Tonal), light colour scheme, as in the <a href="https://material.angular.dev/components/button/overview">Angular Material button page</a></li>
 <li><strong>Angular-M3-Dark</strong>: the same Angular Material 3 buttons, dark colour scheme</li>
@@ -456,6 +467,53 @@ TaskDialog -&gt; StyledTaskDialog</p>
 It also contains performance benchmarks (<code>StyledPerfTests</code>) that count heap allocations and time per paint and fail above a ceiling, locking the 4.3.0 optimizations against regressions.
 Run <code>Test\run_tests.cmd [Win32|Win64] [Debug|Release]</code>: it builds the project and writes a NUnit XML report in <code>Test\Bin\&lt;Platform&gt;\&lt;Config&gt;</code>.</p>
 <h3 id="release-notes">RELEASE NOTES</h3>
+<p>11 Nov 2026 - version 4.6.3</p>
+<ul>
+<li>Compatibility with Delphi 13.2</li>
+</ul>
+<p>9 Nov 2026 - version 4.6.2</p>
+<ul>
+<li>Support for the new VCL style “Windows Modern Dark SE” of Delphi 13.2: it is now in the colour tables of the Classic family used by the buttons (StyleClass and AsVCLComponent) and by TStyledPanel with AsVCLComponent; before, the components fell back to the light colours of the Windows class. Its colours, measured on the .vsf file, are the ones of Windows11 Modern Dark</li>
+<li>Fixed the colours of the Windows Modern styles of Delphi 13.1, measured on their .vsf files: “Windows Modern Dark” had the colours of Windows11 Modern Dark (button #373737 instead of #262626, Hot #405560 instead of the blue #017CE6, panel #373737 instead of black #000000); the panel border of Windows Modern Blue, Green, Purple, SlateGray and MountainMist is now the shadow side of the bevel painted by the style (it was the panel colour itself), and the panel colour of Windows Modern Blue and SlateGray is now the exact one</li>
+<li>The test suite now has 161 tests; the slow TextBlink tests that show the dialog are switched off with [Ignore]</li>
+</ul>
+<p>3 Nov 2026 - version 4.6.1</p>
+<ul>
+<li>Fixed the hyperlinks of the blinking text of TStyledTaskDialog (TextBlinkLinks): the flag LIS_DEFAULTCOLORS of the SysLink means “enable the custom text colours”, so it is now set in the blink phase (the links take TextBlinkColor) and cleared in the other one; in 4.6.0 it was the other way round (issue #120)</li>
+<li>Fixed the caption of a Transparent button on a parent painted by its own VCL style (a StyleName set on the control, Delphi 11 and later) or on a TStyledPanel: the contrast is now measured against the style of the parent, and a TStyledPanel counts as styled only with AsVCLComponent, using the face it really paints, also the disabled one (issue #120)</li>
+<li>Fixed EStyledButtonError raised when a VCL style is active and the runtime themes are disabled: the attributes of the VCL styles are always registered, a style without registered attributes falls back to the Windows class, and the appearance is initialized also when the border is not styled by the VCL style</li>
+<li>The library is also published as a DPM package (delphi.dev, EtheaDev.StyledComponents)</li>
+<li>The test suite now has 153 tests: the key tests of the dialog set the modifier keys themselves (new Shift+Esc test), and a dialog shown first is no longer left hidden by the start-up show command of the process</li>
+</ul>
+<p>2 Nov 2026 - version 4.6.0</p>
+<ul>
+<li>New: the properties TextBlink, TextBlinkColor and TextBlinkInterval of TStyledTaskDialog (requested in issue #66): while the dialog is shown the text switches between its colour and TextBlinkColor (default clRed) every TextBlinkInterval milliseconds (default 500). An interval below MIN_TEXTBLINK_INTERVAL (250 ms: two blinks a second, under the three flashes a second that WCAG 2.3.1 sets as the limit for flashing content) is raised to it. It works with and without VCL styles: the text of the dialog is a SysLink, which paints with the colour answered to WM_CTLCOLORSTATIC and ignores Font.Color, so the answer is the one that is changed. The hyperlinks of the text blink too (TextBlinkLinks, True by default): a SysLink paints its links with the colours of the system unless LIS_DEFAULTCOLORS is cleared, so it is cleared in the blink phase only; set TextBlinkLinks to False to keep the links still</li>
+<li>New: GetDialogTextBlink, GetDialogTextBlinkColor, GetDialogTextBlinkInterval and SetDialogTextBlink (unit Vcl.StyledTaskDialog): the default of every new TStyledTaskDialog, which is the only way to make blink the dialogs of the message routines (StyledMessageDlg, ShowMessage with the hooks…), leaving every other setting as it is. Like SetDialogAutoClickDelay, it can be limited to one operation and the previous values put back afterwards</li>
+<li>Fixed the caption, and the triangle of the split button, of a Transparent button (the default of the buttons of TStyledToolbar) unreadable when the font of the style was chosen to contrast with the face, which is not drawn in the Normal state: for example white on the light panel of Raize Frost : Blue. When the font of the style does not contrast with what is behind the button (the panel colour of the VCL style, or the Color of the parent) the text colour of the panel is used; a font that already contrasts is kept, and a disabled button keeps its faded font (pull request #117)</li>
+<li>The test suite now has 152 tests</li>
+</ul>
+<p>1 Nov 2026 - version 4.5.1</p>
+<ul>
+<li>New: the properties DialogButtonsBorderWidth and DialogButtonsShadowSize of TStyledTaskDialog (-1 = the border/shadow of the style, 0 = none, a value greater than zero = that border/shadow in every state): they are given to all the buttons of the dialog (also the ones of the custom items and the command links), like StyleBorderWidth and StyleShadowSize of TStyledButton. They are saved in the form file only if different from the registered default, and a value below -1 raises an exception</li>
+<li>New: the parameters AShadowSize and ABorderWidth (default -1) at the end of TStyledTaskDialog.RegisterDefaultRenderingStyle, to register the default border and shadow of the buttons of all the dialogs created afterwards; the existing calls are not affected</li>
+<li>Fixed the items of TStyledButtonGroup and TStyledCategoryButtons loaded from the form file with a style of their own: they now start from the border width registered with RegisterDefaultRenderingStyle (as the radius), instead of -1</li>
+<li>Fixed StyleBorderWidth and StyleShadowSize of the items of TStyledButtonGroup and TStyledCategoryButtons: a value below -1 now raises an exception, as for the components</li>
+<li>The test suite now has 137 tests</li>
+</ul>
+<p>30 Oct 2026 - version 4.5.0</p>
+<ul>
+<li>New: the property StyleBorderWidth, to change the width of the border of the buttons: -1 (default) = the border defined by the chosen style, 0 = no border, a value greater than zero = that width (in pixels at 100% scale, scaled with the DPI like the border of the style) in every state of the button (Normal, Hot, Pressed, Selected, Disabled) and on any family, also with AsVCLComponent. It is available on TStyledButton, TStyledBitBtn, TStyledSpeedButton, TStyledGraphicButton, TStyledAnimatedButton, TStyledToolbar (and its buttons), TStyledDbNavigator, TStyledBindNavigator, TStyledButtonGroup and TStyledCategoryButtons (also on every item); the value of a container is given to the buttons that still have the value of the container, like StyleRadius. The width also decides the margin of the text and of the image. It is saved in the form file only if different from -1; values below -1 raise an exception</li>
+<li>New: the parameter AStyleBorderWidth (after AStyleRadius, default -1) of RegisterDefaultRenderingStyle of the buttons, toolbar, navigator, button group and category buttons: the border width given to the components created afterwards. Warning: the parameter is inserted before the cursor, so a call that passes the cursor as an argument by position must be updated</li>
+<li>Component Editor: new Border Width trackbar (from -1 = the border of the style to 10) next to the radius, that changes the border of the button; it is not shown when editing a TStyledPanel</li>
+<li>The test suite now has 131 tests</li>
+</ul>
+<p>19 Oct 2026 - version 4.4.1</p>
+<ul>
+<li>Fixed TStyledTaskDialog without StyleFamily (a dialog shown with an empty button family, for example by the message routines of an application that never called InitializeStyledTaskDialogs with a family): the form lost its default Classic family and raised an error when it created the buttons of the custom items; now the Classic family is used, and DialogButtonsDrawType, DialogButtonsRadius and DialogButtonsRoundedCorners are applied to the buttons in this case too</li>
+<li>New: the property DialogBtnFamily of TStyledTaskDialogForm, to change the family of the buttons of a dialog that is already open</li>
+<li>New: GetDialogAutoClickDelay and SetDialogAutoClickDelay (unit Vcl.StyledTaskDialog): read and change only the auto-click delay used by all the dialogs that are not given their own delay, leaving every other setting as it is (the overloads of InitializeStyledTaskDialogs that take the delay also reset font, family, command links, alpha blend and button sizes). It lets an application limit the delay to one operation, for example an idle-logout that saves the record and must not wait forever for a prompt that nobody reads, and put the previous value back afterwards</li>
+<li>The test suite now has 121 tests</li>
+</ul>
 <p>11 Oct 2026 - version 4.4.0</p>
 <ul>
 <li>New: the Angular Material 3 families <strong>Angular-M3-Light</strong> and <strong>Angular-M3-Dark</strong> (as in the current Angular Material button page): appearances Text, Elevated, Outlined, Filled and Tonal, a single class Basic, “full corner” (btRounded) shape by default, colours of the azure palette and the hover/focus/pressed/disabled states of Material 3; FAB, Mini FAB and Extended FAB are Tonal buttons with btRoundRect, the Icon button is a Text button with btEllipse. In a Styled TaskDialog the buttons are Filled/Outlined/Text according to their ModalResult</li>
@@ -1106,5 +1164,8 @@ StyledDialog:</li>
 <ul>
 <li>First “beta” version</li>
 </ul>
+<h2 id="license">License</h2>
+<p>Copyright (c) 2022-2026 Ethea S.r.l.</p>
+<p>Licensed under the <a href="LICENSE">Apache License, Version 2.0</a> (the “License”): you may not use this software except in compliance with the License. Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.</p>
 </body>
 </html>

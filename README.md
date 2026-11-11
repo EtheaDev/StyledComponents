@@ -9,7 +9,7 @@
 
 ## Components similar to Delphi VCL Buttons, Panels, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 4.6.2
+### Actual official version: 4.6.3
 
 ---
 ## Setup for Installation of Components
@@ -408,6 +408,9 @@ It also contains performance benchmarks (`StyledPerfTests`) that count heap allo
 Run `Test\run_tests.cmd [Win32|Win64] [Debug|Release]`: it builds the project and writes a NUnit XML report in `Test\Bin\<Platform>\<Config>`.
 
 ### RELEASE NOTES
+11 Nov 2026 - version 4.6.3
+- Compatibility with Delphi 13.2
+
 9 Nov 2026 - version 4.6.2
 - Support for the new VCL style "Windows Modern Dark SE" of Delphi 13.2: it is now in the colour tables of the Classic family used by the buttons (StyleClass and AsVCLComponent) and by TStyledPanel with AsVCLComponent; before, the components fell back to the light colours of the Windows class. Its colours, measured on the .vsf file, are the ones of Windows11 Modern Dark
 - Fixed the colours of the Windows Modern styles of Delphi 13.1, measured on their .vsf files: "Windows Modern Dark" had the colours of Windows11 Modern Dark (button #373737 instead of #262626, Hot #405560 instead of the blue #017CE6, panel #373737 instead of black #000000); the panel border of Windows Modern Blue, Green, Purple, SlateGray and MountainMist is now the shadow side of the bevel painted by the style (it was the panel colour itself), and the panel colour of Windows Modern Blue and SlateGray is now the exact one

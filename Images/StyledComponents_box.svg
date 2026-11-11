@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ns2="http://creativecommons.org/ns#" xmlns:ns4="http://www.inkscape.org/namespaces/inkscape" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" width="107.818mm" height="152.792mm" version="1.1" viewBox="46.091 23.601 107.818 152.792">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ns2="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink" width="107.818mm" height="152.792mm" version="1.1" viewBox="46.091 23.601 107.818 152.792">
  <defs>
   <linearGradient id="linearGradient981" x1="150.58" x2="126.5" y1="28.545" y2="172.75" gradientUnits="userSpaceOnUse">
    <stop offset="0"/>
@@ -37,7 +37,7 @@
   <filter id="A" x="-.05" y="-.15" width="1.1" height="1.3">
    <feGaussianBlur stdDeviation="2"/>
   </filter>
- </defs>
+ <linearGradient id="linearGradient919"><stop offset="0"/><stop stop-color="#4d4d4d" offset="1"/></linearGradient><linearGradient id="linearGradient927"><stop offset="0"/><stop stop-color="#333" offset="1"/></linearGradient><linearGradient id="linearGradient921" x1="90.659" x2="106.3" y1="71.725" y2="37.656" gradientTransform="matrix(1.2619 0 0 1.2619 1.7894 -28.165)" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient919"/><linearGradient id="linearGradient929" x1="90.659" x2="106.3" y1="71.725" y2="37.656" gradientTransform="matrix(1.2619 0 0 1.2619 1.7894 -28.165)" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient927"/><linearGradient id="linearGradient995" x1="87.85" x2="113.89" y1="66.493" y2="-.031793" gradientTransform="matrix(1.2619 0 0 1.2619 4.986 42.092)" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient919"/><linearGradient id="linearGradient997" x1="87.85" x2="113.89" y1="66.493" y2="-.031793" gradientTransform="matrix(1.2619 0 0 1.2619 4.986 42.092)" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient927"/></defs>
  <metadata>
   <rdf:RDF>
    <ns2:Work rdf:about="">
@@ -61,7 +61,7 @@
    <path d="m76.829 94.208 2.3617-0.02067-1.1513 4.0987-1.2104-0.0108zm-30.872 11.685 1.4903-3.3919 10.806 0.13545v3.6026zm17.267-15.997-3.0087 0.03762v-3.8133l9.6802-0.21825v3.9412l-3.0087 0.03762v16.608l-3.6628-0.0957zm8.6337-4.0402 3.6628-0.10643v20.986l-3.6628-0.0903zm-21.167 8.5753 7.5627-0.0602v3.6778l-9.1112-0.13546zm1.7405-4.4372 1.5053-3.723 4.3168-0.09784v3.7606z" fill="#33d3ff"/>
   </g>
  </g>
- <style type="text/css">.st0{fill:#9494b8;stroke:white;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+ <g><path d="m46.095 162.52v-22.071l83.714 13.902-1.5e-4 22.038z" fill="#f2f2f2"/><g font-family="sans-serif" letter-spacing="0px" word-spacing="0px"><text id="textTop" transform="matrix(.79095 -.093869 0 1.2643 0 0)" x="111.259" y="49.731964" fill="url(#linearGradient921)" font-size="16.405px" stroke="url(#linearGradient929)" stroke-width="0.63094" text-anchor="middle" style="line-height:1.25" xml:space="preserve"><tspan x="111.259" y="49.731964" fill="url(#linearGradient921)" font-family="sans-serif" font-size="16.405px" font-weight="bold" stroke="url(#linearGradient929)" stroke-width="0.63094" text-anchor="middle">Styled</tspan></text><text id="textBottom" transform="matrix(.79095 .12918 0 1.2643 0 0)" x="111.259" y="119.98884" fill="url(#linearGradient995)" font-size="15.694px" stroke="url(#linearGradient997)" stroke-width="0.603595" text-anchor="middle" style="line-height:1.25" xml:space="preserve"><tspan x="111.259" y="119.98884" fill="url(#linearGradient995)" font-family="sans-serif" font-size="15.694px" font-weight="bold" stroke="url(#linearGradient997)" stroke-width="0.603595" text-anchor="middle">Components</tspan></text></g></g><style type="text/css">.st0{fill:#9494b8;stroke:white;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
     .st1{fill:#0d6efd;stroke:white;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}</style>
  <g id="logo-paths">
     <g id="g17">
