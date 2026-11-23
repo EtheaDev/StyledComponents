@@ -89,14 +89,16 @@ Type
     destructor Destroy; override;
   end;
 
-  TStyledButtonComponentEditor = class(TComponentEditor)
+  //Derived from TDefaultEditor: a double click does what it does on a standard
+  //VCL button (it opens the OnClick handler, creating it when missing); the
+  //Styled Button Editor is the first verb of the context menu
+  TStyledButtonComponentEditor = class(TDefaultEditor)
   private
     function GetControl: TControl;
   public
     function GetVerbCount: Integer; override;
     function GetVerb(Index: Integer): string; override;
     procedure ExecuteVerb(Index: Integer); override;
-    procedure Edit; override;
   end;
 
   TStyledToolbarComponentEditor = class(TComponentEditor)
@@ -443,11 +445,6 @@ begin
     Result := TCustomStyledButton(LComponent)
   else if LComponent is TStyledPanel then
     Result := TStyledPanel(LComponent);
-end;
-
-procedure TStyledButtonComponentEditor.Edit;
-begin
-  inherited;
 end;
 
 procedure TStyledButtonComponentEditor.ExecuteVerb(Index: Integer);

@@ -1,3 +1,17 @@
+@rem ---- Explorer pause: when started by double click the window stays open at the end ----
+@if defined EXPLORER_PAUSE_CHILD goto :explorer_pause_skip
+@if not "%~1"=="" goto :explorer_pause_skip
+@echo %cmdcmdline% | "%SystemRoot%\System32\find.exe" /i "%~nx0" > NUL
+@if errorlevel 1 goto :explorer_pause_skip
+@echo %cmdcmdline% | "%SystemRoot%\System32\find.exe" /i "call " > NUL
+@if not errorlevel 1 goto :explorer_pause_skip
+@set EXPLORER_PAUSE_CHILD=1
+@"%ComSpec%" /c ""%~f0""
+@set EXPLORER_PAUSE_RC=%errorlevel%
+@echo.
+@pause
+@exit /b %EXPLORER_PAUSE_RC%
+:explorer_pause_skip
 @echo *****************************************
 @echo BUILD StyledComponentsDemo with Delphi 12
 @echo *****************************************

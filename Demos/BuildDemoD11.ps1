@@ -33,6 +33,22 @@ param(
     [string]$Target = "Rebuild"
 )
 
+# --- Explorer pause: when started from Explorer the window stays open at the end, so the errors can be read ---
+if (-not $global:ExplorerPauseRegistered) {
+    $global:ExplorerPauseRegistered = $true
+    try {
+        $ppid = (Get-CimInstance Win32_Process -Filter "ProcessId=$PID").ParentProcessId
+        if ((Get-Process -Id $ppid -ErrorAction Stop).ProcessName -eq 'explorer') {
+            Register-EngineEvent -SourceIdentifier PowerShell.Exiting -Action {
+                Write-Host ''
+                Write-Host 'Press Enter to close...'
+                [void](Read-Host)
+            } | Out-Null
+        }
+    } catch { }
+}
+
+
 $BuildAll = Join-Path $PSScriptRoot "BuildAllDemos.ps1"
 & $BuildAll -DelphiVersion "D11" -BDSRoot $BDSRoot -Platform $Platform -Config $Config -Target $Target
 exit $LASTEXITCODE

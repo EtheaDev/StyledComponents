@@ -9,7 +9,7 @@
 
 ## Components similar to Delphi VCL Buttons, Panels, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!
 
-### Actual official version: 4.6.3
+### Actual official version: 4.7.0
 
 ---
 ## Setup for Installation of Components
@@ -408,6 +408,9 @@ It also contains performance benchmarks (`StyledPerfTests`) that count heap allo
 Run `Test\run_tests.cmd [Win32|Win64] [Debug|Release]`: it builds the project and writes a NUnit XML report in `Test\Bin\<Platform>\<Config>`.
 
 ### RELEASE NOTES
+23 Nov 2026 - version 4.7.0
+- New: a double click on a Styled Button in the Form Designer now works as on a standard VCL button and opens the code editor on the OnClick handler, creating it when it does not exist (issue #121). The Styled Button Editor is still the first item of the context menu (right click). It applies to TStyledGraphicButton, TStyledSpeedButton, TStyledButton, TStyledBitBtn, TStyledToolButton, TStyledAnimatedButton, TStyledAnimatedToolButton and TStyledPanel, which no longer opens its editor with a double click
+
 11 Nov 2026 - version 4.6.3
 - Compatibility with Delphi 13.2
 

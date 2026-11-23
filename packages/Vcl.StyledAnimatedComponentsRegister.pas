@@ -28,14 +28,15 @@ uses
   ;
 
 Type
-  TStyledAnimatedButtonComponentEditor = class (TComponentEditor)
+  //Derived from TDefaultEditor: a double click opens the OnClick handler, like
+  //a standard VCL button; the Styled Button Editor is the first context menu verb
+  TStyledAnimatedButtonComponentEditor = class (TDefaultEditor)
   private
     function GetButton: TControl;
   public
     function GetVerbCount: Integer; override;
     function GetVerb(Index: Integer): string; override;
     procedure ExecuteVerb(Index: Integer); override;
-    procedure Edit; override;
   end;
 
   TStyledAnimatedToolbarComponentEditor = class (TComponentEditor)
@@ -101,11 +102,6 @@ begin
   LComponent := GetComponent;
   if LComponent is TStyledAnimatedButton then
     Result := TStyledAnimatedButton(LComponent);
-end;
-
-procedure TStyledAnimatedButtonComponentEditor.Edit;
-begin
-  inherited;
 end;
 
 procedure TStyledAnimatedButtonComponentEditor.ExecuteVerb(Index: Integer);

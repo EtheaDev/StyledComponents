@@ -119,7 +119,7 @@ pre.mermaid{
 <a href="https://docwiki.embarcadero.com/RADStudio/en/Main_Page"><img src="https://img.shields.io/badge/Platform-VCL-8a2be2.svg" alt="Platform: VCL" /></a>
 <a href="https://www.microsoft.com/windows"><img src="https://img.shields.io/badge/Windows-10%20%7C%2011-0078d6.svg" alt="Windows 10 and 11" /></a></p>
 <h2 id="components-similar-to-delphi-vcl-buttons-panels-toolbar-dbnavigator-bindnavigator-buttongroup-and-categorybuttons-with-custom-graphic-styles-and-an-advanced-full-customizable-taskdialog-also-with-animations">Components similar to Delphi VCL Buttons, Panels, Toolbar, DbNavigator, BindNavigator, ButtonGroup and CategoryButtons with Custom Graphic Styles, and an advanced, full-customizable TaskDialog, also with animations!</h2>
-<h3 id="actual-official-version-463">Actual official version: 4.6.3</h3>
+<h3 id="actual-official-version-470">Actual official version: 4.7.0</h3>
 <hr />
 <h2 id="setup-for-installation-of-components">Setup for Installation of Components</h2>
 <p>An easy “Installer” read-to-use is located in the Release area: <a href="https://github.com/EtheaDev/StyledComponents/releases/latest/download/StyledComponents_Setup.exe">Download the Installer</a>.</p>
@@ -467,6 +467,10 @@ TaskDialog -&gt; StyledTaskDialog</p>
 It also contains performance benchmarks (<code>StyledPerfTests</code>) that count heap allocations and time per paint and fail above a ceiling, locking the 4.3.0 optimizations against regressions.
 Run <code>Test\run_tests.cmd [Win32|Win64] [Debug|Release]</code>: it builds the project and writes a NUnit XML report in <code>Test\Bin\&lt;Platform&gt;\&lt;Config&gt;</code>.</p>
 <h3 id="release-notes">RELEASE NOTES</h3>
+<p>23 Nov 2026 - version 4.7.0</p>
+<ul>
+<li>New: a double click on a Styled Button in the Form Designer now works as on a standard VCL button and opens the code editor on the OnClick handler, creating it when it does not exist (issue #121). The Styled Button Editor is still the first item of the context menu (right click). It applies to TStyledGraphicButton, TStyledSpeedButton, TStyledButton, TStyledBitBtn, TStyledToolButton, TStyledAnimatedButton, TStyledAnimatedToolButton and TStyledPanel, which no longer opens its editor with a double click</li>
+</ul>
 <p>11 Nov 2026 - version 4.6.3</p>
 <ul>
 <li>Compatibility with Delphi 13.2</li>
